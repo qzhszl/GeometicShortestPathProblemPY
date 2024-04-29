@@ -7,7 +7,7 @@ import networkx as nx
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
+    G = nx.Graph([1,2])
 
 
 # Press the green button in the gutter to run the script.
