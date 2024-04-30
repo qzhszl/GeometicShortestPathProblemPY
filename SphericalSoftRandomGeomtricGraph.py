@@ -7,6 +7,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import math
+import time
 import random
 import sys
 
@@ -90,7 +91,36 @@ def dist_to_geodesic_S2(angle1C, angle2C, angle1A, angle2A, angle1B, angle2B):
     return dist
 
 
-def SphericalSoftRGG(N, avg, beta, rg, Coortheta=None,Coorphi=None):
+def SphericalSoftRGG(N, avg, beta, rg, Coortheta=None, Coorphi=None, SaveNetworkPath=None):
+    """
+    %%***********************************************************************%
+    %*             Spherical Soft Random Geometric Graph Generator          *%
+    %*             Generates Spherical Soft Random Geometric Graphs         *%
+    %*                                                                      *%
+    %*                                                                      *%
+    %* Author: Maksim Kitsak & Zhihao Qiu                                   *%
+    %* Date: 19/03/2024                                                     *%
+    %************************************************************************%
+    %
+    %************************************************************************%
+    %
+    % Usage: G, theta, phi     = SphericalSoftRGG(N, avg, beta, rg, Coortheta, Coorphi, "filename.txt")
+    %
+    % Inputs:
+    %           N                   - Number of nodes in the graph
+    %           avg                 - Expected degree
+    %           beta                - controlling clustering coefficient
+    %           rg                  - random number seed generator
+    %           Coortheta/Coorphi   - Optional positions for nodes in the graph
+    %           SaveNetworkPath     - "savefilepath.txt"
+    %
+    %
+    % Outputs:
+    %
+    %           G                   - Graph object for the random geometric graph
+    %           angle1, angle2      - (angle1, theta, angle2 phi)coordinates of all each point in the graph
+    %--------------------------------------------------------------------------
+    """
     assert N >1
     assert beta>2
     assert avg>0
@@ -123,6 +153,87 @@ def SphericalSoftRGG(N, avg, beta, rg, Coortheta=None,Coorphi=None):
             if rannum < prob:
                 s.append(i)
                 t.append(j)
+    if SaveNetworkPath is not None:
+        with open(SaveNetworkPath, "w") as file:
+            for nodei, nodej in zip(s, t):
+                file.write(f"{nodei}\t{nodej}\n")
+    # Create graph and remove self-loops
+    G = nx.Graph()
+    G.add_edges_from(zip(s, t))
+    return G, angle1, angle2
+
+def SphericalSoftRGGwithGivenNode(N, avg, beta, rg, thetaA, phiA, thetaB,phiB, Coortheta=None, Coorphi=None, SaveNetworkPath=None):
+    """
+    %%***********************************************************************%
+    %*             Spherical Soft Random Geometric Graph Generator          *%
+    %*             Generates Spherical Soft Random Geometric Graphs         *%
+    %*             With fixed two nodes coordinates                         *%
+    %*                                                                      *%
+    %*                                                                      *%
+    %* Author:   Zhihao Qiu & Maksim Kitsak                                 *%
+    %* Date: 19/03/2024                                                     *%
+    %************************************************************************%
+    %
+    %************************************************************************%
+    %
+    % Usage: G, theta, phi     = SphericalSoftRGG(N, avg, beta, rg, Coortheta, Coorphi, "filename.txt")
+    %
+    % Inputs:
+    %           N                   - Number of nodes in the graph
+    %           avg                 - Expected degree
+    %           beta                - controlling clustering coefficient
+    %           rg                  - random number seed generator
+    %           Coortheta/Coorphi   - Optional positions for nodes in the graph
+    %           SaveNetworkPath     - "savefilepath.txt"
+    %
+    %
+    % Outputs:
+    %
+    %           G                   - Graph object for the random geometric graph
+    %           angle1, angle2      - (angle1, theta, angle2 phi)coordinates of all each point in the graph
+    %--------------------------------------------------------------------------
+    """
+    assert N > 1
+    assert beta > 2
+    assert avg > 0
+
+    s = []
+    t = []
+
+    # Calculate the alpha parameter
+    alpha = math.sqrt((N * math.pi) / (2 * avg * beta * math.sin(2 * math.pi / beta)))
+
+    # Assign coordinates
+    if Coortheta is not None and Coorphi is not None:
+        angle1 = Coortheta
+        angle2 = Coorphi
+    else:
+        angle1 = []
+        angle2 = []
+        for i in range(N):
+            sinangle = sin_generator(rg)
+            angle1.append(sinangle)
+            rannum = rg.ran1()
+            angle2.append(2 * math.pi * rannum)
+
+    angle1[N - 2] = thetaA
+    angle2[N - 2] = phiA
+    angle1[N - 1] = thetaB
+    angle2[N - 1] = phiB
+
+    # Make connections
+    for i in range(N):
+        for j in range(i + 1, N):
+            dist = distS2(angle1[i], angle2[i], angle1[j], angle2[j])
+            prob = 1 / (1 + math.exp(beta * math.log(alpha * dist)))
+            rannum = rg.ran1()
+            if rannum < prob:
+                s.append(i)
+                t.append(j)
+    if SaveNetworkPath is not None:
+        with open(SaveNetworkPath, "w") as file:
+            for nodei, nodej in zip(s, t):
+                file.write(f"{nodei}\t{nodej}\n")
     # Create graph and remove self-loops
     G = nx.Graph()
     G.add_edges_from(zip(s, t))
@@ -130,15 +241,18 @@ def SphericalSoftRGG(N, avg, beta, rg, Coortheta=None,Coorphi=None):
 
 
 if __name__ == "__main__":
-    # dist = dist_to_geodesic_S2(math.pi/4,0,math.pi/2,math.pi/2,math.pi/2,math.pi)
-    # print(dist)
     rg = RandomGenerator(-12)  # Seed initialization
-    N= 100
+    N = 100
     avg = 5
-    beta = 3.5
-    G, Coortheta, Coorphi = SphericalSoftRGG(N, avg, beta, rg, Coortheta=None, Coorphi=None)
-    print(Coortheta)
+    beta = 5
+    tic = time.time()
+    print(tic)
+    G, Coortheta, Coorphi = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, math.pi/2,0, math.pi/2,1)
+    print(time.time()-tic)
     print(Coorphi)
-
+    # filename = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\testnetworkNode{NodeNum}.txt".format(NodeNum = N)
+    # with open(filename, "w") as file:
+    #     for nodei, nodej in zip(Coortheta, Coorphi):
+    #         file.write(f"{nodei}\t{nodej}\n")
     # filename = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\testnetworkNode{NodeNum}.txt".format(NodeNum = N)
     # print(filename)
