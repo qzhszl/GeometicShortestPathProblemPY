@@ -160,7 +160,13 @@ def SphericalSoftRGG(N, avg, beta, rg, Coortheta=None, Coorphi=None, SaveNetwork
     # Create graph and remove self-loops
     G = nx.Graph()
     G.add_edges_from(zip(s, t))
+    if G.number_of_nodes()<N:
+        ExpectedNodeList = [i for i in range(0, N)]
+        Nodelist = list(G.nodes)
+        difference = [item for item in ExpectedNodeList if item not in Nodelist]
+        G.add_nodes_from(difference)
     return G, angle1, angle2
+
 
 def SphericalSoftRGGwithGivenNode(N, avg, beta, rg, thetaA, phiA, thetaB,phiB, Coortheta=None, Coorphi=None, SaveNetworkPath=None):
     """
@@ -237,6 +243,11 @@ def SphericalSoftRGGwithGivenNode(N, avg, beta, rg, thetaA, phiA, thetaB,phiB, C
     # Create graph and remove self-loops
     G = nx.Graph()
     G.add_edges_from(zip(s, t))
+    if G.number_of_nodes()<N:
+        ExpectedNodeList = [i for i in range(0, N)]
+        Nodelist = list(G.nodes)
+        difference = [item for item in ExpectedNodeList if item not in Nodelist]
+        G.add_nodes_from(difference)
     return G, angle1, angle2
 
 
@@ -248,8 +259,15 @@ if __name__ == "__main__":
     tic = time.time()
     print(tic)
     G, Coortheta, Coorphi = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, math.pi/2,0, math.pi/2,1)
-    print(time.time()-tic)
-    print(Coorphi)
+    ExpectedNodeList = [i for i in range(0, 100)]
+    Nodelist = list(G.nodes)
+    difference = [item for item in ExpectedNodeList if item not in Nodelist]
+    G.add_nodes_from(difference)
+    print(G.number_of_nodes())
+    difference = [item for item in ExpectedNodeList if item not in list(G.nodes)]
+    print(difference)
+
+    print('time:',time.time()-tic)
     # filename = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\testnetworkNode{NodeNum}.txt".format(NodeNum = N)
     # with open(filename, "w") as file:
     #     for nodei, nodej in zip(Coortheta, Coorphi):
