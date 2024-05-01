@@ -4,7 +4,8 @@
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import networkx as nx
 import matplotlib.pyplot as plt
-from SphericalSoftRandomGeomtricGraph import print_pi
+import numpy as np
+import SphericalSoftRandomGeomtricGraph
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -33,6 +34,9 @@ def IOforNormalFile():
                 continue
             data = line.strip().split("\t")  # 使用制表符分割
             Coorphi.append(float(data[1]))
+    FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\output.txt"
+    np.savetxt(FileASPName, Coorphi,fmt="%i")
+    data = np.loadtxt(FileASPName, dtype=int)
 
 
 def IOforGraph():

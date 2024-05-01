@@ -1,0 +1,151 @@
+# -*- coding UTF-8 -*-
+"""
+@Project: Geometric shortest path problem
+@Author: Zhihao Qiu
+@Date: 1-5-2024
+"""
+import random
+import math
+import numpy as np
+import networkx as nx
+
+from NearlyShortestPathPredict import FindNearlySPNodes
+from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalSoftRGGwithGivenNode, SphericalSoftRGG, \
+    dist_to_geodesic_S2
+
+
+def VisualizationDataOfSPNSPGEO():
+    # Input data parameters
+    N = 10000
+    avg = 5
+    beta = 3.5
+    rg = RandomGenerator(-12)
+    # for _ in range(random.randint(0,100)):
+    #     rg.ran1()
+
+    # Network and coordinates
+    G,Coortheta,Coorphi = SphericalSoftRGGwithGivenNode(N,avg,beta,rg,math.pi/4,0,math.pi/2,0)
+    print("LinkNum:",G.number_of_edges())
+    print("AveDegree:", G.number_of_edges()*2/G.number_of_nodes())
+    print("ClusteringCoefficient:",nx.average_clustering(G))
+
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYnetwork.txt"
+    nx.write_edgelist(G, FileNetworkName)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYnetworkCoor.txt"
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(Coortheta, Coorphi):
+            file.write(f"{data1}\t{data2}\n")
+
+    nodei = N-2
+    nodej = N-1
+
+
+    # All shortest paths
+    AllSP = nx.all_shortest_paths(G, nodei, nodej)
+    AllSPlist = list(AllSP)
+    FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYASP.txt"
+    np.savetxt(FileASPName, AllSPlist, fmt="%i")
+
+    # All shortest path node
+    AllSPNode = set()
+    for path in AllSPlist:
+        AllSPNode.update(path)
+    AllSPNode.discard(nodei)
+    AllSPNode.discard(nodej)
+    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYASPNode.txt"
+    np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
+
+    # Nearly shortest path node
+    NSPNode, relevance = FindNearlySPNodes(G, nodei, nodej)
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYNSPNode.txt"
+    np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
+    FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYRelevance.txt"
+    np.savetxt(FileNodeRelevanceName, relevance, fmt="%.3f")
+
+    # Geodesic
+    thetaSource = Coortheta[nodei]
+    phiSource = Coorphi[nodei]
+    thetaEnd = Coortheta[nodej]
+    phiEnd = Coorphi[nodej]
+
+    Geodistance={}
+    for NodeC in range(N):
+        if NodeC in [nodei,nodej]:
+            Geodistance[NodeC] = 0
+        else:
+            thetaMed = Coortheta[NodeC]
+            phiMed = Coorphi[NodeC]
+            dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+            Geodistance[NodeC] = dist
+    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYGeoDistance.txt"
+    np.savetxt(FileGeodistanceName, list(Geodistance.values()), fmt="%.8f")
+    Geodistance = sorted(Geodistance.items(), key=lambda kv: (kv[1], kv[0]))
+    Geodistance = Geodistance[:102]
+    Top100closednode = [t[0] for t in Geodistance]
+    Top100closednode = [n for n in Top100closednode if n not in [nodei,nodej]]
+
+    FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYFileTop100closedNode.txt"
+    np.savetxt(FileTop100closedNodeName, Top100closednode, fmt="%i")
+
+
+def PlotVisualizationDataOfSPNSPGEO():
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    # Read data from files
+    noderelevance = np.loadtxt(
+        'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\Noderelevancepi_32degree5beta5node10000.txt')
+    deviation = np.loadtxt(
+        'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\deviationpi_32degree5beta5node10000.txt')
+
+    p_all_node_list = np.loadtxt(
+        'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\ASPpi_32degree5beta5node10000.txt')
+    x_all_node = noderelevance[p_all_node_list.astype(int)]
+    y_all_node = deviation[p_all_node_list.astype(int)]
+
+    nsp_node_list = np.loadtxt(
+        'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\NSPpi_32degree5beta5node10000.txt')
+    x_nsp = noderelevance[nsp_node_list.astype(int)]
+    y_nsp = deviation[nsp_node_list.astype(int)]
+
+    closest_node_list = np.loadtxt(
+        'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\closeddeviationpi_32degree5beta5node10000.txt')
+    x_close = noderelevance[closest_node_list.astype(int)]
+    y_close = deviation[closest_node_list.astype(int)]
+
+    # Sort noderelevance and adjust deviations accordingly
+    sorted_indices = np.argsort(noderelevance)
+    sorted_noderelevance = noderelevance[sorted_indices]
+    sorted_deviation = deviation[sorted_indices]
+
+    # Plot settings
+    plt.figure(figsize=(12, 8))
+    plt.scatter(sorted_noderelevance, sorted_deviation, label='General node')
+
+    # Additional scatter plots with customized markers
+    scatter_size = 100
+    plt.scatter(x_all_node, y_all_node, s=scatter_size, marker='*', edgecolors=(0.8500, 0.3250, 0.0980),
+                label='Shortest path node')
+    plt.scatter(x_nsp, y_nsp, s=scatter_size, marker='s', edgecolors=(0.4940, 0.1840, 0.5560),
+                label='Nearly shortest path node')
+    plt.scatter(x_close, y_close, s=scatter_size, marker='^', edgecolors=(0.4660, 0.6740, 0.1880),
+                label='Top 100 nodes along the geodesic')
+
+    # Configure plot
+    plt.xlabel('Node Relevance', fontsize=30)
+    plt.ylabel('Deviation', fontsize=30)
+    plt.xscale('log')
+    plt.legend()
+    plt.grid(True)
+
+    # Save the plot as an EPS file
+    picname = 'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\VisualizeSPNSPDepi_32degree5beta5node10000.eps'
+    plt.savefig(picname, format='eps', dpi=600)
+
+    plt.show()  # Display the plot
+
+
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+    VisualizationDataOfSPNSPGEO()
+

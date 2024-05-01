@@ -63,10 +63,14 @@ def sin_generator(rg):  # Input: Random generator
 
 
 def distS2(angle1i, angle2i, angle1j, angle2j):
-    dist = math.cos(angle1i) * math.cos(angle1j)
-    dist += math.sin(angle1i) * math.sin(angle1j) * math.cos(angle2i) * math.cos(angle2j)
-    dist += math.sin(angle1i) * math.sin(angle1j) * math.sin(angle2i) * math.sin(angle2j)
-    return math.acos(dist)
+    if angle1i == angle1j and angle2i == angle2j:
+        dist = 0
+        return dist
+    else:
+        dist = math.cos(angle1i) * math.cos(angle1j)
+        dist += math.sin(angle1i) * math.sin(angle1j) * math.cos(angle2i) * math.cos(angle2j)
+        dist += math.sin(angle1i) * math.sin(angle1j) * math.sin(angle2i) * math.sin(angle2j)
+        return math.acos(dist)
 
 
 def dist_to_geodesic_S2(angle1C, angle2C, angle1A, angle2A, angle1B, angle2B):
