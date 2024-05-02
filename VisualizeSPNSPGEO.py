@@ -6,12 +6,13 @@
 """
 import random
 import math
-import numpy as np
 import networkx as nx
 
 from NearlyShortestPathPredict import FindNearlySPNodes
 from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalSoftRGGwithGivenNode, SphericalSoftRGG, \
     dist_to_geodesic_S2
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 def VisualizationDataOfSPNSPGEO():
@@ -89,46 +90,45 @@ def VisualizationDataOfSPNSPGEO():
 
 
 def PlotVisualizationDataOfSPNSPGEO():
-    import numpy as np
-    import matplotlib.pyplot as plt
+    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYASPNode.txt"
+    p_all_node_list = np.loadtxt(FileASPNodeName)
+    p_all_node_list = p_all_node_list.astype(int)
 
-    # Read data from files
-    noderelevance = np.loadtxt(
-        'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\Noderelevancepi_32degree5beta5node10000.txt')
-    deviation = np.loadtxt(
-        'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\deviationpi_32degree5beta5node10000.txt')
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYNSPNode.txt"
+    nsp_node_List = np.loadtxt(FileNSPNodeName)
+    nsp_node_List = nsp_node_List.astype(int)
 
-    p_all_node_list = np.loadtxt(
-        'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\ASPpi_32degree5beta5node10000.txt')
-    x_all_node = noderelevance[p_all_node_list.astype(int)]
-    y_all_node = deviation[p_all_node_list.astype(int)]
+    FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYRelevance.txt"
+    relevance_list = np.loadtxt(FileNodeRelevanceName)
+    # print(relevance_list)
 
-    nsp_node_list = np.loadtxt(
-        'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\NSPpi_32degree5beta5node10000.txt')
-    x_nsp = noderelevance[nsp_node_list.astype(int)]
-    y_nsp = deviation[nsp_node_list.astype(int)]
+    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYGeoDistance.txt"
+    geo_distance = np.loadtxt(FileGeodistanceName)
 
-    closest_node_list = np.loadtxt(
-        'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\closeddeviationpi_32degree5beta5node10000.txt')
-    x_close = noderelevance[closest_node_list.astype(int)]
-    y_close = deviation[closest_node_list.astype(int)]
+    FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYFileTop100closedNode.txt"
+    Top100closednode = np.loadtxt(FileTop100closedNodeName)
+    top100_closed_node_list =  Top100closednode.astype(int)
 
-    # Sort noderelevance and adjust deviations accordingly
-    sorted_indices = np.argsort(noderelevance)
-    sorted_noderelevance = noderelevance[sorted_indices]
-    sorted_deviation = deviation[sorted_indices]
+    x_asp = relevance_list[p_all_node_list]
+    y_asp = geo_distance[p_all_node_list]
+
+    x_nsp = relevance_list[nsp_node_List]
+    y_nsp = geo_distance[nsp_node_List]
+
+    x_close = relevance_list[top100_closed_node_list]
+    y_close = geo_distance[top100_closed_node_list]
 
     # Plot settings
     plt.figure(figsize=(12, 8))
-    plt.scatter(sorted_noderelevance, sorted_deviation, label='General node')
+    plt.scatter(relevance_list, geo_distance,marker="o", edgecolors=(0, 0.4470, 0.7410),facecolors="none", label='General node')
 
     # Additional scatter plots with customized markers
     scatter_size = 100
-    plt.scatter(x_all_node, y_all_node, s=scatter_size, marker='*', edgecolors=(0.8500, 0.3250, 0.0980),
+    plt.scatter(x_asp, y_asp, s=scatter_size, marker='*', edgecolors=(0.8500, 0.3250, 0.0980), facecolors="none",
                 label='Shortest path node')
-    plt.scatter(x_nsp, y_nsp, s=scatter_size, marker='s', edgecolors=(0.4940, 0.1840, 0.5560),
+    plt.scatter(x_nsp, y_nsp, s=scatter_size, marker='s', edgecolors=(0.4940, 0.1840, 0.5560),facecolors="none",
                 label='Nearly shortest path node')
-    plt.scatter(x_close, y_close, s=scatter_size, marker='^', edgecolors=(0.4660, 0.6740, 0.1880),
+    plt.scatter(x_close, y_close, s=scatter_size, marker='^', edgecolors=(0.4660, 0.6740, 0.1880),facecolors="none",
                 label='Top 100 nodes along the geodesic')
 
     # Configure plot
@@ -136,10 +136,9 @@ def PlotVisualizationDataOfSPNSPGEO():
     plt.ylabel('Deviation', fontsize=30)
     plt.xscale('log')
     plt.legend()
-    plt.grid(True)
 
     # Save the plot as an EPS file
-    picname = 'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\VisualizeSPNSPDepi_32degree5beta5node10000.eps'
+    picname = 'D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYVisualizeSPNSPDe.eps'
     plt.savefig(picname, format='eps', dpi=600)
 
     plt.show()  # Display the plot
@@ -147,5 +146,6 @@ def PlotVisualizationDataOfSPNSPGEO():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    VisualizationDataOfSPNSPGEO()
+    # VisualizationDataOfSPNSPGEO()
+    PlotVisualizationDataOfSPNSPGEO()
 

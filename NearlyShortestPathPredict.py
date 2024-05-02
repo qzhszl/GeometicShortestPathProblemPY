@@ -65,24 +65,41 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
     return NearlySPNodelist, Noderelevance
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
+def TestFindNSPnodes():
+    # Demo 1, use a and
     rg = RandomGenerator(-12)  # Seed initialization
     N = 10000
     avg = 5
     beta = 5
-    tic=time.time()
+    tic = time.time()
     print(tic)
     G, Coortheta, Coorphi = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, math.pi / 2, 0, math.pi / 2, 1)
     toc1 = time.time()
-    print(time.time()-tic)
-
-    nodei = N-1
-    nodej = N-2
-
-    NSP,NSPrelevance = FindNearlySPNodes(G, nodei, nodej,RelevanceSimTimes=1000)
+    print(time.time() - tic)
+    nodei = N - 1
+    nodej = N - 2
+    NSP, NSPrelevance = FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000)
     print(len(NSP))
-
-    print("time:", time.time()-toc1)
+    print("time:", time.time() - toc1)
     plt.hist(NSPrelevance)
     plt.show()
+
+
+def GeodiscPRAUC(ED,beta):
+    """
+    :param ED: average degree
+    :param beta: parameter to control the clustering coefficient
+    :return: ED and beta
+    """
+    test = ED+beta
+    PRAUCName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\AUCED{EDn}Beta{betan}PY.txt".format(EDn=ED, betan=beta)
+    np.savetxt(PRAUCName,test)
+
+
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+    # TestFindNSPnodes()
+    GeodiscPRAUC(5,3)
+
+
+

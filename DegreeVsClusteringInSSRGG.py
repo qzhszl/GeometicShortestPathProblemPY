@@ -10,6 +10,7 @@ import numpy as np
 import networkx as nx
 from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalSoftRGGwithGivenNode,SphericalSoftRGG
 
+
 def DegreeVsClu():
     """
     % INPUT: expected degree ED;expected clustering coefficent CC
@@ -50,7 +51,6 @@ def DegreeVsClu():
                     betamin = beta
                     beta += 0.5 * (betamax - beta)
     return betavec
-
 
 
 # Press the green button in the gutter to run the script.

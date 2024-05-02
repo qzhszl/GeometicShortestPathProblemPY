@@ -55,7 +55,7 @@ def sprintffilename():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
-    print_pi()
+    # print_pi()
 
     # graph = nx.convert_node_labels_to_integers(graph, first_label=1)
 
