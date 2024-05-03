@@ -1,4 +1,6 @@
 # This is a sample Python script.
+import itertools
+import random
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
@@ -54,7 +56,7 @@ def sprintffilename():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    # print_hi('PyCharm')
     # print_pi()
 
     # graph = nx.convert_node_labels_to_integers(graph, first_label=1)
@@ -63,4 +65,17 @@ if __name__ == '__main__':
     # G = nx.read_edgelist("D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\testnetwork.txt",delimiter=",",nodetype=int)
     # print(G.edges)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    # G = nx.fast_gnp_random_graph(20, 0.1)
+    G = nx.Graph()
+    G.add_edges_from([(1, 0), (1,3),(2, 3),(4,5)])
+    # 获取网络中的所有连通分量
+    components = list(nx.connected_components(G))
+    # 找到最大的连通分量
+    largest_component = max(components, key=len)
+    # 从最大连通分量中获取节点列表
+    nodes = list(largest_component)
+    # 创建所有可能的节点对
+    unique_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(nodes, 2))
+    # 从唯一节点对中随机选择 100 个
+    random_pairs = random.sample(sorted(unique_pairs), 2)
+    print(random_pairs)
