@@ -27,7 +27,7 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
         print("NSP Simutime:",Simutime)
         ShuffleTable = np.random.rand(G.number_of_edges())  # Random numbers for shuffle
         H = G.copy()  # Create a copy of the graph
-        edges_to_remove = [e for e, shuffle_value in zip(G.edges, ShuffleTable) if shuffle_value < 0.5]
+        edges_to_remove = [e for e, shuffle_value in zip(G.edges, ShuffleTable) if shuffle_value < 0.1]
         H.remove_edges_from(edges_to_remove)  # Remove edges with shuffle value < 0.5
         # time3 = time.time()
 
@@ -46,8 +46,8 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
                 if count>1000000:
                     PNodeList = set()
                     break
-            # print("pathlength", len(path))
-            # print("pathnum",count)
+            print("pathlength", len(path))
+            print("pathnum",count)
         except nx.NetworkXNoPath:
             PNodeList = set()  # If there's no path, continue with an empty set
         # time31 = time.time()
@@ -73,18 +73,19 @@ def TestFindNSPnodes():
     # Demo 1, use a and
     rg = RandomGenerator(-12)  # Seed initialization
     N = 10000
-    avg = 5
-    beta = 5
+    avg = 100
+    beta = 5.19042969
     tic = time.time()
     print(tic)
     G, Coortheta, Coorphi = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, math.pi / 2, 0, math.pi / 2, 1)
     toc1 = time.time()
-    print(time.time() - tic)
+    print("Genenrate a graph time:", time.time() - tic)
+    print("CLU:",nx.average_clustering(G))
     nodei = N - 1
     nodej = N - 2
     NSP, NSPrelevance = FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000)
-    print(len(NSP))
-    print("time:", time.time() - toc1)
+    print("NSP nodes Num:",len(NSP))
+    print("Finding NSP time:", time.time() - toc1)
     plt.hist(NSPrelevance)
     plt.show()
 
@@ -192,7 +193,10 @@ if __name__ == '__main__':
     # ExternalSimutime = sys.argv[3]
     # GeodiscPRAUC(int(ED),int(beta),int(ExternalSimutime))
 
-    GeodiscPRAUC(0, 0,1)
+    # GeodiscPRAUC(0, 0,1)
+    GeodiscPRAUC(0,0,10)
+
+
 
 
 

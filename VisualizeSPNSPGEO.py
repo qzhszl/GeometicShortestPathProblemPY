@@ -6,6 +6,8 @@
 """
 import random
 import math
+import time
+
 import networkx as nx
 
 from NearlyShortestPathPredict import FindNearlySPNodes
@@ -21,11 +23,11 @@ def VisualizationDataOfSPNSPGEO():
     avg = 5
     beta = 3.5
     rg = RandomGenerator(-12)
-    # for _ in range(random.randint(0,100)):
-    #     rg.ran1()
+    for _ in range(random.randint(0,100)):
+        rg.ran1()
 
     # Network and coordinates
-    G,Coortheta,Coorphi = SphericalSoftRGGwithGivenNode(N,avg,beta,rg,math.pi/4,0,math.pi/2,0)
+    G,Coortheta,Coorphi = SphericalSoftRGGwithGivenNode(N,avg,beta,rg,math.pi/4,0,3*math.pi/8,0)
     print("LinkNum:",G.number_of_edges())
     print("AveDegree:", G.number_of_edges()*2/G.number_of_nodes())
     print("ClusteringCoefficient:",nx.average_clustering(G))
@@ -118,6 +120,12 @@ def PlotVisualizationDataOfSPNSPGEO():
     x_close = relevance_list[top100_closed_node_list]
     y_close = geo_distance[top100_closed_node_list]
 
+    # plt.figure(figsize=(12, 8))
+    # plt.hist(geo_distance,bins=60)
+    # plt.title('histogram of geodistance')
+    # plt.show()
+
+
     # Plot settings
     plt.figure(figsize=(12, 8))
     plt.scatter(relevance_list, geo_distance,marker="o", edgecolors=(0, 0.4470, 0.7410),facecolors="none", label='General node')
@@ -134,7 +142,7 @@ def PlotVisualizationDataOfSPNSPGEO():
     # Configure plot
     plt.xlabel('Node Relevance', fontsize=30)
     plt.ylabel('Deviation', fontsize=30)
-    plt.xscale('log')
+    # plt.xscale('log')
     plt.legend()
 
     # Save the plot as an EPS file
@@ -146,6 +154,8 @@ def PlotVisualizationDataOfSPNSPGEO():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    # tic = time.time()
     # VisualizationDataOfSPNSPGEO()
+    # print(time.time()-tic)
     PlotVisualizationDataOfSPNSPGEO()
 

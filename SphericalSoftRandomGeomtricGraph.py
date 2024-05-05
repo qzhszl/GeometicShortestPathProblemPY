@@ -254,27 +254,53 @@ def SphericalSoftRGGwithGivenNode(N, avg, beta, rg, thetaA, phiA, thetaB,phiB, C
         G.add_nodes_from(difference)
     return G, angle1, angle2
 
-
-if __name__ == "__main__":
+def SphericalSoftRGGcheck():
     rg = RandomGenerator(-12)  # Seed initialization
-    N = 100
+    N = 10000
     avg = 5
-    beta = 5
+    beta = 3.5
+    for _ in range(random.randint(0,100)):
+        rg.ran1()
+
     tic = time.time()
     print(tic)
-    G, Coortheta, Coorphi = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, math.pi/2,0, math.pi/2,1)
-    ExpectedNodeList = [i for i in range(0, 100)]
-    Nodelist = list(G.nodes)
-    difference = [item for item in ExpectedNodeList if item not in Nodelist]
-    G.add_nodes_from(difference)
-    print(G.number_of_nodes())
-    difference = [item for item in ExpectedNodeList if item not in list(G.nodes)]
-    print(difference)
+    G, Coortheta, Coorphi = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, math.pi / 2, 0, math.pi / 2, 1)
+    toc1 = time.time()
+    print("Genenrate a graph time:", time.time() - tic)
+    print("CLU:", nx.average_clustering(G))
+    linkweight_list = []
+    for link in G.edges():
+        nodei = link[0]
+        nodej = link[1]
+        linkweight = distS2(Coortheta[nodei],Coorphi[nodei],Coortheta[nodej],Coorphi[nodej])
+        linkweight_list.append(linkweight)
+    plt.figure()
+    plt.hist(linkweight_list,bins=60)
+    plt.show()
 
-    print('time:',time.time()-tic)
-    # filename = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\testnetworkNode{NodeNum}.txt".format(NodeNum = N)
-    # with open(filename, "w") as file:
-    #     for nodei, nodej in zip(Coortheta, Coorphi):
-    #         file.write(f"{nodei}\t{nodej}\n")
-    # filename = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\testnetworkNode{NodeNum}.txt".format(NodeNum = N)
-    # print(filename)
+
+if __name__ == "__main__":
+    # rg = RandomGenerator(-12)  # Seed initialization
+    # N = 100
+    # avg = 5
+    # beta = 5
+    # tic = time.time()
+    # print(tic)
+    # G, Coortheta, Coorphi = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, math.pi/2,0, math.pi/2,1)
+    # ExpectedNodeList = [i for i in range(0, 100)]
+    # Nodelist = list(G.nodes)
+    # difference = [item for item in ExpectedNodeList if item not in Nodelist]
+    # G.add_nodes_from(difference)
+    # print(G.number_of_nodes())
+    # difference = [item for item in ExpectedNodeList if item not in list(G.nodes)]
+    # print(difference)
+    #
+    # print('time:',time.time()-tic)
+    # # filename = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\testnetworkNode{NodeNum}.txt".format(NodeNum = N)
+    # # with open(filename, "w") as file:
+    # #     for nodei, nodej in zip(Coortheta, Coorphi):
+    # #         file.write(f"{nodei}\t{nodej}\n")
+    # # filename = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\testnetworkNode{NodeNum}.txt".format(NodeNum = N)
+    # # print(filename)
+
+    SphericalSoftRGGcheck()
