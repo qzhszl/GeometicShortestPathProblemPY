@@ -16,6 +16,8 @@ from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalSoftRGGwi
     dist_to_geodesic_S2
 from sklearn.metrics import precision_recall_curve, auc
 import sys
+import seaborn as sns
+import pandas as pd
 
 # Function to find nodes that frequently appear in the shortest paths
 def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
@@ -29,7 +31,7 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
         H = G.copy()  # Create a copy of the graph
         edges_to_remove = [e for e, shuffle_value in zip(G.edges, ShuffleTable) if shuffle_value < 0.1]
         H.remove_edges_from(edges_to_remove)  # Remove edges with shuffle value < 0.5
-        # time3 = time.time()
+        time3 = time.time()
 
         # Find all shortest paths between nodei and nodej
         try:
@@ -38,20 +40,22 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
             # print("timeallsp",time.time()-timespecial)
             # print("pathlength", sum(1 for _ in shortest_paths))
             shortest_paths = nx.all_shortest_paths(H, nodei, nodej)
+            time30 = time.time()
+            print("timeallsppathonly0", time30 - time3)
             PNodeList = set()  # Use a set to keep unique nodes
             count =0
             for path in shortest_paths:
                 PNodeList.update(path)
                 count+=1
-                if count>1000000:
-                    PNodeList = set()
-                    break
+                # if count>1000000:
+                #     PNodeList = set()
+                #     break
             print("pathlength", len(path))
             print("pathnum",count)
         except nx.NetworkXNoPath:
             PNodeList = set()  # If there's no path, continue with an empty set
-        # time31 = time.time()
-        # print("timeallsp0",time31-time3)
+        time31 = time.time()
+        print("timeallsp0",time31-time3)
         # Remove the starting and ending nodes from the list
         PNodeList.discard(nodei)
         PNodeList.discard(nodej)
@@ -135,7 +139,7 @@ def GeodiscPRAUC(Edindex,betaindex,ExternalSimutime):
     count = 0
     for nodepair in random_pairs:
         count = count + 1
-        print(count)
+        print(count,"Simu")
         nodei = nodepair[0]
         nodej = nodepair[1]
 
@@ -143,9 +147,11 @@ def GeodiscPRAUC(Edindex,betaindex,ExternalSimutime):
         phiSource = CoorPhi[nodei]
         thetaEnd = CoorTheta[nodej]
         phiEnd = CoorPhi[nodej]
-
+        tic = time.time()
         # Find nearly shortest path nodes
         NearlySPNodelist, Noderelevance = FindNearlySPNodes(G, nodei, nodej)
+        toc  = time.time-tic
+        print("NSP finding time:", toc)
 
         # Create label array
         Label_med = np.zeros(N)
@@ -182,19 +188,75 @@ def GeodiscPRAUC(Edindex,betaindex,ExternalSimutime):
     print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
 
 
-# def PlotPRAUC():
+def PlotPRAUC():
+    """
+    PRAUC of using geo distance to predict nearly shortest path nodes
+    50% Links are randomly removed when computing the nearly shortest paths nodes
+    X is average clustering coefficient of each node, while the Y axis is the average degree
+    :return:
+    """
+    beta_list = [[3.575, 3.69375, 4.05, 4.7625, 5.57128906],
+                 [3.21875, 3.575, 4.05, 4.525, 5.38085938],
+                 [3.21875, 3.575, 4.05, 4.525, 5.38085938],
+                 [3.21875, 3.575, 4.05, 4.525, 5.19042969],
+                 [3.21875, 3.575, 4.05, 4.525, 5.38085938],
+                 [3.1, 3.575, 4.05, 4.525, 5.19042969],
+                 [3.1, 3.45625, 3.93125, 4.525, 5.19042969]]
+    PRAUC_matrix = np.zeros((7,5))
+    for EDindex in range(7):
+        ED_list = [5, 7, 10, 15, 20, 50, 100]  # Expected degrees
+        ED = ED_list[EDindex]
+        print("ED:", ED)
 
+        for betaindex in range(5):
+            CC_list = [0.2, 0.25, 0.3, 0.35, 0.4]  # Clustering coefficients
+            CC = CC_list[betaindex]
+            print(CC)
+            beta = beta_list[EDindex][betaindex]
+            print(beta)
+            PRAUC_list =[]
+            for ExternalSimutime in range(9):
+                PRAUCName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\NSP0_5LinkRemove\\AUCED{EDn}Beta{betan}PYSimu{ST}.txt".format(EDn=ED, betan=beta,ST=ExternalSimutime)
+                PRAUC_list_10times = np.loadtxt(PRAUCName)
+                PRAUC_list.extend(PRAUC_list_10times)
+            PRAUC_list = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_list))
+            mean_PRAUC = np.mean(PRAUC_list)
+            PRAUC_matrix[EDindex][betaindex]=mean_PRAUC
+            print(mean_PRAUC)
+            print(PRAUC_matrix)
+    # plt.imshow(PRAUC_matrix, cmap="viridis", aspect="auto")
+    # plt.colorbar()  # 添加颜色条
+    # plt.title("Heatmap Example")
+    # plt.xlabel("Column")
+    # plt.ylabel("Row")
+    #
+    # # 显示热力图
+    # plt.show()
+    plt.figure()
+    df = pd.DataFrame(PRAUC_matrix,
+                      index=[ED_list],  # DataFrame的行标签设置为大写字母
+                      columns=CC_list)  # 设置DataFrame的列标签
+    sns.heatmap(data=df,vmin=0,annot=True,fmt=".2f",cbar=True,
+            cbar_kws={'label': 'PRAUC'})
+    # plt.title("50% links are removed when computing Nearly Shortest Path Node")
+    plt.xlabel("clustering coefficient")
+    plt.ylabel("average degree")
+    plt.savefig("D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\NSP0_5LinkRemove\\PRAUCHeatmapNSP0_5LinkRemove.pdf", format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # TestFindNSPnodes()
+
     # ED = sys.argv[1]
     # beta = sys.argv[2]
     # ExternalSimutime = sys.argv[3]
     # GeodiscPRAUC(int(ED),int(beta),int(ExternalSimutime))
 
-    # GeodiscPRAUC(0, 0,1)
-    GeodiscPRAUC(0,0,10)
+
+    GeodiscPRAUC(0,0,0)
+
+    # PlotPRAUC()
 
 
 

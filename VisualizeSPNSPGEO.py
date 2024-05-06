@@ -9,10 +9,11 @@ import math
 import time
 
 import networkx as nx
+from sklearn.metrics import precision_recall_curve, auc
 
 from NearlyShortestPathPredict import FindNearlySPNodes
 from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalSoftRGGwithGivenNode, SphericalSoftRGG, \
-    dist_to_geodesic_S2
+    dist_to_geodesic_S2, distS2
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -21,7 +22,7 @@ def VisualizationDataOfSPNSPGEO():
     # Input data parameters
     N = 10000
     avg = 5
-    beta = 3.5
+    beta = 3.575
     rg = RandomGenerator(-12)
     for _ in range(random.randint(0,100)):
         rg.ran1()
@@ -39,13 +40,16 @@ def VisualizationDataOfSPNSPGEO():
         for data1, data2 in zip(Coortheta, Coorphi):
             file.write(f"{data1}\t{data2}\n")
 
-    nodei = N-2
-    nodej = N-1
+    nodei = 1
+    nodej = 102
 
-
+    print("Node Geo distance",distS2(Coortheta[nodei], Coorphi[nodei], Coortheta[nodej], Coorphi[nodej]))
     # All shortest paths
     AllSP = nx.all_shortest_paths(G, nodei, nodej)
     AllSPlist = list(AllSP)
+    print("SPnum",len(AllSPlist))
+    print("SPlength",len(AllSPlist[0]))
+
     FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYASP.txt"
     np.savetxt(FileASPName, AllSPlist, fmt="%i")
 
@@ -60,6 +64,7 @@ def VisualizationDataOfSPNSPGEO():
 
     # Nearly shortest path node
     NSPNode, relevance = FindNearlySPNodes(G, nodei, nodej)
+    print("NSP num", len(NSPNode))
     FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYNSPNode.txt"
     np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
     FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYRelevance.txt"
@@ -89,6 +94,28 @@ def VisualizationDataOfSPNSPGEO():
 
     FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYFileTop100closedNode.txt"
     np.savetxt(FileTop100closedNodeName, Top100closednode, fmt="%i")
+
+    # Create label array
+    Label_med = np.zeros(N)
+    Label_med[NSPNode] = 1  # True cases
+    distance_med = np.zeros(N)
+
+    # Calculate distances to geodesic
+    for NodeC in range(0, N):
+        if NodeC not in [nodei, nodej]:
+            thetaMed = Coortheta[NodeC]
+            phiMed = Coorphi[NodeC]
+            dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+            distance_med[NodeC] = dist
+
+    # Remove source and target nodes from consideration
+    Label_med = np.delete(Label_med, [nodei, nodej])
+    distance_med = np.delete(distance_med, [nodei, nodej])
+    distance_score = [1 / x for x in distance_med]
+    # Calculate precision-recall curve and AUC
+    precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
+    AUCWithoutNornodeij = auc(recalls, precisions)
+    print("PRAUC",AUCWithoutNornodeij)
 
 
 def PlotVisualizationDataOfSPNSPGEO():
@@ -155,7 +182,11 @@ def PlotVisualizationDataOfSPNSPGEO():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # tic = time.time()
-    # VisualizationDataOfSPNSPGEO()
+    VisualizationDataOfSPNSPGEO()
     # print(time.time()-tic)
     PlotVisualizationDataOfSPNSPGEO()
+
+
+
+
 
