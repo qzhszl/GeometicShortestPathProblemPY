@@ -40,8 +40,8 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
             # print("timeallsp",time.time()-timespecial)
             # print("pathlength", sum(1 for _ in shortest_paths))
             shortest_paths = nx.all_shortest_paths(H, nodei, nodej)
-            time30 = time.time()
-            print("timeallsppathonly0", time30 - time3)
+            # time30 = time.time()
+            # print("timeallsppathonly0", time30 - time3)
             PNodeList = set()  # Use a set to keep unique nodes
             count =0
             for path in shortest_paths:
@@ -50,12 +50,12 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
                 # if count>1000000:
                 #     PNodeList = set()
                 #     break
-            print("pathlength", len(path))
-            print("pathnum",count)
+            # print("pathlength", len(path))
+            # print("pathnum",count)
         except nx.NetworkXNoPath:
             PNodeList = set()  # If there's no path, continue with an empty set
-        time31 = time.time()
-        print("timeallsp0",time31-time3)
+        # time31 = time.time()
+        # print("timeallsp0",time31-time3)
         # Remove the starting and ending nodes from the list
         PNodeList.discard(nodei)
         PNodeList.discard(nodej)
@@ -137,6 +137,11 @@ def GeodiscPRAUC(Edindex,betaindex,ExternalSimutime):
     else:
         random_pairs = random.sample(sorted(unique_pairs), possible_num_nodepair)
     count = 0
+    components = []
+    largest_component = []
+    nodes = []
+    unique_pairs = []
+    unique_pairs = []
     for nodepair in random_pairs:
         count = count + 1
         print(count,"Simu")
@@ -150,7 +155,7 @@ def GeodiscPRAUC(Edindex,betaindex,ExternalSimutime):
         tic = time.time()
         # Find nearly shortest path nodes
         NearlySPNodelist, Noderelevance = FindNearlySPNodes(G, nodei, nodej)
-        toc  = time.time-tic
+        toc  = time.time()-tic
         print("NSP finding time:", toc)
 
         # Create label array

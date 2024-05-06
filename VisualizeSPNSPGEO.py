@@ -4,6 +4,7 @@
 @Author: Zhihao Qiu
 @Date: 1-5-2024
 """
+import itertools
 import random
 import math
 import time
@@ -24,8 +25,8 @@ def VisualizationDataOfSPNSPGEO():
     avg = 5
     beta = 3.575
     rg = RandomGenerator(-12)
-    for _ in range(random.randint(0,100)):
-        rg.ran1()
+    # for _ in range(random.randint(0,100)):
+    #     rg.ran1()
 
     # Network and coordinates
     G,Coortheta,Coorphi = SphericalSoftRGGwithGivenNode(N,avg,beta,rg,math.pi/4,0,3*math.pi/8,0)
@@ -40,8 +41,37 @@ def VisualizationDataOfSPNSPGEO():
         for data1, data2 in zip(Coortheta, Coorphi):
             file.write(f"{data1}\t{data2}\n")
 
-    nodei = 1
-    nodej = 102
+    # test form here
+    nodepair_num = 1
+    # Random select nodepair_num nodes in the largest connected component
+    components = list(nx.connected_components(G))
+    largest_component = max(components, key=len)
+    nodes = list(largest_component)
+    unique_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(nodes, 2))
+    possible_num_nodepair = len(unique_pairs)
+    if possible_num_nodepair > nodepair_num:
+        random_pairs = random.sample(sorted(unique_pairs), nodepair_num)
+    else:
+        random_pairs = random.sample(sorted(unique_pairs), possible_num_nodepair)
+    count = 0
+    for nodepair in random_pairs:
+        count = count + 1
+        print(count,"Simu")
+        nodei = nodepair[0]
+        nodej = nodepair[1]
+        print("nodei",nodei)
+        print(nodej)
+    components=[]
+    largest_component=[]
+    nodes=[]
+    unique_pairs=[]
+    unique_pairs=[]
+
+
+    # test end here
+    # nodei = 7333
+    # nodej = 9230
+
 
     print("Node Geo distance",distS2(Coortheta[nodei], Coorphi[nodei], Coortheta[nodej], Coorphi[nodej]))
     # All shortest paths
@@ -61,9 +91,10 @@ def VisualizationDataOfSPNSPGEO():
     AllSPNode.discard(nodej)
     FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYASPNode.txt"
     np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
-
+    tic = time.time()
     # Nearly shortest path node
     NSPNode, relevance = FindNearlySPNodes(G, nodei, nodej)
+    print("time for finding NSP", time.time()-tic)
     print("NSP num", len(NSPNode))
     FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYNSPNode.txt"
     np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
