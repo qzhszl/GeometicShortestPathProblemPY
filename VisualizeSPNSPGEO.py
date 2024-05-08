@@ -32,7 +32,7 @@ def VisualizationDataOfSPNSPGEO():
     G,Coortheta,Coorphi = SphericalSoftRGGwithGivenNode(N,avg,beta,rg,math.pi/4,0,3*math.pi/8,0)
     print("LinkNum:",G.number_of_edges())
     print("AveDegree:", G.number_of_edges()*2/G.number_of_nodes())
-    print("ClusteringCoefficient:",nx.average_clustering(G))
+    print("ClusteringCoefficient:", nx.average_clustering(G))
 
     FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\VisualizeSPNSPDe\\testPYnetwork.txt"
     nx.write_edgelist(G, FileNetworkName)
@@ -42,36 +42,34 @@ def VisualizationDataOfSPNSPGEO():
             file.write(f"{data1}\t{data2}\n")
 
     # test form here
-    nodepair_num = 1
-    # Random select nodepair_num nodes in the largest connected component
-    components = list(nx.connected_components(G))
-    largest_component = max(components, key=len)
-    nodes = list(largest_component)
-    unique_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(nodes, 2))
-    possible_num_nodepair = len(unique_pairs)
-    if possible_num_nodepair > nodepair_num:
-        random_pairs = random.sample(sorted(unique_pairs), nodepair_num)
-    else:
-        random_pairs = random.sample(sorted(unique_pairs), possible_num_nodepair)
+    # nodepair_num = 1
+    # # Random select nodepair_num nodes in the largest connected component
+    # components = list(nx.connected_components(G))
+    # largest_component = max(components, key=len)
+    # nodes = list(largest_component)
+    # unique_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(nodes, 2))
+    # possible_num_nodepair = len(unique_pairs)
+    # if possible_num_nodepair > nodepair_num:
+    #     random_pairs = random.sample(sorted(unique_pairs), nodepair_num)
+    # else:
+    #     random_pairs = random.sample(sorted(unique_pairs), possible_num_nodepair)
     count = 0
-    for nodepair in random_pairs:
-        count = count + 1
-        print(count,"Simu")
-        nodei = nodepair[0]
-        nodej = nodepair[1]
-        print("nodei",nodei)
-        print(nodej)
+    # for nodepair in random_pairs:
+    #     count = count + 1
+    #     print(count,"Simu")
+    #     nodei = nodepair[0]
+    #     nodej = nodepair[1]
+    #     print("nodei",nodei)
+    #     print(nodej)
     components=[]
     largest_component=[]
     nodes=[]
     unique_pairs=[]
     unique_pairs=[]
-
-
     # test end here
-    # nodei = 7333
-    # nodej = 9230
 
+    nodei = N-2
+    nodej = N-1
 
     print("Node Geo distance",distS2(Coortheta[nodei], Coorphi[nodei], Coortheta[nodej], Coorphi[nodej]))
     # All shortest paths
