@@ -291,13 +291,27 @@ if __name__ == '__main__':
 
     # PlotPRAUC()
     # length_NSP()
-    Label_med = [1,1,1,1,1,1,1,1]
-    distance_score=[1,2,3,4,5,6,7,8]
+    fig, axs = plt.subplots(2)
+    Label_med = [0, 0, 0, 0, 1, 0, 1, 0]
+    distance_score = [1, 2, 3, 1.5, 0.14, 0.13, 0.12, 0.11]
+    distance_score = [1 / x for x in distance_score]
     precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
     print(precisions)
     print(recalls)
     AUCWithoutNornodeij = auc(recalls, precisions)
     print(AUCWithoutNornodeij)
+    axs[0].plot(recalls,precisions)
+
+    Label_med = [0, 0, 0, 1, 1, 0, 1, 0]
+    distance_score = [1, 2, 3, 1.5, 0.14, 0.13, 0.12, 0.11]
+    distance_score = [1 / x for x in distance_score]
+    precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
+    print(precisions)
+    print(recalls)
+    AUCWithoutNornodeij = auc(recalls, precisions)
+    print(AUCWithoutNornodeij)
+    axs[1].plot(recalls, precisions)
+    plt.show()
 
 
 
