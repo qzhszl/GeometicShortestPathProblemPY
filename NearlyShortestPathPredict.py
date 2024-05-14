@@ -279,25 +279,44 @@ def plot_relevance_vs_link_remove():
             ratio=Linkremoveratio)
         relevance_matrix[:,Linkremoveratioindex] = np.loadtxt(FileNodeRelevanceName)
 
-    # for Linkremoveratioindex in range(4):
-    #     plt.figure()
-    #     plt.scatter(relevance_matrix[:,Linkremoveratioindex], relevance_matrix[:,Linkremoveratioindex+1])
-    #     plt.title("Scatter Plot Example")
-    #     plt.xlabel("X Axis")
-    #     plt.ylabel("Y Axis")
-    #     # 显示图形
-    #     plt.show()
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYASPNode.txt"
+    ASPlist = np.loadtxt(FileNSPNodeName, dtype=int)
 
+
+    # for i in range(5):
+    #     for j in range(i+1,5):
+    #         print(i,j)
+    #         plt.figure()
+    #         scatter_size = 100
+    #         plt.scatter(relevance_matrix[:,i], relevance_matrix[:,j], marker="o", edgecolors=(0, 0.4470, 0.7410), facecolors="none",
+    #                     label='General node')
+    #         plt.scatter(relevance_matrix[ASPlist,i], relevance_matrix[ASPlist,j], s=scatter_size, marker='*', edgecolors=(0.8500, 0.3250, 0.0980), facecolors="none",
+    #                     label='All shortest path nodes')
+    #         xlabelname = "relevance by removing {ix}0% links".format(ix=i+1)
+    #         plt.xlabel(xlabelname)
+    #         ylabelname = "relevance by removing {jx}0% links".format(jx=j+1)
+    #         plt.ylabel(ylabelname)
+    #         picfilename = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\ScatterCor0{ix}vs0{jx}.pdf".format(ix=i+1,jx=j+1)
+    #         plt.legend()
+    #         plt.savefig(picfilename,
+    #             format='pdf', bbox_inches='tight', dpi=600)
+
+    print(ASPlist)
     plt.figure()
-    plt.scatter(relevance_matrix[:,1], relevance_matrix[:,4])
-    plt.xlabel("20% Links Removed")
-    plt.ylabel("50% Links Removed")
-    plt.savefig(
-        "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\ScatterCor02vs05.pdf",
-        format='pdf', bbox_inches='tight', dpi=600)
-    # 显示图形
+    ASPnode_relevance_change = relevance_matrix[ASPlist,:]
+    for i in range(len(ASPlist)):
+        plt.plot([1,2,3,4,5], ASPnode_relevance_change[i])
+    plt.xticks([1,2,3,4,5],["10%","20%","30%","40%","50%"])
     plt.show()
 
+
+
+
+
+    # plt.show()
+
+
+    # the correlation heatmap
     # data = pd.DataFrame(relevance_matrix, columns=["10%", "20%", "30%", "40%","50%"])
     # # 计算相关性矩阵
     # correlation_matrix = data.corr()
@@ -557,8 +576,8 @@ def nodeNSPfrequency(N, avg, beta, rg, Coortheta, Coorphi, nodei, nodej):
 
 def frequency_controlgroup_PRAUC(Edindex, betaindex, ExternalSimutime):
     """
-        :param ED: average degree
-        :param beta: parameter to control the clustering coefficient
+        :param Edindex: average degree
+        :param betaindex: parameter to control the clustering coefficient
         :return: PRAUC control and test simu for diff ED and beta
         """
     N = 10000
@@ -861,12 +880,19 @@ if __name__ == '__main__':
 
     plot_relevance_vs_link_remove()
 
+
+
     # frequency_controlgroup_PRAUC_givennodepair()
+
+
+
 
     # ED = sys.argv[1]
     # beta = sys.argv[2]
     # ExternalSimutime = sys.argv[3]
     # frequency_controlgroup_PRAUC(int(ED),int(beta),int(ExternalSimutime))
+
+
 
     # frequency_controlgroup_PRAUC(0, 0, 0)
     # frequency_controlgroup_PRAUC(0,0,0)
