@@ -68,14 +68,20 @@ if __name__ == '__main__':
     # G = nx.fast_gnp_random_graph(20, 0.1)
     G = nx.Graph()
     G.add_edges_from([(1, 0), (1,3),(2, 3),(4,5)])
-    # 获取网络中的所有连通分量
-    components = list(nx.connected_components(G))
-    # 找到最大的连通分量
-    largest_component = max(components, key=len)
-    # 从最大连通分量中获取节点列表
-    nodes = list(largest_component)
-    # 创建所有可能的节点对
-    unique_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(nodes, 2))
-    # 从唯一节点对中随机选择 100 个
-    random_pairs = random.sample(sorted(unique_pairs), 2)
-    print(random_pairs)
+    d1=nx.shortest_path_length(G, 0, 0)
+    d2 = nx.shortest_path_length(G, 0, 3)
+    print(min(d1,d2))
+    # # 获取网络中的所有连通分量
+    # components = list(nx.connected_components(G))
+    # # 找到最大的连通分量
+    # largest_component = max(components, key=len)
+    # # 从最大连通分量中获取节点列表
+    # nodes = list(largest_component)
+    # # 创建所有可能的节点对
+    # unique_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(nodes, 2))
+    # # 从唯一节点对中随机选择 100 个
+    # random_pairs = random.sample(sorted(unique_pairs), 2)
+    # print(random_pairs)
+
+
+
