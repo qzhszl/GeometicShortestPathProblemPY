@@ -9,15 +9,15 @@ import math
 import random
 import time
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalSoftRGGwithGivenNode, SphericalSoftRGG, \
     dist_to_geodesic_S2, distS2, loadNodeSSRGG
 from sklearn.metrics import precision_recall_curve, auc
 import sys
-# import seaborn as sns
-# import pandas as pd
+import seaborn as sns
+import pandas as pd
 
 
 # Function to find nodes that frequently appear in the shortest paths
@@ -1150,16 +1150,16 @@ if __name__ == '__main__':
     # test_two_brunch_in_relevance_with_linkremoval_betweenness()
 
 
-    test_two_brunch_in_relevance_with_hopcount()
+    # test_two_brunch_in_relevance_with_hopcount()
 
 
     # frequency_controlgroup_PRAUC_givennodepair()
 
 
-    # ED = sys.argv[1]
-    # beta = sys.argv[2]
-    # ExternalSimutime = sys.argv[3]
-    # frequency_controlgroup_PRAUC(int(ED),int(beta),int(ExternalSimutime))
+    ED = sys.argv[1]
+    beta = sys.argv[2]
+    ExternalSimutime = sys.argv[3]
+    frequency_controlgroup_PRAUC(int(ED),int(beta),int(ExternalSimutime))
 
 
 
