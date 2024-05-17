@@ -1241,9 +1241,10 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A,phi_A,theta
     N = 10000
     avg = 5
     beta = 3.69375
+    random.seed()
     rg = RandomGenerator(-12)
-    # for _ in range(random.randint(0,100)):
-    #     rg.ran1()
+    for _ in range(random.randint(0,100)):
+        rg.ran1()
 
     # Network and coordinates
     G, Coortheta, Coorphi = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, theta_A, phi_A, theta_B, phi_B)
@@ -1260,33 +1261,6 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A,phi_A,theta
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coortheta, Coorphi):
             file.write(f"{data1}\t{data2}\n")
-
-    # test form here
-    # nodepair_num = 1
-    # # Random select nodepair_num nodes in the largest connected component
-    # components = list(nx.connected_components(G))
-    # largest_component = max(components, key=len)
-    # nodes = list(largest_component)
-    # unique_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(nodes, 2))
-    # possible_num_nodepair = len(unique_pairs)
-    # if possible_num_nodepair > nodepair_num:
-    #     random_pairs = random.sample(sorted(unique_pairs), nodepair_num)
-    # else:
-    #     random_pairs = random.sample(sorted(unique_pairs), possible_num_nodepair)
-    count = 0
-    # for nodepair in random_pairs:
-    #     count = count + 1
-    #     print(count,"Simu")
-    #     nodei = nodepair[0]
-    #     nodej = nodepair[1]
-    #     print("nodei",nodei)
-    #     print(nodej)
-    components = []
-    largest_component = []
-    nodes = []
-    unique_pairs = []
-    unique_pairs = []
-    # test end here
 
     nodei = N - 2
     nodej = N - 1
@@ -1429,7 +1403,7 @@ if __name__ == '__main__':
     # frequency_controlgroup_PRAUC(0,0,0)
 
 
-    for (theta_A,theta_B) in [(8*math.pi/16, 9*math.pi/16),(2*math.pi/4, 3*math.pi/4),(3*math.pi/4, math.pi/4)]:
+    for (theta_A,theta_B) in [(8*math.pi/16, 9*math.pi/16),(4*math.pi/8, 5*math.pi/8),(2*math.pi/4, 3*math.pi/4),(3*math.pi/4, math.pi/4)]:
         geo_length = distS2(theta_A, 0, theta_B, 0)
         print("Geo Length:", geo_length/math.pi)
         frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, 0, theta_B, 0)
