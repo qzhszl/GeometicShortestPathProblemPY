@@ -859,7 +859,7 @@ if __name__ == '__main__':
 
 
 
-    plot_relevance_vs_link_remove()
+    # plot_relevance_vs_link_remove()
 
     # frequency_controlgroup_PRAUC_givennodepair()
 
@@ -870,6 +870,8 @@ if __name__ == '__main__':
 
     # frequency_controlgroup_PRAUC(0, 0, 0)
     # frequency_controlgroup_PRAUC(0,0,0)
+
+    testPRAUCvsPositiveCase()
 
 
 
