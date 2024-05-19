@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalSoftRGGwithGivenNode, SphericalSoftRGG, \
-    dist_to_geodesic_S2, distS2
+    dist_to_geodesic_S2, distS2, loadNodeSSRGG
 from sklearn.metrics import precision_recall_curve, auc
 import sys
 import seaborn as sns
@@ -173,8 +173,8 @@ def relevance_vs_link_remove():
     avg = 5
     beta = 3.5
     rg = RandomGenerator(-12)
-    # for _ in range(random.randint(0,100)):
-    #     rg.ran1()
+    for _ in range(random.randint(0,100)):
+        rg.ran1()
 
     # Network and coordinates
     G, Coortheta, Coorphi = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, math.pi / 4, 0, 3 * math.pi / 8, 0)
@@ -182,9 +182,9 @@ def relevance_vs_link_remove():
     print("AveDegree:", G.number_of_edges() * 2 / G.number_of_nodes())
     print("ClusteringCoefficient:", nx.average_clustering(G))
 
-    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYnetwork.txt"
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\data20240515\\testPYnetwork.txt"
     nx.write_edgelist(G, FileNetworkName)
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYnetworkCoor.txt"
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\data20240515\\testPYnetworkCoor.txt"
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coortheta, Coorphi):
             file.write(f"{data1}\t{data2}\n")
@@ -199,7 +199,7 @@ def relevance_vs_link_remove():
     print("SPnum", len(AllSPlist))
     print("SPlength", len(AllSPlist[0]))
 
-    FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYASP.txt"
+    FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\data20240515\\testPYASP.txt"
     np.savetxt(FileASPName, AllSPlist, fmt="%i")
 
     # All shortest path node
@@ -208,7 +208,7 @@ def relevance_vs_link_remove():
         AllSPNode.update(path)
     AllSPNode.discard(nodei)
     AllSPNode.discard(nodej)
-    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYASPNode.txt"
+    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\data20240515\\testPYASPNode.txt"
     np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
 
     # Geodesic
@@ -226,14 +226,14 @@ def relevance_vs_link_remove():
             phiMed = Coorphi[NodeC]
             dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
             Geodistance[NodeC] = dist
-    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYGeoDistance.txt"
+    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\data20240515\\testPYGeoDistance.txt"
     np.savetxt(FileGeodistanceName, list(Geodistance.values()), fmt="%.8f")
     Geodistance = sorted(Geodistance.items(), key=lambda kv: (kv[1], kv[0]))
     Geodistance = Geodistance[:102]
     Top100closednode = [t[0] for t in Geodistance]
     Top100closednode = [n for n in Top100closednode if n not in [nodei, nodej]]
 
-    FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYFileTop100closedNode.txt"
+    FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\data20240515\\testPYFileTop100closedNode.txt"
     np.savetxt(FileTop100closedNodeName, Top100closednode, fmt="%i")
 
     # Nearly shortest path node
@@ -241,10 +241,10 @@ def relevance_vs_link_remove():
         print("RemoveLINK:", Linkremoveratio)
         NSPNode, relevance = FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=Linkremoveratio)
         print("NSP num", len(NSPNode))
-        FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYNSPNodeLinkRemoveRatio{ratio}.txt".format(
+        FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\data20240515\\testPYNSPNodeLinkRemoveRatio{ratio}.txt".format(
             ratio=Linkremoveratio)
         np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
-        FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYRelevance{ratio}.txt".format(
+        FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\data20240515\\testPYRelevance{ratio}.txt".format(
             ratio=Linkremoveratio)
         np.savetxt(FileNodeRelevanceName, relevance, fmt="%.8f")
 
@@ -279,25 +279,45 @@ def plot_relevance_vs_link_remove():
             ratio=Linkremoveratio)
         relevance_matrix[:,Linkremoveratioindex] = np.loadtxt(FileNodeRelevanceName)
 
-    # for Linkremoveratioindex in range(4):
-    #     plt.figure()
-    #     plt.scatter(relevance_matrix[:,Linkremoveratioindex], relevance_matrix[:,Linkremoveratioindex+1])
-    #     plt.title("Scatter Plot Example")
-    #     plt.xlabel("X Axis")
-    #     plt.ylabel("Y Axis")
-    #     # 显示图形
-    #     plt.show()
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYASPNode.txt"
+    ASPlist = np.loadtxt(FileNSPNodeName, dtype=int)
 
-    plt.figure()
-    plt.scatter(relevance_matrix[:,1], relevance_matrix[:,4])
-    plt.xlabel("20% Links Removed")
-    plt.ylabel("50% Links Removed")
-    plt.savefig(
-        "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\ScatterCor02vs05.pdf",
-        format='pdf', bbox_inches='tight', dpi=600)
-    # 显示图形
-    plt.show()
 
+    for i in range(5):
+        for j in range(i+1,5):
+            print(i,j)
+            plt.figure()
+            scatter_size = 100
+            plt.scatter(relevance_matrix[:,i], relevance_matrix[:,j], marker="o", edgecolors=(0, 0.4470, 0.7410), facecolors="none",
+                        label='General node')
+            plt.scatter(relevance_matrix[ASPlist,i], relevance_matrix[ASPlist,j], s=scatter_size, marker='*', edgecolors=(0.8500, 0.3250, 0.0980), facecolors="none",
+                        label='All shortest path nodes')
+            xlabelname = "relevance by removing {ix}0% links".format(ix=i+1)
+            plt.xlabel(xlabelname)
+            ylabelname = "relevance by removing {jx}0% links".format(jx=j+1)
+            plt.ylabel(ylabelname)
+            picfilename = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\ScatterCor0{ix}vs0{jx}.pdf".format(ix=i+1,jx=j+1)
+            plt.legend()
+            plt.savefig(picfilename,
+                format='pdf', bbox_inches='tight', dpi=600)
+            plt.show()
+
+    # print(ASPlist)
+    # plt.figure()
+    # ASPnode_relevance_change = relevance_matrix[ASPlist,:]
+    # for i in range(len(ASPlist)):
+    #     plt.plot([1,2,3,4,5], ASPnode_relevance_change[i])
+    # plt.xticks([1,2,3,4,5],["10%","20%","30%","40%","50%"])
+    # plt.show()
+
+
+
+
+
+    # plt.show()
+
+
+    # the correlation heatmap
     # data = pd.DataFrame(relevance_matrix, columns=["10%", "20%", "30%", "40%","50%"])
     # # 计算相关性矩阵
     # correlation_matrix = data.corr()
@@ -315,6 +335,266 @@ def plot_relevance_vs_link_remove():
     #     format='pdf', bbox_inches='tight', dpi=600)
     # # 显示图形
     # plt.show()
+
+def test_two_brunch_in_relevance_with_linkremoval():
+    # load data
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYnetwork.txt"
+    G = loadNodeSSRGG(10000, FileNetworkName)
+
+    degreedic = dict(sorted(dict(G.degree()).items()))
+    degreelist = [val for (node, val) in degreedic.items()]
+
+    relevance_matrix = np.zeros((10000, 5))
+    Linkremoveratio_list = [0.1, 0.2, 0.3, 0.4, 0.5]
+    for Linkremoveratioindex in range(5):
+        Linkremoveratio = Linkremoveratio_list[Linkremoveratioindex]
+        FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYRelevance{ratio}.txt".format(
+            ratio=Linkremoveratio)
+        relevance_matrix[:, Linkremoveratioindex] = np.loadtxt(FileNodeRelevanceName)
+
+    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYASPNode.txt"
+    ASPlist = np.loadtxt(FileASPNodeName, dtype=int)
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYNSPNodeLinkRemoveRatio0.5.txt"
+    NSPlist = np.loadtxt(FileNSPNodeName, dtype=int)
+
+
+    # plot figure
+    plt.figure()
+    scatter_size = 100
+    # plt.scatter(relevance_matrix[:,4], relevance_matrix[:,0], marker="o", edgecolors=(0, 0.4470, 0.7410),
+    #             facecolors="none",
+    #             label='General node')
+    plt.scatter(relevance_matrix[:,0], degreelist, marker="o", edgecolors=(0, 0.4470, 0.7410),
+                facecolors="none",
+                label='General node')
+    plt.scatter(relevance_matrix[ASPlist, 0], [degreelist[i] for i in ASPlist], s=scatter_size, marker='*',
+                edgecolors=(0.8500, 0.3250, 0.0980), facecolors="none",
+                label='All shortest path nodes')
+    plt.scatter(relevance_matrix[NSPlist, 0], [degreelist[i] for i in NSPlist], s=scatter_size, marker='s', edgecolors=(0.4940, 0.1840, 0.5560), facecolors="none",
+                label='NSP 50% link removal')
+
+    xlabelname = "relevance by removing {jx}0% links".format(jx=0 + 1)
+    plt.xlabel(xlabelname)
+    ylabelname = "Degree"
+    plt.ylabel(ylabelname)
+    plt.legend()
+
+    picfilename = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\ScatterDegreeCor0{ix}vs0{jx}.pdf".format(
+        ix=0 + 1, jx=4 + 1)
+    plt.savefig(picfilename,
+                format='pdf', bbox_inches='tight', dpi=600)
+    # plt.show()
+
+
+    # 3dfigure
+    x = relevance_matrix[:,0]
+    y = relevance_matrix[:,4]
+    z = np.zeros_like(x)
+    dx = np.ones_like(x)*0.001
+    dy = np.ones_like(y)*0.001
+    dz = degreelist
+
+    # 创建 3D 图形对象
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    # 绘制柱状图
+    ax.bar3d(x, y, z, dx, dy, dz, edgecolor='k')
+
+    # 添加透明圆圈
+    for xi, yi, zi in zip(x, y, dz):
+        ax.scatter3D(xi, yi, zi, color='none', edgecolor=(0, 0.4470, 0.7410), s=100)
+    for xi, yi, zi in zip([x[i] for i in ASPlist], [y[i] for i in ASPlist], [dz[i] for i in ASPlist]):
+        ax.scatter3D(xi, yi, zi, color='none',marker='*',edgecolor=(0.8500, 0.3250, 0.0980), s=100)
+
+    # 设置图形标题和轴标签
+    # ax.set_title('3D Bar Plot with Scatter Points')
+    ax.set_xlabel('relevance by removing 10% links')
+    ax.set_ylabel('relevance by removing 50% links')
+    ax.set_zlabel('Degree')
+    picfilename = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\d3ScatterDegreeCor0{ix}vs0{jx}.pdf".format(
+        ix=0 + 1, jx=4 + 1)
+    plt.savefig(picfilename,
+                format='pdf', bbox_inches='tight', dpi=600)
+    # 显示图形
+    plt.show()
+
+
+def test_two_brunch_in_relevance_with_linkremoval_betweenness():
+    # load data
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYnetwork.txt"
+    G = loadNodeSSRGG(10000, FileNetworkName)
+
+    betweenness_dict = nx.betweenness_centrality(G)
+    degreelist = [betweenness_dict[i] for i in range(G.number_of_nodes())]
+    FileBcName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYbetweenness.txt"
+    np.savetxt(FileBcName, degreelist)
+
+    relevance_matrix = np.zeros((10000, 5))
+    Linkremoveratio_list = [0.1, 0.2, 0.3, 0.4, 0.5]
+    for Linkremoveratioindex in range(5):
+        Linkremoveratio = Linkremoveratio_list[Linkremoveratioindex]
+        FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYRelevance{ratio}.txt".format(
+            ratio=Linkremoveratio)
+        relevance_matrix[:, Linkremoveratioindex] = np.loadtxt(FileNodeRelevanceName)
+
+    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYASPNode.txt"
+    ASPlist = np.loadtxt(FileASPNodeName, dtype=int)
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYNSPNodeLinkRemoveRatio0.5.txt"
+    NSPlist = np.loadtxt(FileNSPNodeName, dtype=int)
+
+    # plot figure
+    plt.figure()
+    scatter_size = 100
+    # plt.scatter(relevance_matrix[:,4], relevance_matrix[:,0], marker="o", edgecolors=(0, 0.4470, 0.7410),
+    #             facecolors="none",
+    #             label='General node')
+    plt.scatter(relevance_matrix[:, 0], degreelist, marker="o", edgecolors=(0, 0.4470, 0.7410),
+                facecolors="none",
+                label='General node')
+    plt.scatter(relevance_matrix[ASPlist, 0], [degreelist[i] for i in ASPlist], s=scatter_size, marker='*',
+                edgecolors=(0.8500, 0.3250, 0.0980), facecolors="none",
+                label='All shortest path nodes')
+    plt.scatter(relevance_matrix[NSPlist, 0], [degreelist[i] for i in NSPlist], s=scatter_size, marker='s',
+                edgecolors=(0.4940, 0.1840, 0.5560), facecolors="none",
+                label='NSP 50% link removal')
+
+    xlabelname = "Betweenness"
+    plt.xlabel(xlabelname)
+    ylabelname = "relevance by removing {jx}0% links".format(jx=0 + 1)
+    plt.ylabel(ylabelname)
+    plt.legend()
+
+    picfilename = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\ScatterDegreeCor0{ix}vs0{jx}.pdf".format(
+        ix=0 + 1, jx=4 + 1)
+    plt.savefig(picfilename,
+                format='pdf', bbox_inches='tight', dpi=600)
+    # plt.show()
+
+    # 3dfigure
+    x = relevance_matrix[:, 0]
+    y = relevance_matrix[:, 4]
+    z = np.zeros_like(x)
+    dx = np.ones_like(x) * 0.001
+    dy = np.ones_like(y) * 0.001
+    dz = degreelist
+
+    # 创建 3D 图形对象
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    # 绘制柱状图
+    ax.bar3d(x, y, z, dx, dy, dz, edgecolor='k')
+
+    # 添加透明圆圈
+    for xi, yi, zi in zip(x, y, dz):
+        ax.scatter3D(xi, yi, zi, color='none', edgecolor=(0, 0.4470, 0.7410), s=100)
+    for xi, yi, zi in zip([x[i] for i in ASPlist], [y[i] for i in ASPlist], [dz[i] for i in ASPlist]):
+        ax.scatter3D(xi, yi, zi, color='none', marker='*', edgecolor=(0.8500, 0.3250, 0.0980), s=100)
+
+    # 设置图形标题和轴标签
+    # ax.set_title('3D Bar Plot with Scatter Points')
+    ax.set_xlabel('relevance by removing 10% links')
+    ax.set_ylabel('relevance by removing 50% links')
+    ax.set_zlabel('betweenness')
+    picfilename = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\d3ScatterDegreeCor0{ix}vs0{jx}.pdf".format(
+        ix=0 + 1, jx=4 + 1)
+    plt.savefig(picfilename,
+                format='pdf', bbox_inches='tight', dpi=600)
+    # 显示图形
+    plt.show()
+
+
+def test_two_brunch_in_relevance_with_hopcount():
+    # load data
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYnetwork.txt"
+    G = loadNodeSSRGG(10000, FileNetworkName)
+    N = G.number_of_nodes()
+    hopcountlength_list=[]
+    for nodeindex in range(N):
+        if nx.has_path(G, nodeindex, N-2):
+            d1 = nx.shortest_path_length(G, nodeindex, N-2)
+            d2 = nx.shortest_path_length(G, nodeindex, N-1)
+            hopcountlength_list.append(min(d1, d2))
+        else:
+            hopcountlength_list.append(0)
+
+    relevance_matrix = np.zeros((10000, 5))
+    Linkremoveratio_list = [0.1, 0.2, 0.3, 0.4, 0.5]
+    for Linkremoveratioindex in range(5):
+        Linkremoveratio = Linkremoveratio_list[Linkremoveratioindex]
+        FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYRelevance{ratio}.txt".format(
+            ratio=Linkremoveratio)
+        relevance_matrix[:, Linkremoveratioindex] = np.loadtxt(FileNodeRelevanceName)
+
+    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYASPNode.txt"
+    ASPlist = np.loadtxt(FileASPNodeName, dtype=int)
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\testPYNSPNodeLinkRemoveRatio0.5.txt"
+    NSPlist = np.loadtxt(FileNSPNodeName, dtype=int)
+
+
+    # plot figure
+    plt.figure()
+    scatter_size = 100
+    # plt.scatter(relevance_matrix[:,4], relevance_matrix[:,0], marker="o", edgecolors=(0, 0.4470, 0.7410),
+    #             facecolors="none",
+    #             label='General node')
+    plt.scatter(relevance_matrix[:,0], hopcountlength_list, marker="o", edgecolors=(0, 0.4470, 0.7410),
+                facecolors="none",
+                label='General node')
+    plt.scatter(relevance_matrix[ASPlist, 0], [hopcountlength_list[i] for i in ASPlist], s=scatter_size, marker='*',
+                edgecolors=(0.8500, 0.3250, 0.0980), facecolors="none",
+                label='All shortest path nodes')
+    plt.scatter(relevance_matrix[NSPlist, 0], [hopcountlength_list[i] for i in NSPlist], s=scatter_size, marker='s', edgecolors=(0.4940, 0.1840, 0.5560), facecolors="none",
+                label='NSP 50% link removal')
+
+    xlabelname = "relevance by removing {jx}0% links".format(jx=0 + 1)
+    plt.xlabel(xlabelname)
+    ylabelname = "Hopcount"
+    plt.ylabel(ylabelname)
+    plt.yticks([0,3,6,9,12,15,18])
+    plt.legend()
+
+    picfilename = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\ScatterHopCor0{ix}vs0{jx}.pdf".format(
+        ix=0 + 1, jx=4 + 1)
+    plt.savefig(picfilename,
+                format='pdf', bbox_inches='tight', dpi=600)
+    # plt.show()
+
+
+    # 3dfigure
+    x = relevance_matrix[:,0]
+    y = relevance_matrix[:,4]
+    z = np.zeros_like(x)
+    dx = np.ones_like(x)*0.001
+    dy = np.ones_like(y)*0.001
+    dz = hopcountlength_list
+
+    # 创建 3D 图形对象
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+
+    # 绘制柱状图
+    ax.bar3d(x, y, z, dx, dy, dz, edgecolor='k')
+
+    # 添加透明圆圈
+    for xi, yi, zi in zip(x, y, dz):
+        ax.scatter3D(xi, yi, zi, color='none', edgecolor=(0, 0.4470, 0.7410), s=100)
+    for xi, yi, zi in zip([x[i] for i in ASPlist], [y[i] for i in ASPlist], [dz[i] for i in ASPlist]):
+        ax.scatter3D(xi, yi, zi, color='none',marker='*',edgecolor=(0.8500, 0.3250, 0.0980), s=100)
+
+    # 设置图形标题和轴标签
+    # ax.set_title('3D Bar Plot with Scatter Points')
+    ax.set_xlabel('relevance by removing 10% links')
+    ax.set_ylabel('relevance by removing 50% links')
+    ax.set_zlabel('Hopcount')
+    ax.set_zticks([0, 3, 6, 9, 12, 15, 18])
+    picfilename = "D:\\data\\geometric shortest path problem\\SSRGG\\relevance\\d3ScatterHopCor0{ix}vs0{jx}.pdf".format(
+        ix=0 + 1, jx=4 + 1)
+    plt.savefig(picfilename,
+                format='pdf', bbox_inches='tight', dpi=600)
+    # 显示图形
+    plt.show()
 
 
 def testPRAUCvsPositiveCase():
@@ -534,6 +814,129 @@ def PlotPRAUC():
     plt.show()
 
 
+def PlotPRAUCFrequency():
+    """
+    PRAUC of using geo distance to predict nearly shortest path nodes
+    50% Links are randomly removed when computing the nearly shortest paths nodes
+    X is average clustering coefficient of each node, while the Y axis is the average degree
+    :return:
+    """
+
+
+    beta_list = [[3.2781, 3.69375, 4.05, 4.7625, 5.57128906],
+                 [3.21875, 3.575, 4.05, 4.525, 5.38085938],
+                 [3.21875, 3.575, 4.05, 4.525, 5.38085938],
+                 [3.21875, 3.575, 4.05, 4.525, 5.19042969],
+                 [3.21875, 3.575, 4.05, 4.525, 5.38085938],
+                 [3.1, 3.575, 4.05, 4.525, 5.19042969],
+                 [3.1, 3.45625, 3.93125, 4.525, 5.19042969]]
+    PRAUC_matrix = np.zeros((7, 5))
+    for EDindex in [0, 5]:
+        ED_list = [5, 7, 10, 15, 20, 50, 100]  # Expected degrees
+        ED = ED_list[EDindex]
+        print("ED:", ED)
+
+        for betaindex in [0, 4]:
+            CC_list = [0.2, 0.25, 0.3, 0.35, 0.4]  # Clustering coefficients
+            CC = CC_list[betaindex]
+            print(CC)
+            beta = beta_list[EDindex][betaindex]
+            print(beta)
+            PRAUC_list = []
+            for ExternalSimutime in range(50):
+                PRAUCName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\NSP0_1LinkRemove\\ControlFreAUCED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, ST=ExternalSimutime)
+                PRAUC_list_10times = np.loadtxt(PRAUCName)
+                PRAUC_list.extend(PRAUC_list_10times)
+            PRAUC_list = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_list))
+            mean_PRAUC = np.mean(PRAUC_list)
+            PRAUC_matrix[EDindex][betaindex] = mean_PRAUC
+            print(mean_PRAUC)
+            print(PRAUC_matrix)
+    # plt.imshow(PRAUC_matrix, cmap="viridis", aspect="auto")
+    # plt.colorbar()  # 添加颜色条
+    # plt.title("Heatmap Example")
+    # plt.xlabel("Column")
+    # plt.ylabel("Row")
+    #
+    # # 显示热力图
+    # plt.show()
+    plt.figure()
+    df = pd.DataFrame(PRAUC_matrix,
+                      index=[ED_list],  # DataFrame的行标签设置为大写字母
+                      columns=CC_list)  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'PRAUC'})
+    plt.title("Frequency")
+    plt.xlabel("clustering coefficient")
+    plt.ylabel("average degree")
+    plt.savefig(
+        "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\NSP0_1LinkRemove\\ControlFrePRAUCHeatmapNSP0_1LinkRemove.pdf",
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+
+def PlotPRAUCFrequency2():
+    """
+    PRAUC of using geo distance to predict nearly shortest path nodes
+    50% Links are randomly removed when computing the nearly shortest paths nodes
+    X is average clustering coefficient of each node, while the Y axis is the average degree
+    :return:
+    """
+
+
+    beta_list = [[3.2781, 3.69375, 4.05, 4.7625, 5.57128906],
+                 [3.21875, 3.575, 4.05, 4.525, 5.38085938],
+                 [3.21875, 3.575, 4.05, 4.525, 5.38085938],
+                 [3.21875, 3.575, 4.05, 4.525, 5.19042969],
+                 [3.21875, 3.575, 4.05, 4.525, 5.38085938],
+                 [3.1, 3.575, 4.05, 4.525, 5.19042969],
+                 [3.1, 3.45625, 3.93125, 4.525, 5.19042969]]
+    PRAUC_matrix = np.zeros((7, 5))
+    for EDindex in [0, 5]:
+        ED_list = [5, 7, 10, 15, 20, 50, 100]  # Expected degrees
+        ED = ED_list[EDindex]
+        print("ED:", ED)
+
+        for betaindex in [0, 4]:
+            CC_list = [0.2, 0.25, 0.3, 0.35, 0.4]  # Clustering coefficients
+            CC = CC_list[betaindex]
+            print(CC)
+            beta = beta_list[EDindex][betaindex]
+            print(beta)
+            PRAUC_list = []
+            for ExternalSimutime in range(50):
+                PRAUCName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\NSP0_1LinkRemove\\AUCED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, ST=ExternalSimutime)
+                PRAUC_list_10times = np.loadtxt(PRAUCName)
+                PRAUC_list.extend(PRAUC_list_10times)
+            PRAUC_list = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_list))
+            mean_PRAUC = np.mean(PRAUC_list)
+            PRAUC_matrix[EDindex][betaindex] = mean_PRAUC
+            print(mean_PRAUC)
+            print(PRAUC_matrix)
+    # plt.imshow(PRAUC_matrix, cmap="viridis", aspect="auto")
+    # plt.colorbar()  # 添加颜色条
+    # plt.title("Heatmap Example")
+    # plt.xlabel("Column")
+    # plt.ylabel("Row")
+    #
+    # # 显示热力图
+    # plt.show()
+    plt.figure()
+    df = pd.DataFrame(PRAUC_matrix,
+                      index=[ED_list],  # DataFrame的行标签设置为大写字母
+                      columns=CC_list)  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'PRAUC'})
+    plt.title("Frequency")
+    plt.xlabel("clustering coefficient")
+    plt.ylabel("average degree")
+    plt.savefig(
+        "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\NSP0_1LinkRemove\\GeoDisPRAUCHeatmapNSP0_1LinkRemove.pdf",
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+
+
 def nodeNSPfrequency(N, avg, beta, rg, Coortheta, Coorphi, nodei, nodej):
     """
         Given nodes of the SRGG.
@@ -557,8 +960,8 @@ def nodeNSPfrequency(N, avg, beta, rg, Coortheta, Coorphi, nodei, nodej):
 
 def frequency_controlgroup_PRAUC(Edindex, betaindex, ExternalSimutime):
     """
-        :param ED: average degree
-        :param beta: parameter to control the clustering coefficient
+        :param Edindex: average degree
+        :param betaindex: parameter to control the clustering coefficient
         :return: PRAUC control and test simu for diff ED and beta
         """
     N = 10000
@@ -599,7 +1002,7 @@ def frequency_controlgroup_PRAUC(Edindex, betaindex, ExternalSimutime):
         for data1, data2 in zip(CoorTheta, CoorPhi):
             file.write(f"{data1}\t{data2}\n")
 
-    nodepair_num = 10
+    nodepair_num = 2
     # Random select nodepair_num nodes in the largest connected component
     components = list(nx.connected_components(G))
     largest_component = max(components, key=len)
@@ -622,7 +1025,7 @@ def frequency_controlgroup_PRAUC(Edindex, betaindex, ExternalSimutime):
 
     for nodepair in random_pairs:
         count = count + 1
-        print(count, "Simu")
+        print("Simunodepair:", count)
         nodei = nodepair[0]
         nodej = nodepair[1]
 
@@ -833,6 +1236,120 @@ def frequency_controlgroup_PRAUC_givennodepair():
     print(AUCfrenodeij)
 
 
+def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A,phi_A,theta_B,phi_B):
+    # Input data parameters
+    N = 10000
+    avg = 5
+    beta = 3.69375
+    random.seed()
+    rg = RandomGenerator(-12)
+    for _ in range(random.randint(0,100)):
+        rg.ran1()
+
+    # Network and coordinates
+    G, Coortheta, Coorphi = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, theta_A, phi_A, theta_B, phi_B)
+    print("LinkNum:", G.number_of_edges())
+    print("AveDegree:", G.number_of_edges() * 2 / G.number_of_nodes())
+    print("ClusteringCoefficient:", nx.average_clustering(G))
+    geo_length = distS2(theta_A, phi_A, theta_B, phi_B)
+    print("Geo Length:", geo_length/math.pi)
+
+
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupnetworkGeolen{le}.txt".format(le = geo_length)
+    nx.write_edgelist(G, FileNetworkName)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupnetworkCoorGeolen{le}.txt".format(le = geo_length)
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(Coortheta, Coorphi):
+            file.write(f"{data1}\t{data2}\n")
+
+    nodei = N - 2
+    nodej = N - 1
+
+    print("Node Geo distance", distS2(Coortheta[nodei], Coorphi[nodei], Coortheta[nodej], Coorphi[nodej]))
+    # All shortest paths
+    AllSP = nx.all_shortest_paths(G, nodei, nodej)
+    AllSPlist = list(AllSP)
+    print("SPnum", len(AllSPlist))
+    print("SPlength", len(AllSPlist[0]))
+
+    FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupASPGeolen{le}.txt".format(le = geo_length)
+    np.savetxt(FileASPName, AllSPlist, fmt="%i")
+
+    # All shortest path node
+    AllSPNode = set()
+    for path in AllSPlist:
+        AllSPNode.update(path)
+    AllSPNode.discard(nodei)
+    AllSPNode.discard(nodej)
+    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupASPNodeGeolen{le}.txt".format(le = geo_length)
+    np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
+    tic = time.time()
+    # Nearly shortest path node
+    NSPNode, relevance = FindNearlySPNodes(G, nodei, nodej)
+    print("time for finding NSP", time.time() - tic)
+    print("NSP num", len(NSPNode))
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupNSPNodeGeolen{le}.txt".format(le = geo_length)
+    np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
+    FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupRelevanceGeolen{le}.txt".format(le = geo_length)
+    np.savetxt(FileNodeRelevanceName, relevance, fmt="%.3f")
+
+    # Geodesic
+    thetaSource = Coortheta[nodei]
+    phiSource = Coorphi[nodei]
+    thetaEnd = Coortheta[nodej]
+    phiEnd = Coorphi[nodej]
+
+    Geodistance = {}
+    for NodeC in range(N):
+        if NodeC in [nodei, nodej]:
+            Geodistance[NodeC] = 0
+        else:
+            thetaMed = Coortheta[NodeC]
+            phiMed = Coorphi[NodeC]
+            dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+            Geodistance[NodeC] = dist
+    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupGeoDistanceGeolen{le}.txt".format(le = geo_length)
+    np.savetxt(FileGeodistanceName, list(Geodistance.values()), fmt="%.8f")
+    Geodistance = sorted(Geodistance.items(), key=lambda kv: (kv[1], kv[0]))
+    Geodistance = Geodistance[:102]
+    Top100closednode = [t[0] for t in Geodistance]
+    Top100closednode = [n for n in Top100closednode if n not in [nodei, nodej]]
+
+    FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupTop100closedNodeGeolen{le}.txt".format(le = geo_length)
+    np.savetxt(FileTop100closedNodeName, Top100closednode, fmt="%i")
+
+    # Create label array
+    Label_med = np.zeros(N)
+    Label_med[NSPNode] = 1  # True cases
+    distance_med = np.zeros(N)
+
+    # Calculate distances to geodesic
+    for NodeC in range(0, N):
+        if NodeC not in [nodei, nodej]:
+            thetaMed = Coortheta[NodeC]
+            phiMed = Coorphi[NodeC]
+            dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+            distance_med[NodeC] = dist
+
+    # Remove source and target nodes from consideration
+    Label_med = np.delete(Label_med, [nodei, nodej])
+    distance_med = np.delete(distance_med, [nodei, nodej])
+    distance_score = [1 / x for x in distance_med]
+    # Calculate precision-recall curve and AUC
+    precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
+    AUCWithoutNornodeij = auc(recalls, precisions)
+    print("PRAUC", AUCWithoutNornodeij)
+
+    # Calculate precision-recall curve and AUC for control group
+    node_fre = nodeNSPfrequency(N, avg, beta, rg, Coortheta, Coorphi, nodei, nodej)
+    FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupNodefreGeolen{le}.txt".format(le = geo_length)
+    np.savetxt(FileNodefreName, node_fre)
+
+    node_fre = np.delete(node_fre, [nodei, nodej])
+    precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
+    AUCfrenodeij = auc(recallsfre, precisionsfre)
+    print(AUCfrenodeij)
+
 
 
 # Press the green button in the gutter to run the script.
@@ -861,17 +1378,38 @@ if __name__ == '__main__':
 
     # plot_relevance_vs_link_remove()
 
+
+
+
+    # test_two_brunch_in_relevance_with_linkremoval()
+
+
+    # test_two_brunch_in_relevance_with_linkremoval_betweenness()
+
+
+    # test_two_brunch_in_relevance_with_hopcount()
+
+
     # frequency_controlgroup_PRAUC_givennodepair()
+
 
     # ED = sys.argv[1]
     # beta = sys.argv[2]
     # ExternalSimutime = sys.argv[3]
     # frequency_controlgroup_PRAUC(int(ED),int(beta),int(ExternalSimutime))
 
+
     # frequency_controlgroup_PRAUC(0, 0, 0)
     # frequency_controlgroup_PRAUC(0,0,0)
 
-    testPRAUCvsPositiveCase()
+
+    for (theta_A,theta_B) in [(8*math.pi/16, 9*math.pi/16),(4*math.pi/8, 5*math.pi/8),(2*math.pi/4, 3*math.pi/4),(3*math.pi/4, math.pi/4)]:
+        geo_length = distS2(theta_A, 0, theta_B, 0)
+        print("Geo Length:", geo_length/math.pi)
+        frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, 0, theta_B, 0)
+
+
+
 
 
 

@@ -171,6 +171,15 @@ def SphericalSoftRGG(N, avg, beta, rg, Coortheta=None, Coorphi=None, SaveNetwork
         G.add_nodes_from(difference)
     return G, angle1, angle2
 
+def loadNodeSSRGG(N, filepath):
+    G = nx.read_edgelist(filepath, nodetype=int)
+    if G.number_of_nodes() < N:
+        ExpectedNodeList = [i for i in range(0, N)]
+        Nodelist = list(G.nodes)
+        difference = [item for item in ExpectedNodeList if item not in Nodelist]
+        G.add_nodes_from(difference)
+    return G
+
 
 def SphericalSoftRGGwithGivenNode(N, avg, beta, rg, thetaA, phiA, thetaB,phiB, Coortheta=None, Coorphi=None, SaveNetworkPath=None):
     """
