@@ -9,7 +9,7 @@ import math
 import random
 import time
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 
@@ -18,8 +18,8 @@ from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalSoftRGGwi
     dist_to_geodesic_S2, distS2, loadNodeSSRGG
 from sklearn.metrics import precision_recall_curve, auc
 import sys
-# import seaborn as sns
-# import pandas as pd
+import seaborn as sns
+import pandas as pd
 
 
 def nodeNSPfrequency(N, avg, beta, rg, Coortheta, Coorphi, nodei, nodej):
@@ -325,8 +325,8 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, phi_A, the
     # Input data parameters
     N = 10000
     avg = 5
-    beta = 3.69375
-    random.seed()
+    beta = 100
+    # random.seed(ExternalSimutime)
     rg = RandomGenerator(-12)
     for _ in range(random.randint(0, 100)):
         rg.ran1()
@@ -339,10 +339,10 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, phi_A, the
     geo_length = distS2(theta_A, phi_A, theta_B, phi_B)
     print("Geo Length:", geo_length / math.pi)
 
-    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupnetworkGeolen{le}Simu{ST}.txt".format(
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupnetworkGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     nx.write_edgelist(G, FileNetworkName)
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupnetworkCoorGeolen{le}Simu{ST}.txt".format(
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupnetworkCoorGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coortheta, Coorphi):
@@ -358,7 +358,7 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, phi_A, the
     print("SPnum", len(AllSPlist))
     print("SPlength", len(AllSPlist[0]))
 
-    FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupASPGeolen{le}Simu{ST}.txt".format(
+    FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupASPGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     np.savetxt(FileASPName, AllSPlist, fmt="%i")
 
@@ -368,7 +368,7 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, phi_A, the
         AllSPNode.update(path)
     AllSPNode.discard(nodei)
     AllSPNode.discard(nodej)
-    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupASPNodeGeolen{le}Simu{ST}.txt".format(
+    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupASPNodeGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
     tic = time.time()
@@ -376,10 +376,10 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, phi_A, the
     NSPNode, relevance = FindNearlySPNodes(G, nodei, nodej)
     print("time for finding NSP", time.time() - tic)
     print("NSP num", len(NSPNode))
-    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}.txt".format(
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupNSPNodeGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
-    FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupRelevanceGeolen{le}Simu{ST}.txt".format(
+    FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupRelevanceGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     np.savetxt(FileNodeRelevanceName, relevance, fmt="%.3f")
 
@@ -398,7 +398,7 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, phi_A, the
             phiMed = Coorphi[NodeC]
             dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
             Geodistance[NodeC] = dist
-    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupGeoDistanceGeolen{le}Simu{ST}.txt".format(
+    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupGeoDistanceGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     np.savetxt(FileGeodistanceName, list(Geodistance.values()), fmt="%.8f")
     Geodistance = sorted(Geodistance.items(), key=lambda kv: (kv[1], kv[0]))
@@ -406,7 +406,7 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, phi_A, the
     Top100closednode = [t[0] for t in Geodistance]
     Top100closednode = [n for n in Top100closednode if n not in [nodei, nodej]]
 
-    FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupTop100closedNodeGeolen{le}Simu{ST}.txt".format(
+    FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupTop100closedNodeGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     np.savetxt(FileTop100closedNodeName, Top100closednode, fmt="%i")
 
@@ -434,7 +434,7 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, phi_A, the
 
     # Calculate precision-recall curve and AUC for control group
     node_fre = nodeNSPfrequency(N, avg, beta, rg, Coortheta, Coorphi, nodei, nodej)
-    FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}.txt".format(
+    FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupNodefreGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     np.savetxt(FileNodefreName, node_fre)
 
@@ -460,6 +460,7 @@ def PlotPRAUCFrequency():
                  [3.1, 3.575, 4.05, 4.525, 5.19042969],
                  [3.1, 3.45625, 3.93125, 4.525, 5.19042969]]
     PRAUC_matrix = np.zeros((7, 5))
+    PRAUC_std_matrix = np.zeros((7, 5))
     for EDindex in [0, 5]:
         ED_list = [5, 7, 10, 15, 20, 50, 100]  # Expected degrees
         ED = ED_list[EDindex]
@@ -481,9 +482,13 @@ def PlotPRAUCFrequency():
             mean_PRAUC = np.mean(PRAUC_list)
             PRAUC_matrix[EDindex][betaindex] = mean_PRAUC
             print(mean_PRAUC)
+            PRAUC_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
     print(PRAUC_matrix)
     PRAUC_matrix = np.reshape(PRAUC_matrix[PRAUC_matrix!=0],(2,2))
     print(PRAUC_matrix)
+
+    PRAUC_std_matrix = np.reshape(PRAUC_std_matrix[PRAUC_std_matrix != 0], (2, 2))
+    print("std:", PRAUC_std_matrix)
     # plt.imshow(PRAUC_matrix, cmap="viridis", aspect="auto")
     # plt.colorbar()  # 添加颜色条
     # plt.title("Heatmap Example")
@@ -524,6 +529,7 @@ def PlotPRAUCFrequency2():
                  [3.1, 3.575, 4.05, 4.525, 5.19042969],
                  [3.1, 3.45625, 3.93125, 4.525, 5.19042969]]
     PRAUC_matrix = np.zeros((7, 5))
+    PRAUC_std_matrix = np.zeros((7, 5))
     for EDindex in [0, 5]:
         ED_list = [5, 7, 10, 15, 20, 50, 100]  # Expected degrees
         ED = ED_list[EDindex]
@@ -544,11 +550,13 @@ def PlotPRAUCFrequency2():
             PRAUC_list = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_list))
             mean_PRAUC = np.mean(PRAUC_list)
             PRAUC_matrix[EDindex][betaindex] = mean_PRAUC
+            PRAUC_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
             print(mean_PRAUC)
 
-    print(PRAUC_matrix)
+
     PRAUC_matrix = np.reshape(PRAUC_matrix[PRAUC_matrix != 0], (2, 2))
-    print(PRAUC_matrix)
+    PRAUC_std_matrix = np.reshape(PRAUC_std_matrix[PRAUC_std_matrix != 0], (2, 2))
+    print("std:", PRAUC_std_matrix)
     # plt.imshow(PRAUC_matrix, cmap="viridis", aspect="auto")
     # plt.colorbar()  # 添加颜色条
     # plt.title("Heatmap Example")
@@ -574,14 +582,14 @@ def PlotPRAUCFrequency2():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    Nodepairindex = sys.argv[1]
-    ExternalSimutime = sys.argv[2]
+    # Nodepairindex = sys.argv[1]
+    # ExternalSimutime = sys.argv[2]
+    #
+    # Geolength_list = [(8*math.pi/16, 9*math.pi/16), (4*math.pi/8, 5*math.pi/8), (2*math.pi/4, 3*math.pi/4), (3*math.pi/4, math.pi/4)]
+    # (theta_A, theta_B) = Geolength_list[int(Nodepairindex)]
+    # frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, 0, theta_B, 0, int(ExternalSimutime))
 
-    Geolength_list = [(8*math.pi/16, 9*math.pi/16), (4*math.pi/8, 5*math.pi/8), (2*math.pi/4, 3*math.pi/4), (3*math.pi/4, math.pi/4)]
-    (theta_A, theta_B) = Geolength_list[int(Nodepairindex)]
-    frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, 0, theta_B, 0, int(ExternalSimutime))
-
-    # frequency_controlgroup_PRAUC_givennodepair_diffgeolength(math.pi/4, 0, 0, 0, int(0))
+    frequency_controlgroup_PRAUC_givennodepair_diffgeolength(8*math.pi/16, 0, 9*math.pi/16, 0, int(0))
 
     # PlotPRAUCFrequency()
     # PlotPRAUCFrequency2()
