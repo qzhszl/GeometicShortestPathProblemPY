@@ -223,6 +223,139 @@ def frequency_controlgroup_PRAUC(Edindex, betaindex, ExternalSimutime):
     # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
 
 
+def frequency_controlgroup_PRAUC_highbeta(Edindex, betaindex, ExternalSimutime):
+    """
+    :param Edindex: average degree
+    :param betaindex: parameter to control the clustering coefficient
+    :return: PRAUC control and test simu for diff ED and beta
+    Only four data point, beta can reach 100
+    """
+    N = 10000
+    ED_list = [5, 20]  # Expected degrees
+    ED = ED_list[Edindex]
+    print("ED:", ED)
+
+    beta_list = [4, 100]
+    beta = beta_list[betaindex]
+    print("beta:", beta)
+    PRAUC_nodepair = []  # save the PRAUC for each node pair, we selected 100 node pair in total
+    PRAUC_fre_controlgroup_nodepair = []  # save the PRAUC for each node pair, we selected 100 node pair in total
+    NSPnum_nodepair = []  # save the Number of nearly shortest path for each node pair
+    geodistance_between_nodepair = []  # save the geodeisc length between each node pair
+
+    random.seed(ExternalSimutime)
+    rg = RandomGenerator(-12)
+    for i in range(random.randint(0, 100)):
+        rg.ran1()
+
+    G, CoorTheta, CoorPhi = SphericalSoftRGG(N, ED, beta, rg)
+
+    print("We have a network now!")
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\Compare\\NetworkED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, ST=ExternalSimutime)
+    nx.write_edgelist(G, FileNetworkName)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\Compare\\CoorED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, ST=ExternalSimutime)
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(CoorTheta, CoorPhi):
+            file.write(f"{data1}\t{data2}\n")
+
+    nodepair_num = 2
+    # Random select nodepair_num nodes in the largest connected component
+    components = list(nx.connected_components(G))
+    largest_component = max(components, key=len)
+    nodes = list(largest_component)
+    unique_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(nodes, 2))
+    possible_num_nodepair = len(unique_pairs)
+    if possible_num_nodepair > nodepair_num:
+        random_pairs = random.sample(sorted(unique_pairs), nodepair_num)
+    else:
+        random_pairs = random.sample(sorted(unique_pairs), possible_num_nodepair)
+    count = 0
+    components = []
+    largest_component = []
+    nodes = []
+    unique_pairs = []
+    unique_pairs = []
+    filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\Compare\\SelecetedNodepairED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(filename_selecetednodepair, random_pairs, fmt="%i")
+
+    for nodepair in random_pairs:
+        count = count + 1
+        print("Simunodepair:", count)
+        nodei = nodepair[0]
+        nodej = nodepair[1]
+
+        thetaSource = CoorTheta[nodei]
+        phiSource = CoorPhi[nodei]
+        thetaEnd = CoorTheta[nodej]
+        phiEnd = CoorPhi[nodej]
+        geodistance_between_nodepair.append(distS2(thetaSource, phiSource, thetaEnd, phiEnd))
+
+        # tic = time.time()
+        # Find nearly shortest path nodes
+        NearlySPNodelist, Noderelevance = FindNearlySPNodes(G, nodei, nodej)
+        NSPnum_nodepair.append(len(NearlySPNodelist))
+        # toc  = time.time()-tic
+        # print("NSP finding time:", toc)
+
+        # Create label array
+        Label_med = np.zeros(N)
+        Label_med[NearlySPNodelist] = 1  # True cases
+        distance_med = np.zeros(N)
+
+        # Calculate distances to geodesic
+        for NodeC in range(0, N):
+            if NodeC not in [nodei, nodej]:
+                thetaMed = CoorTheta[NodeC]
+                phiMed = CoorPhi[NodeC]
+                dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+                distance_med[NodeC] = dist
+
+        # Remove source and target nodes from consideration
+        Label_med = np.delete(Label_med, [nodei, nodej])
+        distance_med = np.delete(distance_med, [nodei, nodej])
+        distance_score = [1 / x for x in distance_med]
+        # Calculate precision-recall curve and AUC
+        precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
+        AUCWithoutNornodeij = auc(recalls, precisions)
+
+        # Store AUC values
+        PRAUC_nodepair.append(AUCWithoutNornodeij)
+
+        # Calculate precision-recall curve and AUC for control group
+        node_fre = nodeNSPfrequency(N, ED, beta, rg, CoorTheta, CoorPhi, nodei, nodej)
+        node_fre = np.delete(node_fre, [nodei, nodej])
+        precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
+        AUCfrenodeij = auc(recallsfre, precisionsfre)
+        PRAUC_fre_controlgroup_nodepair.append(AUCfrenodeij)
+
+    # Calculate means and standard deviations of AUC
+    # AUCWithoutnorMean = np.mean(PRAUC_nodepair[~np.isnan(PRAUC_nodepair)])
+    # AUCWithoutnorStd = np.std(PRAUC_nodepair[~np.isnan(PRAUC_nodepair)])
+
+    PRAUCName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\Compare\\AUCED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(PRAUCName, PRAUC_nodepair)
+
+    FrePRAUCName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\Compare\\ControlFreAUCED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(FrePRAUCName, PRAUC_fre_controlgroup_nodepair)
+
+    NSPnum_nodepairName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\Compare\\NSPNumED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(NSPnum_nodepairName, NSPnum_nodepair, fmt="%i")
+
+    geodistance_between_nodepair_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\Compare\\GeodistanceBetweenTwoNodesED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(geodistance_between_nodepair_Name, geodistance_between_nodepair)
+
+    print("Mean AUC Without Normalization:", np.mean(PRAUC_nodepair))
+    print("Mean AUC CONTROL:", np.mean(PRAUC_fre_controlgroup_nodepair))
+    # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
+
+
 def frequency_controlgroup_PRAUC_bySP(Edindex, betaindex, ExternalSimutime):
     """
      We use shortest path rather than nearly shortest path
@@ -944,7 +1077,13 @@ if __name__ == '__main__':
     # PlotPRAUCFrequency2()
 
     # frequency_controlgroup_PRAUC_bySP(0, 0, 0)
+    # ED = sys.argv[1]
+    # beta = sys.argv[2]
+    # ExternalSimutime = sys.argv[3]
+    # frequency_controlgroup_PRAUC_bySP(int(ED),int(beta),int(ExternalSimutime))
+
+    # frequency_controlgroup_PRAUC_highbeta(0, 0, 0)
     ED = sys.argv[1]
     beta = sys.argv[2]
     ExternalSimutime = sys.argv[3]
-    frequency_controlgroup_PRAUC_bySP(int(ED),int(beta),int(ExternalSimutime))
+    frequency_controlgroup_PRAUC_highbeta(int(ED), int(beta), int(ExternalSimutime))
