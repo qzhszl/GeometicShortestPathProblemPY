@@ -13,12 +13,16 @@ import numpy as np
 import networkx as nx
 import random
 import math
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 
 from sklearn.metrics import precision_recall_curve, auc, precision_score, recall_score
 
 from NearlyShortestPathPredict import FindNearlySPNodes, FindNearlySPNodesRemoveSpecficLink
 from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalRandomGeometricGraph, distS2, \
     SphericalRGGwithGivenNode, dist_to_geodesic_S2, SphericalSoftRGGwithGivenNode, SphericalSoftRGG
+from main import find_nonzero_indices
 
 
 def NSPnodes_inRGG_with_coordinates(N, avg, rg, Coortheta, Coorphi, nodei, nodej):
@@ -28,7 +32,6 @@ def NSPnodes_inRGG_with_coordinates(N, avg, rg, Coortheta, Coorphi, nodei, nodej
     """
     G, coor1, coor2 = SphericalRandomGeometricGraph(N, avg, rg, Coortheta=Coortheta,
                                                     Coorphi=Coorphi, SaveNetworkPath=None)
-    print("RGG IS DONE")
     NSPNodeList, _ = FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1)
     return NSPNodeList
 
@@ -196,7 +199,7 @@ def PredictGeodistanceVsRGG(Edindex, betaindex, ExternalSimutime):
         for data1, data2 in zip(CoorTheta, CoorPhi):
             file.write(f"{data1}\t{data2}\n")
 
-    nodepair_num = 2
+    nodepair_num = 5
     # Random select nodepair_num nodes in the largest connected component
     components = list(nx.connected_components(G))
     largest_component = max(components, key=len)
@@ -316,13 +319,175 @@ def PredictGeodistanceVsRGG(Edindex, betaindex, ExternalSimutime):
     print("Mean Recall Geodistance:", np.mean(Recall_Geodis_nodepair))
     # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
 
+
+
+def plot_GeovsRGG_precsion():
+    PRAUC_matrix = np.zeros((2, 2))
+    PRAUC_std_matrix = np.zeros((2, 2))
+    PRAUC_fre_matrix = np.zeros((2, 2))
+    PRAUC_fre_std_matrix = np.zeros((2, 2))
+
+    for EDindex in [0, 1]:
+        ED_list = [5, 20]  # Expected degrees
+        ED = ED_list[EDindex]
+        print("ED:", ED)
+
+        for betaindex in [0, 1]:
+            beta_list = [4, 100]
+            beta = beta_list[betaindex]
+            print(beta)
+            PRAUC_list = []
+            PRAUC_fre_list = []
+            for ExternalSimutime in range(10):
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\SphericalRGG\\PRAUC\\PrecisionGeodisED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, ST=ExternalSimutime)
+
+                PRAUC_list_10times = np.loadtxt(precision_Geodis_Name)
+                PRAUC_list.extend(PRAUC_list_10times)
+
+                precision_fre_Name = "D:\\data\\geometric shortest path problem\\SphericalRGG\\PRAUC\\PrecisionRGGED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, ST=ExternalSimutime)
+                PRAUC_fre_list_10times = np.loadtxt(precision_fre_Name)
+                PRAUC_fre_list.extend(PRAUC_fre_list_10times)
+
+            nonzero_indices_geo = find_nonzero_indices(PRAUC_list)
+            # PRAUC_list = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_list))
+            PRAUC_list = [PRAUC_list[x] for x in nonzero_indices_geo]
+
+            print("lenpre",len(PRAUC_list))
+            mean_PRAUC = np.mean(PRAUC_list)
+
+            PRAUC_matrix[EDindex][betaindex] = mean_PRAUC
+            PRAUC_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_PRAUC)
+
+            # PRAUC_fre_list = list(
+            #     filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_fre_list))
+            PRAUC_fre_list = [PRAUC_fre_list[x] for x in nonzero_indices_geo]
+            print(PRAUC_fre_list)
+            print("lenPRE", len(PRAUC_fre_list))
+            mean_fre_PRAUC = np.mean(PRAUC_fre_list)
+            PRAUC_fre_matrix[EDindex][betaindex] = mean_fre_PRAUC
+            PRAUC_fre_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_fre_PRAUC)
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4, 100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=0.8, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'precision'})
+    plt.title("Geo distance")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    plt.savefig(
+        "D:\\data\\geometric shortest path problem\\SphericalRGG\\PRAUC\\GeoPrecisionHeatmapNSP0_1LinkRemove.pdf",
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_fre_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4, 100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=0.8, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'precision'})
+    plt.title("RGG")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    plt.savefig(
+        "D:\\data\\geometric shortest path problem\\SphericalRGG\\PRAUC\\RGGPrecisionHeatmapNSP0_1LinkRemove.pdf",
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+
+def plot_GeovsRGG_recall():
+    PRAUC_matrix = np.zeros((2, 2))
+    PRAUC_std_matrix = np.zeros((2, 2))
+    PRAUC_fre_matrix = np.zeros((2, 2))
+    PRAUC_fre_std_matrix = np.zeros((2, 2))
+
+    for EDindex in [0, 1]:
+        ED_list = [5, 20]  # Expected degrees
+        ED = ED_list[EDindex]
+        print("ED:", ED)
+
+        for betaindex in [0, 1]:
+            beta_list = [4, 100]
+            beta = beta_list[betaindex]
+            print(beta)
+            PRAUC_list = []
+            PRAUC_fre_list = []
+            for ExternalSimutime in range(10):
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\SphericalRGG\\PRAUC\\RecallGeodisED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, ST=ExternalSimutime)
+
+                PRAUC_list_10times = np.loadtxt(precision_Geodis_Name)
+                PRAUC_list.extend(PRAUC_list_10times)
+
+                precision_fre_Name = "D:\\data\\geometric shortest path problem\\SphericalRGG\\PRAUC\\RecallRGGED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, ST=ExternalSimutime)
+                PRAUC_fre_list_10times = np.loadtxt(precision_fre_Name)
+                PRAUC_fre_list.extend(PRAUC_fre_list_10times)
+
+            nonzero_indices_geo = find_nonzero_indices(PRAUC_list)
+            # PRAUC_list = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_list))
+            PRAUC_list = [PRAUC_list[x] for x in nonzero_indices_geo]
+
+            print("lenpre",len(PRAUC_list))
+            mean_PRAUC = np.mean(PRAUC_list)
+
+            PRAUC_matrix[EDindex][betaindex] = mean_PRAUC
+            PRAUC_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_PRAUC)
+
+            # PRAUC_fre_list = list(
+            #     filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_fre_list))
+            PRAUC_fre_list = [PRAUC_fre_list[x] for x in nonzero_indices_geo]
+            print(PRAUC_fre_list)
+            print("lenPRE", len(PRAUC_fre_list))
+            mean_fre_PRAUC = np.mean(PRAUC_fre_list)
+            PRAUC_fre_matrix[EDindex][betaindex] = mean_fre_PRAUC
+            PRAUC_fre_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_fre_PRAUC)
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4, 100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=0.8, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'recall'})
+    plt.title("Geo distance")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    plt.savefig(
+        "D:\\data\\geometric shortest path problem\\SphericalRGG\\PRAUC\\GeoRecallHeatmapNSP0_1LinkRemove.pdf",
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_fre_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4, 100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=0.8, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'recall'})
+    plt.title("RGG")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    plt.savefig(
+        "D:\\data\\geometric shortest path problem\\SphericalRGG\\PRAUC\\RGGRecallHeatmapNSP0_1LinkRemove.pdf",
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # PredictGeodistanceVsRGG_givennodepair_difflength(8*math.pi/16,0, 9*math.pi/16,0,0)
 
-    PredictGeodistanceVsRGG(0, 0, 0)
+    # PredictGeodistanceVsRGG(0, 0, 0)
     # ED = sys.argv[1]
     # beta = sys.argv[2]
     # ExternalSimutime = sys.argv[3]
     # PredictGeodistanceVsRGG(int(ED), int(beta), int(ExternalSimutime))
+
+    plot_GeovsRGG_precsion()
+    plot_GeovsRGG_recall()
 

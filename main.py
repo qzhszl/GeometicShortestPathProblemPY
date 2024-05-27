@@ -54,6 +54,29 @@ def sprintffilename():
     print(filename)
 
 
+def find_nonzero_indices(lst):
+    # 创建一个空列表来存储非0元素的索引
+    nonzero_indices = []
+
+    # 遍历列表，使用enumerate获取元素及其索引
+    for index, element in enumerate(lst):
+        # 如果元素非0，则添加其索引到nonzero_indices列表中
+        if element != 0:
+            nonzero_indices.append(index)
+
+    return nonzero_indices
+
+def find_nonnan_indices(lst):
+    # 创建一个空列表来存储非0元素的索引
+    nonzero_indices = []
+    # 遍历列表，使用enumerate获取元素及其索引
+    for index, element in enumerate(lst):
+        # 如果元素非0，则添加其索引到nonzero_indices列表中
+        if not np.isnan(element):
+            nonzero_indices.append(index)
+    return nonzero_indices
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # print_hi('PyCharm')
