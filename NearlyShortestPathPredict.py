@@ -38,7 +38,7 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
         print("NSP Simutime:",Simutime)
         ShuffleTable = np.random.rand(G.number_of_edges())  # Random numbers for shuffle
         H = G.copy()  # Create a copy of the graph
-        edges_to_remove = [e for e, shuffle_value in zip(G.edges, ShuffleTable) if shuffle_value < 0.5]
+        edges_to_remove = [e for e, shuffle_value in zip(G.edges, ShuffleTable) if shuffle_value < 0.1]
         H.remove_edges_from(edges_to_remove)  # Remove edges with shuffle value < 0.5
         time3 = time.time()
 
