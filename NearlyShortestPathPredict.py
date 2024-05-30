@@ -38,7 +38,7 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
         print("NSP Simutime:",Simutime)
         ShuffleTable = np.random.rand(G.number_of_edges())  # Random numbers for shuffle
         H = G.copy()  # Create a copy of the graph
-        edges_to_remove = [e for e, shuffle_value in zip(G.edges, ShuffleTable) if shuffle_value < 0.1]
+        edges_to_remove = [e for e, shuffle_value in zip(G.edges, ShuffleTable) if shuffle_value < 0.5]
         H.remove_edges_from(edges_to_remove)  # Remove edges with shuffle value < 0.5
         time3 = time.time()
 
@@ -56,15 +56,15 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
             for path in shortest_paths:
                 PNodeList.update(path)
                 count += 1
-                # if count > 1000000:
-                #     PNodeList = set()
-                #     break
-            print("pathlength", len(path))
-            print("pathnum",count)
+                if count > 1000000:
+                    PNodeList = set()
+                    break
+            # print("pathlength", len(path))
+            # print("pathnum",count)
         except nx.NetworkXNoPath:
             PNodeList = set()  # If there's no path, continue with an empty set
         time31 = time.time()
-        print("timeallsp0",time31-time3)
+        # print("time for a nsp",time31-time3)
         # Remove the starting and ending nodes from the list
         PNodeList.discard(nodei)
         PNodeList.discard(nodej)
@@ -96,7 +96,7 @@ def FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1, Rel
 
     # Simulate the removal of random edges and calculate shortest paths
     for Simutime in range(RelevanceSimTimes):
-        # print("NSP Simutime:",Simutime)
+        print("NSP Simutime:",Simutime)
         # time3 = time.time()
         ShuffleTable = np.random.rand(G.number_of_edges())  # Random numbers for shuffle
         H = G.copy()  # Create a copy of the graph

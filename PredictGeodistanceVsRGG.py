@@ -252,7 +252,6 @@ def PredictGeodistanceVsRGG(Edindex, betaindex, ExternalSimutime):
         # Create label array
         Label_med = np.zeros(N)
         Label_med[NearlySPNodelist] = 1  # True cases
-        distance_med = np.zeros(N)
 
         # Generate an RGG with the coordinates and predict it
         NSPNodeList_RGG = NSPnodes_inRGG_with_coordinates(N, ED, rg, CoorTheta, CoorPhi, nodei, nodej)

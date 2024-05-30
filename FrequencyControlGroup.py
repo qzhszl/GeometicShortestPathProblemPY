@@ -38,7 +38,7 @@ def nodeNSPfrequency(N, avg, beta, rg, Coortheta, Coorphi, nodei, nodej):
         print("simu time:", i)
         tic = time.time()
         H, angle1, angle2 = SphericalSoftRGG(N, avg, beta, rg, Coortheta=Coortheta, Coorphi=Coorphi)
-        FreNodeList, _ = FindNearlySPNodesRemoveSpecficLink(H, nodei, nodej, Linkremoveratio=0.1)
+        FreNodeList, _ = FindNearlySPNodesRemoveSpecficLink(H, nodei, nodej, Linkremoveratio=0.5)
         for node in FreNodeList:
             NodeFrequency[node] += 1
         print(time.time() - tic)
@@ -753,7 +753,7 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, phi_A, the
     # Input data parameters
     N = 10000
     avg = 5
-    beta = 100
+    beta = 4
     # random.seed(ExternalSimutime)
     rg = RandomGenerator(-12)
     for _ in range(random.randint(0, 100)):
@@ -1228,7 +1228,7 @@ if __name__ == '__main__':
     # (theta_A, theta_B) = Geolength_list[int(Nodepairindex)]
     # frequency_controlgroup_PRAUC_givennodepair_diffgeolength(theta_A, 0, theta_B, 0, int(ExternalSimutime))
 
-    # frequency_controlgroup_PRAUC_givennodepair_diffgeolength(8*math.pi/16, 0, 9*math.pi/16, 0, int(0))
+    frequency_controlgroup_PRAUC_givennodepair_diffgeolength(8*math.pi/16, 0, 9*math.pi/16, 0, int(0))
 
     # PlotPRAUCFrequency()
     # PlotPRAUCFrequency2()
@@ -1251,4 +1251,4 @@ if __name__ == '__main__':
 
     # plot_frequency_controlgroup_PRAUC_bySP()
 
-    frequency_controlgroup_PRAUC_givennodepair_diffgeolengthhighbeta(4*math.pi/8, 0, 5*math.pi/8, 0, 0)
+    # frequency_controlgroup_PRAUC_givennodepair_diffgeolengthhighbeta(4*math.pi/8, 0, 5*math.pi/8, 0, 0)
