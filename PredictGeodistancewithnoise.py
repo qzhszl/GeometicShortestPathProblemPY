@@ -586,7 +586,7 @@ def PredictGeodistanceVsfrequency_withnoise(Edindex, betaindex, noiseindex, Exte
 
         # tic = time.time()
         # Find nearly shortest path nodes
-        NearlySPNodelist, Noderelevance = FindNearlySPNodes(G, nodei, nodej)
+        NearlySPNodelist, _ = FindNearlySPNodes(G, nodei, nodej)
         NSPnum_nodepair.append(len(NearlySPNodelist))
         # toc  = time.time()-tic
         # print("NSP finding time:", toc)
