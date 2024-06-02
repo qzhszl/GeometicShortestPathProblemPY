@@ -51,7 +51,7 @@ def R2SRGG(N, avg, beta, rg, Coorx=None, Coory=None, SaveNetworkPath=None):
             dist = math.sqrt((xx[i] - xx[j]) ** 2 + (yy[i] - yy[j]) ** 2)
             assert dist > 0
             prob = 1 / (1 + math.exp(beta * math.log(alpha * dist)))
-            if random.random() < prob:
+            if rg.ran1() < prob:
                 s.append(i)
                 t.append(j)
 
