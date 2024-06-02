@@ -659,6 +659,51 @@ if __name__ == '__main__':
     # PredictGeodistanceVsRGG_withnoise(int(ED), int(beta), int(noise), int(ExternalSimutime))
 
 
-    PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(0.1, 8*math.pi/16, 0, 9*math.pi/16, 0, int(0))
+    # PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(0.1, 8*math.pi/16, 0, 9*math.pi/16, 0, int(0))
+
+
+    # TEST
+    N = 10000
+    nodei = N-2
+    nodej = N-1
+    theta_A = 8 * math.pi / 16
+    phi_A = 0
+    theta_B = 9 * math.pi / 16
+    phi_B = 0
+    ExternalSimutime = 0
+    geo_length = distS2(theta_A, phi_A, theta_B, phi_B)
+    beta = 4
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    NSPNode = np.loadtxt(FileNSPNodeName,dtype=int)
+
+    # Create label array
+    Label_med = np.zeros(N)
+    Label_med[NSPNode] = 1  # True cases
+
+    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\PredictGeoVsRGGGeoDistancewithnoiseGeolen{le}Simu{ST}.txt".format(
+        le=geo_length, ST=ExternalSimutime)
+    distance = np.loadtxt(FileGeodistanceName)
+
+    # Remove source and target nodes from consideration
+    Label_med = np.delete(Label_med, [nodei, nodej])
+    distance_med = np.delete(distance, [nodei, nodej])
+    distance_score = [1 / x for x in distance_med]
+    # Calculate precision-recall curve and AUC
+    precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
+    AUCWithoutNornodeij = auc(recalls, precisions)
+    print("PRAUC_geo", AUCWithoutNornodeij)
+
+    # Calculate precision-recall curve and AUC for control group
+
+    FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    node_fre = np.loadtxt(FileNodefreName)
+
+    node_fre = np.delete(node_fre, [nodei, nodej])
+    precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
+    AUCfrenodeij = auc(recallsfre, precisionsfre)
+    print(AUCfrenodeij)
+
 
 

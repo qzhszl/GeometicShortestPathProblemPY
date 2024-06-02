@@ -96,7 +96,7 @@ def FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1, Rel
 
     # Simulate the removal of random edges and calculate shortest paths
     for Simutime in range(RelevanceSimTimes):
-        print("NSP Simutime:",Simutime)
+        # print("NSP Simutime:",Simutime)
         # time3 = time.time()
         ShuffleTable = np.random.rand(G.number_of_edges())  # Random numbers for shuffle
         H = G.copy()  # Create a copy of the graph
@@ -952,7 +952,7 @@ def nodeNSPfrequency(N, avg, beta, rg, Coortheta, Coorphi, nodei, nodej):
         print("simu time:", i)
         tic = time.time()
         H, angle1, angle2 = SphericalSoftRGG(N, avg, beta, rg, Coortheta=Coortheta, Coorphi=Coorphi)
-        FreNodeList, _ = FindNearlySPNodesRemoveSpecficLink(H, nodei, nodej, Linkremoveratio=0.1)
+        FreNodeList, _ = FindNearlySPNodesRemoveSpecficLink(H, nodei, nodej, Linkremoveratio=0.5)
         for node in FreNodeList:
             NodeFrequency[node] += 1
         print(time.time()-tic)
