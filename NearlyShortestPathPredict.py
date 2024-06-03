@@ -9,15 +9,15 @@ import math
 import random
 import time
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalSoftRGGwithGivenNode, SphericalSoftRGG, \
     dist_to_geodesic_S2, distS2, loadNodeSSRGG
 from sklearn.metrics import precision_recall_curve, auc
 import sys
-import seaborn as sns
-import pandas as pd
+# import seaborn as sns
+# import pandas as pd
 
 
 # Function to find nodes that frequently appear in the shortest paths
@@ -952,7 +952,7 @@ def nodeNSPfrequency(N, avg, beta, rg, Coortheta, Coorphi, nodei, nodej):
         print("simu time:", i)
         tic = time.time()
         H, angle1, angle2 = SphericalSoftRGG(N, avg, beta, rg, Coortheta=Coortheta, Coorphi=Coorphi)
-        FreNodeList, _ = FindNearlySPNodesRemoveSpecficLink(H, nodei, nodej, Linkremoveratio=0.5)
+        FreNodeList, _ = FindNearlySPNodesRemoveSpecficLink(H, nodei, nodej, Linkremoveratio=0.1)
         for node in FreNodeList:
             NodeFrequency[node] += 1
         print(time.time()-tic)
