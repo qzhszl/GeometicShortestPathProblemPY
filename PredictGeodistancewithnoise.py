@@ -661,7 +661,6 @@ if __name__ == '__main__':
 
     # PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(0.1, 8*math.pi/16, 0, 9*math.pi/16, 0, int(0))
 
-
     # TEST
     N = 10000
     nodei = N-2
@@ -675,7 +674,7 @@ if __name__ == '__main__':
     beta = 4
     FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
-    NSPNode = np.loadtxt(FileNSPNodeName,dtype=int)
+    NSPNode = np.loadtxt(FileNSPNodeName, dtype=int)
 
     # Create label array
     Label_med = np.zeros(N)
