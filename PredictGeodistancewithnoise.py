@@ -22,6 +22,7 @@ import numpy as np
 import networkx as nx
 import random
 import math
+
 # import matplotlib.pyplot as plt
 # import seaborn as sns
 # import pandas as pd
@@ -361,6 +362,173 @@ def PredictGeodistanceVsRGG_withnoise(Edindex, betaindex, noiseindex, ExternalSi
     print("Mean Recall Geodistance:", np.mean(Recall_Geodis_nodepair))
     # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
 
+def plot_GeovsRGG_precsion_withnoise():
+    PRAUC_matrix = np.zeros((2, 2))
+    PRAUC_std_matrix = np.zeros((2, 2))
+    PRAUC_fre_matrix = np.zeros((2, 2))
+    PRAUC_fre_std_matrix = np.zeros((2, 2))
+    noise_amplitude = 0.5
+    for EDindex in [0, 1]:
+        ED_list = [5, 20]  # Expected degrees
+        ED = ED_list[EDindex]
+        print("ED:", ED)
+
+        for betaindex in [0, 1]:
+            beta_list = [4, 100]
+            beta = beta_list[betaindex]
+            print(beta)
+            PRAUC_list = []
+            PRAUC_fre_list = []
+            for ExternalSimutime in range(20):
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                PRAUC_list_10times = np.loadtxt(precision_Geodis_Name)
+                PRAUC_list.extend(PRAUC_list_10times)
+
+                precision_fre_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                PRAUC_fre_list_10times = np.loadtxt(precision_fre_Name)
+                PRAUC_fre_list.extend(PRAUC_fre_list_10times)
+
+            nonzero_indices_geo = find_nonzero_indices(PRAUC_list)
+            # PRAUC_list = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_list))
+            PRAUC_list = [PRAUC_list[x] for x in nonzero_indices_geo]
+
+            print("lenpre", len(PRAUC_list))
+            mean_PRAUC = np.mean(PRAUC_list)
+
+            PRAUC_matrix[EDindex][betaindex] = mean_PRAUC
+            PRAUC_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_PRAUC)
+
+            # PRAUC_fre_list = list(
+            #     filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_fre_list))
+            PRAUC_fre_list = [PRAUC_fre_list[x] for x in nonzero_indices_geo]
+            print(PRAUC_fre_list)
+            print("lenPRE", len(PRAUC_fre_list))
+            mean_fre_PRAUC = np.mean(PRAUC_fre_list)
+            PRAUC_fre_matrix[EDindex][betaindex] = mean_fre_PRAUC
+            PRAUC_fre_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_fre_PRAUC)
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4, 100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=0.8, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'precision'})
+    plt.title("Geo distance")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    precision_Geodis_fig_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PY.pdf".format(
+        EDn=ED, betan=beta, no=noise_amplitude)
+    plt.savefig(precision_Geodis_fig_Name,
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_fre_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4, 100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=0.8, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'precision'})
+    plt.title("RGG")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+
+    precision_RGG_fig_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\PrecisionRGGED{EDn}Beta{betan}Noise{no}PY.pdf".format(
+        EDn=ED, betan=beta, no=noise_amplitude)
+    plt.savefig(
+        precision_RGG_fig_Name,
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+def plot_GeovsRGG_recall_withnoise():
+    noise_amplitude = 0.1
+    PRAUC_matrix = np.zeros((2, 2))
+    PRAUC_std_matrix = np.zeros((2, 2))
+    PRAUC_fre_matrix = np.zeros((2, 2))
+    PRAUC_fre_std_matrix = np.zeros((2, 2))
+
+    for EDindex in [0, 1]:
+        ED_list = [5, 20]  # Expected degrees
+        ED = ED_list[EDindex]
+        print("ED:", ED)
+
+        for betaindex in [0, 1]:
+            beta_list = [4, 100]
+            beta = beta_list[betaindex]
+            print(beta)
+            PRAUC_list = []
+            PRAUC_fre_list = []
+            for ExternalSimutime in range(20):
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+
+
+                PRAUC_list_10times = np.loadtxt(precision_Geodis_Name)
+                PRAUC_list.extend(PRAUC_list_10times)
+
+                precision_fre_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                PRAUC_fre_list_10times = np.loadtxt(precision_fre_Name)
+                PRAUC_fre_list.extend(PRAUC_fre_list_10times)
+
+            nonzero_indices_geo = find_nonzero_indices(PRAUC_list)
+            # PRAUC_list = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_list))
+            PRAUC_list = [PRAUC_list[x] for x in nonzero_indices_geo]
+
+            print("lenGEOturecase", len(PRAUC_list))
+            mean_PRAUC = np.mean(PRAUC_list)
+
+            PRAUC_matrix[EDindex][betaindex] = mean_PRAUC
+            PRAUC_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_PRAUC)
+
+            # PRAUC_fre_list = list(
+            #     filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_fre_list))
+            PRAUC_fre_list = [PRAUC_fre_list[x] for x in nonzero_indices_geo]
+            print(PRAUC_fre_list)
+            print("lenRGGturecase", len(PRAUC_fre_list))
+            mean_fre_PRAUC = np.mean(PRAUC_fre_list)
+            PRAUC_fre_matrix[EDindex][betaindex] = mean_fre_PRAUC
+            PRAUC_fre_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_fre_PRAUC)
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4, 100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=0.8, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'recall'})
+    plt.title("Geo distance")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    recall_Geodis_fig_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\RecallGeodisED{EDn}Beta{betan}Noise{no}PY.pdf".format(
+        EDn=ED, betan=beta, no=noise_amplitude)
+    plt.savefig(
+        recall_Geodis_fig_Name,
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_fre_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4, 100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=0.8, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'recall'})
+    plt.title("RGG")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    recall_RGG_fig_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\RecallRGGED{EDn}Beta{betan}Noise{no}PY.pdf".format(
+        EDn=ED, betan=beta, no=noise_amplitude)
+    plt.savefig(
+        recall_RGG_fig_Name,
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+
+
 
 def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(noise_amplitude,theta_A, phi_A, theta_B, phi_B, ExternalSimutime):
     """
@@ -489,6 +657,51 @@ def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(noise_ampli
     FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
     np.savetxt(FileNodefreName, node_fre)
+
+    node_fre = np.delete(node_fre, [nodei, nodej])
+    precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
+    AUCfrenodeij = auc(recallsfre, precisionsfre)
+    print(AUCfrenodeij)
+
+
+def test_result_PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength():
+    # TEST
+    N = 10000
+    nodei = N - 2
+    nodej = N - 1
+    theta_A = 8 * math.pi / 16
+    phi_A = 0
+    theta_B = 9 * math.pi / 16
+    phi_B = 0
+    ExternalSimutime = 0
+    geo_length = distS2(theta_A, phi_A, theta_B, phi_B)
+    beta = 4
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    NSPNode = np.loadtxt(FileNSPNodeName, dtype=int)
+
+    # Create label array
+    Label_med = np.zeros(N)
+    Label_med[NSPNode] = 1  # True cases
+
+    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\PredictGeoVsRGGGeoDistancewithnoiseGeolen{le}Simu{ST}.txt".format(
+        le=geo_length, ST=ExternalSimutime)
+    distance = np.loadtxt(FileGeodistanceName)
+
+    # Remove source and target nodes from consideration
+    Label_med = np.delete(Label_med, [nodei, nodej])
+    distance_med = np.delete(distance, [nodei, nodej])
+    distance_score = [1 / x for x in distance_med]
+    # Calculate precision-recall curve and AUC
+    precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
+    AUCWithoutNornodeij = auc(recalls, precisions)
+    print("PRAUC_geo", AUCWithoutNornodeij)
+
+    # Calculate precision-recall curve and AUC for control group
+
+    FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    node_fre = np.loadtxt(FileNodefreName)
 
     node_fre = np.delete(node_fre, [nodei, nodej])
     precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
@@ -656,53 +869,22 @@ if __name__ == '__main__':
     # beta = sys.argv[2]
     # noise = sys.argv[3]
     # ExternalSimutime = sys.argv[4]
-    # PredictGeodistanceVsRGG_withnoise(int(ED), int(beta), int(noise), int(ExternalSimutime))
+    # PredictGeodistanceVsRGG_withnoise(int(ED), int(beta), int(noise), int(ExternalSimutime)
 
+    # plot_GeovsRGG_precsion_withnoise()
+    # plot_GeovsRGG_recall_withnoise()
 
     # PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(0.1, 8*math.pi/16, 0, 9*math.pi/16, 0, int(0))
 
-    # TEST
-    N = 10000
-    nodei = N-2
-    nodej = N-1
-    theta_A = 8 * math.pi / 16
-    phi_A = 0
-    theta_B = 9 * math.pi / 16
-    phi_B = 0
-    ExternalSimutime = 0
-    geo_length = distS2(theta_A, phi_A, theta_B, phi_B)
-    beta = 4
-    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
-        le=geo_length, ST=ExternalSimutime, b=beta)
-    NSPNode = np.loadtxt(FileNSPNodeName, dtype=int)
+    PredictGeodistanceVsfrequency_withnoise(0,0,2,0)
+    # ED = sys.argv[1]
+    # beta = sys.argv[2]
+    # noise = sys.argv[3]
+    # ExternalSimutime = sys.argv[4]
+    # PredictGeodistanceVsfrequency_withnoise(int(ED), int(beta), int(noise), int(ExternalSimutime))
 
-    # Create label array
-    Label_med = np.zeros(N)
-    Label_med[NSPNode] = 1  # True cases
 
-    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\PredictGeoVsRGGGeoDistancewithnoiseGeolen{le}Simu{ST}.txt".format(
-        le=geo_length, ST=ExternalSimutime)
-    distance = np.loadtxt(FileGeodistanceName)
 
-    # Remove source and target nodes from consideration
-    Label_med = np.delete(Label_med, [nodei, nodej])
-    distance_med = np.delete(distance, [nodei, nodej])
-    distance_score = [1 / x for x in distance_med]
-    # Calculate precision-recall curve and AUC
-    precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
-    AUCWithoutNornodeij = auc(recalls, precisions)
-    print("PRAUC_geo", AUCWithoutNornodeij)
-
-    # Calculate precision-recall curve and AUC for control group
-
-    FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}beta{b}.txt".format(
-        le=geo_length, ST=ExternalSimutime, b=beta)
-    node_fre = np.loadtxt(FileNodefreName)
-
-    node_fre = np.delete(node_fre, [nodei, nodej])
-    precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
-    AUCfrenodeij = auc(recallsfre, precisionsfre)
-    print(AUCfrenodeij)
 
 
 
