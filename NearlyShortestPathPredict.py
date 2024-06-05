@@ -77,7 +77,7 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
     Noderelevance /= RelevanceSimTimes
 
     # Find nodes with relevance greater than 0.05
-    NearlySPNodelist = [i for i, relevance in enumerate(Noderelevance) if relevance > 0.05]
+    NearlySPNodelist = [i for i, relevance in enumerate(Noderelevance) if relevance > 0.03]
 
     return NearlySPNodelist, Noderelevance
 
@@ -139,7 +139,7 @@ def FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1, Rel
     Noderelevance /= RelevanceSimTimes
 
     # Find nodes with relevance greater than 0.05
-    NearlySPNodelist = [i for i, relevance in enumerate(Noderelevance) if relevance > 0.05]
+    NearlySPNodelist = [i for i, relevance in enumerate(Noderelevance) if relevance > 0.03]
 
     return NearlySPNodelist, Noderelevance
 
