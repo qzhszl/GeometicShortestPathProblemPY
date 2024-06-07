@@ -23,13 +23,14 @@ import networkx as nx
 import random
 import math
 
-# import matplotlib.pyplot as plt
-# import seaborn as sns
-# import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
 
 from sklearn.metrics import precision_recall_curve, auc, precision_score, recall_score
 
-from NearlyShortestPathPredict import FindNearlySPNodes, FindNearlySPNodesRemoveSpecficLink, nodeNSPfrequency
+from FrequencyControlGroup import nodeNSPfrequency
+from NearlyShortestPathPredict import FindNearlySPNodes, FindNearlySPNodesRemoveSpecficLink
 from PredictGeodistanceVsRGG import NSPnodes_inRGG_with_coordinates
 from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalRandomGeometricGraph, distS2, \
     SphericalRGGwithGivenNode, dist_to_geodesic_S2, SphericalSoftRGGwithGivenNode, SphericalSoftRGG
@@ -367,7 +368,7 @@ def plot_GeovsRGG_precsion_withnoise():
     PRAUC_std_matrix = np.zeros((2, 2))
     PRAUC_fre_matrix = np.zeros((2, 2))
     PRAUC_fre_std_matrix = np.zeros((2, 2))
-    noise_amplitude = 0.5
+    noise_amplitude = 0.001
     for EDindex in [0, 1]:
         ED_list = [5, 20]  # Expected degrees
         ED = ED_list[EDindex]
@@ -380,15 +381,16 @@ def plot_GeovsRGG_precsion_withnoise():
             PRAUC_list = []
             PRAUC_fre_list = []
             for ExternalSimutime in range(20):
-                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-                PRAUC_list_10times = np.loadtxt(precision_Geodis_Name)
-                PRAUC_list.extend(PRAUC_list_10times)
+                if ExternalSimutime not in [4,13]:
+                    precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                    PRAUC_list_10times = np.loadtxt(precision_Geodis_Name)
+                    PRAUC_list.extend(PRAUC_list_10times)
 
-                precision_fre_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-                PRAUC_fre_list_10times = np.loadtxt(precision_fre_Name)
-                PRAUC_fre_list.extend(PRAUC_fre_list_10times)
+                    precision_fre_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                    PRAUC_fre_list_10times = np.loadtxt(precision_fre_Name)
+                    PRAUC_fre_list.extend(PRAUC_fre_list_10times)
 
             nonzero_indices_geo = find_nonzero_indices(PRAUC_list)
             # PRAUC_list = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_list))
@@ -444,7 +446,7 @@ def plot_GeovsRGG_precsion_withnoise():
     plt.close()
 
 def plot_GeovsRGG_recall_withnoise():
-    noise_amplitude = 0.1
+    noise_amplitude = 0.001
     PRAUC_matrix = np.zeros((2, 2))
     PRAUC_std_matrix = np.zeros((2, 2))
     PRAUC_fre_matrix = np.zeros((2, 2))
@@ -462,17 +464,18 @@ def plot_GeovsRGG_recall_withnoise():
             PRAUC_list = []
             PRAUC_fre_list = []
             for ExternalSimutime in range(20):
-                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                if ExternalSimutime not in [4,13]:
+                    precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
 
 
-                PRAUC_list_10times = np.loadtxt(precision_Geodis_Name)
-                PRAUC_list.extend(PRAUC_list_10times)
+                    PRAUC_list_10times = np.loadtxt(precision_Geodis_Name)
+                    PRAUC_list.extend(PRAUC_list_10times)
 
-                precision_fre_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-                PRAUC_fre_list_10times = np.loadtxt(precision_fre_Name)
-                PRAUC_fre_list.extend(PRAUC_fre_list_10times)
+                    precision_fre_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\RGG\\RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                    PRAUC_fre_list_10times = np.loadtxt(precision_fre_Name)
+                    PRAUC_fre_list.extend(PRAUC_fre_list_10times)
 
             nonzero_indices_geo = find_nonzero_indices(PRAUC_list)
             # PRAUC_list = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PRAUC_list))
@@ -871,12 +874,12 @@ if __name__ == '__main__':
     # ExternalSimutime = sys.argv[4]
     # PredictGeodistanceVsRGG_withnoise(int(ED), int(beta), int(noise), int(ExternalSimutime)
 
-    # plot_GeovsRGG_precsion_withnoise()
-    # plot_GeovsRGG_recall_withnoise()
+    plot_GeovsRGG_precsion_withnoise()
+    plot_GeovsRGG_recall_withnoise()
 
     # PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(0.1, 8*math.pi/16, 0, 9*math.pi/16, 0, int(0))
 
-    PredictGeodistanceVsfrequency_withnoise(0,0,2,0)
+    # PredictGeodistanceVsfrequency_withnoise(0,0,2,0)
     # ED = sys.argv[1]
     # beta = sys.argv[2]
     # noise = sys.argv[3]

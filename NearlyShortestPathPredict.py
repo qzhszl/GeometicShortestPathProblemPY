@@ -77,7 +77,7 @@ def FindNearlySPNodes(G, nodei, nodej, RelevanceSimTimes=1000):
     Noderelevance /= RelevanceSimTimes
 
     # Find nodes with relevance greater than 0.05
-    NearlySPNodelist = [i for i, relevance in enumerate(Noderelevance) if relevance > 0.03]
+    NearlySPNodelist = [i for i, relevance in enumerate(Noderelevance) if relevance > 0.05]
 
     return NearlySPNodelist, Noderelevance
 
@@ -118,9 +118,11 @@ def FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1, Rel
             for path in shortest_paths:
                 PNodeList.update(path)
                 count += 1
-                if count > 1000000:
-                    PNodeList = set()
-                    break
+                if count % 1000000 ==0:
+                    print(count / 1000000)
+                # if count > 1000000:
+                #     PNodeList = set()
+                #     break
             # print("pathlength", len(path))
             # print("pathnum",count)
         except nx.NetworkXNoPath:
@@ -139,7 +141,7 @@ def FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1, Rel
     Noderelevance /= RelevanceSimTimes
 
     # Find nodes with relevance greater than 0.05
-    NearlySPNodelist = [i for i, relevance in enumerate(Noderelevance) if relevance > 0.03]
+    NearlySPNodelist = [i for i, relevance in enumerate(Noderelevance) if relevance > 0.05]
 
     return NearlySPNodelist, Noderelevance
 

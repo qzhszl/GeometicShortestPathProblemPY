@@ -6,6 +6,7 @@
 """
 import math
 import random
+import pandas as pd
 import numpy as np
 import networkx as nx
 
@@ -26,9 +27,10 @@ def degree_vs_radius(N,avg):
     # Loop through ED and CC combinations to find optimal beta
 
     flag = False
-    radiusmax = 1  # Maximum bound for radius
+
     radiusmin = 0.0001  # Minimum bound for radius
     radius = math.sqrt(avg/((N-1)*math.pi))
+    radiusmax = radius+0.01  # Maximum bound for radius
 
     while not flag:
         G,_,_= RandomGeometricGraph(N,avg,rg,radius)
@@ -46,61 +48,67 @@ def degree_vs_radius(N,avg):
     return radius
 
 
-# def degree_vs_radius():
-#     """
-#     % INPUT: expected degree ED;expected clustering coefficent CC
-#     :return: beta
-#     """
-#     N = 10000  # Number of nodes
-#     ED = [3, 5, 7, 10, 15, 20, 50, 100]  # Expected degrees
-#     CC = [0.2, 0.25, 0.3, 0.35, 0.4, 0.45]  # Clustering coefficients
-#     betavec = np.zeros((len(ED), len(CC)))  # Matrix to store optimal beta values
-#
-#     # Generata a random number generator for ran1 and warm up a bit
-#     rg = RandomGenerator(-12)
-#     for i in range(random.randint(1,100)):
-#         rg.ran1()
-#
-#     # Loop through ED and CC combinations to find optimal beta
-#     for i, ED_i in enumerate(ED):
-#         print("E_d:",ED_i)
-#         for j, CC_i in enumerate(CC):
-#             print("CC:", CC_i)
-#             flag = False
-#             betamax = 200  # Maximum bound for beta
-#             betamin = 1.2  # Minimum bound for beta
-#             beta = 5  # Starting beta
-#
-#             while not flag:
-#                 G,_,_= SphericalSoftRGG(N, ED_i, beta, rg)
-#                 cc = nx.average_clustering(G)
-#                 print("current cc:", cc)
-#                 if abs(cc - CC_i) < 0.01:
-#                     flag = True
-#                     betavec[i][j] = beta
-#                     print("Optimal beta:", beta)
-#                 elif cc - CC_i > 0:
-#                     betamax = beta
-#                     beta -= 0.5 * (beta - betamin)
-#                 else:
-#                     betamin = beta
-#                     beta += 0.5 * (betamax - beta)
-#     return betavec
+def compute_degree_vs_radius_diffN():
+    """
+    % INPUT: expected degree ED; Node number N
+    :return: radius
+    """
+    ED = [3, 5, 7, 10, 15, 20]  # Expected degrees
+    N = [100,500,1000,10000]  # Clustering coefficients
+    betavec = np.zeros((len(ED), len(N)))  # Matrix to store optimal radius values
+
+    # Generata a random number generator for ran1 and warm up a bit
+    rg = RandomGenerator(-12)
+    for i in range(random.randint(1,100)):
+        rg.ran1()
+
+    # Loop through ED and N combinations to find optimal radius
+    for i, ED_i in enumerate(ED):
+        print("E_d:",ED_i)
+        for j, N_j in enumerate(N):
+            print("N:", N_j)
+            betavec[i][j] = degree_vs_radius(N_j, ED_i)
+    print(betavec)
+    return 0
+
+def read_radius(N,avg):
+    m1 = [[0.1069628,  0.0462457,  0.0321674,  0.00977254],
+        [0.13522968, 0.05772546, 0.04116419, 0.01261629],
+    [0.15877253,0.06932267,0.04847711,0.0149278],
+    [0.18930023, 0.08236836, 0.05769719, 0.01799838],
+    [0.22960928,0.10313087,0.07163341,0.02204737],
+    [0.26358436, 0.11857592, 0.08275807, 0.02554509]]
+    df = pd.DataFrame(m1, columns=[100,500,1000,10000],index=[3, 5, 7, 10, 15, 20])
+    radius = df.loc[avg,N]
+    return radius
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Verification
-    N = 10000
-    avg =5
+    # N = 10000
+    # avg =20
 
-    r = degree_vs_radius(N, avg)
-    print(r)
+    # r = degree_vs_radius(200, 5)
+    # print(r)
 
-    rg = RandomGenerator(-12)
-    for i in range(random.randint(1, 100)):
-        rg.ran1()
+    # rg = RandomGenerator(-12)
+    # for i in range(random.randint(1, 100)):
+    #     rg.ran1()
+    #
+    # for _ in range(10):
+    #     G, _, _ = RandomGeometricGraph(N, avg, rg, r)
+    #     print("degree:", G.number_of_edges() * 2 / G.number_of_nodes())
 
-    for _ in range(10):
-        G, _, _ = RandomGeometricGraph(N, avg, rg, r)
-        print("degree:", G.number_of_edges() * 2 / G.number_of_nodes())
+    # m1=[]
+    # m1.append([1,2])
+    # m1.append([4, 3])
+    #
+    # df = pd.DataFrame(m1, columns=[100,10000],index=[5,20])
+    # print(df)
+    # print(df.loc[5,100])
+
+    compute_degree_vs_radius_diffN()
+
+
 

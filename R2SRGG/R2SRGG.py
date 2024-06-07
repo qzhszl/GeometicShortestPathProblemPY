@@ -63,6 +63,8 @@ def distR2(x1,y1,x2,y2):
 
 
 def dist_to_geodesic_R2(px, py, ax, ay, bx, by):
+    # the distance between AB and an extra point P
+    # return the distance and the nearest point between A and B
     # 向量 AB 和 AP
     AB = np.array([bx - ax, by - ay])
     AP = np.array([px - ax, py - ay])
