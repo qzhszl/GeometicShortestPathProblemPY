@@ -31,16 +31,17 @@ from sklearn.metrics import precision_recall_curve, auc, precision_score, recall
 
 from NearlyShortestPathPredict import FindNearlySPNodesRemoveSpecficLink
 from PredictGeodistanceVsRGGR2 import NSPnodes_inRGG_with_coordinatesR2
-from R2SRGG.R2SRGG import R2SRGG_withgivennodepair, distR2
+from R2SRGG import R2SRGG_withgivennodepair, distR2, dist_to_geodesic_R2, R2SRGG
+from FrequencyControlGroupR2 import nodeNSPfrequencyR2
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import find_nonzero_indices
 
 
-def add_uniform_random_noise_to_coordinates(lst, noise_amplitude):
+def add_uniform_random_noise_to_coordinates_R2(lst, noise_amplitude):
     coor = []
     for x in lst:
         x_noise = x + random.uniform(-noise_amplitude, noise_amplitude)
-        if x_noise > 1 | x_noise < 0:
+        if x_noise > 1 or x_noise < 0:
             x_noise = x
         coor.append(x_noise)
     return coor
@@ -107,7 +108,7 @@ def PredictGeodistanceVsRGG_withnoise_givennodepair_difflengthR2(noise_amplitude
     np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
     tic = time.time()
     # Nearly shortest path node(Actual Case)
-    NSPNode, relevance = FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej,Linkremoveratio=0.1)
+    NSPNode, relevance = FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1)
     print("time for finding NSP", time.time() - tic)
     print("NSP num", len(NSPNode))
     FileNSPNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\Geolength\\PredictGeoVsRGGNSPNodeGeolen{le}Simu{ST}.txt".format(
@@ -128,8 +129,8 @@ def PredictGeodistanceVsRGG_withnoise_givennodepair_difflengthR2(noise_amplitude
     Label_med[NSPNode] = 1  # True cases
 
     # add noise into theta and phi
-    Coorx = add_uniform_random_noise_to_coordinates(Coorx, noise_amplitude,"theta")
-    Coory = add_uniform_random_noise_to_coordinates(Coory, noise_amplitude,"phi")
+    Coorx = add_uniform_random_noise_to_coordinates_R2(Coorx, noise_amplitude)
+    Coory = add_uniform_random_noise_to_coordinates_R2(Coory, noise_amplitude)
     FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\Geolength\\PredictGeoVsRGGnetworkCoorwithnoiseGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     with open(FileNetworkCoorName, "w") as file:
@@ -149,14 +150,14 @@ def PredictGeodistanceVsRGG_withnoise_givennodepair_difflengthR2(noise_amplitude
         else:
             thetaMed = Coorx[NodeC]
             phiMed = Coory[NodeC]
-            dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+            dist,_ = dist_to_geodesic_R2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
             Geodistance[NodeC] = dist
     FileGeodistanceName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\Geolength\\PredictGeoVsRGGGeoDistancewithnoiseGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     np.savetxt(FileGeodistanceName, list(Geodistance.values()), fmt="%.8f")
 
     # Generate an RGG with the coordinates and predict it
-    NSPNodeList_RGG = NSPnodes_inRGG_with_coordinates(N, avg, rg, Coorx, Coory, nodei, nodej)
+    NSPNodeList_RGG = NSPnodes_inRGG_with_coordinatesR2(N, avg, rg, Coorx, Coory, nodei, nodej)
     Predicted_truecase_num = len(NSPNodeList_RGG)
 
     PredictNSPNodeList_RGG = np.zeros(N)
@@ -169,7 +170,7 @@ def PredictGeodistanceVsRGG_withnoise_givennodepair_difflengthR2(noise_amplitude
 
     # Predict nsp nodes use distance, where top Predicted_truecase_num nodes will be regarded as predicted nsp according to distance form the geodesic
     Geodistance = sorted(Geodistance.items(), key=lambda kv: (kv[1], kv[0]))
-    Geodistance = Geodistance[:Predicted_truecase_num+2]
+    Geodistance = Geodistance[:Predicted_truecase_num + 2]
     Top100closednode = [t[0] for t in Geodistance]
     Top100closednode = [n for n in Top100closednode if n not in [nodei, nodej]]
     FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\Geolength\\PredictGeoVsRGGPredictedTrueNSPNodeByGeodistanceGeolen{le}Simu{ST}.txt".format(
@@ -200,10 +201,9 @@ def PredictGeodistanceVsRGG_withnoiseR2(Edindex, betaindex, noiseindex, External
     beta = beta_list[betaindex]
     print("beta:", beta)
 
-    noise_amplitude_list = [0.1, 0.5, 2]
+    noise_amplitude_list = [0.001, 0.01, 0.1]
     noise_amplitude = noise_amplitude_list[noiseindex]
     print("noise amplitude:", noise_amplitude)
-
 
     Precision_RGG_nodepair = []  # save the precision_RGG for each node pair, we selected 100 node pair in total
     Recall_RGG_nodepair = []  # we selected 100 node pair in total
@@ -217,14 +217,14 @@ def PredictGeodistanceVsRGG_withnoiseR2(Edindex, betaindex, noiseindex, External
     for i in range(random.randint(0, 100)):
         rg.ran1()
 
-    G, Coorx, Coory = SphericalSoftRGG(N, ED, beta, rg)
+    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
 
     print("We have a network now!")
     FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\NetworkED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     nx.write_edgelist(G, FileNetworkName)
     FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\CoorED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coorx, Coory):
             file.write(f"{data1}\t{data2}\n")
@@ -247,18 +247,17 @@ def PredictGeodistanceVsRGG_withnoiseR2(Edindex, betaindex, noiseindex, External
     unique_pairs = []
     unique_pairs = []
     filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\SelecetedNodepairED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(filename_selecetednodepair, random_pairs, fmt="%i")
 
     # add noise into theta and phi
-    Coorx = add_uniform_random_noise_to_coordinates(Coorx, noise_amplitude, "theta")
-    Coory = add_uniform_random_noise_to_coordinates(Coory, noise_amplitude, "phi")
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\CoorwithNoiseED{EDn}Beta{betan}PYSimu{ST}.txt".format(
+    Coorx = add_uniform_random_noise_to_coordinates_R2(Coorx, noise_amplitude)
+    Coory = add_uniform_random_noise_to_coordinates_R2(Coory, noise_amplitude)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\CoorwithNoiseED{EDn}Beta{betan}PYSimu{ST}.txt".format(
         EDn=ED, betan=beta, ST=ExternalSimutime)
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coorx, Coory):
             file.write(f"{data1}\t{data2}\n")
-
 
     for nodepair in random_pairs:
         count = count + 1
@@ -268,9 +267,9 @@ def PredictGeodistanceVsRGG_withnoiseR2(Edindex, betaindex, noiseindex, External
 
         tic = time.time()
         # Find nearly shortest path nodes
-        NearlySPNodelist, _ = FindNearlySPNodes(G, nodei, nodej)
+        NearlySPNodelist, _ = FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1)
         NSPnum_nodepair.append(len(NearlySPNodelist))
-        toc  = time.time()-tic
+        toc = time.time() - tic
         print("NSP finding time:", toc)
 
         # Create label array
@@ -281,7 +280,7 @@ def PredictGeodistanceVsRGG_withnoiseR2(Edindex, betaindex, noiseindex, External
         phiSource = Coory[nodei]
         thetaEnd = Coorx[nodej]
         phiEnd = Coory[nodej]
-        geodistance_between_nodepair.append(distS2(thetaSource, phiSource, thetaEnd, phiEnd))
+        geodistance_between_nodepair.append(distR2(thetaSource, phiSource, thetaEnd, phiEnd))
 
         Geodistance = {}
         for NodeC in range(N):
@@ -290,11 +289,11 @@ def PredictGeodistanceVsRGG_withnoiseR2(Edindex, betaindex, noiseindex, External
             else:
                 thetaMed = Coorx[NodeC]
                 phiMed = Coory[NodeC]
-                dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+                dist,_ = dist_to_geodesic_R2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
                 Geodistance[NodeC] = dist
 
         # Generate an RGG with the coordinates and predict it
-        NSPNodeList_RGG = NSPnodes_inRGG_with_coordinates(N, ED, rg, Coorx, Coory, nodei, nodej)
+        NSPNodeList_RGG = NSPnodes_inRGG_with_coordinatesR2(N, ED, rg, Coorx, Coory, nodei, nodej)
         Predicted_truecase_num = len(NSPNodeList_RGG)
         toc2 = time.time() - toc
         print("RGG generate time:", toc2)
@@ -329,27 +328,27 @@ def PredictGeodistanceVsRGG_withnoiseR2(Edindex, betaindex, noiseindex, External
     # AUCWithoutnorStd = np.std(PRAUC_nodepair[~np.isnan(PRAUC_nodepair)])
 
     precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(precision_RGG_Name, Precision_RGG_nodepair)
 
     recall_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(recall_RGG_Name, Recall_RGG_nodepair)
 
     precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(precision_Geodis_Name, Precision_Geodis_nodepair)
 
     recall_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(recall_Geodis_Name, Recall_Geodis_nodepair)
 
     NSPnum_nodepairName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\NSPNumED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(NSPnum_nodepairName, NSPnum_nodepair, fmt="%i")
 
     geodistance_between_nodepair_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\GeodistanceBetweenTwoNodesED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(geodistance_between_nodepair_Name, geodistance_between_nodepair)
 
     print("Mean Pre RGG:", np.mean(Precision_RGG_nodepair))
@@ -357,6 +356,7 @@ def PredictGeodistanceVsRGG_withnoiseR2(Edindex, betaindex, noiseindex, External
     print("Mean Pre Geodistance:", np.mean(Precision_Geodis_nodepair))
     print("Mean Recall Geodistance:", np.mean(Recall_Geodis_nodepair))
     # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
+
 
 def plot_GeovsRGG_precsion_withnoiseR2():
     PRAUC_matrix = np.zeros((2, 2))
@@ -419,7 +419,7 @@ def plot_GeovsRGG_precsion_withnoiseR2():
     precision_Geodis_fig_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PY.pdf".format(
         EDn=ED, betan=beta, no=noise_amplitude)
     plt.savefig(precision_Geodis_fig_Name,
-        format='pdf', bbox_inches='tight', dpi=600)
+                format='pdf', bbox_inches='tight', dpi=600)
     plt.close()
 
     plt.figure()
@@ -438,6 +438,7 @@ def plot_GeovsRGG_precsion_withnoiseR2():
         precision_RGG_fig_Name,
         format='pdf', bbox_inches='tight', dpi=600)
     plt.close()
+
 
 def plot_GeovsRGG_recall_withnoiseR2():
     noise_amplitude = 0.1
@@ -460,7 +461,6 @@ def plot_GeovsRGG_recall_withnoiseR2():
             for ExternalSimutime in range(20):
                 precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\Noise\\RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
                     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-
 
                 PRAUC_list_10times = np.loadtxt(precision_Geodis_Name)
                 PRAUC_list.extend(PRAUC_list_10times)
@@ -524,15 +524,14 @@ def plot_GeovsRGG_recall_withnoiseR2():
     plt.close()
 
 
-
-
-def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(noise_amplitude,theta_A, phi_A, theta_B, phi_B, ExternalSimutime):
+def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength_R2(noise_amplitude, x_A, y_A, x_B, y_B,
+                                                                        ExternalSimutime):
     """
         For a given node pair. This function is designed for the cluster
-        :param theta_A:
-        :param phi_A:
-        :param theta_B:
-        :param phi_B:
+        :param x_A:
+        :param y_A:
+        :param x_B:
+        :param y_B:
         :param ExternalSimutime:
         :return:
         """
@@ -546,17 +545,17 @@ def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(noise_ampli
         rg.ran1()
 
     # Network and coordinates
-    G, Coorx, Coory = SphericalSoftRGGwithGivenNode(N, avg, beta, rg, theta_A, phi_A, theta_B, phi_B)
+    G, Coorx, Coory = R2SRGG_withgivennodepair(N, avg, beta, rg, x_A, y_A, x_B, y_B)
     print("LinkNum:", G.number_of_edges())
     print("AveDegree:", G.number_of_edges() * 2 / G.number_of_nodes())
     print("ClusteringCoefficient:", nx.average_clustering(G))
-    geo_length = distS2(theta_A, phi_A, theta_B, phi_B)
-    print("Geo Length:", geo_length / math.pi)
+    geo_length = distR2(x_A, y_A, x_B, y_B)
+    print("Geo Length:", geo_length)
 
-    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupnetworkGeolen{le}Simu{ST}beta{b}.txt".format(
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\ControlGroupnetworkGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
     nx.write_edgelist(G, FileNetworkName)
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupnetworkCoorGeolen{le}Simu{ST}beta{b}.txt".format(
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\ControlGroupnetworkCoorGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coorx, Coory):
@@ -565,14 +564,14 @@ def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(noise_ampli
     nodei = N - 2
     nodej = N - 1
 
-    print("Node Geo distance", distS2(Coorx[nodei], Coory[nodei], Coorx[nodej], Coory[nodej]))
+    print("Node Geo distance", distR2(Coorx[nodei], Coory[nodei], Coorx[nodej], Coory[nodej]))
     # All shortest paths
     AllSP = nx.all_shortest_paths(G, nodei, nodej)
     AllSPlist = list(AllSP)
     print("SPnum", len(AllSPlist))
     print("SPlength", len(AllSPlist[0]))
 
-    FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupASPGeolen{le}Simu{ST}beta{b}.txt".format(
+    FileASPName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\ControlGroupASPGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
     np.savetxt(FileASPName, AllSPlist, fmt="%i")
 
@@ -582,18 +581,18 @@ def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(noise_ampli
         AllSPNode.update(path)
     AllSPNode.discard(nodei)
     AllSPNode.discard(nodej)
-    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupASPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
+    FileASPNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\ControlGroupASPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
     np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
     tic = time.time()
     # Nearly shortest path node
-    NSPNode, relevance = FindNearlySPNodes(G, nodei, nodej)
+    NSPNode, relevance = FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1)
     print("time for finding NSP", time.time() - tic)
     print("NSP num", len(NSPNode))
-    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
     np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
-    FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupRelevanceGeolen{le}Simu{ST}beta{b}.txt".format(
+    FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\ControlGroupRelevanceGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
     np.savetxt(FileNodeRelevanceName, relevance, fmt="%.3f")
 
@@ -602,9 +601,9 @@ def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(noise_ampli
     Label_med[NSPNode] = 1  # True cases
 
     # add noise into theta and phi
-    Coorx = add_uniform_random_noise_to_coordinates(Coorx, noise_amplitude, "theta")
-    Coory = add_uniform_random_noise_to_coordinates(Coory, noise_amplitude, "phi")
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\PredictGeoVsRGGnetworkCoorwithnoiseGeolen{le}Simu{ST}.txt".format(
+    Coorx = add_uniform_random_noise_to_coordinates_R2(Coorx, noise_amplitude)
+    Coory = add_uniform_random_noise_to_coordinates_R2(Coory, noise_amplitude)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\PredictGeoVsRGGnetworkCoorwithnoiseGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coorx, Coory):
@@ -623,9 +622,9 @@ def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(noise_ampli
         else:
             thetaMed = Coorx[NodeC]
             phiMed = Coory[NodeC]
-            dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+            dist,_ = dist_to_geodesic_R2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
             Geodistance[NodeC] = dist
-    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\PredictGeoVsRGGGeoDistancewithnoiseGeolen{le}Simu{ST}.txt".format(
+    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\PredictGeoVsRGGGeoDistancewithnoiseGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     np.savetxt(FileGeodistanceName, list(Geodistance.values()), fmt="%.8f")
 
@@ -636,7 +635,7 @@ def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(noise_ampli
         if NodeC not in [nodei, nodej]:
             thetaMed = Coorx[NodeC]
             phiMed = Coory[NodeC]
-            dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+            dist,_ = dist_to_geodesic_R2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
             distance_med[NodeC] = dist
 
     # Remove source and target nodes from consideration
@@ -649,8 +648,8 @@ def PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(noise_ampli
     print("PRAUC_geo", AUCWithoutNornodeij)
 
     # Calculate precision-recall curve and AUC for control group
-    node_fre = nodeNSPfrequency(N, avg, beta, rg, Coorx, Coory, nodei, nodej)
-    FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}beta{b}.txt".format(
+    node_fre = nodeNSPfrequencyR2(N, avg, beta, rg, Coorx, Coory, nodei, nodej)
+    FileNodefreName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
     np.savetxt(FileNodefreName, node_fre)
 
@@ -670,9 +669,9 @@ def test_result_PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength
     theta_B = 9 * math.pi / 16
     phi_B = 0
     ExternalSimutime = 0
-    geo_length = distS2(theta_A, phi_A, theta_B, phi_B)
+    geo_length = distR2(theta_A, phi_A, theta_B, phi_B)
     beta = 4
-    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
     NSPNode = np.loadtxt(FileNSPNodeName, dtype=int)
 
@@ -680,7 +679,7 @@ def test_result_PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength
     Label_med = np.zeros(N)
     Label_med[NSPNode] = 1  # True cases
 
-    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\PredictGeoVsRGGGeoDistancewithnoiseGeolen{le}Simu{ST}.txt".format(
+    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\PredictGeoVsRGGGeoDistancewithnoiseGeolen{le}Simu{ST}.txt".format(
         le=geo_length, ST=ExternalSimutime)
     distance = np.loadtxt(FileGeodistanceName)
 
@@ -695,7 +694,7 @@ def test_result_PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength
 
     # Calculate precision-recall curve and AUC for control group
 
-    FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}beta{b}.txt".format(
+    FileNodefreName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}beta{b}.txt".format(
         le=geo_length, ST=ExternalSimutime, b=beta)
     node_fre = np.loadtxt(FileNodefreName)
 
@@ -705,7 +704,7 @@ def test_result_PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength
     print(AUCfrenodeij)
 
 
-def PredictGeodistanceVsfrequency_withnoise(Edindex, betaindex, noiseindex, ExternalSimutime):
+def PredictGeodistanceVsfrequency_withnoise_R2(Edindex, betaindex, noiseindex, ExternalSimutime):
     """
     :param Edindex: average degree
     :param betaindex: parameter to control the clustering coefficient
@@ -721,11 +720,11 @@ def PredictGeodistanceVsfrequency_withnoise(Edindex, betaindex, noiseindex, Exte
     beta = beta_list[betaindex]
     print("beta:", beta)
 
-    noise_amplitude_list = [0.1, 0.5, 2]
+    noise_amplitude_list = [0.001, 0.01, 0.1]
     noise_amplitude = noise_amplitude_list[noiseindex]
     print("noise amplitude:", noise_amplitude)
 
-    print("ExternalSimutime",ExternalSimutime)
+    print("ExternalSimutime", ExternalSimutime)
 
     PRAUC_nodepair = []  # save the PRAUC for each node pair, we selected 100 node pair in total
     PRAUC_fre_controlgroup_nodepair = []  # save the PRAUC for each node pair, we selected 100 node pair in total
@@ -737,14 +736,14 @@ def PredictGeodistanceVsfrequency_withnoise(Edindex, betaindex, noiseindex, Exte
     for i in range(random.randint(0, 100)):
         rg.ran1()
 
-    G, Coorx, Coory = SphericalSoftRGG(N, ED, beta, rg)
+    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
 
     print("We have a network now!")
-    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\NetworkED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\NetworkED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     nx.write_edgelist(G, FileNetworkName)
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\CoorED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\CoorED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coorx, Coory):
             file.write(f"{data1}\t{data2}\n")
@@ -766,20 +765,18 @@ def PredictGeodistanceVsfrequency_withnoise(Edindex, betaindex, noiseindex, Exte
     nodes = []
     unique_pairs = []
     unique_pairs = []
-    filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\SelecetedNodepairED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+    filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\SelecetedNodepairED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(filename_selecetednodepair, random_pairs, fmt="%i")
 
-
     # add noise into theta and phi
-    Coorx = add_uniform_random_noise_to_coordinates(Coorx, noise_amplitude, "theta")
-    Coory = add_uniform_random_noise_to_coordinates(Coory, noise_amplitude, "phi")
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\CoorwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+    Coorx = add_uniform_random_noise_to_coordinates_R2(Coorx, noise_amplitude)
+    Coory = add_uniform_random_noise_to_coordinates_R2(Coory, noise_amplitude)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\CoorwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coorx, Coory):
             file.write(f"{data1}\t{data2}\n")
-
 
     for nodepair in random_pairs:
         count = count + 1
@@ -791,11 +788,11 @@ def PredictGeodistanceVsfrequency_withnoise(Edindex, betaindex, noiseindex, Exte
         phiSource = Coory[nodei]
         thetaEnd = Coorx[nodej]
         phiEnd = Coory[nodej]
-        geodistance_between_nodepair.append(distS2(thetaSource, phiSource, thetaEnd, phiEnd))
+        geodistance_between_nodepair.append(distR2(thetaSource, phiSource, thetaEnd, phiEnd))
 
         # tic = time.time()
         # Find nearly shortest path nodes
-        NearlySPNodelist, Noderelevance = FindNearlySPNodes(G, nodei, nodej)
+        NearlySPNodelist, _ = FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1)
         NSPnum_nodepair.append(len(NearlySPNodelist))
         # toc  = time.time()-tic
         # print("NSP finding time:", toc)
@@ -810,7 +807,7 @@ def PredictGeodistanceVsfrequency_withnoise(Edindex, betaindex, noiseindex, Exte
             if NodeC not in [nodei, nodej]:
                 thetaMed = Coorx[NodeC]
                 phiMed = Coory[NodeC]
-                dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+                dist,_ = dist_to_geodesic_R2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
                 distance_med[NodeC] = dist
 
         # Remove source and target nodes from consideration
@@ -825,7 +822,7 @@ def PredictGeodistanceVsfrequency_withnoise(Edindex, betaindex, noiseindex, Exte
         PRAUC_nodepair.append(AUCWithoutNornodeij)
 
         # Calculate precision-recall curve and AUC for control group
-        node_fre = nodeNSPfrequency(N, ED, beta, rg, Coorx, Coory, nodei, nodej)
+        node_fre = nodeNSPfrequencyR2(N, ED, beta, rg, Coorx, Coory, nodei, nodej)
         node_fre = np.delete(node_fre, [nodei, nodej])
         precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
         AUCfrenodeij = auc(recallsfre, precisionsfre)
@@ -835,20 +832,20 @@ def PredictGeodistanceVsfrequency_withnoise(Edindex, betaindex, noiseindex, Exte
     # AUCWithoutnorMean = np.mean(PRAUC_nodepair[~np.isnan(PRAUC_nodepair)])
     # AUCWithoutnorStd = np.std(PRAUC_nodepair[~np.isnan(PRAUC_nodepair)])
 
-    PRAUCName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\AUCED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+    PRAUCName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\AUCED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(PRAUCName, PRAUC_nodepair)
 
-    FrePRAUCName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\ControlFreAUCED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+    FrePRAUCName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\ControlFreAUCED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(FrePRAUCName, PRAUC_fre_controlgroup_nodepair)
 
-    NSPnum_nodepairName = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\NSPNumED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+    NSPnum_nodepairName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\NSPNumED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(NSPnum_nodepairName, NSPnum_nodepair, fmt="%i")
 
-    geodistance_between_nodepair_Name = "D:\\data\\geometric shortest path problem\\SSRGG\\Noise\\FrequencyReconstruction\\GeodistanceBetweenTwoNodesED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta,no = noise_amplitude, ST=ExternalSimutime)
+    geodistance_between_nodepair_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\GeodistanceBetweenTwoNodesED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(geodistance_between_nodepair_Name, geodistance_between_nodepair)
 
     print("Mean AUC Without Normalization:", np.mean(PRAUC_nodepair))
@@ -858,29 +855,28 @@ def PredictGeodistanceVsfrequency_withnoise(Edindex, betaindex, noiseindex, Exte
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    PredictGeodistanceVsRGG_withnoise_givennodepair_difflengthR2(0.1, 0.2, 0.2, 0.6, 0.6, int(0))
+    # STEP 1
+    # PredictGeodistanceVsRGG_withnoise_givennodepair_difflengthR2(0.1, 0.2, 0.2, 0.6, 0.6, int(0))
 
-    # PredictGeodistanceVsRGG_withnoise(0, 0, 0, 0)
+
+    # STEP 2
+    # PredictGeodistanceVsRGG_withnoiseR2(0, 0, 0, 0)
     # ED = sys.argv[1]
     # beta = sys.argv[2]
     # noise = sys.argv[3]
     # ExternalSimutime = sys.argv[4]
-    # PredictGeodistanceVsRGG_withnoise(int(ED), int(beta), int(noise), int(ExternalSimutime)
+    # PredictGeodistanceVsRGG_withnoiseR2(int(ED), int(beta), int(noise), int(ExternalSimutime))
 
     # plot_GeovsRGG_precsion_withnoise()
     # plot_GeovsRGG_recall_withnoise()
 
-    # PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength(0.1, 8*math.pi/16, 0, 9*math.pi/16, 0, int(0))
+    # STEP 3
+    # PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength_R2(0.1, 0.1, 0.2, 0.2, 0.6, int(0))
 
-    # PredictGeodistanceVsfrequency_withnoise(0,0,2,0)
+    # STEP 4
+    PredictGeodistanceVsfrequency_withnoise_R2(0,0,2,0)
     # ED = sys.argv[1]
     # beta = sys.argv[2]
     # noise = sys.argv[3]
     # ExternalSimutime = sys.argv[4]
-    # PredictGeodistanceVsfrequency_withnoise(int(ED), int(beta), int(noise), int(ExternalSimutime))
-
-
-
-
-
-
+    # PredictGeodistanceVsfrequency_withnoise_R2(int(ED), int(beta), int(noise), int(ExternalSimutime))

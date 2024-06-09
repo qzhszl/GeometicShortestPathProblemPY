@@ -118,11 +118,13 @@ def FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1, Rel
             for path in shortest_paths:
                 PNodeList.update(path)
                 count += 1
-                if count % 1000000 ==0:
-                    print(count / 1000000)
+                # if count % 1000000 ==0:
+                #     print(count / 1000000)
                 # if count > 1000000:
                 #     PNodeList = set()
                 #     break
+                if count > 10000000:
+                    break
             # print("pathlength", len(path))
             # print("pathnum",count)
         except nx.NetworkXNoPath:
