@@ -310,7 +310,7 @@ def frequency_controlgroup_PRAUC_highbeta_R2(Edindex, betaindex, ExternalSimutim
             if NodeC not in [nodei, nodej]:
                 thetaMed = Coorx[NodeC]
                 phiMed = Coory[NodeC]
-                dist,_ = dist_to_geodesic_R2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
+                dist, _ = dist_to_geodesic_R2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
                 distance_med[NodeC] = dist
 
         # Remove source and target nodes from consideration
@@ -614,9 +614,9 @@ def frequency_controlgroup_PRAUC_highbeta_R2(Edindex, betaindex, ExternalSimutim
 #     print("AveDegree:", G.number_of_edges() * 2 / G.number_of_nodes())
 #     print("ClusteringCoefficient:", nx.average_clustering(G))
 #
-#     FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\ControlGroupnetwork.txt"
+#     FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\ControlGroupnetwork.txt"
 #     nx.write_edgelist(G, FileNetworkName)
-#     FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\ControlGroupnetworkCoor.txt"
+#     FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\ControlGroupnetworkCoor.txt"
 #     with open(FileNetworkCoorName, "w") as file:
 #         for data1, data2 in zip(Coorx, Coory):
 #             file.write(f"{data1}\t{data2}\n")
@@ -658,7 +658,7 @@ def frequency_controlgroup_PRAUC_highbeta_R2(Edindex, betaindex, ExternalSimutim
 #     print("SPnum", len(AllSPlist))
 #     print("SPlength", len(AllSPlist[0]))
 #
-#     FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\ControlGroupASP.txt"
+#     FileASPName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\ControlGroupASP.txt"
 #     np.savetxt(FileASPName, AllSPlist, fmt="%i")
 #
 #     # All shortest path node
@@ -667,16 +667,16 @@ def frequency_controlgroup_PRAUC_highbeta_R2(Edindex, betaindex, ExternalSimutim
 #         AllSPNode.update(path)
 #     AllSPNode.discard(nodei)
 #     AllSPNode.discard(nodej)
-#     FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\ControlGroupASPNode.txt"
+#     FileASPNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\ControlGroupASPNode.txt"
 #     np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
 #     tic = time.time()
 #     # Nearly shortest path node
 #     NSPNode, relevance = FindNearlySPNodes(G, nodei, nodej)
 #     print("time for finding NSP", time.time() - tic)
 #     print("NSP num", len(NSPNode))
-#     FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\ControlGroupNSPNode.txt"
+#     FileNSPNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\ControlGroupNSPNode.txt"
 #     np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
-#     FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\ControlGroupRelevance.txt"
+#     FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\ControlGroupRelevance.txt"
 #     np.savetxt(FileNodeRelevanceName, relevance, fmt="%.3f")
 #
 #     # Geodesic
@@ -694,14 +694,14 @@ def frequency_controlgroup_PRAUC_highbeta_R2(Edindex, betaindex, ExternalSimutim
 #             phiMed = Coory[NodeC]
 #             dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
 #             Geodistance[NodeC] = dist
-#     FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\ControlGroupGeoDistance.txt"
+#     FileGeodistanceName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\ControlGroupGeoDistance.txt"
 #     np.savetxt(FileGeodistanceName, list(Geodistance.values()), fmt="%.8f")
 #     Geodistance = sorted(Geodistance.items(), key=lambda kv: (kv[1], kv[0]))
 #     Geodistance = Geodistance[:102]
 #     Top100closednode = [t[0] for t in Geodistance]
 #     Top100closednode = [n for n in Top100closednode if n not in [nodei, nodej]]
 #
-#     FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\ControlGroupTop100closedNode.txt"
+#     FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\ControlGroupTop100closedNode.txt"
 #     np.savetxt(FileTop100closedNodeName, Top100closednode, fmt="%i")
 #
 #     # Create label array
@@ -728,7 +728,7 @@ def frequency_controlgroup_PRAUC_highbeta_R2(Edindex, betaindex, ExternalSimutim
 #
 #     # Calculate precision-recall curve and AUC for control group
 #     node_fre = nodeNSPfrequency(N, avg, beta, rg, Coorx, Coory, nodei, nodej)
-#     FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\ControlGroupNodefre.txt"
+#     FileNodefreName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\ControlGroupNodefre.txt"
 #     np.savetxt(FileNodefreName, node_fre)
 #
 #     node_fre = np.delete(node_fre, [nodei, nodej])
@@ -748,7 +748,7 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(xA, yA, xB, yB, Ext
     :return:
     """
     # Input data parameters
-    N = 1000
+    N = 10000
     avg = 5
     beta = 4
     # random.seed(ExternalSimutime)
@@ -764,14 +764,14 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(xA, yA, xB, yB, Ext
     geo_length = distR2(xA, yA, xB, yB)
     print("Geo Length:", geo_length / math.pi)
 
-    # FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupnetworkGeolen{le}Simu{ST}beta{b}.txt".format(
-    #     le=geo_length, ST=ExternalSimutime, b=beta)
-    # nx.write_edgelist(G, FileNetworkName)
-    # FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupnetworkCoorGeolen{le}Simu{ST}beta{b}.txt".format(
-    #     le=geo_length, ST=ExternalSimutime, b=beta)
-    # with open(FileNetworkCoorName, "w") as file:
-    #     for data1, data2 in zip(Coorx, Coory):
-    #         file.write(f"{data1}\t{data2}\n")
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\ControlGroupnetworkGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    nx.write_edgelist(G, FileNetworkName)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\ControlGroupnetworkCoorGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(Coorx, Coory):
+            file.write(f"{data1}\t{data2}\n")
 
     nodei = N - 2
     nodej = N - 1
@@ -783,9 +783,9 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(xA, yA, xB, yB, Ext
     print("SPnum", len(AllSPlist))
     print("SPlength", len(AllSPlist[0]))
 
-    # FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupASPGeolen{le}Simu{ST}beta{b}.txt".format(
-    #     le=geo_length, ST=ExternalSimutime, b=beta)
-    # np.savetxt(FileASPName, AllSPlist, fmt="%i")
+    FileASPName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\ControlGroupASPGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    np.savetxt(FileASPName, AllSPlist, fmt="%i")
 
     # All shortest path node
     AllSPNode = set()
@@ -793,20 +793,20 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(xA, yA, xB, yB, Ext
         AllSPNode.update(path)
     AllSPNode.discard(nodei)
     AllSPNode.discard(nodej)
-    # FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupASPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
-    #     le=geo_length, ST=ExternalSimutime, b=beta)
-    # np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
+    FileASPNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\ControlGroupASPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
     tic = time.time()
     # Nearly shortest path node
     NSPNode, relevance = FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1)
     print("time for finding NSP", time.time() - tic)
     print("NSP num", len(NSPNode))
-    # FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
-    #     le=geo_length, ST=ExternalSimutime, b=beta)
-    # np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
-    # FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupRelevanceGeolen{le}Simu{ST}beta{b}.txt".format(
-    #     le=geo_length, ST=ExternalSimutime, b=beta)
-    # np.savetxt(FileNodeRelevanceName, relevance, fmt="%.3f")
+    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\ControlGroupNSPNodeGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
+    FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\ControlGroupRelevanceGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    np.savetxt(FileNodeRelevanceName, relevance, fmt="%.3f")
 
     # Geodesic
     thetaSource = Coorx[nodei]
@@ -823,17 +823,17 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(xA, yA, xB, yB, Ext
             phiMed = Coory[NodeC]
             dist,_ = dist_to_geodesic_R2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
             Geodistance[NodeC] = dist
-    # FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupGeoDistanceGeolen{le}Simu{ST}beta{b}.txt".format(
-    #     le=geo_length, ST=ExternalSimutime, b=beta)
-    # np.savetxt(FileGeodistanceName, list(Geodistance.values()), fmt="%.8f")
+    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\ControlGroupGeoDistanceGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    np.savetxt(FileGeodistanceName, list(Geodistance.values()), fmt="%.8f")
     Geodistance = sorted(Geodistance.items(), key=lambda kv: (kv[1], kv[0]))
     Geodistance = Geodistance[:102]
     Top100closednode = [t[0] for t in Geodistance]
     Top100closednode = [n for n in Top100closednode if n not in [nodei, nodej]]
 
-    # FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupTop100closedNodeGeolen{le}Simu{ST}beta{b}.txt".format(
-    #     le=geo_length, ST=ExternalSimutime, b=beta)
-    # np.savetxt(FileTop100closedNodeName, Top100closednode, fmt="%i")
+    FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\ControlGroupTop100closedNodeGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    np.savetxt(FileTop100closedNodeName, Top100closednode, fmt="%i")
 
     # Create label array
     Label_med = np.zeros(N)
@@ -858,147 +858,16 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(xA, yA, xB, yB, Ext
     print("PRAUC_geo", AUCWithoutNornodeij)
 
     # Calculate precision-recall curve and AUC for control group
-    node_fre = nodeNSPfrequencyR2(N, avg, beta, rg, Coorx, Coory, nodei, nodej, Linkremoveratio=0.5)
-    # FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}beta{b}.txt".format(
-    #     le=geo_length, ST=ExternalSimutime, b=beta)
-    # np.savetxt(FileNodefreName, node_fre)
+    node_fre = nodeNSPfrequencyR2(N, avg, beta, rg, Coorx, Coory, nodei, nodej, Linkremoveratio=0.1)
+    FileNodefreName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\ControlGroupNodefreGeolen{le}Simu{ST}beta{b}.txt".format(
+        le=geo_length, ST=ExternalSimutime, b=beta)
+    np.savetxt(FileNodefreName, node_fre)
 
     node_fre = np.delete(node_fre, [nodei, nodej])
     precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
     AUCfrenodeij = auc(recallsfre, precisionsfre)
     print("PRAUC_fre:", AUCfrenodeij)
 
-
-def frequency_controlgroup_PRAUC_givennodepair_diffgeolengthhighbeta(theta_A, phi_A, theta_B, phi_B, ExternalSimutime):
-    """
-        For a given node pair. Compared with the last one ,the beta is very high here
-        :param theta_A:
-        :param phi_A:
-        :param theta_B:
-        :param phi_B:
-        :param ExternalSimutime:
-        :return:
-        """
-    # Input data parameters
-    N = 10000
-    avg = 5
-    beta = 100
-    # random.seed(ExternalSimutime)
-    rg = RandomGenerator(-12)
-    for _ in range(random.randint(0, 100)):
-        rg.ran1()
-
-    # Network and coordinates
-    G, Coorx, Coory = R2SRGGwithGivenNode(N, avg, beta, rg, theta_A, phi_A, theta_B, phi_B)
-    print("LinkNum:", G.number_of_edges())
-    print("AveDegree:", G.number_of_edges() * 2 / G.number_of_nodes())
-    print("ClusteringCoefficient:", nx.average_clustering(G))
-    geo_length = distS2(theta_A, phi_A, theta_B, phi_B)
-    print("Geo Length:", geo_length / math.pi)
-
-    FileNetworkName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupnetworkGeolen{le}Simu{ST}.txt".format(
-        le=geo_length, ST=ExternalSimutime)
-    nx.write_edgelist(G, FileNetworkName)
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupnetworkCoorGeolen{le}Simu{ST}.txt".format(
-        le=geo_length, ST=ExternalSimutime)
-    with open(FileNetworkCoorName, "w") as file:
-        for data1, data2 in zip(Coorx, Coory):
-            file.write(f"{data1}\t{data2}\n")
-
-    nodei = N - 2
-    nodej = N - 1
-
-    print("Node Geo distance", distS2(Coorx[nodei], Coory[nodei], Coorx[nodej], Coory[nodej]))
-    # All shortest paths
-    AllSP = nx.all_shortest_paths(G, nodei, nodej)
-    AllSPlist = list(AllSP)
-    print("SPnum", len(AllSPlist))
-    print("SPlength", len(AllSPlist[0]))
-
-    FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupASPGeolen{le}Simu{ST}.txt".format(
-        le=geo_length, ST=ExternalSimutime)
-    np.savetxt(FileASPName, AllSPlist, fmt="%i")
-
-    # All shortest path node
-    AllSPNode = set()
-    for path in AllSPlist:
-        AllSPNode.update(path)
-    AllSPNode.discard(nodei)
-    AllSPNode.discard(nodej)
-    FileASPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupASPNodeGeolen{le}Simu{ST}.txt".format(
-        le=geo_length, ST=ExternalSimutime)
-    np.savetxt(FileASPNodeName, list(AllSPNode), fmt="%i")
-    tic = time.time()
-    # Nearly shortest path node
-    NSPNode, relevance = FindNearlySPNodes(G, nodei, nodej)
-    print("time for finding NSP", time.time() - tic)
-    print("NSP num", len(NSPNode))
-    FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupNSPNodeGeolen{le}Simu{ST}.txt".format(
-        le=geo_length, ST=ExternalSimutime)
-    np.savetxt(FileNSPNodeName, NSPNode, fmt="%i")
-    FileNodeRelevanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupRelevanceGeolen{le}Simu{ST}.txt".format(
-        le=geo_length, ST=ExternalSimutime)
-    np.savetxt(FileNodeRelevanceName, relevance, fmt="%.3f")
-
-    # Geodesic
-    thetaSource = Coorx[nodei]
-    phiSource = Coory[nodei]
-    thetaEnd = Coorx[nodej]
-    phiEnd = Coory[nodej]
-
-    Geodistance = {}
-    for NodeC in range(N):
-        if NodeC in [nodei, nodej]:
-            Geodistance[NodeC] = 0
-        else:
-            thetaMed = Coorx[NodeC]
-            phiMed = Coory[NodeC]
-            dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
-            Geodistance[NodeC] = dist
-    FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupGeoDistanceGeolen{le}Simu{ST}.txt".format(
-        le=geo_length, ST=ExternalSimutime)
-    np.savetxt(FileGeodistanceName, list(Geodistance.values()), fmt="%.8f")
-    Geodistance = sorted(Geodistance.items(), key=lambda kv: (kv[1], kv[0]))
-    Geodistance = Geodistance[:102]
-    Top100closednode = [t[0] for t in Geodistance]
-    Top100closednode = [n for n in Top100closednode if n not in [nodei, nodej]]
-
-    FileTop100closedNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupTop100closedNodeGeolen{le}Simu{ST}.txt".format(
-        le=geo_length, ST=ExternalSimutime)
-    np.savetxt(FileTop100closedNodeName, Top100closednode, fmt="%i")
-
-    # Create label array
-    Label_med = np.zeros(N)
-    Label_med[NSPNode] = 1  # True cases
-    distance_med = np.zeros(N)
-
-    # Calculate distances to geodesic
-    for NodeC in range(0, N):
-        if NodeC not in [nodei, nodej]:
-            thetaMed = Coorx[NodeC]
-            phiMed = Coory[NodeC]
-            dist = dist_to_geodesic_S2(thetaMed, phiMed, thetaSource, phiSource, thetaEnd, phiEnd)
-            distance_med[NodeC] = dist
-
-    # Remove source and target nodes from consideration
-    Label_med = np.delete(Label_med, [nodei, nodej])
-    distance_med = np.delete(distance_med, [nodei, nodej])
-    distance_score = [1 / x for x in distance_med]
-    # Calculate precision-recall curve and AUC
-    precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
-    AUCWithoutNornodeij = auc(recalls, precisions)
-    print("PRAUC", AUCWithoutNornodeij)
-
-    # Calculate precision-recall curve and AUC for control group
-    node_fre = nodeNSPfrequency(N, avg, beta, rg, Coorx, Coory, nodei, nodej)
-    FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\HighbetaControlGroupNodefreGeolen{le}Simu{ST}.txt".format(
-        le=geo_length, ST=ExternalSimutime)
-    np.savetxt(FileNodefreName, node_fre)
-
-    node_fre = np.delete(node_fre, [nodei, nodej])
-    precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
-    AUCfrenodeij = auc(recallsfre, precisionsfre)
-    print(AUCfrenodeij)
 
 def PlotPRAUCFrequency():
     """
@@ -1135,88 +1004,96 @@ def PlotPRAUCFrequency2():
         format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
 
-def plot_AUPRC_geo_vs_fre_diff_length_geo():
-   # Data Source:"D:\data\geometric shortest path problem\SSRGG\PRAUC\ControlGroup\Geolength\100realization"
-   #  x: Geo length : (8*math.pi/16, 9*math.pi/16), (4*math.pi/8, 5*math.pi/8), (2*math.pi/4, 3*math.pi/4), (3*math.pi/4, math.pi/4)
-   #  y: ave AUPRC (errorbar) of predicted by geo distance from the geodesic and the frequency
-   #  return: a figure
-
-    Geolength_list = [(8*math.pi/16, 9*math.pi/16), (4*math.pi/8, 5*math.pi/8), (2*math.pi/4, 3*math.pi/4), (3*math.pi/4, math.pi/4)]
-    N=10000
-    x=[1,2,3,4]
-    AUPRC_geodis = []
-    AUPRC_fre = []
-    std_AUPRC_geodis = []
-    std_AUPRC_fre = []
-
-    for Nodepairindex in range(4):
-        AUPRC_geodis_foronegeo = []
-        AUPRC_fre_foronegeo = []
-        (theta_A, theta_B) = Geolength_list[Nodepairindex]
-        geo_length = distS2(theta_A, 0, theta_B, 0)
-        print("Geo Length:", geo_length / math.pi)
-        for ExternalSimutime in range(50):
-            if (Nodepairindex, ExternalSimutime) not in [(0, 2),(2,7),(2,25),(2,28),(3,38),(3,39)]:
-                nodei = N-2
-                nodej = N-1
-
-                FileNSPNodeName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\100realization\\ControlGroupNSPNodeGeolen{le}Simu{ST}.txt".format(
-                    le=geo_length, ST=ExternalSimutime)
-                NSPNode = np.loadtxt(FileNSPNodeName,dtype=int)
-                Label_med = np.zeros(N)
-                Label_med[NSPNode] = 1  # True cases
-
-                # Calculate distances to geodesic
-                FileGeodistanceName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\100realization\\ControlGroupGeoDistanceGeolen{le}Simu{ST}.txt".format(
-                    le=geo_length, ST=ExternalSimutime)
-                distance_med = np.loadtxt(FileGeodistanceName)
-
-                # Remove source and target nodes from consideration
-                Label_med = np.delete(Label_med, [nodei, nodej])
-                distance_med = np.delete(distance_med, [nodei, nodej])
-                distance_score = [1 / x for x in distance_med]
-                # Calculate precision-recall curve and AUC
-                precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
-                AUCWithoutNornodeij = auc(recalls, precisions)
-                AUPRC_geodis_foronegeo.append(AUCWithoutNornodeij)
-
-
-                # load precision-recall curve and AUC for control group
-                FileNodefreName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\100realization\\ControlGroupNodefreGeolen{le}Simu{ST}.txt".format(
-                    le=geo_length, ST=ExternalSimutime)
-                node_fre = np.loadtxt(FileNodefreName)
-                node_fre = np.delete(node_fre, [nodei, nodej])
-                precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
-                AUCfrenodeij = auc(recallsfre, precisionsfre)
-                AUPRC_fre_foronegeo.append(AUCfrenodeij)
-        AUPRC_geodis.append(np.mean(AUPRC_geodis_foronegeo))
-        AUPRC_fre.append(np.mean(AUPRC_fre_foronegeo))
-        std_AUPRC_geodis.append(np.std(AUPRC_geodis_foronegeo))
-        std_AUPRC_fre.append(np.std(AUPRC_fre_foronegeo))
-
-
-    x_labels = ['pi/16', 'pi/8', 'pi/4', 'pi/2']
-
-    # 绘制带有误差条的图
-    plt.errorbar(x, AUPRC_geodis, yerr=std_AUPRC_geodis, fmt='o', capsize=5, capthick=1, ecolor=(0, 0.4470, 0.7410), label='By GeoDistance')
-    plt.errorbar(x, AUPRC_fre, yerr=std_AUPRC_fre, fmt='o', capsize=5, capthick=1, ecolor=(0.8500, 0.3250, 0.0980),
-                 label='By Frequency')
-    # 设置x轴标签
-    plt.xticks(x, x_labels)
-
-    # 添加标题和标签
-
-    plt.xlabel('Length of the geodesic')
-    plt.ylabel('AUPRC')
-    plt.legend()
-
-    plt.savefig(
-        "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\ControlGroup\\Geolength\\100realization\\AUPRC_geo_vs_fre_diff_length_geo.pdf",
-        format='pdf', bbox_inches='tight', dpi=600)
-    plt.show()
+# def plot_AUPRC_geo_vs_fre_diff_length_geo():
+#    # Data Source:"D:\data\geometric shortest path problem\SSRGG\PRAUC\ControlGroup\Geolength\100realization"
+#    #  x: Geo length : (8*math.pi/16, 9*math.pi/16), (4*math.pi/8, 5*math.pi/8), (2*math.pi/4, 3*math.pi/4), (3*math.pi/4, math.pi/4)
+#    #  y: ave AUPRC (errorbar) of predicted by geo distance from the geodesic and the frequency
+#    #  return: a figure
+#
+#     Geolength_list = [(8*math.pi/16, 9*math.pi/16), (4*math.pi/8, 5*math.pi/8), (2*math.pi/4, 3*math.pi/4), (3*math.pi/4, math.pi/4)]
+#     N=10000
+#     x=[1,2,3,4]
+#     AUPRC_geodis = []
+#     AUPRC_fre = []
+#     std_AUPRC_geodis = []
+#     std_AUPRC_fre = []
+#
+#     for Nodepairindex in range(4):
+#         AUPRC_geodis_foronegeo = []
+#         AUPRC_fre_foronegeo = []
+#         (theta_A, theta_B) = Geolength_list[Nodepairindex]
+#         geo_length = distS2(theta_A, 0, theta_B, 0)
+#         print("Geo Length:", geo_length / math.pi)
+#         for ExternalSimutime in range(50):
+#             if (Nodepairindex, ExternalSimutime) not in [(0, 2),(2,7),(2,25),(2,28),(3,38),(3,39)]:
+#                 nodei = N-2
+#                 nodej = N-1
+#
+#                 FileNSPNodeName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\100realization\\ControlGroupNSPNodeGeolen{le}Simu{ST}.txt".format(
+#                     le=geo_length, ST=ExternalSimutime)
+#                 NSPNode = np.loadtxt(FileNSPNodeName,dtype=int)
+#                 Label_med = np.zeros(N)
+#                 Label_med[NSPNode] = 1  # True cases
+#
+#                 # Calculate distances to geodesic
+#                 FileGeodistanceName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\100realization\\ControlGroupGeoDistanceGeolen{le}Simu{ST}.txt".format(
+#                     le=geo_length, ST=ExternalSimutime)
+#                 distance_med = np.loadtxt(FileGeodistanceName)
+#
+#                 # Remove source and target nodes from consideration
+#                 Label_med = np.delete(Label_med, [nodei, nodej])
+#                 distance_med = np.delete(distance_med, [nodei, nodej])
+#                 distance_score = [1 / x for x in distance_med]
+#                 # Calculate precision-recall curve and AUC
+#                 precisions, recalls, _ = precision_recall_curve(Label_med, distance_score)
+#                 AUCWithoutNornodeij = auc(recalls, precisions)
+#                 AUPRC_geodis_foronegeo.append(AUCWithoutNornodeij)
+#
+#
+#                 # load precision-recall curve and AUC for control group
+#                 FileNodefreName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\100realization\\ControlGroupNodefreGeolen{le}Simu{ST}.txt".format(
+#                     le=geo_length, ST=ExternalSimutime)
+#                 node_fre = np.loadtxt(FileNodefreName)
+#                 node_fre = np.delete(node_fre, [nodei, nodej])
+#                 precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
+#                 AUCfrenodeij = auc(recallsfre, precisionsfre)
+#                 AUPRC_fre_foronegeo.append(AUCfrenodeij)
+#         AUPRC_geodis.append(np.mean(AUPRC_geodis_foronegeo))
+#         AUPRC_fre.append(np.mean(AUPRC_fre_foronegeo))
+#         std_AUPRC_geodis.append(np.std(AUPRC_geodis_foronegeo))
+#         std_AUPRC_fre.append(np.std(AUPRC_fre_foronegeo))
+#
+#
+#     x_labels = ['pi/16', 'pi/8', 'pi/4', 'pi/2']
+#
+#     # 绘制带有误差条的图
+#     plt.errorbar(x, AUPRC_geodis, yerr=std_AUPRC_geodis, fmt='o', capsize=5, capthick=1, ecolor=(0, 0.4470, 0.7410), label='By GeoDistance')
+#     plt.errorbar(x, AUPRC_fre, yerr=std_AUPRC_fre, fmt='o', capsize=5, capthick=1, ecolor=(0.8500, 0.3250, 0.0980),
+#                  label='By Frequency')
+#     # 设置x轴标签
+#     plt.xticks(x, x_labels)
+#
+#     # 添加标题和标签
+#
+#     plt.xlabel('Length of the geodesic')
+#     plt.ylabel('AUPRC')
+#     plt.legend()
+#
+#     plt.savefig(
+#         "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Geolength\\100realization\\AUPRC_geo_vs_fre_diff_length_geo.pdf",
+#         format='pdf', bbox_inches='tight', dpi=600)
+#     plt.show()
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # STEP 1
-    frequency_controlgroup_PRAUC_highbeta(0, 0, 0)
+    frequency_controlgroup_PRAUC_givennodepair_diffgeolength(0.2, 0.2, 0.6, 0.6, 0)
+    # # STEP 2
+    # frequency_controlgroup_PRAUC_highbeta_R2(0, 0, 0)
+    #
+    # # STEP3
+    # ED = sys.argv[1]
+    # beta = sys.argv[2]
+    # ExternalSimutime = sys.argv[3]
+    # frequency_controlgroup_PRAUC_highbeta_R2(int(ED), int(beta), int(ExternalSimutime))
