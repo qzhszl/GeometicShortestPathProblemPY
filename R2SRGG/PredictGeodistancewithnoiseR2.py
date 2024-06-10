@@ -34,7 +34,7 @@ from PredictGeodistanceVsRGGR2 import NSPnodes_inRGG_with_coordinatesR2
 from R2SRGG import R2SRGG_withgivennodepair, distR2, dist_to_geodesic_R2, R2SRGG
 from FrequencyControlGroupR2 import nodeNSPfrequencyR2
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
-from main import find_nonzero_indices
+from main import find_nonzero_indices, find_nonnan_indices
 
 
 def add_uniform_random_noise_to_coordinates_R2(lst, noise_amplitude):
@@ -851,6 +851,86 @@ def PredictGeodistanceVsfrequency_withnoise_R2(Edindex, betaindex, noiseindex, E
     print("Mean AUC Without Normalization:", np.mean(PRAUC_nodepair))
     print("Mean AUC CONTROL:", np.mean(PRAUC_fre_controlgroup_nodepair))
     # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
+
+def plot_frequency_controlgroup_PRAUC_withnoise():
+    PRAUC_matrix = np.zeros((2, 2))
+    PRAUC_std_matrix = np.zeros((2, 2))
+    PRAUC_fre_matrix = np.zeros((2, 2))
+    PRAUC_fre_std_matrix = np.zeros((2, 2))
+    noise_amplitude = 0.5
+
+
+    for EDindex in [0, 1]:
+        ED_list = [5, 20]  # Expected degrees
+        ED = ED_list[EDindex]
+        print("ED:", ED)
+
+        for betaindex in [0, 1]:
+            beta_list = [4, 100]
+            beta = beta_list[betaindex]
+            print(beta)
+            PRAUC_list = []
+            PRAUC_fre_list = []
+            for ExternalSimutime in range(5):
+                if (ED==5 and beta == 100 and ExternalSimutime in [1,2,3,4])or (ED==20 and beta == 100 and ExternalSimutime in [0,1,2,4]):
+                    pass
+                else:
+                    PRAUCName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\AUCED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                    PRAUC_list_10times = np.loadtxt(PRAUCName)
+                    PRAUC_list.extend(PRAUC_list_10times)
+
+                    FrePRAUCName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\ControlFreAUCED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                    PRAUC_fre_list_10times = np.loadtxt(FrePRAUCName)
+                    PRAUC_fre_list.extend(PRAUC_fre_list_10times)
+
+            nonzero_indices_geo = find_nonnan_indices(PRAUC_list)
+            PRAUC_list = [PRAUC_list[x] for x in nonzero_indices_geo]
+
+            mean_PRAUC = np.mean(PRAUC_list)
+            PRAUC_matrix[EDindex][betaindex] = mean_PRAUC
+            PRAUC_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_PRAUC)
+
+            nonzero_indices_geo = find_nonnan_indices(PRAUC_fre_list)
+            PRAUC_fre_list = [PRAUC_fre_list[x] for x in nonzero_indices_geo]
+            mean_fre_PRAUC = np.mean(PRAUC_fre_list)
+            PRAUC_fre_matrix[EDindex][betaindex] = mean_fre_PRAUC
+            PRAUC_fre_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_fre_PRAUC)
+
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_matrix,
+                      index=[5,20],  # DataFrame的行标签设置为大写字母
+                      columns=[4,100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0,vmax=1, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'AUPRC'})
+    plt.title("Distance of node from the geodesic")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    precision_Geodis_fig_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\AUPRC_geo_Noise{no}.pdf".format(
+         no=noise_amplitude)
+    plt.savefig(precision_Geodis_fig_Name,
+                format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_fre_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4,100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=1, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'AUPRC'})
+    plt.title("Frequency of reconstruction")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    precision_Geodis_fig_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\Noise\\AUPRC_fre_Noise{no}.pdf".format(
+        no=noise_amplitude)
+    plt.savefig(precision_Geodis_fig_Name,
+                format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
 
 
 # Press the green button in the gutter to run the script.

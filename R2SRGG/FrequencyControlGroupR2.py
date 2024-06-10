@@ -21,6 +21,9 @@ import sys
 import seaborn as sns
 import pandas as pd
 
+from main import find_nonnan_indices
+
+
 # from main import find_nonnan_indices
 
 
@@ -867,6 +870,86 @@ def frequency_controlgroup_PRAUC_givennodepair_diffgeolength(xA, yA, xB, yB, Ext
     precisionsfre, recallsfre, _ = precision_recall_curve(Label_med, node_fre)
     AUCfrenodeij = auc(recallsfre, precisionsfre)
     print("PRAUC_fre:", AUCfrenodeij)
+
+
+def plot_frequency_controlgroup_PRAUC_R2():
+    PRAUC_matrix = np.zeros((2, 2))
+    PRAUC_std_matrix = np.zeros((2, 2))
+    PRAUC_fre_matrix = np.zeros((2, 2))
+    PRAUC_fre_std_matrix = np.zeros((2, 2))
+    noise_amplitude = 0.5
+
+
+    for EDindex in [0, 1]:
+        ED_list = [5, 20]  # Expected degrees
+        ED = ED_list[EDindex]
+        print("ED:", ED)
+
+        for betaindex in [0, 1]:
+            beta_list = [4, 100]
+            beta = beta_list[betaindex]
+            print(beta)
+            PRAUC_list = []
+            PRAUC_fre_list = []
+            for ExternalSimutime in range(5):
+                if (ED==5 and beta == 100 and ExternalSimutime in [1,2,3,4])or (ED==20 and beta == 100 and ExternalSimutime in [0,1,2,4]):
+                    pass
+                else:
+                    PRAUCName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\AUCED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                    PRAUC_list_10times = np.loadtxt(PRAUCName)
+                    PRAUC_list.extend(PRAUC_list_10times)
+
+                    FrePRAUCName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\ControlFreAUCED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                    PRAUC_fre_list_10times = np.loadtxt(FrePRAUCName)
+                    PRAUC_fre_list.extend(PRAUC_fre_list_10times)
+
+            nonzero_indices_geo = find_nonnan_indices(PRAUC_list)
+            PRAUC_list = [PRAUC_list[x] for x in nonzero_indices_geo]
+
+            mean_PRAUC = np.mean(PRAUC_list)
+            PRAUC_matrix[EDindex][betaindex] = mean_PRAUC
+            PRAUC_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_PRAUC)
+
+            nonzero_indices_geo = find_nonnan_indices(PRAUC_fre_list)
+            PRAUC_fre_list = [PRAUC_fre_list[x] for x in nonzero_indices_geo]
+            mean_fre_PRAUC = np.mean(PRAUC_fre_list)
+            PRAUC_fre_matrix[EDindex][betaindex] = mean_fre_PRAUC
+            PRAUC_fre_std_matrix[EDindex][betaindex] = np.std(PRAUC_list)
+            print(mean_fre_PRAUC)
+
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_matrix,
+                      index=[5,20],  # DataFrame的行标签设置为大写字母
+                      columns=[4,100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0,vmax=1, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'AUPRC'})
+    plt.title("Distance of node from the geodesic")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    precision_Geodis_fig_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\AUPRC_geo_Noise{no}.pdf".format(
+         no=noise_amplitude)
+    plt.savefig(precision_Geodis_fig_Name,
+                format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_fre_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4,100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=1, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'AUPRC'})
+    plt.title("Frequency of reconstruction")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    precision_Geodis_fig_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\FrequencyReconstruction\\AUPRC_fre_Noise{no}.pdf".format(
+        no=noise_amplitude)
+    plt.savefig(precision_Geodis_fig_Name,
+                format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
 
 
 def PlotPRAUCFrequency():
