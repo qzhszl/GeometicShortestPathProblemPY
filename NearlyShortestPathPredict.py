@@ -123,7 +123,7 @@ def FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1, Rel
                 # if count > 1000000:
                 #     PNodeList = set()
                 #     break
-                if count > 10000000:
+                if count > 1000000:
                     break
             # print("pathlength", len(path))
             # print("pathnum",count)

@@ -389,7 +389,7 @@ def plot_GeovsRGG_precsion():
     plt.xlabel("beta")
     plt.ylabel("average degree")
     plt.savefig(
-        "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\GeoPrecisionHeatmapNSP0_5LinkRemove.pdf",
+        "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\GeoPrecisionHeatmapNSP0_1LinkRemove.pdf",
         format='pdf', bbox_inches='tight', dpi=600)
     plt.close()
 
@@ -403,7 +403,7 @@ def plot_GeovsRGG_precsion():
     plt.xlabel("beta")
     plt.ylabel("average degree")
     plt.savefig(
-        "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\RGGPrecisionHeatmapNSP0_5LinkRemove.pdf",
+        "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\RGGPrecisionHeatmapNSP0_1LinkRemove.pdf",
         format='pdf', bbox_inches='tight', dpi=600)
     plt.close()
 
@@ -468,7 +468,7 @@ def plot_GeovsRGG_recall():
     plt.xlabel("beta")
     plt.ylabel("average degree")
     plt.savefig(
-        "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\GeoRecallHeatmapNSP0_5LinkRemove.pdf",
+        "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\GeoRecallHeatmapNSP0_1LinkRemove.pdf",
         format='pdf', bbox_inches='tight', dpi=600)
     plt.close()
 
@@ -482,7 +482,7 @@ def plot_GeovsRGG_recall():
     plt.xlabel("beta")
     plt.ylabel("average degree")
     plt.savefig(
-        "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\RGGRecallHeatmapNSP0_5LinkRemove.pdf",
+        "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\CompareRGG\\RGGRecallHeatmapNSP0_1LinkRemove.pdf",
         format='pdf', bbox_inches='tight', dpi=600)
     plt.close()
 
@@ -500,4 +500,9 @@ if __name__ == '__main__':
     PredictGeodistanceVsRGGR2(0, 0, 0)
 
     # STEP3
+    ED = sys.argv[1]
+    beta = sys.argv[2]
+    ExternalSimutime = sys.argv[3]
+    PredictGeodistanceVsRGGR2(int(ED), int(beta), int(ExternalSimutime))
+
 

@@ -871,10 +871,10 @@ if __name__ == '__main__':
     # plot_GeovsRGG_recall_withnoise()
 
     # STEP 3
-    # PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength_R2(0.1, 0.1, 0.2, 0.2, 0.6, int(0))
+    PredictGeodistanceVsfrequency_withnoise_givennodepair_difflength_R2(0.01, 0.1, 0.2, 0.2, 0.6, int(0))
 
     # STEP 4
-    PredictGeodistanceVsfrequency_withnoise_R2(0,0,2,0)
+    # PredictGeodistanceVsfrequency_withnoise_R2(0,0,2,0)
     # ED = sys.argv[1]
     # beta = sys.argv[2]
     # noise = sys.argv[3]
