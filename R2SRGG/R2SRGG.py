@@ -231,6 +231,11 @@ def loadSRGGandaddnode(N, filepath):
     return G
 
 
+def generate_r2SRGG_withdiffinput():
+
+
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     rg = RandomGenerator(-12)  # Seed initialization
