@@ -497,7 +497,7 @@ if __name__ == '__main__':
     # PredictGeodistanceVsRGG_givennodepair_difflengthR2(x_A, y_A, x_B, y_B, ExternalSimutime)
 
     # STEP2
-    PredictGeodistanceVsRGGR2(0, 0, 0)
+    # PredictGeodistanceVsRGGR2(0, 0, 0)
 
     # STEP3
     ED = sys.argv[1]
