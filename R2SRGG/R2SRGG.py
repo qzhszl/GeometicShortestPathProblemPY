@@ -8,6 +8,7 @@ Soft random geometric graph on 2-d Euclidean space
 import math
 import random
 import networkx as nx
+
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 import numpy as np
 import matplotlib.pyplot as plt
@@ -231,14 +232,11 @@ def loadSRGGandaddnode(N, filepath):
     return G
 
 
-def generate_r2SRGG_withdiffinput():
-
-
-
-
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    rg = RandomGenerator(-12)  # Seed initialization
-    # for _ in range(random.randint(0, 100)):
-    #     rg.ran1()
-    R2SRGG(100, 5, 3.5, rg)
+    rg = RandomGenerator(-12)
+    R2SRGG(110,5,4,rg)
+
+
+
+
