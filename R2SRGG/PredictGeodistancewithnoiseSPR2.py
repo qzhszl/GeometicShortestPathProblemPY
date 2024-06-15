@@ -932,6 +932,7 @@ def plot_frequency_controlgroup_PRAUC_withnoise():
     plt.close()
 
 def generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude):
+    # generate 100 SRGG FOR EACH ED, beta and the amplitude of node
     N = 10000
     ED_list = [5, 20]  # Expected degrees
     ED = ED_list[Edindex]
