@@ -90,6 +90,7 @@ def all_shortest_path_node(G, nodei, nodej):
         #     break
     PNodeList.discard(nodei)
     PNodeList.discard(nodej)
+    PNodeList = list(PNodeList)
     return PNodeList
 
 def find_top_n_values(arr, N):

@@ -39,15 +39,17 @@ def NSPnodes_inRGG_with_coordinatesR2(N, avg, rg, CoorX, CoorY, nodei, nodej):
     NSPNodeList, _ = FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1)
     return NSPNodeList
 
-def SPnodes_inRGG_with_coordinatesR2(N, avg, rg, CoorX, CoorY, nodei, nodej):
+def SPnodes_inRGG_with_coordinatesR2(N, avg, radius, rg, CoorX, CoorY, nodei, nodej):
     """
     Given nodes(coordinates) of the SRGG.
     Generate a RGG with the given coordinates
     :return: Nearly SHORTEST PATH nodes in the corresponding RGG
     """
-    r = degree_vs_radius(N, avg)
-    G, _, _ = RandomGeometricGraph(N, avg, rg, radius=r, Coorx=CoorX, Coory=CoorY)
-    SPNodeList = all_shortest_path_node(G, nodei, nodej)
+    G, _, _ = RandomGeometricGraph(N, avg, rg, radius=radius, Coorx=CoorX, Coory=CoorY)
+    if  nx.has_path(G, nodei, nodej):
+        SPNodeList = all_shortest_path_node(G, nodei, nodej)
+    else:
+        SPNodeList = []
     return SPNodeList
 
 
@@ -512,9 +514,25 @@ if __name__ == '__main__':
     # PredictGeodistanceVsRGGR2(0, 0, 0)
 
     # STEP3
-    ED = sys.argv[1]
-    beta = sys.argv[2]
-    ExternalSimutime = sys.argv[3]
-    PredictGeodistanceVsRGGR2(int(ED), int(beta), int(ExternalSimutime))
+    # ED = sys.argv[1]
+    # beta = sys.argv[2]
+    # ExternalSimutime = sys.argv[3]
+    # PredictGeodistanceVsRGGR2(int(ED), int(beta), int(ExternalSimutime))
+
+
+    # 创建一个无向图
+    G = nx.Graph()
+
+    # 添加边
+    edges = [('A', 'B'), ('B', 'D'), ('A', 'C'), ('C', 'D'), ('D', 'E')]
+    G.add_edges_from(edges)
+
+    # 判断两点是否连通
+    start_node = 'A'
+    end_node = 'E'
+    is_connected = nx.has_path(G, start_node, end_node)
+
+    print(f"Is there a path between {start_node} and {end_node}? {is_connected}")
+
 
 

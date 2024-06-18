@@ -38,6 +38,7 @@ def degree_vs_radius(N,avg):
         print("current <k>:", real_degree)
         if abs(avg - real_degree) < 0.1:
             flag = True
+            print("current <k>:", real_degree)
             print("Optimal radius:", radius)
         elif real_degree - avg > 0:
             radiusmax = radius

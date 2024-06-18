@@ -32,7 +32,8 @@ from sklearn.metrics import precision_recall_curve, auc, precision_score, recall
 from PredictGeodistanceVsRGGR2 import SPnodes_inRGG_with_coordinatesR2
 from R2SRGG import R2SRGG_withgivennodepair, distR2, dist_to_geodesic_R2, R2SRGG, loadSRGGandaddnode
 from PredictGeodistancewithnoiseR2 import add_uniform_random_noise_to_coordinates_R2
-from FrequencyControlGroupR2 import nodeSPfrequency_loaddata_R2
+from FrequencyControlGroupR2 import nodeSPfrequency_loaddata_R2, nodeSPfrequency_loaddata_R2_clu
+from degree_Vs_radius_RGG import degree_vs_radius
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import find_nonzero_indices, find_nonnan_indices, all_shortest_path_node, find_top_n_values
 
@@ -42,9 +43,10 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2(Edindex, betai
     :param Edindex: average degree
     :param betaindex: parameter to control the clustering coefficient
     :return: PRAUC control and test simu for diff ED and beta
-    Only four data point, beta can reach 100
+    4 combination of ED and beta
+    ED = 5 and 20 while beta = 4 and 100
     """
-    N = 10000
+    N = 100
     ED_list = [5, 20]  # Expected degrees
     ED = ED_list[Edindex]
     print("ED:", ED)
@@ -78,6 +80,7 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2(Edindex, betai
 
     real_avg = 2*nx.number_of_edges(G)/nx.number_of_nodes(G)
     print("real ED:", real_avg)
+    realradius = degree_vs_radius(N, real_avg)
 
     # load coordinates with noise
     Coorx = []
@@ -154,9 +157,9 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2(Edindex, betai
                 Geodistance[NodeC] = dist
 
         # Generate an RGG with the coordinates and predict it
-        SPNodeList_RGG = SPnodes_inRGG_with_coordinatesR2(N, real_avg, rg, Coorx, Coory, nodei, nodej)
-        toc2 = time.time() - toc
-        print("RGG generate time:", toc2)
+        SPNodeList_RGG = SPnodes_inRGG_with_coordinatesR2(N, real_avg, realradius,rg, Coorx, Coory, nodei, nodej)
+        # toc2 = time.time() - toc
+        # print("RGG generate time:", toc2)
 
         PredictNSPNodeList_RGG = np.zeros(N)
         PredictNSPNodeList_RGG[SPNodeList_RGG] = 1  # True cases
@@ -186,7 +189,7 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2(Edindex, betai
 
         # Predict sp nodes using reconstruction of SRGG
         node_fre = nodeSPfrequency_loaddata_R2(N, ED, beta, noise_amplitude, nodei, nodej)
-        SPnode_predictedbySRGG = find_top_n_values(node_fre, Predicted_truecase_num)
+        _, SPnode_predictedbySRGG = find_top_n_values(node_fre, Predicted_truecase_num)
         SPNodeList_SRGG = np.zeros(N)
         SPNodeList_SRGG[SPnode_predictedbySRGG] = 1  # True cases
         precision_SRGG = precision_score(Label_med, SPNodeList_SRGG)
@@ -236,14 +239,18 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2(Edindex, betai
 
     print("Mean Pre RGG:", np.mean(Precision_RGG_nodepair))
     print("Mean Recall RGG:", np.mean(Recall_RGG_nodepair))
+    print("Mean Pre SRGG:", np.mean(Precision_SRGG_nodepair))
+    print("Mean Recall SRGG:", np.mean(Recall_SRGG_nodepair))
     print("Mean Pre Geodistance:", np.mean(Precision_Geodis_nodepair))
     print("Mean Recall Geodistance:", np.mean(Recall_Geodis_nodepair))
+
     # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
+
 
 
 def generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude):
     # generate 100 SRGG FOR EACH ED, beta and the amplitude of node
-    N = 10000
+    N = 100
     ED_list = [5, 20]  # Expected degrees
     ED = ED_list[Edindex]
     print("ED:", ED)
@@ -279,9 +286,10 @@ def generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude):
             file.write(f"{data1}\t{data2}\n")
 
     for ExternalSimutime in range(100):
+        H, Coorx1, Coory1 = R2SRGG(N, ED, beta, rg, Coorx, Coory)
         FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
             EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-        nx.write_edgelist(G, FileNetworkName)
+        nx.write_edgelist(H, FileNetworkName)
 
 
 
