@@ -13,16 +13,17 @@ import numpy as np
 import networkx as nx
 import random
 import math
-import matplotlib.pyplot as plt
-import seaborn as sns
+# import matplotlib.pyplot as plt
+# import seaborn as sns
 import pandas as pd
 
 from sklearn.metrics import precision_recall_curve, auc, precision_score, recall_score
 
 from NearlyShortestPathPredict import FindNearlySPNodesRemoveSpecficLink
 from R2RGG import RandomGeometricGraph
-from R2SRGG import R2SRGG_withgivennodepair, distR2, dist_to_geodesic_R2, R2SRGG
-from degree_Vs_radius_RGG import read_radius
+from R2SRGG import R2SRGG_withgivennodepair, distR2, dist_to_geodesic_R2, R2SRGG, loadSRGGandaddnode
+from main import all_shortest_path_node
+from degree_Vs_radius_RGG import read_radius, degree_vs_radius
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import find_nonzero_indices
 
@@ -37,6 +38,17 @@ def NSPnodes_inRGG_with_coordinatesR2(N, avg, rg, CoorX, CoorY, nodei, nodej):
     G, _, _ = RandomGeometricGraph(N, avg, rg, radius=r, Coorx=CoorX, Coory=CoorY)
     NSPNodeList, _ = FindNearlySPNodesRemoveSpecficLink(G, nodei, nodej, Linkremoveratio=0.1)
     return NSPNodeList
+
+def SPnodes_inRGG_with_coordinatesR2(N, avg, rg, CoorX, CoorY, nodei, nodej):
+    """
+    Given nodes(coordinates) of the SRGG.
+    Generate a RGG with the given coordinates
+    :return: Nearly SHORTEST PATH nodes in the corresponding RGG
+    """
+    r = degree_vs_radius(N, avg)
+    G, _, _ = RandomGeometricGraph(N, avg, rg, radius=r, Coorx=CoorX, Coory=CoorY)
+    SPNodeList = all_shortest_path_node(G, nodei, nodej)
+    return SPNodeList
 
 
 def PredictGeodistanceVsRGG_givennodepair_difflengthR2(x_A, y_A, x_B, y_B, ExternalSimutime):

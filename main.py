@@ -5,7 +5,7 @@ import random
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import networkx as nx
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import SphericalSoftRandomGeomtricGraph
 
@@ -75,6 +75,34 @@ def find_nonnan_indices(lst):
         if not np.isnan(element):
             nonzero_indices.append(index)
     return nonzero_indices
+
+def all_shortest_path_node(G, nodei, nodej):
+    """
+        :return: All shortest path nodes except for nodei and nodej
+    """
+    shortest_paths = nx.all_shortest_paths(G, nodei, nodej)
+    PNodeList = set()  # Use a set to keep unique nodes
+    count = 0
+    for path in shortest_paths:
+        PNodeList.update(path)
+        # count += 1
+        # if count > 1000000:
+        #     break
+    PNodeList.discard(nodei)
+    PNodeList.discard(nodej)
+    return PNodeList
+
+def find_top_n_values(arr, N):
+    # 找到最大的N个数的索引（在数组中的索引）
+    indices = np.argpartition(arr, -N)[-N:]
+    # 根据这些索引找到对应的值
+    top_values = arr[indices]
+    # 对这些值按降序排序
+    sorted_indices = indices[np.argsort(-top_values)]
+    # 按顺序返回最大的N个数的值和对应的索引
+    top_values_sorted = arr[sorted_indices]
+
+    return top_values_sorted, sorted_indices
 
 
 # Press the green button in the gutter to run the script.
