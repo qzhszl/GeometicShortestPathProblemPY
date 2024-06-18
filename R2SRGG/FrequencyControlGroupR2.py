@@ -9,16 +9,16 @@ import math
 import random
 import time
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 
 from NearlyShortestPathPredict import FindNearlySPNodes, FindNearlySPNodesRemoveSpecficLink
-from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, R2SRGG_withgivennodepair
+from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, R2SRGG_withgivennodepair, loadSRGGandaddnode
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from sklearn.metrics import precision_recall_curve, auc
 import sys
-import seaborn as sns
+# import seaborn as sns
 import pandas as pd
 
 from main import find_nonnan_indices
@@ -71,6 +71,47 @@ def nodeSPfrequency_R2(N, avg, beta, rg, Coorx, Coory, nodei, nodej):
                 count += 1
                 if count > 1000000:
                     break
+            # print("pathlength", len(path))
+            # print("pathnum",count)
+        except nx.NetworkXNoPath:
+            PNodeList = set()  # If there's no path, continue with an empty set
+        # time31 = time.time()
+        # print("timeallsp0",time31-time3)
+        # Remove the starting and ending nodes from the list
+        PNodeList.discard(nodei)
+        PNodeList.discard(nodej)
+
+        for node in PNodeList:
+            NodeFrequency[node] += 1
+        print("time",time.time() - tic)
+    return NodeFrequency
+
+
+def nodeSPfrequency_loaddata_R2(N, ED, beta, noise_amplitude, nodei, nodej, preadict_actual_num):
+    """
+        Given nodes of the SRGG.
+        For i = 1 to 100 independent realizations:
+    	Reconstruct G_i using original connection probabilities. Find shortest path nodes SPi.
+        Characterize each node by the frequency it belong to the shortest path.
+        Use this frequency to computer AUPRC.
+        :return: Frequency to predict NSP
+        """
+    NodeFrequency = np.zeros(N)  # Initialize node frequency
+    for i in range(100):
+        # print("fresimu time:", i)
+        tic = time.time()
+        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+            EDn=ED, betan=beta, no=noise_amplitude, ST=i)
+        H = loadSRGGandaddnode(N, FileNetworkName)
+        try:
+            shortest_paths = nx.all_shortest_paths(H, nodei, nodej)
+            PNodeList = set()  # Use a set to keep unique nodes
+            count = 0
+            for path in shortest_paths:
+                PNodeList.update(path)
+                count += 1
+                # if count > 10000000:
+                #     break
             # print("pathlength", len(path))
             # print("pathnum",count)
         except nx.NetworkXNoPath:
@@ -1171,7 +1212,7 @@ def PlotPRAUCFrequency2():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # STEP 1
-    frequency_controlgroup_PRAUC_givennodepair_diffgeolength(0.2, 0.2, 0.6, 0.6, 0)
+    # frequency_controlgroup_PRAUC_givennodepair_diffgeolength(0.2, 0.2, 0.6, 0.6, 0)
     # # STEP 2
     # frequency_controlgroup_PRAUC_highbeta_R2(0, 0, 0)
     #
@@ -1180,3 +1221,13 @@ if __name__ == '__main__':
     # beta = sys.argv[2]
     # ExternalSimutime = sys.argv[3]
     # frequency_controlgroup_PRAUC_highbeta_R2(int(ED), int(beta), int(ExternalSimutime))
+
+    # a = nodeSPfrequency_loaddata_R2(N=10000, ED=5, beta=4, noise_amplitude=0, nodei=1, nodej=2)
+    # print(a)
+    arr = np.array([10, 30, 20, 50, 50, 40, 90, 70, 80])
+    # 找出最大的N个数及其索引
+    N = 4
+    values, indices = find_top_n_values(arr, N)
+
+    print("最大的N个数的值：", values)
+    print("最大的N个数的索引：", indices)
