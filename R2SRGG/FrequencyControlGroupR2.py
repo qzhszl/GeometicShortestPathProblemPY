@@ -141,7 +141,7 @@ def nodeSPfrequency_loaddata_R2_clu(N, ED, beta, noise_amplitude, nodei, nodej):
     for i in range(100):
         # print("fresimu time:", i)
         tic = time.time()
-        FileNetworkName = "EuclideanSoftRGGnetwork\\Noise\\NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+        FileNetworkName = "/home/zqiu1/GSPP/SSRGGpy/R2/EuclideanSoftRGGnetwork/NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
             EDn=ED, betan=beta, no=noise_amplitude, ST=i)
         H = loadSRGGandaddnode(N, FileNetworkName)
         try:

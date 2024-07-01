@@ -9,7 +9,7 @@ import math
 import random
 import time
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 
@@ -18,7 +18,7 @@ from SphericalSoftRandomGeomtricGraph import RandomGenerator, SphericalSoftRGGwi
     dist_to_geodesic_S2, distS2, loadNodeSSRGG
 from sklearn.metrics import precision_recall_curve, auc
 import sys
-import seaborn as sns
+# import seaborn as sns
 import pandas as pd
 
 # from main import find_nonnan_indices
