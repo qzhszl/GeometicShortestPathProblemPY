@@ -38,6 +38,52 @@ from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import find_nonzero_indices, find_nonnan_indices, all_shortest_path_node, find_top_n_values
 
 
+def generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude):
+    # generate 100 SRGG FOR EACH ED, beta and the amplitude of node
+    N = 10000
+    ED_list = [5, 20]  # Expected degrees
+    ED = ED_list[Edindex]
+    print("ED:", ED)
+
+    beta_list = [4, 100]
+    beta = beta_list[betaindex]
+    print("beta:", beta)
+
+    print("noise_amplitude:", noise_amplitude)
+
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    print(rseed)
+    for i in range(rseed):
+        rg.ran1()
+
+    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\NetworkOriginalED{EDn}Beta{betan}Noise{no}.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude)
+    nx.write_edgelist(G, FileNetworkName)
+
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\CoorED{EDn}Beta{betan}Noise{no}mothernetwork.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude)
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(Coorx, Coory):
+            file.write(f"{data1}\t{data2}\n")
+
+    Coorx = add_uniform_random_noise_to_coordinates_R2(Coorx, noise_amplitude)
+    Coory = add_uniform_random_noise_to_coordinates_R2(Coory, noise_amplitude)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt".format(
+        EDn=ED, betan=beta, no=noise_amplitude)
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(Coorx, Coory):
+            file.write(f"{data1}\t{data2}\n")
+
+    for ExternalSimutime in range(100):
+        print(ExternalSimutime)
+        H, Coorx1, Coory1 = R2SRGG(N, ED, beta, rg, Coorx, Coory)
+        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+            EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+        nx.write_edgelist(H, FileNetworkName)
+
 def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2(Edindex, betaindex, noiseindex, ExternalSimutime):
     """
     :param Edindex: average degree
@@ -283,7 +329,7 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, b
     for i in range(random.randint(0, 100)):
         rg.ran1()
 
-    FileOriNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\NetworkOriginalED{EDn}Beta{betan}Noise{no}.txt".format(
+    FileOriNetworkName = "/home/zqiu1/GSPP/SSRGGpy/R2/EuclideanSoftRGGnetwork/NetworkOriginalED{EDn}Beta{betan}Noise{no}.txt".format(
         EDn=ED, betan=beta, no=noise_amplitude)
     G = loadSRGGandaddnode(N, FileOriNetworkName)
 
@@ -294,7 +340,7 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, b
     # load coordinates with noise
     Coorx = []
     Coory = []
-    FileOriNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\CoorED{EDn}Beta{betan}Noise{no}mothernetwork.txt".format(
+    FileOriNetworkCoorName = "/home/zqiu1/GSPP/SSRGGpy/R2/EuclideanSoftRGGnetwork/CoorED{EDn}Beta{betan}Noise{no}mothernetwork.txt".format(
         EDn=ED, betan=beta, no=noise_amplitude)
     with open(FileOriNetworkCoorName, "r") as file:
         for line in file:
@@ -456,52 +502,108 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, b
     # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
 
 
-
-def generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude):
-    # generate 100 SRGG FOR EACH ED, beta and the amplitude of node
-    N = 10000
+def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex):
     ED_list = [5, 20]  # Expected degrees
     ED = ED_list[Edindex]
-    print("ED:", ED)
-
     beta_list = [4, 100]
     beta = beta_list[betaindex]
-    print("beta:", beta)
+    RGG_precision_list_allno = []
+    SRGG_precision_list_allno = []
+    Geo_precision_list_allno = []
+    for noise_amplitude in [0, 0.001,0.01,0.1,0.5]:
+        PrecisonRGG_specificnoise = []
+        for ExternalSimutime in range(20):
+            precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+            Precison_RGG_5_times = np.loadtxt(precision_RGG_Name)
+            PrecisonRGG_specificnoise.extend(Precison_RGG_5_times)
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        RGG_precision_list_allno.append(np.mean(PrecisonRGG_specificnoise))
+    # print("lenpre", len(PrecisonRGG_specificnoise))
+        PrecisonSRGG_specificnoise = []
+        for ExternalSimutime in range(20):
+            precision_SRGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+            Precison_SRGG_5_times = np.loadtxt(precision_SRGG_Name)
+            PrecisonSRGG_specificnoise.extend(Precison_SRGG_5_times)
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        SRGG_precision_list_allno.append(np.mean(PrecisonSRGG_specificnoise))
+        # print("lenpre", len(PrecisonRGG_specificnoise))
 
-    print("noise_amplitude:", noise_amplitude)
+        PrecisonGeodis_specificnoise = []
+        for ExternalSimutime in range(20):
+            precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+            Precison_Geodis_5_times = np.loadtxt(precision_Geodis_Name)
+            PrecisonGeodis_specificnoise.extend(Precison_Geodis_5_times)
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        Geo_precision_list_allno.append(np.mean(PrecisonRGG_specificnoise))
+        # print("lenpre", len(PrecisonRGG_specificnoise))
 
-    rg = RandomGenerator(-12)
-    rseed = random.randint(0, 100)
-    print(rseed)
-    for i in range(rseed):
-        rg.ran1()
 
-    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
 
-    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\NetworkOriginalED{EDn}Beta{betan}Noise{no}.txt".format(
-        EDn=ED, betan=beta, no=noise_amplitude)
-    nx.write_edgelist(G, FileNetworkName)
+    fig, ax = plt.subplots()
+    # Data
+    y1 = [2, 5, 6]
+    y2 = [1, 3, 4]
+    y3 = [6, 7, 1]
 
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\CoorED{EDn}Beta{betan}Noise{no}mothernetwork.txt".format(
-        EDn=ED, betan=beta, no=noise_amplitude)
-    with open(FileNetworkCoorName, "w") as file:
-        for data1, data2 in zip(Coorx, Coory):
-            file.write(f"{data1}\t{data2}\n")
+    # X axis labels
+    x_labels = ['0', '0.001', '0.01', '0.1','0.5']
 
-    Coorx = add_uniform_random_noise_to_coordinates_R2(Coorx, noise_amplitude)
-    Coory = add_uniform_random_noise_to_coordinates_R2(Coory, noise_amplitude)
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt".format(
-        EDn=ED, betan=beta, no=noise_amplitude)
-    with open(FileNetworkCoorName, "w") as file:
-        for data1, data2 in zip(Coorx, Coory):
-            file.write(f"{data1}\t{data2}\n")
+    # X axis positions for each bar group
+    x = np.arange(len(x_labels))
 
-    for ExternalSimutime in range(100):
-        print(ExternalSimutime)
-        H, Coorx1, Coory1 = R2SRGG(N, ED, beta, rg, Coorx, Coory)
-        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-            EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-        nx.write_edgelist(H, FileNetworkName)
+    # Width of each bar
+    width = 0.2
+
+    # Plotting the bars
+    bar1 = ax.bar(x - width, y1, width, label='y1')
+    bar2 = ax.bar(x, y2, width, label='y2')
+    bar3 = ax.bar(x + width, y3, width, label='y3')
+
+    # Adding labels and title
+    ax.set_xlabel('Groups')
+    ax.set_ylabel('Values')
+    ax.set_title('Grouped Bar Chart')
+    ax.set_xticks(x)
+    ax.set_xticklabels(x_labels)
+    ax.legend()
+
+    # Display the plot
+    plt.show()
+
+
+    plt.title("Geo distance")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    plt.savefig(
+        "D:\\data\\geometric shortest path problem\\SphericalRGG\\PRAUC\\GeoPrecisionHeatmapNSP0_1LinkRemove.pdf",
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+    plt.figure()
+    df = pd.DataFrame(PRAUC_fre_matrix,
+                      index=[5, 20],  # DataFrame的行标签设置为大写字母
+                      columns=[4, 100])  # 设置DataFrame的列标签
+    sns.heatmap(data=df, vmin=0, vmax=0.8, annot=True, fmt=".2f", cbar=True,
+                cbar_kws={'label': 'precision'})
+    plt.title("RGG")
+    plt.xlabel("beta")
+    plt.ylabel("average degree")
+    plt.savefig(
+        "D:\\data\\geometric shortest path problem\\SphericalRGG\\PRAUC\\RGGPrecisionHeatmapNSP0_1LinkRemove.pdf",
+        format='pdf', bbox_inches='tight', dpi=600)
+    plt.close()
+
+
+
 
 
 
@@ -513,23 +615,6 @@ if __name__ == '__main__':
     #         for noise_amplitude in [0, 0.001,0.01,0.1,0.5]:
     #         # for noise_amplitude in [0.01]:
     #             generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude)
-
-    for (Edindex,betaindex) in [(0,0)]:
-        for noise_amplitude in [0.1, 0.5]:
-            generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude)
-    for (Edindex,betaindex) in [(1,0)]:
-        for noise_amplitude in [0.001, 0.01, 0.1, 0.5]:
-            generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude)
-    for (Edindex,betaindex) in [(1,1)]:
-        for noise_amplitude in [0, 0.001, 0.01, 0.1, 0.5]:
-            generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude)
-
-
-    # ed5 beta 4 noise 0,0.001,0.01
-    # ed 20 beta 4 0, 0.001
-    # ed5 beta 100 noise all
-    # ed 20 beta 3 noise 0
-
 
     # STEP 2.1 test and run the simu
     # predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2(0, 0, 0, 0)
@@ -558,3 +643,5 @@ if __name__ == '__main__':
     # noise = sys.argv[3]
     # ExternalSimutime = sys.argv[4]
     # PredictGeodistanceVsfrequency_withnoise_R2(int(ED), int(beta), int(noise), int(ExternalSimutime))
+
+
