@@ -232,11 +232,24 @@ def loadSRGGandaddnode(N, filepath):
     return G
 
 
+def check_realdegree_vs_expecteddegree():
+    rg = RandomGenerator(-12)
+    avg = 5
+    repeat_size = random.randint(0,20)
+    for i in range(repeat_size):
+        rg.ran1()
+    for network_size in [1000,10000,100000]:
+        G,_,_ = R2SRGG(network_size, avg, 6, rg)
+        real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+        print("networksize:", network_size)
+        print("real ED:", real_avg)
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    rg = RandomGenerator(-12)
-    R2SRGG(110,5,4,rg)
-
+    # rg = RandomGenerator(-12)
+    # R2SRGG(110,5,4,rg)
+    check_realdegree_vs_expecteddegree()
 
 
 

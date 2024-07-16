@@ -41,10 +41,18 @@ def add_uniform_random_noise_to_coordinates_R2(lst, noise_amplitude):
     coor = []
     for x in lst:
         x_noise = x + random.uniform(-noise_amplitude, noise_amplitude)
-        if x_noise > 1 or x_noise < 0:
-            x_noise = x
+        # if x_noise > 1 or x_noise < 0:
+        #     x_noise = x
         coor.append(x_noise)
     return coor
+# def add_uniform_random_noise_to_coordinates_R2(lst, noise_amplitude):
+#     coor = []
+#     for x in lst:
+#         x_noise = x + random.uniform(-noise_amplitude, noise_amplitude)
+#         if x_noise > 1 or x_noise < 0:
+#             x_noise = x
+#         coor.append(x_noise)
+#     return coor
 
 
 def PredictGeodistanceVsRGG_withnoise_givennodepair_difflengthR2(noise_amplitude, x_A, y_A, x_B, y_B, ExternalSimutime):
