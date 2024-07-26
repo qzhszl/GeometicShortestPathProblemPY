@@ -36,6 +36,7 @@ def IOforNormalFile():
                 continue
             data = line.strip().split("\t")  # 使用制表符分割
             Coorphi.append(float(data[1]))
+
     FileASPName = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\output.txt"
     np.savetxt(FileASPName, Coorphi,fmt="%i")
     data = np.loadtxt(FileASPName, dtype=int)
@@ -85,9 +86,9 @@ def all_shortest_path_node(G, nodei, nodej):
     count = 0
     for path in shortest_paths:
         PNodeList.update(path)
-        # count += 1
-        # if count > 1000000:
-        #     break
+        count += 1
+        if count > 1000000:
+            break
     PNodeList.discard(nodei)
     PNodeList.discard(nodej)
     PNodeList = list(PNodeList)

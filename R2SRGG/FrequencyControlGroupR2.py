@@ -151,8 +151,8 @@ def nodeSPfrequency_loaddata_R2_clu(N, ED, beta, noise_amplitude, nodei, nodej):
             for path in shortest_paths:
                 PNodeList.update(path)
                 count += 1
-                # if count > 10000000:
-                #     break
+                if count > 10000000:
+                    break
             # print("pathlength", len(path))
             # print("pathnum",count)
         except nx.NetworkXNoPath:
