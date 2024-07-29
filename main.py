@@ -5,7 +5,7 @@ import random
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 import networkx as nx
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
 import SphericalSoftRandomGeomtricGraph
 
@@ -120,10 +120,62 @@ if __name__ == '__main__':
 
     # G = nx.fast_gnp_random_graph(20, 0.1)
     G = nx.Graph()
-    G.add_edges_from([(1, 0), (1,3),(2, 3),(4,5)])
-    d1=nx.shortest_path_length(G, 0, 0)
-    d2 = nx.shortest_path_length(G, 0, 3)
-    print(min(d1,d2))
+    G.add_edges_from([(0, 1),(0,2),(2,3), (1,3),(4, 3),(3,5),(4,6),(5,6)])
+    # plt.figure()
+    # nx.draw(G)
+    # plt.show()
+
+    nodei = 0
+    nodej = 4
+    source = 0
+    target = nodej
+    pred = nx.predecessor(G, source)
+    if target not in pred:
+        raise nx.NetworkXNoPath()
+    stack = [[target, 0]]
+    top = 0
+    while top >= 0:
+        node, i = stack[top]
+        if node == source:
+            yield [p for p, n in reversed(stack[:top + 1])]
+        if len(pred[node]) > i:
+            top += 1
+            if top == len(stack):
+                stack.append([pred[node][i], 0])
+            else:
+                stack[top] = [pred[node][i], 0]
+        else:
+            stack[top - 1][1] += 1
+            top -= 1
+
+    shortest_paths = nx.all_shortest_paths(G, nodei, nodej)
+    # # testa = shortest_paths.gi_frame.f_locals["pred"]
+    # # print(testa)
+    # Pnodelist_test = set()
+    # for node in testa.values():
+    #     Pnodelist_test.update(node)
+    # Pnodelist_test.discard(nodei)
+    # print(list(Pnodelist_test))
+
+
+    PNodeList = set()  # Use a set to keep unique nodes
+    count = 0
+    for path in shortest_paths:
+        print(path)
+        PNodeList.update(path)
+        count += 1
+        if count > 1000000:
+            break
+    PNodeList.discard(nodei)
+    PNodeList.discard(nodej)
+    PNodeList = list(PNodeList)
+
+    print("Pnodelist:", PNodeList)
+
+
+    # d1=nx.shortest_path_length(G, 0, 0)
+    # d2 = nx.shortest_path_length(G, 0, 3)
+    # print(min(d1,d2))
     # # 获取网络中的所有连通分量
     # components = list(nx.connected_components(G))
     # # 找到最大的连通分量
