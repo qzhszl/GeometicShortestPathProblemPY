@@ -137,7 +137,7 @@ if __name__ == '__main__':
     while top >= 0:
         node, i = stack[top]
         if node == source:
-            yield [p for p, n in reversed(stack[:top + 1])]
+            res = [p for p, n in reversed(stack[:top + 1])]
         if len(pred[node]) > i:
             top += 1
             if top == len(stack):
@@ -147,8 +147,8 @@ if __name__ == '__main__':
         else:
             stack[top - 1][1] += 1
             top -= 1
-
-    shortest_paths = nx.all_shortest_paths(G, nodei, nodej)
+    print(res)
+    # shortest_paths = nx.all_shortest_paths(G, nodei, nodej)
     # # testa = shortest_paths.gi_frame.f_locals["pred"]
     # # print(testa)
     # Pnodelist_test = set()
@@ -158,19 +158,19 @@ if __name__ == '__main__':
     # print(list(Pnodelist_test))
 
 
-    PNodeList = set()  # Use a set to keep unique nodes
-    count = 0
-    for path in shortest_paths:
-        print(path)
-        PNodeList.update(path)
-        count += 1
-        if count > 1000000:
-            break
-    PNodeList.discard(nodei)
-    PNodeList.discard(nodej)
-    PNodeList = list(PNodeList)
-
-    print("Pnodelist:", PNodeList)
+    # PNodeList = set()  # Use a set to keep unique nodes
+    # count = 0
+    # for path in shortest_paths:
+    #     print(path)
+    #     PNodeList.update(path)
+    #     count += 1
+    #     if count > 1000000:
+    #         break
+    # PNodeList.discard(nodei)
+    # PNodeList.discard(nodej)
+    # PNodeList = list(PNodeList)
+    #
+    # print("Pnodelist:", PNodeList)
 
 
     # d1=nx.shortest_path_length(G, 0, 0)
