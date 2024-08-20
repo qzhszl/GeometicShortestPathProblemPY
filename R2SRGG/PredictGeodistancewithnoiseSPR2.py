@@ -642,8 +642,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
         PrecisonRGG_specificnoise = []
         for ExternalSimutime in range(20):
             try:
-                precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2 = noise_amplitude)
                 Precison_RGG_5_times = np.loadtxt(precision_RGG_Name)
                 PrecisonRGG_specificnoise.extend(Precison_RGG_5_times)
             except FileNotFoundError:
@@ -657,8 +657,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
         PrecisonSRGG_specificnoise = []
         for ExternalSimutime in range(20):
             try:
-                precision_SRGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                precision_SRGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\PrecisionSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2 = noise_amplitude)
                 Precison_SRGG_5_times = np.loadtxt(precision_SRGG_Name)
                 PrecisonSRGG_specificnoise.extend(Precison_SRGG_5_times)
             except FileNotFoundError:
@@ -673,8 +673,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
         PrecisonGeodis_specificnoise = []
         for ExternalSimutime in range(20):
             try:
-                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2 = noise_amplitude)
                 Precison_Geodis_5_times = np.loadtxt(precision_Geodis_Name)
                 PrecisonGeodis_specificnoise.extend(Precison_Geodis_5_times)
             except FileNotFoundError:
@@ -721,7 +721,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
 
     # Display the plot
     plt.show()
-    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
+    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
                 EDn=ED, betan=beta)
 
     fig.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
@@ -747,8 +747,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
         PrecisonRGG_specificnoise = []
         for ExternalSimutime in range(20):
             try:
-                precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2 = noise_amplitude)
                 Precison_RGG_5_times = np.loadtxt(precision_RGG_Name)
                 PrecisonRGG_specificnoise.extend(Precison_RGG_5_times)
             except:
@@ -762,8 +762,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
         PrecisonSRGG_specificnoise = []
         for ExternalSimutime in range(20):
             try:
-                precision_SRGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                precision_SRGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\RecallSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2 = noise_amplitude)
                 Precison_SRGG_5_times = np.loadtxt(precision_SRGG_Name)
                 PrecisonSRGG_specificnoise.extend(Precison_SRGG_5_times)
             except:
@@ -778,8 +778,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
         PrecisonGeodis_specificnoise = []
         for ExternalSimutime in range(20):
             try:
-                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2 = noise_amplitude)
                 Precison_Geodis_5_times = np.loadtxt(precision_Geodis_Name)
                 PrecisonGeodis_specificnoise.extend(Precison_Geodis_5_times)
             except:
@@ -822,8 +822,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
 
     # Display the plot
     plt.show()
-    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}N.png".format(
-        EDn=ED, betan=beta)
+    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}N.png".format(
+        EDn=ED, betan=beta,no2 = noise_amplitude)
     plt.savefig(figname, format='png', bbox_inches='tight', dpi=600)
     plt.close()
 

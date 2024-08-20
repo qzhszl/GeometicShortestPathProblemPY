@@ -106,6 +106,25 @@ def find_top_n_values(arr, N):
 
     return top_values_sorted, sorted_indices
 
+def testallspnodes(G,source, target):
+    pred = nx.predecessor(G, source)
+    if target not in pred:
+        raise nx.NetworkXNoPath()
+    stack = [[target, 0]]
+    top = 0
+    while top >= 0:
+        node, i = stack[top]
+        if node == source:
+            yield [p for p, n in reversed(stack[:top + 1])]
+        if len(pred[node]) > i:
+            top += 1
+            if top == len(stack):
+                stack.append([pred[node][i], 0])
+            else:
+                stack[top] = [pred[node][i], 0]
+        else:
+            stack[top - 1][1] += 1
+            top -= 1
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -129,25 +148,29 @@ if __name__ == '__main__':
     nodej = 4
     source = 0
     target = nodej
-    pred = nx.predecessor(G, source)
-    if target not in pred:
-        raise nx.NetworkXNoPath()
-    stack = [[target, 0]]
-    top = 0
-    while top >= 0:
-        node, i = stack[top]
-        if node == source:
-            res = [p for p, n in reversed(stack[:top + 1])]
-        if len(pred[node]) > i:
-            top += 1
-            if top == len(stack):
-                stack.append([pred[node][i], 0])
-            else:
-                stack[top] = [pred[node][i], 0]
-        else:
-            stack[top - 1][1] += 1
-            top -= 1
-    print(res)
+
+    pathtest = testallspnodes(G, source, target)
+    for i in pathtest:
+        print(i)
+    # pred = nx.predecessor(G, source)
+    # if target not in pred:
+    #     raise nx.NetworkXNoPath()
+    # stack = [[target, 0]]
+    # top = 0
+    # while top >= 0:
+    #     node, i = stack[top]
+    #     if node == source:
+    #         res = [p for p, n in reversed(stack[:top + 1])]
+    #     if len(pred[node]) > i:
+    #         top += 1
+    #         if top == len(stack):
+    #             stack.append([pred[node][i], 0])
+    #         else:
+    #             stack[top] = [pred[node][i], 0]
+    #     else:
+    #         stack[top - 1][1] += 1
+    #         top -= 1
+    # print(res)
     # shortest_paths = nx.all_shortest_paths(G, nodei, nodej)
     # # testa = shortest_paths.gi_frame.f_locals["pred"]
     # # print(testa)
