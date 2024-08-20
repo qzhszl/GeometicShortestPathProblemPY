@@ -131,7 +131,11 @@ def R2SRGG(N, avg, beta, rg, Coorx=None, Coory=None, SaveNetworkPath=None):
         for j in range(i + 1, N):
             dist = math.sqrt((xx[i] - xx[j]) ** 2 + (yy[i] - yy[j]) ** 2)
             assert dist > 0
-            prob = 1 / (1 + math.exp(beta * math.log(alpha * dist)))
+
+            try:
+                prob = 1 / (1 + math.exp(beta * math.log(alpha * dist)))
+            except:
+                prob = 0
             if rg.ran1() < prob:
                 s.append(i)
                 t.append(j)
@@ -234,7 +238,7 @@ def loadSRGGandaddnode(N, filepath):
 
 def check_realdegree_vs_expecteddegree():
     rg = RandomGenerator(-12)
-    avg = 5
+    avg = 10
     repeat_size = random.randint(0,20)
     for i in range(repeat_size):
         rg.ran1()
@@ -250,6 +254,7 @@ if __name__ == '__main__':
     # rg = RandomGenerator(-12)
     # R2SRGG(110,5,4,rg)
     check_realdegree_vs_expecteddegree()
+
 
 
 
