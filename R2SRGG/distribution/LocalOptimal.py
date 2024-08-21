@@ -100,11 +100,6 @@ def distance_insmallSRGG(N, ED, beta,rg):
 
 
 
-
-
-
-
-
 def distance_inlargeSRGG(N,ED,beta,rg):
     pass
 

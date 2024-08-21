@@ -173,6 +173,7 @@ if __name__ == '__main__':
     G = nx.Graph()
     # G.add_edges_from([(0, 1),(0,2),(2,3), (1,3),(4, 3),(3,5),(4,6),(5,6)])
     G.add_edges_from([(0, 1), (1, 2), (2, 3), (5, 4)])
+    G.add_node(7)
     connected_component = find_all_connected_node_pairs(G)
 
     # components = list(nx.connected_components(G))
