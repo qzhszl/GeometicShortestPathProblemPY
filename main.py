@@ -126,6 +126,38 @@ def testallspnodes(G,source, target):
             stack[top - 1][1] += 1
             top -= 1
 
+def find_all_connected_node_pairs(G):
+    connected_node_pairs = set()
+    components = list(nx.connected_components(G))
+    connected_component = [s for s in components if len(s) > 1]
+    for compo in connected_component:
+        unique_connected_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(compo, 2))
+        connected_node_pairs = set.union(unique_connected_pairs,connected_node_pairs)
+    return connected_node_pairs
+
+def find_k_connected_node_pairs(G,k):
+    components = list(nx.connected_components(G))
+    largest_component = max(components, key=len)
+    nodes = list(largest_component)
+    if len(nodes)*(len(nodes)-1)/2>k:
+        # 已生成的节点对集合
+        generated_pairs = set()
+        # 结果列表
+        unique_connected_pairs = []
+        while len(unique_connected_pairs) < k:
+            # 随机选择两个不同的节点
+            node1, node2 = random.sample(range(G.number_of_nodes()), 2)
+            # 生成的节点对
+            node_pair = tuple(sorted((node1, node2)))  # 确保 (node1, node2) 和 (node2, node1) 被视为相同的对
+            # 检查节点对的连通性及是否已生成过
+            if node_pair not in generated_pairs and nx.has_path(G, node1, node2):
+                generated_pairs.add(node_pair)
+                unique_connected_pairs.append(node_pair)
+    else:
+        unique_connected_pairs = find_all_connected_node_pairs(G)
+    return unique_connected_pairs
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # print_hi('PyCharm')
@@ -139,19 +171,28 @@ if __name__ == '__main__':
 
     # G = nx.fast_gnp_random_graph(20, 0.1)
     G = nx.Graph()
-    G.add_edges_from([(0, 1),(0,2),(2,3), (1,3),(4, 3),(3,5),(4,6),(5,6)])
+    # G.add_edges_from([(0, 1),(0,2),(2,3), (1,3),(4, 3),(3,5),(4,6),(5,6)])
+    G.add_edges_from([(0, 1), (1, 2), (2, 3), (5, 4)])
+    connected_component = find_all_connected_node_pairs(G)
+
+    # components = list(nx.connected_components(G))
+    # connected_component = [s for s in components if len(s)>1]
     # plt.figure()
     # nx.draw(G)
     # plt.show()
+    c = find_k_connected_node_pairs(G, 100)
+    print(c)
 
-    nodei = 0
-    nodej = 4
-    source = 0
-    target = nodej
 
-    pathtest = testallspnodes(G, source, target)
-    for i in pathtest:
-        print(i)
+
+    # nodei = 0
+    # nodej = 4
+    # source = 0
+    # target = nodej
+    #
+    # pathtest = testallspnodes(G, source, target)
+    # for i in pathtest:
+    #     print(i)
     # pred = nx.predecessor(G, source)
     # if target not in pred:
     #     raise nx.NetworkXNoPath()

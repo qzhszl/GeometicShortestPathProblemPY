@@ -17,26 +17,95 @@ import math
 from R2SRGG.R2SRGG import R2SRGG
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 
-def avedistance_insmallSRGG(N,ED,beta,rg):
-    simu_times = 100
-    for simu_index in range(simu_times):
-        G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
-        real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-        print("real ED:", real_avg)
-        print("clu:", nx.average_clustering(G))
-        components = list(nx.connected_components(G))
-        largest_component = max(components, key=len)
-        print("LCC", len(largest_component))
 
-        # pick up all the node pairs in the LCC
-        nodes = list(largest_component)
-        unique_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(nodes, 2))
-        count = 0
+def generate_r2SRGG():
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    print(rseed)
+    for i in range(rseed):
+        rg.ran1()
+
+    Nvec = [200, 500, 1000, 10000]
+    kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    betavec = [2.1, 4, 8, 16, 32, 64, 128]
+
+    for N in Nvec:
+        for ED in kvec:
+            for beta in betavec:
+
+                G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+                real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+                print("input para:", (N, ED, beta))
+                print("real ED:", real_avg)
+                print("clu:", nx.average_clustering(G))
+                components = list(nx.connected_components(G))
+                largest_component = max(components, key=len)
+                print("LCC", len(largest_component))
+
+                FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                    Nn=N, EDn=ED, betan=beta)
+                nx.write_edgelist(G, FileNetworkName)
+
+                FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                    Nn=N, EDn=ED, betan=beta)
+                with open(FileNetworkCoorName, "w") as file:
+                    for data1, data2 in zip(Coorx, Coory):
+                        file.write(f"{data1}\t{data2}\n")
+
+
+def distance_insmallSRGG(N, ED, beta,rg):
+    """
+    :param N:
+    :param ED:
+    :param beta:
+    :param rg:
+    :return:
+    for each graph, we record the real average degree, LCC number, clustering coefficient
+    for each node pair, we only record the ave,max,min of distance from the shortest path to the geodesic,
+    length of the geo distances.
+    """
+    if N> ED:
+        # For graph:
+        real_ave_degree = []
+        LCC_num = []
+        clustering_coefficient = []
+        # For each node pair:
+        ave_deviation = []
+        max_deviation = []
+        min_deviation = []
+        length_geodesic = []
+        simu_times = 100
+        for simu_index in range(simu_times):
+            G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+            print("real ED:", real_avg)
+            real_ave_degree.append(real_avg)
+            ave_clu = nx.average_clustering(G)
+            print("clu:", )
+            clustering_coefficient.append(ave_clu)
+            components = list(nx.connected_components(G))
+            largest_component = max(components, key=len)
+            LCC_number = len(largest_component)
+            print("LCC", LCC_number)
+            LCC_num.append(LCC_number)
+
+            # pick up all the node pairs in the LCC and save them in the unique_pairs
+            nodes = list(largest_component)
+            unique_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(nodes, 2))
+            count = 0
+            for node_pair in unique_pairs:
+                count = count+1
+                nodei = node_pair[0]
+                nodej = node_pair[1]
 
 
 
 
-def avedistance_inlargeSRGG(N,ED,beta,rg):
+
+
+
+
+def distance_inlargeSRGG(N,ED,beta,rg):
     pass
 
 
@@ -60,165 +129,19 @@ def avedistance_inSRGG(network_size_index, average_degree_index, beta_index, Ext
 
 
     # for large network, we only generate one network and randomly selected 1,000 node pair.
-    # for small network, we
+    # for small network, we generate 100 networks and selected all the node pair in the LCC
     if N>100:
-        avedistance_inlargeSRGG(N,ED,beta,rg)
+        distance_inlargeSRGG(N,ED,beta,rg)
     else:
         # Random select nodepair_num nodes in the largest connected component
-        avedistance_insmallSRGG(N, ED, beta, rg)
+        distance_insmallSRGG(N, ED, beta, rg)
 
 
 
-    for simu_index in range(simu_times):
-        ExpectedDegreeVec = np.zeros(simu_times)
-        LCCVec = np.zeros(simu_times)
-        DistanceWithoutNorVec = []
-        DistanceNorVec = []
-        AveNorVec = []
-        AveWithoutNorVec = []
-        MaxNorVec = []
-        MaxWithoutNorVec = []
-        MinNorVec = []
-        MinWithoutNorVec = []
-
-        N = Nvec[counti]
-        k = kvec[countj]
-        r = np.sqrt(k / ((N - 1) * np.pi))
-
-        if N > k:
-            for Simu_i in range(simu_times):
-                G, coor = generate_random_geometric_graph(N, r)
-
-                expected_degree = np.mean([d for n, d in G.degree()])
-                ExpectedDegreeVec[Simu_i] = expected_degree
-
-                b = nx.connected_components(G)
-                bsize = [len(c) for c in b]
-                LCCVec[Simu_i] = max(bsize)
-
-                S = dict(nx.all_pairs_shortest_path_length(G))
-                nodei_list, nodej_list = [], []
-
-                for i in range(N):
-                    for j in range(i + 1, N):
-                        if j in S[i]:
-                            nodei_list.append(i)
-                            nodej_list.append(j)
-
-                NumNodePair = 1000000
-                if len(nodej_list) > NumNodePair:
-                    a = np.random.permutation(len(nodej_list))
-                    nodepair_index_pre = a[:NumNodePair]
-                    nodei_list = np.array(nodei_list)[nodepair_index_pre]
-                    nodej_list = np.array(nodej_list)[nodepair_index_pre]
-                else:
-                    NumNodePair = len(nodej_list)
-
-                distance = [None] * NumNodePair
-                DistanceWithoutNor = [None] * NumNodePair
-                AveNor = [None] * NumNodePair
-                AveWithoutNor = [None] * NumNodePair
-                MaxNor = [None] * NumNodePair
-                MaxWithoutNor = [None] * NumNodePair
-                MinNor = [None] * NumNodePair
-                MinWithoutNor = [None] * NumNodePair
-
-                SPNumVec = np.zeros(NumNodePair)
-
-                for nodepairindex in range(NumNodePair):
-                    nodei = nodei_list[nodepairindex]
-                    nodej = nodej_list[nodepairindex]
-
-                    d, spath = bellman_ford_shortest_path(G, nodei)
-                    spnodej = spath[nodej]
-                    SPNum = len(spnodej)
-                    SPNumVec[nodepairindex] = SPNum
-
-                    distanceForanodepair = [None] * SPNum
-                    DistanceWithoutNorForanodepair = [None] * SPNum
-                    AveNorForanodepair = np.zeros(SPNum)
-                    AveWithoutNorForanodepair = np.zeros(SPNum)
-                    MaxNorForanodepair = np.zeros(SPNum)
-                    MaxWithoutNorForanodepair = np.zeros(SPNum)
-                    MinNorForanodepair = np.zeros(SPNum)
-                    MinWithoutNorForanodepair = np.zeros(SPNum)
-
-                    for q in range(SPNum):
-                        PNodeList = spnodej[q]
-                        PLength = len(PNodeList) - 1
-
-                        if PLength > 1:
-                            distance_med = np.zeros(PLength - 1)
-
-                            xSource, ySource = coor[nodei]
-                            xEnd, yEnd = coor[nodej]
-                            disbetweenendnodes = np.sqrt((xSource - xEnd) ** 2 + (ySource - yEnd) ** 2)
-
-                            for PNodeMed_index in range(1, PLength):
-                                PNodeMed = PNodeList[PNodeMed_index]
-                                xMed, yMed = coor[PNodeMed]
-                                dist = perpendicular_distance(xSource, ySource, xEnd, yEnd, xMed, yMed)
-                                distance_med[PNodeMed_index - 1] = dist
-
-                            distanceForanodepair[q] = distance_med / disbetweenendnodes
-                            DistanceWithoutNorForanodepair[q] = distance_med
-                            AveNorForanodepair[q] = np.mean(distance_med / disbetweenendnodes)
-                            AveWithoutNorForanodepair[q] = np.mean(distance_med)
-                            MaxNorForanodepair[q] = np.max(distance_med / disbetweenendnodes)
-                            MaxWithoutNorForanodepair[q] = np.max(distance_med)
-                            MinNorForanodepair[q] = np.min(distance_med / disbetweenendnodes)
-                            MinWithoutNorForanodepair[q] = np.min(distance_med)
-
-                    distance[nodepairindex] = np.concatenate(distanceForanodepair)
-                    DistanceWithoutNor[nodepairindex] = np.concatenate(DistanceWithoutNorForanodepair)
-                    AveNor[nodepairindex] = AveNorForanodepair
-                    AveWithoutNor[nodepairindex] = AveWithoutNorForanodepair
-                    MaxNor[nodepairindex] = MaxNorForanodepair
-                    MaxWithoutNor[nodepairindex] = MaxWithoutNorForanodepair
-                    MinNor[nodepairindex] = MinNorForanodepair
-                    MinWithoutNor[nodepairindex] = MinWithoutNorForanodepair
-
-                DistanceNor_vecforonegraph = np.concatenate(distance)
-                DistanceNorVec.extend(DistanceNor_vecforonegraph)
-                DistanceWithoutNor_vecforonegraph = np.concatenate(DistanceWithoutNor)
-                DistanceWithoutNorVec.extend(DistanceWithoutNor_vecforonegraph)
-                AveNorwith0 = np.concatenate(AveNor)
-                AveNorVec.extend(AveNorwith0[AveNorwith0 > 0])
-                AveWithoutNorwith0 = np.concatenate(AveWithoutNor)
-                AveWithoutNorVec.extend(AveWithoutNorwith0[AveWithoutNorwith0 > 0])
-                MaxNorwith0 = np.concatenate(MaxNor)
-                MaxNorVec.extend(MaxNorwith0[MaxNorwith0 > 0])
-                MaxWithoutNorwith0 = np.concatenate(MaxWithoutNor)
-                MaxWithoutNorVec.extend(MaxWithoutNorwith0[MaxWithoutNorwith0 > 0])
-                MinNorwith0 = np.concatenate(MinNor)
-                MinNorVec.extend(MinNorwith0[MinNorwith0 > 0])
-                MinWithoutNorwith0 = np.concatenate(MinWithoutNor)
-                MinWithoutNorVec.extend(MinWithoutNorwith0[MinWithoutNorwith0 > 0])
-
-                NodepairLength = np.array([len(AveWithoutNorwith0[AveWithoutNorwith0 > 0])])
-                SPcell = np.array(SPNumVec)
-
-                save_to_file(f"NorDeviation_{N}nodek{k}.txt", DistanceNorVec)
-                save_to_file(f"WithoutNorDeviation_{N}nodek{k}.txt", DistanceWithoutNorVec)
-                save_to_file(f"NorAveDeviation_{N}nodek{k}.txt", AveNorVec)
-                save_to_file(f"WithoutNorAveDeviation_{N}nodek{k}.txt", AveWithoutNorVec)
-                save_to_file(f"NorMaxDeviation_{N}nodek{k}.txt", MaxNorVec)
-                save_to_file(f"WithoutNorMaxDeviation_{N}nodek{k}.txt", MaxWithoutNorVec)
-                save_to_file(f"NorMinDeviation_{N}nodek{k}.txt", MinNorVec)
-                save_to_file(f"WithoutNorMinDeviation_{N}nodek{k}.txt", MinWithoutNorVec)
-                save_to_file(f"LCC_{N}nodek{k}.txt", LCCVec)
-                save_to_file(f"Expecteddegree_{N}nodek{k}.txt", ExpectedDegreeVec)
-                save_to_file(f"NodepairLength_{N}nodek{k}.txt", NodepairLength)
-                save_to_file(f"SPnum_{N}nodek{k}.txt", SPcell)
 
 
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print(math.comb(100,2))
-    network_size_index = 0
-    average_degree_index = 0
-    beta_index = 0
-    external_simu_time = 0
-    avedistance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
+    generate_r2SRGG()
 
