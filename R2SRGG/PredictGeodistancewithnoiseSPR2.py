@@ -489,7 +489,6 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, b
     largest_component = []
     nodes = []
     unique_pairs = []
-    unique_pairs = []
     filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\SelecetedNodepairED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
         EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(filename_selecetednodepair, random_pairs, fmt="%i")
