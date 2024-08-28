@@ -87,12 +87,32 @@ def all_shortest_path_node(G, nodei, nodej):
     for path in shortest_paths:
         PNodeList.update(path)
         count += 1
-        if count > 1000000:
+        if count > 100000000:
             break
     PNodeList.discard(nodei)
     PNodeList.discard(nodej)
     PNodeList = list(PNodeList)
     return PNodeList
+
+
+def all_shortest_path_node_testspeed(G, nodei, nodej):
+    """
+        :return: All shortest path nodes except for nodei and nodej
+    """
+    shortest_paths = nx.all_shortest_paths(G, nodei, nodej)
+    PNodeList = set()  # Use a set to keep unique nodes
+    count = 0
+    for path in shortest_paths:
+        PNodeList.update(path)
+        count += 1
+        if count > 1000000000:
+            break
+    PNodeList.discard(nodei)
+    PNodeList.discard(nodej)
+    PNodeList = list(PNodeList)
+    return PNodeList
+
+
 
 def find_top_n_values(arr, N):
     # 找到最大的N个数的索引（在数组中的索引）
@@ -133,7 +153,7 @@ def find_all_connected_node_pairs(G):
     for compo in connected_component:
         unique_connected_pairs = set(tuple(sorted(pair)) for pair in itertools.combinations(compo, 2))
         connected_node_pairs = set.union(unique_connected_pairs,connected_node_pairs)
-    return connected_node_pairs
+    return list(connected_node_pairs)
 
 def find_k_connected_node_pairs(G,k):
     components = list(nx.connected_components(G))

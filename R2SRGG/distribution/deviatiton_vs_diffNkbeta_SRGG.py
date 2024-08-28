@@ -244,8 +244,8 @@ def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
         LCC_number = len(largest_component)
         print("LCC", LCC_number)
 
-        # Randomly choose 100 connectede node pairs
-        nodepair_num = 100
+        # Randomly choose 1000 connectede node pairs
+        nodepair_num = 1000
         unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
         filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
             Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -345,29 +345,29 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
         # Random select nodepair_num nodes in the largest connected component
         distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
 
-    def distance_inSRGG_realED(network_size_index, average_degree_index, beta_index, ExternalSimutime):
-        Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-        kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-        betavec = [2.1, 4, 8, 16, 32, 64, 128]
+def distance_inSRGG_realED(network_size_index, average_degree_index, beta_index, ExternalSimutime):
+    Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
+    kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    betavec = [2.1, 4, 8, 16, 32, 64, 128]
 
-        random.seed(ExternalSimutime)
-        N = Nvec[network_size_index]
-        ED = kvec[average_degree_index]
-        beta = betavec[beta_index]
-        print("input para:", (N, ED, beta))
+    random.seed(ExternalSimutime)
+    N = Nvec[network_size_index]
+    ED = kvec[average_degree_index]
+    beta = betavec[beta_index]
+    print("input para:", (N, ED, beta))
 
-        rg = RandomGenerator(-12)
-        rseed = random.randint(0, 100)
-        for i in range(rseed):
-            rg.ran1()
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
 
-        # for large network, we only generate one network and randomly selected 1,000 node pair.
-        # for small network, we generate 100 networks and selected all the node pair in the LCC
-        if N > 100:
-            distance_inlargeSRGG(N, ED, beta, ExternalSimutime)
-        else:
-            # Random select nodepair_num nodes in the largest connected component
-            distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
+    # for large network, we only generate one network and randomly selected 1,000 node pair.
+    # for small network, we generate 100 networks and selected all the node pair in the LCC
+    if N > 100:
+        distance_inlargeSRGG(N, ED, beta, ExternalSimutime)
+    else:
+        # Random select nodepair_num nodes in the largest connected component
+        distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
