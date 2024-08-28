@@ -136,8 +136,7 @@ def plot_local_optimum():
                 std_deviation_dict[N] = std_deviation_vec
 
     plt.figure(figsize=(10, 8))
-    colors = [
-    [0.3059, 0.4745, 0.6549],
+    colors = [[0.3059, 0.4745, 0.6549],
     [0.9490, 0.5569, 0.1686],
     [0.8824, 0.3412, 0.3490],
     [0.4627, 0.7176, 0.6980],
@@ -146,8 +145,7 @@ def plot_local_optimum():
     [0.6902, 0.4784, 0.6314],
     [1.0000, 0.6157, 0.6549],
     [0.6118, 0.4588, 0.3725],
-    [0.7294, 0.6902, 0.6745]
-]
+    [0.7294, 0.6902, 0.6745]]
 
     for N_index in range(len(Nvec)):
         N = Nvec[N_index]
@@ -174,7 +172,7 @@ def plot_local_optimum():
     plt.show()
 
 
-def load_reorder_data(N):
+def load_resort_data(N):
     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     exemptionlist =[]
     for N in [N]:
@@ -214,7 +212,21 @@ def load_reorder_data(N):
                                     count = count+1
                             except FileNotFoundError:
                                 exemptionlist.append((N, ED, beta, ExternalSimutime))
-    return real_ave_degree_vec, ave_deviation_vec,ave_deviation_dic
+
+    resort_dict = {}
+    for key_degree, value_deviation in ave_deviation_dic.items():
+        if round(key_degree) in resort_dict.keys():
+            resort_dict[round(key_degree)] = resort_dict[round(key_degree)] + value_deviation
+        else:
+            resort_dict[round(key_degree)] = value_deviation
+    if 1 in resort_dict.keys():
+        del resort_dict[1]
+    resort_dict = {key: resort_dict[key] for key in sorted(resort_dict.keys())}
+    degree_vec_resort = resort_dict.keys()
+    ave_deviation_resort = [np.mean(resort_dict[key_d]) for key_d in degree_vec_resort]
+    std_deviation_resort = [np.std(resort_dict[key_d]) for key_d in degree_vec_resort]
+
+    return degree_vec_resort, ave_deviation_resort, std_deviation_resort, real_ave_degree_vec, ave_deviation_vec, ave_deviation_dic
 
 def plot_local_optimum_with_realED():
     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
@@ -284,6 +296,69 @@ def plot_local_optimum_with_realED():
     plt.show()
 
 
+def plot_local_optimum_with_realED2():
+    real_ave_degree_dict = {}
+    ave_deviation_dict = {}
+    std_deviation_dict = {}
+    Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
+    beta = 4
+    for N in Nvec:
+        if N<200:
+            degree_vec_resort, ave_deviation_resort, std_deviation_resort, _, _, _=load_resort_data(N,beta)
+            real_ave_degree_dict[N] = degree_vec_resort
+            ave_deviation_dict[N] = ave_deviation_resort
+            std_deviation_dict[N] = std_deviation_resort
+        elif N< 10000:
+            for beta in [beta]:
+                real_ave_degree_vec, ave_deviation_vec, std_deviation_vec = load_large_network_results(N, beta)
+                real_ave_degree_dict[N] = real_ave_degree_vec
+                ave_deviation_dict[N] = ave_deviation_vec
+                std_deviation_dict[N] = std_deviation_vec
+        else:
+            for beta in [beta]:
+                real_ave_degree_vec, ave_deviation_vec, std_deviation_vec = load_10000nodenetwork_results(beta)
+                real_ave_degree_dict[N] = real_ave_degree_vec
+                ave_deviation_dict[N] = ave_deviation_vec
+                std_deviation_dict[N] = std_deviation_vec
+
+    plt.figure(figsize=(10, 8))
+    colors = [[0.3059, 0.4745, 0.6549],
+              [0.9490, 0.5569, 0.1686],
+              [0.8824, 0.3412, 0.3490],
+              [0.4627, 0.7176, 0.6980],
+              [0.3490, 0.6314, 0.3098],
+              [0.9294, 0.7882, 0.2824],
+              [0.6902, 0.4784, 0.6314],
+              [1.0000, 0.6157, 0.6549],
+              [0.6118, 0.4588, 0.3725],
+              [0.7294, 0.6902, 0.6745]]
+
+    for N_index in range(len(Nvec)):
+        N = Nvec[N_index]
+        x = real_ave_degree_dict[N]
+        y = ave_deviation_dict[N]
+        error = std_deviation_dict[N]
+        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=2, elinewidth=1, capsize=2, alpha=0.5, marker='o',
+                     markerfacecolor="none", label=f'N={N}', color=colors[N_index])
+
+        # 找到峰值后最低点的坐标
+        peak_index = np.argmax(y[0:10])
+        post_peak_y = y[peak_index:]
+        post_peak_min_index = peak_index + np.argmin(post_peak_y)
+        post_peak_min_x = x[post_peak_min_index]
+        post_peak_min_y = y[post_peak_min_index]
+
+        # 标出最低点
+        plt.plot(post_peak_min_x, post_peak_min_y, 'o', color=colors[N_index], markersize=8)
+
+    plt.xscale('log')
+    plt.xlabel('E[D]')
+    plt.ylabel('Distance form shortest path nodes to the geodesic')
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.legend()
+    plt.show()
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # plot_local_optimum_with_realED()
@@ -291,7 +366,23 @@ if __name__ == '__main__':
     # test_d[1.16] = test_d[1.16]+[1,2,3]
     # print(test_d[1.16])
 
-    load_reorder_data(50)
+    # load_resort_data(50)
     # plot_local_optimum()
 
+    a = {3:[5,6,7,8],1.2:[5,6], 2.1:[1,2,3,4],2.5:[1,2,3,5],1.6:[2,7,3,5]}
+    resort_dict={}
+    for key_degree,value_deviation in a.items():
+        if round(key_degree) in resort_dict.keys():
+            resort_dict[round(key_degree)] = resort_dict[round(key_degree)]+value_deviation
+        else:
+            resort_dict[round(key_degree)] = value_deviation
+    if 1 in resort_dict.keys():
+        del resort_dict[1]
+    resort_dict = {key: resort_dict[key] for key in sorted(resort_dict.keys())}
+    degree_vec_resort = resort_dict.keys()
+    ave_deviation_resort = [np.mean(resort_dict[key_d]) for key_d in degree_vec_resort]
+    std_deviation_resort = [np.std(resort_dict[key_d]) for key_d in degree_vec_resort]
+    print(resort_dict)
+    print(ave_deviation_resort)
+    print(std_deviation_resort)
 
