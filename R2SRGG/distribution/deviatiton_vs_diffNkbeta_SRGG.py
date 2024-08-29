@@ -237,7 +237,7 @@ def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
         print("real ED:", real_avg)
 
         ave_clu = nx.average_clustering(G)
-        print("clu:",ave_clu)
+        print("clu:", ave_clu)
 
         components = list(nx.connected_components(G))
         largest_component = max(components, key=len)

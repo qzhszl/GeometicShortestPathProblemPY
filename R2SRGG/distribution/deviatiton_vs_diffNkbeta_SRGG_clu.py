@@ -47,7 +47,6 @@ def generate_r2SRGG():
     for N in Nvec:
         for ED in kvec:
             for beta in betavec:
-
                 G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
                 real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
                 print("input para:", (N,ED,beta))
