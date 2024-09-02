@@ -55,7 +55,7 @@ def load_small_network_results_maxminave(N, ED, beta):
     return ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, exemptionlist
 
 
-def load_resort_data_smallN(N, ED, beta):
+def load_resort_data_smallN_maxminave(N, ED, beta):
     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     exemptionlist =[]
     for N in [N]:
@@ -331,24 +331,22 @@ def plot_distribution(N, ED, beta):
     # # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     # beta = 8
     if N < 200:
-        degree_vec_resort, ave_deviation_resort, std_deviation_resort, _, _, _=load_resort_data_maxminave(N,beta)
-
-    # elif N < 200:
-    #     for beta in [4]:
-    #         real_ave_degree_vec, ave_deviation_vec, std_deviation_vec = load_small_network_results(N,beta)
+        ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_resort_data_smallN_maxminave(
+            N, ED, beta)
     elif N < 10000:
-        real_ave_degree_vec, ave_deviation_vec, std_deviation_vec = load_large_network_results_maxminave(N, beta)
+        ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_large_network_results_maxminave(
+            N, ED, beta)
     else:
-        ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, exemptionlist = load_10000nodenetwork_maxminave(
+        ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_10000nodenetwork_maxminave(
             ED, beta)
 
     # cuttail = [9,19,34,24]
     # peakcut = [9,5,5,5]
 
-    data1 = np.random.normal(0, 1, 10000)
-    data2 = np.random.normal(1, 2, 10000)
-    data3 = np.random.normal(2, 1.5, 10000)
-    data4 = np.random.normal(-1, 0.5, 10000)
+    data1 = ave_deviation_vec
+    data2 = max_deviation_vec
+    data3 = min_deviation_vec
+    data4 = ran_deviation_vec
     plt.figure(figsize=(9, 6))
     datasets = [data1,data2,data3,data4]
     colors = [[0, 0.4470, 0.7410],
