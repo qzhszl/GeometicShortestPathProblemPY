@@ -40,14 +40,16 @@ def generate_r2SRGG():
     for i in range(rseed):
         rg.ran1()
 
-    Nvec = [200, 500, 1000, 10000]
-    kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    # Nvec = [200, 500, 1000, 10000]
+    Nvec = [10000]
+    kvec = [5,20]
+    # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
 
     for N in Nvec:
         for ED in kvec:
             for beta in betavec:
-
                 G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
                 real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
                 print("input para:", (N,ED,beta))
@@ -371,11 +373,13 @@ def distance_inSRGG_realED(network_size_index, average_degree_index, beta_index,
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    network_size_index = 7
-    average_degree_index = 2
-    beta_index = 1
-    external_simu_time = 0
-    distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
+    generate_r2SRGG()
+
+    # network_size_index = 7
+    # average_degree_index = 2
+    # beta_index = 1
+    # external_simu_time = 0
+    # distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
 
     # for N_index in range(4):
     #     for ED_index in range(24):

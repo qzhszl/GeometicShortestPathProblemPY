@@ -40,9 +40,12 @@ def generate_r2SRGG():
     for i in range(rseed):
         rg.ran1()
 
-    Nvec = [200, 500, 1000, 10000]
-    kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    # Nvec = [200, 500, 1000, 10000]
+    Nvec = [1000]
+    # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    kvec = [5,10,20]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7, 10, 12]
 
     for N in Nvec:
         for ED in kvec:
@@ -323,8 +326,10 @@ def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
 
 def distance_inSRGG(network_size_index, average_degree_index, beta_index, ExternalSimutime):
     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    kvec = [5,10,20]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    betavec=[2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25,3.5,3.75,5,6,7,10,12]
 
     random.seed(ExternalSimutime)
     N = Nvec[network_size_index]
@@ -377,9 +382,16 @@ if __name__ == '__main__':
     # external_simu_time = 0
     # distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
 
-    for N_index in [4,5,6]:
-        for ED_index in range(24):
-            for beta_index in range(7):
+    # generate_r2SRGG()
+    Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
+    # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    kvec = [5, 10, 20]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7, 10, 12]
+
+    for N_index in [6]:
+        for ED_index in range(3):
+            for beta_index in range(14):
                 distance_inSRGG(N_index, ED_index, beta_index, 0)
 
 

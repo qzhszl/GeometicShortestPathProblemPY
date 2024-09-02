@@ -559,17 +559,6 @@ def plot_local_optimum_with_beta():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # plot_local_optimum_with_realED()
-    # test_d = {1.16:[1,23]}
-    # test_d[1.16] = test_d[1.16]+[1,2,3]
-    # print(test_d[1.16])
-
-    # load_resort_data(50)
-    # plot_local_optimum()
-
-    plot_local_optimum_with_realED2()
-    # print(round_quarter(1.6))
-
     # i = 1
     # exemptionlist = np.loadtxt("notrun.txt")
     # notrun_pair = exemptionlist[1]
@@ -581,5 +570,17 @@ if __name__ == '__main__':
     # beta_index = betavec.index(notrun_pair[2])
     # print(ED_index)
     # print(beta_index)
+    # exemptionlist_vec = []
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    # for beta in betavec:
+    #     _, _,_, exemptionlist  = load_10000nodenetwork_results(beta)
+    # exemptionlist_vec = exemptionlist_vec + exemptionlist
+
+    for ED in list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]:
+        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn=10000, EDn=ED, betan=4)
+        G = loadSRGGandaddnode(10000, FileNetworkName)
+        clustering_coefficient = nx.average_clustering(G)
+        print(clustering_coefficient)
 
 
