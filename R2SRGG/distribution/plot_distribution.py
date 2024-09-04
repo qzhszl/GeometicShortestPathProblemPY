@@ -56,6 +56,7 @@ def load_small_network_results_maxminave(N, ED, beta):
 
 
 def load_resort_data_smallN_maxminave(N, ED, beta):
+    k_key = ED
     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     exemptionlist =[]
     for N in [N]:
@@ -81,6 +82,7 @@ def load_resort_data_smallN_maxminave(N, ED, beta):
                                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                                 real_ave_degree = np.loadtxt(real_ave_degree_name)
                                 real_ave_degree_vec=real_ave_degree_vec+list(real_ave_degree)
+
                                 nodepairs_for_eachgraph_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\nodepairs_for_eachgraph_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                                 node_pairs_vec = np.loadtxt(nodepairs_for_eachgraph_vec_name, dtype=int)
@@ -161,7 +163,7 @@ def load_resort_data_smallN_maxminave(N, ED, beta):
     # degree_vec_resort = list(resort_dict_ave.keys())
     # ave_deviation_resort = [np.mean(resort_dict_ave[key_d]) for key_d in degree_vec_resort]
     # std_deviation_resort = [np.std(resort_dict_ave[key_d]) for key_d in degree_vec_resort]
-    return list(resort_dict_ave[ED]), list(resort_dict_max[ED]), list(resort_dict_min[ED]), list(resort_dict_ran[ED]),
+    return list(resort_dict_ave[k_key]), list(resort_dict_max[k_key]), list(resort_dict_min[k_key]), list(resort_dict_ran[k_key]),exemptionlist
 
 
 
@@ -326,7 +328,6 @@ def plot_distribution(N, ED, beta):
     Compared maximum, minimum, average deviation with randomly selected nodes
     :return:
     """
-
     # Nvec = [20,50,100,1000]
     # # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     # beta = 8
@@ -344,37 +345,52 @@ def plot_distribution(N, ED, beta):
     # peakcut = [9,5,5,5]
 
     data1 = ave_deviation_vec
+    # data1 = [0,0,0]
     data2 = max_deviation_vec
     data3 = min_deviation_vec
     data4 = ran_deviation_vec
-    plt.figure(figsize=(9, 6))
+
+    fig, ax = plt.subplots(figsize=(6, 4.5))
+
     datasets = [data1,data2,data3,data4]
     colors = [[0, 0.4470, 0.7410],
               [0.8500, 0.3250, 0.0980],
               [0.9290, 0.6940, 0.1250],
               [0.4940, 0.1840, 0.5560]]
-    labels = ["Max","Min","Ave","Ran"]
+    labels = ["Ave","Max","Min","Ran"]
     for data, color, label in zip(datasets, colors, labels):
         hvalue, bin_vec = np.histogram(data, bins=60, density=True)
         print(bin_vec[1:len(bin_vec)])
-        plt.plot(bin_vec[1:len(bin_vec)], hvalue, color=color, label=label, linewidth=2)
+        plt.plot(bin_vec[1:len(bin_vec)], hvalue, color=color, label=label, linewidth=5)
 
+
+    ax.spines['right'].set_visible(False)
+    ax.spines['top'].set_visible(False)
+    ax.spines['left'].set_position(('data', 0))
+    ax.spines['bottom'].set_position(('data', 0))
     # plt.xscale('log')
-    plt.xlabel(r'x',fontsize = 26)
-    plt.ylabel(r'$f_d(x)$',fontsize = 26)
-    plt.xticks(fontsize=26)
-    plt.yticks(fontsize=26)
+    # plt.yscale('log')
+    plt.xlim([0,1])
+    plt.yticks([0,5,10,15,20,25])
+    # plt.yticks([0, 10, 20, 30, 40, 50])
+
+    plt.xlabel(r'x',fontsize = 35)
+    plt.ylabel(r'$f_{d(q,\gamma(i,j))}(x)$',fontsize = 35)
+    plt.xticks(fontsize=28)
+    plt.yticks(fontsize=28)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=20)
+    # plt.legend(fontsize=30)
     plt.tick_params(axis='both', which="both",length=6, width=1)
-    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionNodenumber{Nn}ED{EDN}Beta{betan}.pdf".format(Nn = N, EDn = ED, betan=beta)
-    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionNodenumber{Nn}ED{EDn}Beta{betan}.pdf".format(Nn = N, EDn = ED, betan=beta)
+    plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     # plt.close()
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    plot_distribution(50)
+    # plot_distribution(50)
+    plot_distribution(50, 10, 4)
+
 
 
