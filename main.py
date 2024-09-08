@@ -178,6 +178,15 @@ def find_k_connected_node_pairs(G,k):
     return unique_connected_pairs
 
 
+def hopcount_node(G, node_source, node_destination, node_index):
+    """
+    :param G: input graph
+    :param node_index: index of node i
+    :return: the hop count from node i to the nearest end node
+    """
+    hop = min(nx.shortest_path_length(G,node_source,node_index), nx.shortest_path_length(G,node_destination,node_index))
+    return hop
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # print_hi('PyCharm')
@@ -190,19 +199,19 @@ if __name__ == '__main__':
     # print(G.edges)
 
     # G = nx.fast_gnp_random_graph(20, 0.1)
-    G = nx.Graph()
+    # G = nx.Graph()
     # G.add_edges_from([(0, 1),(0,2),(2,3), (1,3),(4, 3),(3,5),(4,6),(5,6)])
-    G.add_edges_from([(0, 1), (1, 2), (2, 3), (5, 4)])
-    G.add_node(7)
-    connected_component = find_all_connected_node_pairs(G)
-
-    # components = list(nx.connected_components(G))
-    # connected_component = [s for s in components if len(s)>1]
-    # plt.figure()
-    # nx.draw(G)
-    # plt.show()
-    c = find_k_connected_node_pairs(G, 100)
-    print(c)
+    # # G.add_edges_from([(0, 1), (1, 2), (2, 3), (5, 4)])
+    # G.add_node(7)
+    # connected_component = find_all_connected_node_pairs(G)
+    #
+    # # components = list(nx.connected_components(G))
+    # # connected_component = [s for s in components if len(s)>1]
+    # # plt.figure()
+    # # nx.draw(G)
+    # # plt.show()
+    # c = find_k_connected_node_pairs(G, 100)
+    # print(c)
 
 
 
@@ -272,6 +281,17 @@ if __name__ == '__main__':
     # # 从唯一节点对中随机选择 100 个
     # random_pairs = random.sample(sorted(unique_pairs), 2)
     # print(random_pairs)
+
+    G = nx.Graph()
+    G.add_edges_from([(0, 1), (1,3),(4, 3),(4,6)])
+    # G.add_edges_from([(0, 1), (1, 2), (2, 3), (5, 4)])
+    G.add_node(7)
+    nx.draw(G, with_labels=True, node_size=500, node_color='skyblue', font_size=10, font_color='black',
+            edge_color='gray')
+    plt.show()
+    print(nx.shortest_path_length(G,0,6))
+    for node_index in [0,1,3,4,6]:
+        print(hopcount_node(G,0,6,node_index))
 
 
 

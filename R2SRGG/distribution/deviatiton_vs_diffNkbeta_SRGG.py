@@ -30,7 +30,7 @@ import sys
 
 from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
-from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs
+from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs, hopcount_node
 
 
 def generate_r2SRGG():
@@ -93,6 +93,8 @@ def distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime):
         min_deviation = []
         ave_baseline_deviation =[]
         length_geodesic = []
+        SP_hopcount = []
+        max_dev_node_hopcount = []
         SPnodenum_vec =[]
         simu_times = 100
         for simu_index in range(simu_times):
@@ -128,7 +130,12 @@ def distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime):
                 SPNodelist = all_shortest_path_node(G, nodei, nodej)
                 SPnodenum = len(SPNodelist)
                 SPnodenum_vec.append(SPnodenum)
+
                 if SPnodenum>0:
+                    # hopcount of the SP
+                    SP_hopcount_fornodepair = nx.shortest_path_length(G,nodei,nodej)
+                    SP_hopcount.append(SP_hopcount_fornodepair)
+
                     xSource = Coorx[nodei]
                     ySource = Coory[nodei]
                     xEnd = Coorx[nodej]
@@ -136,14 +143,23 @@ def distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime):
                     length_geodesic.append(distR2(xSource, ySource, xEnd, yEnd))
                     # Compute deviation for the shortest path of each node pair
                     deviations_for_a_nodepair = []
+                    hop_for_a_nodepair = []
                     for SPnode in SPNodelist:
                         xMed = Coorx[SPnode]
                         yMed = Coory[SPnode]
                         dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
                         deviations_for_a_nodepair.append(dist)
+                        # hop = hopcount_node(G, nodei, nodej, SPnode)
+                        # hop_for_a_nodepair.append(hop)
                     ave_deviation.append(np.mean(deviations_for_a_nodepair))
                     max_deviation.append(max(deviations_for_a_nodepair))
                     min_deviation.append(min(deviations_for_a_nodepair))
+
+                    max_value = max(deviations_for_a_nodepair)
+                    max_index = deviations_for_a_nodepair.index(max_value)
+                    maxhop_node_index = SPNodelist[max_index]
+                    max_dev_node_hopcount.append(hopcount_node(G, nodei, nodej, maxhop_node_index))
+
                     count = count + 1
 
                     baseline_deviations_for_a_nodepair = []
@@ -190,6 +206,14 @@ def distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime):
         nodepairs_for_eachgraph_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\nodepairs_for_eachgraph_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(nodepairs_for_eachgraph_vec_name, count_vec, fmt="%i")
+
+        SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\SPhopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        np.savetxt(SPhopcount_name, SP_hopcount, fmt="%i")
+
+        max_dev_node_hopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\max_dev_node_hopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        np.savetxt(max_dev_node_hopcount_name, max_dev_node_hopcount, fmt="%i")
 
 
 
@@ -347,39 +371,61 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
         # Random select nodepair_num nodes in the largest connected component
         distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
 
-def distance_inSRGG_realED(network_size_index, average_degree_index, beta_index, ExternalSimutime):
-    Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [2.1, 4, 8, 16, 32, 64, 128]
-
-    random.seed(ExternalSimutime)
-    N = Nvec[network_size_index]
-    ED = kvec[average_degree_index]
-    beta = betavec[beta_index]
-    print("input para:", (N, ED, beta))
-
-    rg = RandomGenerator(-12)
-    rseed = random.randint(0, 100)
-    for i in range(rseed):
-        rg.ran1()
-
-    # for large network, we only generate one network and randomly selected 1,000 node pair.
-    # for small network, we generate 100 networks and selected all the node pair in the LCC
-    if N > 100:
-        distance_inlargeSRGG(N, ED, beta, ExternalSimutime)
-    else:
-        # Random select nodepair_num nodes in the largest connected component
-        distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
+# def distance_inSRGG_realED(network_size_index, average_degree_index, beta_index, ExternalSimutime):
+#     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
+#     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+#     betavec = [2.1, 4, 8, 16, 32, 64, 128]
+#
+#     random.seed(ExternalSimutime)
+#     N = Nvec[network_size_index]
+#     ED = kvec[average_degree_index]
+#     beta = betavec[beta_index]
+#     print("input para:", (N, ED, beta))
+#
+#     rg = RandomGenerator(-12)
+#     rseed = random.randint(0, 100)
+#     for i in range(rseed):
+#         rg.ran1()
+#
+#     # for large network, we only generate one network and randomly selected 1,000 node pair.
+#     # for small network, we generate 100 networks and selected all the node pair in the LCC
+#     if N > 100:
+#         distance_inlargeSRGG(N, ED, beta, ExternalSimutime)
+#     else:
+#         # Random select nodepair_num nodes in the largest connected component
+#         distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    generate_r2SRGG()
+    # generate_r2SRGG()
 
-    # network_size_index = 7
-    # average_degree_index = 2
-    # beta_index = 1
-    # external_simu_time = 0
-    # distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
+    network_size_index = 2
+    average_degree_index = 7
+    beta_index = 1
+    external_simu_time = 0
+    distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
+    # N = 50
+    # ED = 9
+    # beta = 4
+    # rg=  RandomGenerator(-12)
+    # G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    # try:
+    #     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    # except:
+    #     flag = 0
+    #     while flag == 0:
+    #         G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    #         if nx.number_of_edges(G) > 0:
+    #             flag = 1
+    #             real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    #
+    # print("real ED:", real_avg)
+    # ave_clu = nx.average_clustering(G)
+    # print("clu:", ave_clu)
+    # components = list(nx.connected_components(G))
+    # largest_component = max(components, key=len)
+    # LCC_number = len(largest_component)
+    # print("LCC", LCC_number)
 
     # for N_index in range(4):
     #     for ED_index in range(24):
