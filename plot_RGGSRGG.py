@@ -46,6 +46,6 @@ def generate_plot_model_graph():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    generate_and_plot_SRGG(50,30,8)
+    generate_and_plot_SRGG(20,12,180)
     # generate_plot_model_graph()
 

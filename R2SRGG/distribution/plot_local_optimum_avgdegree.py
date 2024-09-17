@@ -461,12 +461,12 @@ def plot_local_optimum_with_realED2(beta):
             error = std_deviation_dict[N]
             error = error[0:cuttail[N_index]]
 
-            filter_index = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16,  18,  20,  22,  24,  26,  28,
+            filter_index = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16,  18,  20,  22,  24,  26,  28,
              30]
             x = [x[a] for a in filter_index]
             y = [y[a] for a in filter_index]
             error = [error[a] for a in filter_index]
-        else:
+        elif N>100:
             x = real_ave_degree_dict[N]
             print(len(x))
             x = x[0:cuttail[N_index]]
@@ -474,6 +474,14 @@ def plot_local_optimum_with_realED2(beta):
             y = y[0:cuttail[N_index]]
             error = std_deviation_dict[N]
             error = error[0:cuttail[N_index]]
+        else:
+            x = real_ave_degree_dict[N]
+            print(len(x))
+            x = x[1:cuttail[N_index]]
+            y = ave_deviation_dict[N]
+            y = y[1:cuttail[N_index]]
+            error = std_deviation_dict[N]
+            error = error[1:cuttail[N_index]]
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',markersize=16, label=lengend[N_index], color=colors[N_index])
 
         # # 找到峰值后最低点的坐标
@@ -493,7 +501,7 @@ def plot_local_optimum_with_realED2(beta):
 
     plt.xscale('log')
     plt.xlabel('Expected degree, E[D]',fontsize = 26)
-    plt.ylabel('Average Deviation',fontsize = 26)
+    plt.ylabel('Average deviation',fontsize = 26)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
@@ -503,7 +511,7 @@ def plot_local_optimum_with_realED2(beta):
         betan=beta)
     plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     # plt.show()
-    # plt.close()
+    plt.close()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -516,11 +524,13 @@ if __name__ == '__main__':
     # plot_local_optimum()
 
 
+
     betavec = [4, 8, 16, 32, 64, 128]
-    # betavec = [4, 8]
+    # betavec = [8]
     for beta in betavec:
         load_10000nodenetwork_results(beta)
         plot_local_optimum_with_realED2(beta)
+
 
 
 
