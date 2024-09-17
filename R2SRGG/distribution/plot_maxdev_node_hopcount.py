@@ -35,7 +35,7 @@ def plot_maxdev_node_hocount(N, ED, beta):
         # plt.yticks([0, 5, 10, 15, 20, 25])
         # plt.yticks([0, 10, 20, 30, 40, 50])
 
-        plt.xlabel(r'$x$', fontsize=35)
+        plt.xlabel(r'x', fontsize=35)
         plt.ylabel(r'$f_{h(q_{max})}(x)$', fontsize=35)
         plt.xticks(fontsize=28)
         plt.yticks(fontsize=28)
