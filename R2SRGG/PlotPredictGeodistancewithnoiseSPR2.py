@@ -112,14 +112,14 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
     bar3 = ax.bar(x + width, y3, width, label='Deviation', yerr=(y_error_lower,Geo_precision_list_all_std), capsize=5)
 
     # Adding labels and title
-    ax.set_ylim(0,1.1)
+    # ax.set_ylim(0,1.1)
     ax.set_xlabel(r'Noise amplitude, $\alpha$', fontsize = 25)
     ax.set_ylabel('Precision',fontsize = 25)
     # title_name = "beta:{beta_n}, E[D]:{ed_n}".format(ed_n=ED, beta_n = beta)
     # ax.set_title(title_name)
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels)
-    ax.legend(fontsize=22)
+    # ax.legend(fontsize=22)
     ax.tick_params(direction='out')
     plt.xticks(fontsize=22)
     plt.yticks(fontsize=22)
@@ -197,16 +197,15 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
         # print("lenpre", len(PrecisonRGG_specificnoise))
 
     fig, ax = plt.subplots(figsize=(6, 4.5))
-    ax.set_xlabel(r'Noise amplitude, $\alpha$', fontsize=25)
-    ax.set_ylabel('Precision', fontsize=25)
-    ax.set_ylim(0,1.1)
+
+    # ax.set_ylim(0,1.1)
     # Data
     y1 = RGG_precision_list_all_ave
     y2 = SRGG_precision_list_all_ave
     y3 = Geo_precision_list_all_ave
     y_error_lower = [p * 0 for p in y1]
     # X axis labels
-    x_labels = ['0', '0.001', '0.01', '0.1', '0.5']
+    x_labels = ['0', '0.001', '0.01', '0.1', '1']
 
     # X axis positions for each bar group
     x = np.arange(len(x_labels))
@@ -268,18 +267,18 @@ def check_data_wehavenow():
 if __name__ == '__main__':
 
     # # STEP 3 plot the figure
-    for Edindex in [0]:
-        for betaindex in [1]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex)
+    # for Edindex in [0]:
+    #     for betaindex in [1]:
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex)
 
     # for Edindex in range(4):
     #     for betaindex in range(7):
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex)
 
     # STEP 3 plot the recall
-    # for Edindex in [0]:
-    #     for betaindex in [1]:
-    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex)
+    for Edindex in [0]:
+        for betaindex in [1]:
+            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex)
 
 
     # for Edindex in range(4):

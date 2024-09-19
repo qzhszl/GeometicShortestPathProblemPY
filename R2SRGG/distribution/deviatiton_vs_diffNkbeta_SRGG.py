@@ -350,7 +350,8 @@ def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
 def distance_inSRGG(network_size_index, average_degree_index, beta_index, ExternalSimutime):
     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7, 10, 12]
 
     random.seed(ExternalSimutime)
     N = Nvec[network_size_index]
@@ -399,11 +400,12 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
 if __name__ == '__main__':
     # generate_r2SRGG()
 
-    network_size_index = 2
-    average_degree_index = 7
-    beta_index = 1
-    external_simu_time = 0
-    distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
+    # network_size_index = 2
+    # average_degree_index = 7
+    # beta_index = 1
+    # external_simu_time = 0
+    # distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
+
     # N = 50
     # ED = 9
     # beta = 4
@@ -427,11 +429,10 @@ if __name__ == '__main__':
     # LCC_number = len(largest_component)
     # print("LCC", LCC_number)
 
-    # for N_index in range(4):
-    #     for ED_index in range(24):
-    #         for beta_index in range(7):
-    #             distance_inSRGG(N_index, ED_index, beta_index, 0)
-
+    for N_index in [0,3]:
+        for ED_index in range(24):
+            for beta_index in range(14):
+                distance_inSRGG(N_index, ED_index, beta_index, 0)
 
 
 
