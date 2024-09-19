@@ -187,6 +187,8 @@ def load_resort_data_beta2(N):
     ave_deviation_vec = []
     ave_deviation_dic = {}
     clustering_coefficient_vec = []
+    ave_avg_vec = []
+    dict_index = 0
     for ED in kvec:
         if ED<N:
             for beta in betavec:
@@ -209,40 +211,46 @@ def load_resort_data_beta2(N):
                             real_ave_degree_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                                 Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                             real_ave_degree = np.loadtxt(real_ave_degree_name)
-
+                            ave_avg_vec = ave_avg_vec+list(real_ave_degree)
                             a_index = 0
                             count = 0
                             for nodepair_num_inonegraph in node_pairs_vec:
+                                dict_index = dict_index + 1
                                 b_index = a_index+nodepair_num_inonegraph-1
-                                ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb[a_index:b_index]))
-                                real_cc = clustering_coefficient[count]
-                                try:
-                                    ave_deviation_dic[real_cc] = ave_deviation_dic[real_cc] + list(ave_deviation_for_a_para_comb[a_index:b_index])
-                                except:
-                                    ave_deviation_dic[real_cc] = list(ave_deviation_for_a_para_comb[a_index:b_index])
+                                # ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb[a_index:b_index]))
+                                ave_deviation_dic[dict_index] = list(ave_deviation_for_a_para_comb[a_index:b_index])
                                 a_index = b_index+1
                                 count = count+1
+
                         except FileNotFoundError:
                             exemptionlist.append((N, ED, beta, ExternalSimutime))
 
-    resort_dict = {}
-    for key_cc, value_deviation in ave_deviation_dic.items():
-        if round_onetenthquator(key_cc) in resort_dict.keys():
-            resort_dict[round_onetenthquator(key_cc)] = resort_dict[round_onetenthquator(key_cc)] + list(value_deviation)
-            # a = max(list(value_deviation))
-            # b = np.mean(list(value_deviation))
-        else:
-            resort_dict[round_onetenthquator(key_cc)] = list(value_deviation)
-            # a = max(list(value_deviation))
-            # b = np.mean(list(value_deviation))
-    if 0 in resort_dict.keys():
-        del resort_dict[0]
-    resort_dict = {key: resort_dict[key] for key in sorted(resort_dict.keys())}
-    degree_vec_resort = list(resort_dict.keys())
-    ave_deviation_resort = [np.mean(resort_dict[key_d]) for key_d in degree_vec_resort]
-    std_deviation_resort = [np.std(resort_dict[key_d]) for key_d in degree_vec_resort]
+    print(len(ave_avg_vec))
+    print(len(clustering_coefficient_vec))
+    print(len(ave_deviation_dic))
 
-    return degree_vec_resort, ave_deviation_resort, std_deviation_resort, clustering_coefficient_vec, ave_deviation_vec, ave_deviation_dic
+    dataCCED = np.array(ave_avg_vec).reshape(-1, 1)
+    dataCCED = np.column_stack((dataCCED, clustering_coefficient_vec))
+    filtered_data = data[(data[:, 0] == 1) & (data[:, 1] == 2)]
+
+    # resort_dict = {}
+    # for key_cc, value_deviation in ave_deviation_dic.items():
+    #     if round_onetenthquator(key_cc) in resort_dict.keys():
+    #         resort_dict[round_onetenthquator(key_cc)] = resort_dict[round_onetenthquator(key_cc)] + list(value_deviation)
+    #         # a = max(list(value_deviation))
+    #         # b = np.mean(list(value_deviation))
+    #     else:
+    #         resort_dict[round_onetenthquator(key_cc)] = list(value_deviation)
+    #         # a = max(list(value_deviation))
+    #         # b = np.mean(list(value_deviation))
+    # if 0 in resort_dict.keys():
+    #     del resort_dict[0]
+    # resort_dict = {key: resort_dict[key] for key in sorted(resort_dict.keys())}
+    # degree_vec_resort = list(resort_dict.keys())
+    # ave_deviation_resort = [np.mean(resort_dict[key_d]) for key_d in degree_vec_resort]
+    # std_deviation_resort = [np.std(resort_dict[key_d]) for key_d in degree_vec_resort]
+
+    # return degree_vec_resort, ave_deviation_resort, std_deviation_resort, clustering_coefficient_vec, ave_deviation_vec, ave_deviation_dic
 
 
 def round_quarter(x):
