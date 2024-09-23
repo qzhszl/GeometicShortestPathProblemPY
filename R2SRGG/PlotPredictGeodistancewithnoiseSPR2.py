@@ -23,7 +23,7 @@ matplotlib.use('TkAgg',force=True)
 from matplotlib import pyplot as plt
 
 
-def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex):
+def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex,legendpara):
     # plot PRECISION
     ED_list = [5, 10, 20, 40]  # Expected degrees
     ED = ED_list[Edindex]
@@ -85,7 +85,6 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
         Geo_precision_list_all_std.append(np.std(PrecisonGeodis_specificnoise))
         # print("lenpre", len(PrecisonRGG_specificnoise))
 
-
     fig, ax = plt.subplots(figsize=(6, 4.5))
     # Data
     y1 = RGG_precision_list_all_ave
@@ -95,7 +94,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
 
     # X axis labels
     # x_labels = ['0', '0.001', '0.01']
-    x_labels = ['0', '0.001', '0.01','0.1','1']
+    x_labels = ['0', r'$10^{-3}$', r'$10^{-2}$', r'$10^{-1}$', r'$10^{0}$']
 
     # X axis positions for each bar group
     x = np.arange(len(x_labels))
@@ -103,8 +102,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
     # Width of each bar
     width = 0.2
 
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
 
     # Plotting the bars
     bar1 = ax.bar(x - width, y1, width, label='RGG',yerr=(y_error_lower,RGG_precision_list_all_std), capsize=5)
@@ -119,7 +118,9 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
     # ax.set_title(title_name)
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels)
-    # ax.legend(fontsize=22)
+
+    if legendpara ==1:
+        ax.legend(fontsize=22)
     ax.tick_params(direction='out')
     plt.xticks(fontsize=22)
     plt.yticks(fontsize=22)
@@ -134,7 +135,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
     print(exemptionlist)
 
 
-def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex):
+def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara):
     # plot recall
     ED_list = [5, 10, 20, 40]  # Expected degrees
     ED = ED_list[Edindex]
@@ -205,7 +206,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
     y3 = Geo_precision_list_all_ave
     y_error_lower = [p * 0 for p in y1]
     # X axis labels
-    x_labels = ['0', '0.001', '0.01', '0.1', '1']
+    x_labels = ['0', r'$10^{-3}$', r'$10^{-2}$', r'$10^{-1}$', r'$10^{0}$']
 
     # X axis positions for each bar group
     x = np.arange(len(x_labels))
@@ -213,8 +214,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
     # Width of each bar
     width = 0.2
 
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
     # Plotting the bars
     bar1 = ax.bar(x - width, y1, width, label='RGG', yerr=(y_error_lower, RGG_precision_list_all_std), capsize=5)
     bar2 = ax.bar(x, y2, width, label='SRGG', yerr=(y_error_lower, SRGG_precision_list_all_std), capsize=5)
@@ -228,7 +229,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
     # ax.set_title(title_name)
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels)
-    ax.legend(fontsize=22)
+    if legendpara == 1:
+        ax.legend(fontsize=22)
     ax.tick_params(direction='out')
     plt.xticks(fontsize=22)
     plt.yticks(fontsize=22)
@@ -266,22 +268,26 @@ def check_data_wehavenow():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
-    # # STEP 3 plot the figure
+    # # # STEP 3 plot the figure
+    # for Edindex in range(4):
+    #     for betaindex in range(7):
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex,legendpara=0)
+    #
+    #
     # for Edindex in [0]:
     #     for betaindex in [1]:
-    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex)
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=1)
 
-    # for Edindex in range(4):
-    #     for betaindex in range(7):
-    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex)
 
     # STEP 3 plot the recall
+    for Edindex in range(4):
+        for betaindex in range(7):
+            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=0)
+
     for Edindex in [0]:
         for betaindex in [1]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex)
+            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
 
 
-    # for Edindex in range(4):
-    #     for betaindex in range(7):
-    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex)
+
 

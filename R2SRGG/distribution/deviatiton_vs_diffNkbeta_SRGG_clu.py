@@ -491,6 +491,11 @@ def distance_inSRGG_clu(network_size_index, average_degree_index, beta_index, Ex
         # Random select nodepair_num nodes in the largest connected component
         distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
 
+
+
+
+
+
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # network_size_index = 4
@@ -508,7 +513,5 @@ if __name__ == '__main__':
     beta = sys.argv[2]
     ExternalSimutime = sys.argv[3]
     distance_inSRGG_clu(7, int(ED), int(beta), int(ExternalSimutime))
-
-
 
 

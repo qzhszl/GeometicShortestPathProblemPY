@@ -396,6 +396,36 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
 #         # Random select nodepair_num nodes in the largest connected component
 #         distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
 
+def shortest_path_lengthfornetwork(N,beta):
+    # avg
+    kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    for beta in [beta]:
+        for ED in kvec:
+            hopcount_for_one_graph = []
+            nodenum_for_one_graph = []
+            FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                Nn=N, EDn=ED, betan=beta)
+            G = loadSRGGandaddnode(N, FileNetworkName)
+            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+            clustering_coefficient = nx.average_clustering(G)
+            for ExternalSimutime in range(10):
+                SPnodenum_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\SPnodenum_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                SPnodenum_vec = np.loadtxt(SPnodenum_vec_name, dtype=int)
+                nodenum_for_one_graph = nodenum_for_one_graph+list(SPnodenum_vec)
+                filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                nodepair = np.loadtxt(filename_selecetednodepair, dtype=int)
+                for [nodei,nodej] in nodepair:
+                    hopcount_for_one_graph.append(nx.shortest_path_length(G, source=nodei, target=nodej))
+
+            hopcount_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\hopcount_sp_ED{EDn}Beta{betan}.txt".format(
+                EDn=ED, betan=beta)
+            np.savetxt(hopcount_Name, hopcount_for_one_graph)
+            spnodenum_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\SPnodenum_ED{EDn}Beta{betan}.txt".format(
+                EDn=ED, betan=beta)
+            np.savetxt(spnodenum_Name, nodenum_for_one_graph)
+
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # generate_r2SRGG()
@@ -429,11 +459,11 @@ if __name__ == '__main__':
     # LCC_number = len(largest_component)
     # print("LCC", LCC_number)
 
-    for N_index in [0,3]:
-        for ED_index in range(24):
-            for beta_index in range(14):
-                distance_inSRGG(N_index, ED_index, beta_index, 0)
+    # for N_index in [0,3]:
+    #     for ED_index in range(24):
+    #         for beta_index in range(14):
+    #             distance_inSRGG(N_index, ED_index, beta_index, 0)
 
-
+    shortest_path_lengthfornetwork(10000, 8)
 
 
