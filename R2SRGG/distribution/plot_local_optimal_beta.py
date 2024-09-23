@@ -13,7 +13,9 @@ import math
 
 def load_small_network_results_beta(N, ED):
     # return betavec = [2.1, 4, 8, 16, 32, 64, 128] and corresponding
-    betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 10, 12, 16, 32, 64, 128]
+    betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
     exemptionlist =[]
     ave_deviation_vec = []
     std_deviation_vec =[]
@@ -39,7 +41,8 @@ def load_small_network_results_beta(N, ED):
 
 def load_large_network_results_beta(N, ED):
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
-    betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 7,8, 10, 12,16,32,64,128]
+    # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6,8, 10, 12,16,32,64,128]
+    betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
     exemptionlist =[]
     ave_deviation_vec = []
     clustering_coefficient_vec =[]
@@ -75,7 +78,8 @@ def load_large_network_results_beta(N, ED):
 
 def load_10000nodenetwork_results_beta(ED):
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
-    betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 7, 8, 16, 32, 64, 128]
+    betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
+    # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 10, 12, 16, 32, 64, 128]
     # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
     N=10000
     exemptionlist =[]
@@ -113,7 +117,9 @@ def load_10000nodenetwork_results_beta(ED):
 
 
 def load_resort_data_beta(N, ED):
-    betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
+    betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 7, 8,10,12, 16, 32, 64, 128]
     # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7, 10, 12]
     exemptionlist =[]
 
@@ -173,7 +179,7 @@ def load_resort_data_beta(N, ED):
 
 def load_resort_data_beta2(N):
     """
-    In this.m we build a array [real_avg, real_cc, deviation]
+    In this.m we save the real avg,cc and corresponding devaition list in an array [avg,cc] and a dict{1,[1,2,3,4,4]}
     :param N:
     :param ED:
     :return:
@@ -231,7 +237,7 @@ def load_resort_data_beta2(N):
 
     dataCCED = np.array(ave_avg_vec).reshape(-1, 1)
     dataCCED = np.column_stack((dataCCED, clustering_coefficient_vec))
-    filtered_data = data[(data[:, 0] == 1) & (data[:, 1] == 2)]
+    # filtered_data = data[(data[:, 0] == 1) & (data[:, 1] == 2)]
 
     # resort_dict = {}
     # for key_cc, value_deviation in ave_deviation_dic.items():
@@ -272,8 +278,10 @@ def round_onetenthquator(x):
 def plot_local_optimum_with_beta(ED):
     # the x-axis is the real average degree
     # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    betavec = [2.1, 4, 8, 16, 32, 64, 128]
-    Nvec = [20, 50, 100,1000]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 7, 8, 10, 12, 16, 32, 64, 128]
+    betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
+    Nvec = [10,100,1000,10000]
     clustering_coefficient_dict = {}
     ave_deviation_dict = {}
     std_deviation_dict = {}
@@ -318,10 +326,13 @@ def plot_local_optimum_with_beta(ED):
 
     for N_index in range(len(Nvec)):
         N = Nvec[N_index]
-        x = clustering_coefficient_dict[N]
         y = ave_deviation_dict[N]
         error = std_deviation_dict[N]
-        plt.errorbar(betavec, y, yerr=error, linestyle="--", linewidth=3, elinewidth= 1, capsize=5,marker='o',label=f'N={N}',markersize=16,color=colors[N_index])
+        if N < ED:
+            plt.errorbar([], y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
+                         label=f'N={N}', markersize=16, color=colors[N_index])
+        else:
+            plt.errorbar(betavec, y, yerr=error, linestyle="--", linewidth=3, elinewidth= 1, capsize=5,marker='o',label=f'N={N}',markersize=16,color=colors[N_index])
 
         # # 找到峰值后最低点的坐标
         # peak_index = np.argmax(y[0:10])
@@ -334,21 +345,19 @@ def plot_local_optimum_with_beta(ED):
         # plt.plot(post_peak_min_x, post_peak_min_y, 'o', color=colors[N_index], markersize=8)
 
     # plt.xscale('log')
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
     plt.xlabel(r'$\beta$', fontsize=26)
     plt.ylabel('Average Deviation', fontsize=26)
-    plt.ylabel('Distance form shortest path nodes to the geodesic')
+    plt.xscale('log')
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
-    plt.legend(fontsize=20, loc=(0.72, 0.58))
+    plt.legend(fontsize=20, loc=(0.65, 0.58))
     plt.tick_params(axis='both', which="both", length=6, width=1)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumwithbeta_ED{EDn}.pdf".format(
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DeviationVsCC{EDn}.pdf".format(
         EDn=ED)
-    plt.legend(fontsize=20, loc=(0.7, 0.58))
     plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-
     plt.show()
 
 
@@ -393,7 +402,8 @@ def plot_local_optimum_with_cc(ED):
               [0.9290, 0.6940, 0.1250],
               [0.4940, 0.1840, 0.5560],
               [0.4660, 0.6740, 0.1880]]
-    cuttail = [10,9,19,19]
+    # cuttail = [10,9,19,19]  # ED = 5
+    cuttail = [10, 12, 19, 19] # ED = 20
     # peakcut = [9,5,5]
     for N_index in range(len(Nvec)):
         N = Nvec[N_index]
@@ -416,8 +426,8 @@ def plot_local_optimum_with_cc(ED):
         # # 标出最低点
         # plt.plot(post_peak_min_x, post_peak_min_y, 'o', color=colors[N_index], markersize=16)
 
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
 
     plt.xlim(0, 0.65)
     plt.xticks([0, 0.1, 0.2, 0.3,0.4,0.5,0.6])
@@ -430,7 +440,7 @@ def plot_local_optimum_with_cc(ED):
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=20, loc=(0.72,0.58))
+    plt.legend(fontsize=20, loc=(0.68,0.58))
     plt.tick_params(axis='both', which="both",length=6, width=1)
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumED{EDn}2.pdf".format(
         EDn=ED)
@@ -540,9 +550,38 @@ if __name__ == '__main__':
     # print(ED_index)
     # print(beta_index)
 
+
     # plot_local_optimum_with_beta(5)
+
+    # still need to do
     # for ED in [5]:
     #     plot_local_optimum_with_cc_findreason(ED)
-    load_resort_data_beta2(100)
+    # load_resort_data_beta2(100)
 
 
+    # test clustering
+    # N =10000
+    # ED = 5
+    # for beta in [4,8,128]:
+    #     FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     G = loadSRGGandaddnode(N, FileNetworkName)
+    #     clustering_coefficient = nx.average_clustering(G)
+    #     print(clustering_coefficient)
+    # beta = 4
+    # for ED in [10,20,40]:
+    #     FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     G = loadSRGGandaddnode(N, FileNetworkName)
+    #     clustering_coefficient = nx.average_clustering(G)
+    #     print(clustering_coefficient)
+
+    # first time plot deviation with different beta
+    # load_10000nodenetwork_results_beta(20)
+    # plot_local_optimum_with_beta(20)
+
+    # second time plot deviation with different beta
+    # plot_local_optimum_with_beta(20)
+
+    # plot deviation with clustering coefficient
+    plot_local_optimum_with_cc(20)
