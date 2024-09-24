@@ -396,7 +396,7 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
 #         # Random select nodepair_num nodes in the largest connected component
 #         distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
 
-def shortest_path_lengthfornetwork(N,beta):
+def shortest_path_length_hopcount_fornetwork(N,beta):
     # avg
     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     for beta in [beta]:
@@ -425,6 +425,55 @@ def shortest_path_lengthfornetwork(N,beta):
             spnodenum_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\SPnodenum_ED{EDn}Beta{betan}.txt".format(
                 EDn=ED, betan=beta)
             np.savetxt(spnodenum_Name, nodenum_for_one_graph)
+
+
+def generate_proper_network(N, input_ED, beta_index):
+    # for 10000 node
+    betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    beta = betavec[beta_index]
+    cc = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+    C_G = cc[beta_index]
+
+    kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    ED_bound = input_ED*0.05
+
+    min_ED = 1
+    max_ED = N-1
+    count = 0
+    rg = RandomGenerator(-12)
+    G, Coorx, Coory = R2SRGG(N, input_ED, beta, rg)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    ED= input_ED
+    while abs(input_ED-real_avg)>ED_bound and count < 20:
+        count = count + 1
+        if input_ED-real_avg>0:
+            min_ED = ED
+            ED = min_ED+0.5*(max_ED-min_ED)
+        else:
+            max_ED = ED
+            ED = min_ED + 0.5 * (max_ED - min_ED)
+            pass
+        G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+        real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+
+    print("input para:", (N, input_ED, beta))
+    print("real ED:", real_avg)
+    print("clu:", nx.average_clustering(G))
+    components = list(nx.connected_components(G))
+    largest_component = max(components, key=len)
+    print("LCC", len(largest_component))
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_N{Nn}ED{EDn}CC{betan}.txt".format(
+        Nn=N, EDn=input_ED, betan=C_G)
+    nx.write_edgelist(G, FileNetworkName)
+
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_coordinates_N{Nn}ED{EDn}CC{betan}.txt".format(
+        Nn=N, EDn=input_ED, betan=C_G)
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(Coorx, Coory):
+            file.write(f"{data1}\t{data2}\n")
+
+
+
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -464,6 +513,15 @@ if __name__ == '__main__':
     #         for beta_index in range(14):
     #             distance_inSRGG(N_index, ED_index, beta_index, 0)
 
-    shortest_path_lengthfornetwork(10000, 8)
+    # shortest_path_lengthfornetwork(10000, 8)
 
+    # generate_proper_network(N, ED)
+    betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    for beta in range(len(betavec)):
+        for ED_input in kvec:
+            generate_proper_network(10000, ED_input, beta)
 
+    # ED = sys.argv[1]
+    # cc_index = sys.argv[2]
+    # generate_proper_network(10000, int(ED), int(cc_index))

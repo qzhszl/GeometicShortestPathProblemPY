@@ -603,8 +603,20 @@ def plot_local_optimum_with_realED_diffCG():
     plt.legend(fontsize=20,loc="upper left")
     plt.tick_params(axis='both', which="both",length=6, width=1)
 
-    inset_ax = inset_axes(ax, width="40%", height="30%", loc='upper right')
-    inset_ax.plot(c_g_vec, LO_Dev,linewidth=3, marker='o', markersize=10, label=r"$N=10$")
+    # inset_ax = inset_axes(ax, width="40%", height="30%")
+    inset_ax = fig.add_axes([0.58, 0.55, 0.3, 0.3])
+    inset_ax.plot(c_g_vec, LO_Dev,linewidth=3, marker='o', markersize=10, color = "b")
+    inset_ax.set_xlabel("$C_G$",fontsize=18)
+    inset_ax.set_ylabel(r"Local $\min(\overline{d}(q,\gamma(i,j)))$",fontsize=18)
+    inset_ax.tick_params(axis='y', labelsize=18)
+    inset_ax.tick_params(axis='x', labelsize=18)
+    inset_ax.set_xlim(0, 0.6)
+    inset_ax.text(0.8, 0.85, r'$N = 10^4$', transform=inset_ax.transAxes,
+                  fontsize=20, verticalalignment='center', horizontalalignment='center')
+    # inset_ax2 = inset_ax.twinx()
+    # inset_ax2.plot(c_g_vec, LO_ED, 'r-', label='log(x+1)')
+    # inset_ax2.set_ylabel(r"Local minimum $E[D]$", color='r',fontsize=18)
+    # inset_ax2.tick_params(axis='y', labelcolor='r')
 
 
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffc_G.pdf".format(
