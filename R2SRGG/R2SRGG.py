@@ -11,7 +11,7 @@ import networkx as nx
 
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 # def point_to_line_distance_from_two_points(px, py, ax, ay, bx, by):
@@ -200,7 +200,10 @@ def R2SRGG_withgivennodepair(N, avg, beta, rg, xA, yA, xB, yB, Coorx=None, Coory
         for j in range(i + 1, N):
             dist = math.sqrt((xx[i] - xx[j]) ** 2 + (yy[i] - yy[j]) ** 2)
             assert dist > 0
-            prob = 1 / (1 + math.exp(beta * math.log(alpha * dist)))
+            try:
+                prob = 1 / (1 + math.exp(beta * math.log(alpha * dist)))
+            except:
+                prob = 0
             if rg.ran1() < prob:
                 s.append(i)
                 t.append(j)

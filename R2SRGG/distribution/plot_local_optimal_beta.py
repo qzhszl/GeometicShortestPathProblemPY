@@ -669,6 +669,6 @@ if __name__ == '__main__':
     # plot_local_optimum_with_beta(20)
 
     # plot deviation with clustering coefficient
-    # plot_local_optimum_with_cc(20)
+    plot_local_optimum_with_cc(20)
 
 
