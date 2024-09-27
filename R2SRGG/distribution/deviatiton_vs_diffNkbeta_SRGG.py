@@ -28,7 +28,7 @@ import random
 import math
 import sys
 
-from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode
+from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs, hopcount_node
 
@@ -462,17 +462,75 @@ def generate_proper_network(N, input_ED, beta_index):
     components = list(nx.connected_components(G))
     largest_component = max(components, key=len)
     print("LCC", len(largest_component))
-    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_N{Nn}ED{EDn}CC{betan}.txt".format(
-        Nn=N, EDn=input_ED, betan=C_G)
+    if count < 20:
+        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_N{Nn}ED{EDn}CC{betan}.txt".format(
+            Nn=N, EDn=input_ED, betan=C_G)
+        nx.write_edgelist(G, FileNetworkName)
+
+        FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_coordinates_N{Nn}ED{EDn}CC{betan}.txt".format(
+            Nn=N, EDn=input_ED, betan=C_G)
+        with open(FileNetworkCoorName, "w") as file:
+            for data1, data2 in zip(Coorx, Coory):
+                file.write(f"{data1}\t{data2}\n")
+
+
+def generate_proper_network_withgivendistances(N, input_ED_index,beta_index,Geodistance_index):
+    """
+    fix distance: A,B (0.25,0.25) (0.75,0.75)
+    (0.25,0.25) (0.5,0.5)
+    (0.25,0.25) (0.3,0.3)
+    :return:
+    """
+    distance_list = [[0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
+    x_A = distance_list[Geodistance_index][0]
+    y_A = distance_list[Geodistance_index][1]
+    x_B = distance_list[Geodistance_index][2]
+    y_B = distance_list[Geodistance_index][3]
+    geodesic_distance_AB = x_B-x_A
+    # BETA for 10000 node
+    betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    beta = betavec[beta_index]
+    cc = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+    C_G = cc[beta_index]
+
+    kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    input_ED = kvec[input_ED_index]
+    ED_bound = input_ED * 0.05
+
+    min_ED = 1
+    max_ED = N - 1
+    count = 0
+    rg = RandomGenerator(-12)
+    G, Coorx, Coory = R2SRGG_withgivennodepair(N, input_ED, beta, rg,x_A,y_A,x_B,y_B)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    ED = input_ED
+    while abs(input_ED - real_avg) > ED_bound and count < 20:
+        count = count + 1
+        if input_ED - real_avg > 0:
+            min_ED = ED
+            ED = min_ED + 0.5 * (max_ED - min_ED)
+        else:
+            max_ED = ED
+            ED = min_ED + 0.5 * (max_ED - min_ED)
+            pass
+        G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
+        real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+
+    print("input para:", (N, input_ED, beta))
+    print("real ED:", real_avg)
+    print("clu:", nx.average_clustering(G))
+    components = list(nx.connected_components(G))
+    largest_component = max(components, key=len)
+    print("LCC", len(largest_component))
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\Givendistancenetwork_N{Nn}ED{EDn}CC{betan}Geodistance{Geodistance}.txt".format(
+        Nn=N, EDn=input_ED, betan=C_G, Geodistance = geodesic_distance_AB)
     nx.write_edgelist(G, FileNetworkName)
 
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_coordinates_N{Nn}ED{EDn}CC{betan}.txt".format(
-        Nn=N, EDn=input_ED, betan=C_G)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\Givendistancenetwork_coordinates_N{Nn}ED{EDn}CC{betan}Geodistance{Geodistance}.txt".format(
+        Nn=N, EDn=input_ED, betan=C_G, Geodistance = geodesic_distance_AB)
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coorx, Coory):
             file.write(f"{data1}\t{data2}\n")
-
-
 
 
     # Press the green button in the gutter to run the script.
@@ -515,13 +573,77 @@ if __name__ == '__main__':
 
     # shortest_path_lengthfornetwork(10000, 8)
 
-    # generate_proper_network(N, ED)
-    betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
-    kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    for beta in range(len(betavec)):
-        for ED_input in kvec:
-            generate_proper_network(10000, ED_input, beta)
+    ## generate_proper_network(N, ED)
+    # betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    # kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    # for beta in range(len(betavec)):
+    #     for ED_input in kvec:
+    #         generate_proper_network(10000, ED_input, beta)
 
     # ED = sys.argv[1]
     # cc_index = sys.argv[2]
     # generate_proper_network(10000, int(ED), int(cc_index))
+    # N = 10000
+    # exceptionlist =[]
+    # for C_G in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]:
+    #     for input_ED in list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]:
+    #         try:
+    #             FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_coordinates_N{Nn}ED{EDn}CC{betan}.txt".format(
+    #                 Nn=N, EDn=input_ED, betan=C_G)
+    #             a = np.loadtxt(FileNetworkCoorName)
+    #         except:
+    #             exceptionlist.append((C_G,input_ED))
+    # print(exceptionlist)
+
+    # generate ER graph with fixed distances
+    # step 1:
+    # kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    # betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    # kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+
+    # for beta in betavec:
+    #     for ED_input in [10]:
+    #         rg = RandomGenerator(-12)
+    #         G, xx, yy = R2SRGG_withgivennodepair(10000, ED_input, beta, rg, 0.25, 0.25, 0.3, 0.3, Coorx=None, Coory=None, SaveNetworkPath=None)
+    #         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    #         print("real ED:", real_avg)
+    #         ave_clu = nx.average_clustering(G)
+    #         print("clu:", ave_clu)
+    #         components = list(nx.connected_components(G))
+    #         largest_component = max(components, key=len)
+    #         LCC_number = len(largest_component)
+    #         print("LCC", LCC_number)
+
+    # step 2:
+    # generate_proper_network_withgivendistances(100, 0, 0, 0)
+
+
+    """
+    generate proper shortest path network
+    """
+    # betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    # conclusion at this stage is that the data after degree> 6 is clean, but not before
+    N = 10000
+    input_ED = 2
+    C_G = 0.3
+    rg = RandomGenerator(-12)
+    ED = 2.6
+    beta = 6
+    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    print("input para:", (N, ED, beta))
+    print("real ED:", real_avg)
+    print("clu:", nx.average_clustering(G))
+    components = list(nx.connected_components(G))
+    largest_component = max(components, key=len)
+    print("LCC", len(largest_component))
+
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\smallED\\network_N{Nn}ED{EDn}CC{betan}.txt".format(
+        Nn=N, EDn=input_ED, betan=C_G)
+    nx.write_edgelist(G, FileNetworkName)
+
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\smallED\\network_coordinates_N{Nn}ED{EDn}CC{betan}.txt".format(
+        Nn=N, EDn=input_ED, betan=C_G)
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(Coorx, Coory):
+            file.write(f"{data1}\t{data2}\n")
