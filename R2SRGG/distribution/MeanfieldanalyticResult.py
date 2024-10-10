@@ -265,3 +265,5 @@ if __name__ == '__main__':
     Geodistance_index = sys.argv[3]
     ExternalSimutime = sys.argv[4]
     distance_inSRGG_withEDCC(5, int(ED), int(cc_index), int(Geodistance_index), int(ExternalSimutime))
+
+    common_neighbors = list(nx.common_neighbors(G, node1, node2))
