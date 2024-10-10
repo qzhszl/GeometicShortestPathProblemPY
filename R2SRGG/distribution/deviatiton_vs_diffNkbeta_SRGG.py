@@ -619,31 +619,70 @@ if __name__ == '__main__':
 
 
     """
-    generate proper shortest path network
+    generate proper cc and ED network
     """
     # betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
     # conclusion at this stage is that the data after degree> 6 is clean, but not before
+    # N = 10000
+    # input_ED = 2
+    # C_G = 0.3
+    # rg = RandomGenerator(-12)
+    # ED = 2.6
+    # beta = 6
+    # G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    # print("input para:", (N, ED, beta))
+    # print("real ED:", real_avg)
+    # print("clu:", nx.average_clustering(G))
+    # components = list(nx.connected_components(G))
+    # largest_component = max(components, key=len)
+    # print("LCC", len(largest_component))
+    #
+    # FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\smallED\\network_N{Nn}ED{EDn}CC{betan}.txt".format(
+    #     Nn=N, EDn=input_ED, betan=C_G)
+    # nx.write_edgelist(G, FileNetworkName)
+    #
+    # FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\smallED\\network_coordinates_N{Nn}ED{EDn}CC{betan}.txt".format(
+    #     Nn=N, EDn=input_ED, betan=C_G)
+    # with open(FileNetworkCoorName, "w") as file:
+    #     for data1, data2 in zip(Coorx, Coory):
+    #         file.write(f"{data1}\t{data2}\n")
+
+    """
+        generate proper cc and ED network for fixed distance node pair
+    """
+    cc = 0.2
+    distance_list = [[0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
+    betavec = [2.55]
+    cc_vec = [0.1]
+    ED_vec = [7.5]
     N = 10000
-    input_ED = 2
-    C_G = 0.3
     rg = RandomGenerator(-12)
-    ED = 2.6
-    beta = 6
-    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
-    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    print("input para:", (N, ED, beta))
-    print("real ED:", real_avg)
-    print("clu:", nx.average_clustering(G))
-    components = list(nx.connected_components(G))
-    largest_component = max(components, key=len)
-    print("LCC", len(largest_component))
 
-    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\smallED\\network_N{Nn}ED{EDn}CC{betan}.txt".format(
-        Nn=N, EDn=input_ED, betan=C_G)
-    nx.write_edgelist(G, FileNetworkName)
+    for Geodistance_index in range(3):
+        x_A = distance_list[Geodistance_index][0]
+        y_A = distance_list[Geodistance_index][1]
+        x_B = distance_list[Geodistance_index][2]
+        y_B = distance_list[Geodistance_index][3]
+        geodesic_distance_AB = x_B - x_A
+        for simuindex in range(4):
+            ED = ED_vec[simuindex]
+            beta = betavec[simuindex]
+            G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
+            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+            print("input para:", (N, ED, beta,geodesic_distance_AB))
+            print("real ED:", real_avg)
+            print("clu:", nx.average_clustering(G))
+            components = list(nx.connected_components(G))
+            largest_component = max(components, key=len)
+            print("LCC", len(largest_component))
 
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\smallED\\network_coordinates_N{Nn}ED{EDn}CC{betan}.txt".format(
-        Nn=N, EDn=input_ED, betan=C_G)
-    with open(FileNetworkCoorName, "w") as file:
-        for data1, data2 in zip(Coorx, Coory):
-            file.write(f"{data1}\t{data2}\n")
+            FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\GivenDistance\\Givendistancenetwork_N{Nn}ED{EDn}CC{betan}Geodistance{Geodistance}.txt".format(
+                Nn=N, EDn=ED, betan=cc, Geodistance = geodesic_distance_AB)
+            nx.write_edgelist(G, FileNetworkName)
+
+            FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\GivenDistance\\Givendistancenetwork_coordinates_N{Nn}ED{EDn}CC{betan}Geodistance{Geodistance}.txt".format(
+                Nn=N, EDn=ED, betan=cc, Geodistance = geodesic_distance_AB)
+            with open(FileNetworkCoorName, "w") as file:
+                for data1, data2 in zip(Coorx, Coory):
+                    file.write(f"{data1}\t{data2}\n")

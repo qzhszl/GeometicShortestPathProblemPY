@@ -435,13 +435,14 @@ def plot_local_optimum_with_beta(ED):
     plt.xlabel(r'$\beta$', fontsize=26)
     plt.ylabel('Average Deviation', fontsize=26)
     plt.xscale('log')
+    # plt.yscale('log')
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     plt.legend(fontsize=20, loc=(0.65, 0.58))
     plt.tick_params(axis='both', which="both", length=6, width=1)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DeviationVsCC{EDn}.pdf".format(
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DeviationVsbeta{EDn}logy.pdf".format(
         EDn=ED)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
     plt.show()
 

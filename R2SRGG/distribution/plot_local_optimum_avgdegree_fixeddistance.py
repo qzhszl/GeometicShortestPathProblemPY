@@ -1379,25 +1379,50 @@ if __name__ == '__main__':
 
     # STEP10
     # plot_local_optimum_with_realED_diffCG()
-
-    # STEP 11 TEST CLEAN DATA ED and CC
+    """
+     # STEP 11 TEST CLEAN DATA ED and CC
+    """
+    # kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    # cc_vec = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+    # betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    #
+    # distance_list = [[0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
     # N = 10000
-    # ED = 5
-    # for cc in [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]:
-    #     FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_N{Nn}ED{EDn}CC{betan}.txt".format(
-    #         Nn=N, EDn=ED, betan=cc)
-    #     G = loadSRGGandaddnode(N, FileNetworkName)
-    #     clustering_coefficient = nx.average_clustering(G)
-    #     print(clustering_coefficient)
-    #     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    #     print("real ED:", real_avg)
+    # Geodistance_index = 0
+    # x_A = distance_list[Geodistance_index][0]
+    # y_A = distance_list[Geodistance_index][1]
+    # x_B = distance_list[Geodistance_index][2]
+    # y_B = distance_list[Geodistance_index][3]
+    # geodesic_distance_AB = x_B - x_A
+    # for input_ED in kvec:
+    #     for C_G in cc_vec:
+    #         FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\GivenDistance\\Givendistancenetwork_N{Nn}ED{EDn}CC{betan}Geodistance{Geodistance}.txt".format(
+    #         Nn=N, EDn=input_ED, betan=C_G, Geodistance=geodesic_distance_AB)
+    #         G = loadSRGGandaddnode(10000, FileNetworkName)
+    #         clustering_coefficient = nx.average_clustering(G)
+    #         print(clustering_coefficient)
+    #         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    #         print("real ED:", real_avg)
+
+
+    """
+    assure all the figure has reasonable ED and CC
+    """
+    smallED_matrix = [[2.6,2.6,2.6,2.6,0,0,0],
+                      [4.3,4,4,4,4,0],
+                      [5.6,5.4,5.2,5.2,5.2,5.2,5.2],
+                      [7.5,6.7,6.5,6.5,6.5,6.5]]
+    smallbeta_matrix = [[3.1,4.5,6,300,0,0],
+                      [2.7,	3.5,4.7,7.6,300,0],
+                      [2.7,	3.4,4.3,5.7,11,	300],
+                      [2.55,3.2,4,5.5,8.5,300]]
+    print(smallbeta_matrix[3][5])
 
 
     # plot average deviation vs real_avg_degree for clean data
     # first time need to run the two line below:
-    for beta in [2.55, 3.2, 3.99, 5.15, 7.99, 300]:
-        load_10000nodenetwork_results_clean(beta)
-
-    plot_local_optimum_with_realED_diffCG_clean()
-
+    # for beta in [2.55, 3.2, 3.99, 5.15, 7.99, 300]:
+    #     load_10000nodenetwork_results_clean(beta)
+    #
+    # plot_local_optimum_with_realED_diffCG_clean()
 
