@@ -434,7 +434,7 @@ def generate_proper_network(N, input_ED, beta_index):
     cc = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
     C_G = cc[beta_index]
 
-    kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    kvec = list(range(6, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     ED_bound = input_ED*0.05
 
     min_ED = 1
@@ -452,7 +452,6 @@ def generate_proper_network(N, input_ED, beta_index):
         else:
             max_ED = ED
             ED = min_ED + 0.5 * (max_ED - min_ED)
-            pass
         G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
 
@@ -472,6 +471,7 @@ def generate_proper_network(N, input_ED, beta_index):
         with open(FileNetworkCoorName, "w") as file:
             for data1, data2 in zip(Coorx, Coory):
                 file.write(f"{data1}\t{data2}\n")
+    return ED
 
 
 def generate_proper_network_withgivendistances(N, input_ED_index,beta_index,Geodistance_index):
@@ -573,12 +573,24 @@ if __name__ == '__main__':
 
     # shortest_path_lengthfornetwork(10000, 8)
 
+    """
     ## generate_proper_network(N, ED)
-    # betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
-    # kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    # for beta in range(len(betavec)):
-    #     for ED_input in kvec:
-    #         generate_proper_network(10000, ED_input, beta)
+    """
+    EDdic = {}
+    C_G_vec = [0.1,0.2,0.3,0.4,0.5,0.6]
+    betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    kvec = list(range(6, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    count = 0
+    for beta in range(len(betavec)):
+        count = count+1
+        ED_VEC = []
+        for ED_input in kvec:
+            real_input_ED = generate_proper_network(10000, ED_input, beta)
+            ED_VEC.append(real_input_ED)
+        print(ED_VEC)
+        EDdic[C_G_vec[count]] = ED_VEC
+    print(EDdic)
+
 
     # ED = sys.argv[1]
     # cc_index = sys.argv[2]
@@ -648,41 +660,41 @@ if __name__ == '__main__':
     #     for data1, data2 in zip(Coorx, Coory):
     #         file.write(f"{data1}\t{data2}\n")
 
-    """
-        generate proper cc and ED network for fixed distance node pair
-    """
-    cc = 0.2
-    distance_list = [[0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
-    betavec = [2.55]
-    cc_vec = [0.1]
-    ED_vec = [7.5]
-    N = 10000
-    rg = RandomGenerator(-12)
-
-    for Geodistance_index in range(3):
-        x_A = distance_list[Geodistance_index][0]
-        y_A = distance_list[Geodistance_index][1]
-        x_B = distance_list[Geodistance_index][2]
-        y_B = distance_list[Geodistance_index][3]
-        geodesic_distance_AB = x_B - x_A
-        for simuindex in range(4):
-            ED = ED_vec[simuindex]
-            beta = betavec[simuindex]
-            G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
-            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-            print("input para:", (N, ED, beta,geodesic_distance_AB))
-            print("real ED:", real_avg)
-            print("clu:", nx.average_clustering(G))
-            components = list(nx.connected_components(G))
-            largest_component = max(components, key=len)
-            print("LCC", len(largest_component))
-
-            FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\GivenDistance\\Givendistancenetwork_N{Nn}ED{EDn}CC{betan}Geodistance{Geodistance}.txt".format(
-                Nn=N, EDn=ED, betan=cc, Geodistance = geodesic_distance_AB)
-            nx.write_edgelist(G, FileNetworkName)
-
-            FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\GivenDistance\\Givendistancenetwork_coordinates_N{Nn}ED{EDn}CC{betan}Geodistance{Geodistance}.txt".format(
-                Nn=N, EDn=ED, betan=cc, Geodistance = geodesic_distance_AB)
-            with open(FileNetworkCoorName, "w") as file:
-                for data1, data2 in zip(Coorx, Coory):
-                    file.write(f"{data1}\t{data2}\n")
+    # """
+    #     generate proper cc and ED network for fixed distance node pair
+    # """
+    # cc = 0.2
+    # distance_list = [[0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
+    # betavec = [2.55]
+    # cc_vec = [0.1]
+    # ED_vec = [7.5]
+    # N = 10000
+    # rg = RandomGenerator(-12)
+    #
+    # for Geodistance_index in range(3):
+    #     x_A = distance_list[Geodistance_index][0]
+    #     y_A = distance_list[Geodistance_index][1]
+    #     x_B = distance_list[Geodistance_index][2]
+    #     y_B = distance_list[Geodistance_index][3]
+    #     geodesic_distance_AB = x_B - x_A
+    #     for simuindex in range(4):
+    #         ED = ED_vec[simuindex]
+    #         beta = betavec[simuindex]
+    #         G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
+    #         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    #         print("input para:", (N, ED, beta,geodesic_distance_AB))
+    #         print("real ED:", real_avg)
+    #         print("clu:", nx.average_clustering(G))
+    #         components = list(nx.connected_components(G))
+    #         largest_component = max(components, key=len)
+    #         print("LCC", len(largest_component))
+    #
+    #         FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\GivenDistance\\Givendistancenetwork_N{Nn}ED{EDn}CC{betan}Geodistance{Geodistance}.txt".format(
+    #             Nn=N, EDn=ED, betan=cc, Geodistance = geodesic_distance_AB)
+    #         nx.write_edgelist(G, FileNetworkName)
+    #
+    #         FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\GivenDistance\\Givendistancenetwork_coordinates_N{Nn}ED{EDn}CC{betan}Geodistance{Geodistance}.txt".format(
+    #             Nn=N, EDn=ED, betan=cc, Geodistance = geodesic_distance_AB)
+    #         with open(FileNetworkCoorName, "w") as file:
+    #             for data1, data2 in zip(Coorx, Coory):
+    #                 file.write(f"{data1}\t{data2}\n")
