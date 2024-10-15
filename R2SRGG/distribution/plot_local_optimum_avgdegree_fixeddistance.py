@@ -1416,13 +1416,12 @@ if __name__ == '__main__':
                       [2.7,	3.5,4.7,7.6,300,0],
                       [2.7,	3.4,4.3,5.7,11,	300],
                       [2.55,3.2,4,5.5,8.5,300]]
-    print(smallbeta_matrix[3][5])
 
 
     # plot average deviation vs real_avg_degree for clean data
     # first time need to run the two line below:
-    # for beta in [2.55, 3.2, 3.99, 5.15, 7.99, 300]:
-    #     load_10000nodenetwork_results_clean(beta)
-    #
-    # plot_local_optimum_with_realED_diffCG_clean()
+    for beta in [2.55, 3.2, 3.99, 5.15, 7.99, 300]:
+        load_10000nodenetwork_results_clean(beta)
+
+    plot_local_optimum_with_realED_diffCG_clean()
 

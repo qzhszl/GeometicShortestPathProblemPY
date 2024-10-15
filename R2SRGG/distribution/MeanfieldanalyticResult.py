@@ -4,7 +4,7 @@
 @Author: Zhihao Qiu
 @Date: 10-10-2024
 This .m is simulation for Maksim's mean field explanation.
-We generate two nodes with fixed coordinates, find all their common neighbours and the deviations
+We generate two nodes with fixed coordinates, find all their common neighbours
 """
 import numpy as np
 import networkx as nx
@@ -12,8 +12,8 @@ import random
 import math
 import sys
 
-# from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
-from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
+from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
+# from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs
 
@@ -31,67 +31,6 @@ def test_clustering():
     print("clu:", nx.average_clustering(G))
     common_neighbors = list(nx.common_neighbors(G, 1, 2))
     print(common_neighbors)
-
-
-def test_ED(network_size_index, average_degree_index, cc_index, Geodistance_index):
-    real_avg = 0
-    smallED_matrix = [[2.6, 2.6, 2.6, 2.6, 2.6, 0, 0],
-                      [4.3, 4, 4, 4, 4, 0],
-                      [5.6, 5.4, 5.2, 5.2, 5.2, 5.2, 5.2],
-                      [7.5, 6.7, 6.5, 6.5, 6.5, 6.5]]
-    smallbeta_matrix = [[3.1, 4.5, 6, 300, 0, 0],
-                        [2.7, 3.5, 4.7, 7.6, 300, 0],
-                        [2.7, 3.4, 4.3, 5.7, 11, 300],
-                        [2.55, 3.2, 4, 5.5, 8.5, 300]]
-
-    Nvec = [10, 100, 200, 500, 1000, 10000]
-    kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    cc_vec = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
-    betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
-
-    distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5],
-                     [0.25, 0.25, 0.75, 0.75]]
-    x_A = distance_list[Geodistance_index][0]
-    y_A = distance_list[Geodistance_index][1]
-    x_B = distance_list[Geodistance_index][2]
-    y_B = distance_list[Geodistance_index][3]
-    geodesic_distance_AB = round(x_B - x_A, 4)
-
-    N = Nvec[network_size_index]
-    target_ED = kvec[average_degree_index]
-    if average_degree_index < 4:
-        ED = smallED_matrix[average_degree_index][cc_index]
-        if ED == 0:
-            raise RuntimeError("Not exist")
-        beta = smallbeta_matrix[average_degree_index][cc_index]
-    else:
-        ED = kvec[average_degree_index]
-        beta = betavec[cc_index]
-
-    C_G = cc_vec[cc_index]
-    print("input para:", (N, ED, beta, C_G, geodesic_distance_AB))
-
-    rg = RandomGenerator(-12)
-    rseed = random.randint(0, 100)
-    for i in range(rseed):
-        rg.ran1()
-
-    # for large network, we only generate one network and randomly selected 1,000 node pair.
-    # for small network, we generate 100 networks and selected all the node pair in the LCC
-    if N > 100:
-        if beta>2:
-            G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
-            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-            print("real ED:", real_avg)
-            ave_clu = nx.average_clustering(G)
-            print("clu:", ave_clu)
-        else:
-            print("no network")
-    # else:
-    #     # Random select nodepair_num nodes in the largest connected component
-    #     distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
-    return real_avg
-
 
 
 def neighbour_distance_inlargeSRGG_clu_cc_givennodepair(N, ED, beta, cc, rg, ExternalSimutime, geodesic_distance_AB,x_A,y_A,x_B,y_B,target_ED):
@@ -176,21 +115,54 @@ def neighbour_distance_inlargeSRGG_clu_cc_givennodepair(N, ED, beta, cc, rg, Ext
         np.savetxt(SPnodenum_vec_name, SPnodenum_vec,fmt="%i")
 
 def neighbour_distance(network_size_index, average_degree_index, cc_index, Geodistance_index ,ExternalSimutime):
-    smallED_matrix = [[2.6, 2.6, 2.6, 2.6, 2.6, 0, 0],
-                      [4.3, 4, 4, 4, 4, 0],
-                      [5.6, 5.4, 5.2, 5.2, 5.2, 5.2, 5.2],
-                      [7.5, 6.7, 6.5, 6.5, 6.5, 6.5]]
-    smallbeta_matrix = [[3.1, 4.5, 6, 300, 0, 0],
-                        [2.7, 3.5, 4.7, 7.6, 300, 0],
-                        [2.7, 3.4, 4.3, 5.7, 11, 300],
-                        [2.55, 3.2, 4, 5.5, 8.5, 300]]
+    # for control cc
+    #----------------------------------------------------------------------------------------------------
+    # smallED_matrix = [[2.6, 2.6, 2.6, 2.6, 2.6, 0, 0],
+    #                   [4.3, 4, 4, 4, 4, 0],
+    #                   [5.6, 5.4, 5.2, 5.2, 5.2, 5.2, 5.2],
+    #                   [7.5, 6.7, 6.5, 6.5, 6.5, 6.5]]
+    # smallbeta_matrix = [[3.1, 4.5, 6, 300, 0, 0],
+    #                     [2.7, 3.5, 4.7, 7.6, 300, 0],
+    #                     [2.7, 3.4, 4.3, 5.7, 11, 300],
+    #                     [2.55, 3.2, 4, 5.5, 8.5, 300]]
+    #
+    # Nvec = [10, 100, 200, 500, 1000, 10000]
+    # kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    # cc_vec = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+    # betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    #
+    # distance_list = [[0.49,0.5,0.5,0.5],[0.25, 0.25, 0.3, 0.3],[0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
+    # x_A = distance_list[Geodistance_index][0]
+    # y_A = distance_list[Geodistance_index][1]
+    # x_B = distance_list[Geodistance_index][2]
+    # y_B = distance_list[Geodistance_index][3]
+    # geodesic_distance_AB = round(x_B - x_A, 4)
+    #
+    # random.seed(ExternalSimutime)
+    # N = Nvec[network_size_index]
+    # target_ED = kvec[average_degree_index]
+    # if average_degree_index<4:
+    #     ED = smallED_matrix[average_degree_index][cc_index]
+    #     if ED == 0:
+    #         raise RuntimeError("Not exist")
+    #     beta = smallbeta_matrix[average_degree_index][cc_index]
+    # else:
+    #     ED = kvec[average_degree_index]
+    #     beta = betavec[cc_index]
+    #
+    # C_G = cc_vec[cc_index]
+    # print("input para:", (N, ED, beta,C_G,geodesic_distance_AB))
 
+
+    # for control beta
+    # ----------------------------------------------------------------------------------------------------
     Nvec = [10, 100, 200, 500, 1000, 10000]
-    kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    cc_vec = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
-    betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    kvec = [2,5,10,20,100]
+    # cc_vec = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+    betavec = [2,4,8,16,32,64,128]
 
-    distance_list = [[0.49,0.5,0.5,0.5],[0.25, 0.25, 0.3, 0.3],[0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
+    distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5],
+                     [0.25, 0.25, 0.75, 0.75]]
     x_A = distance_list[Geodistance_index][0]
     y_A = distance_list[Geodistance_index][1]
     x_B = distance_list[Geodistance_index][2]
@@ -198,19 +170,11 @@ def neighbour_distance(network_size_index, average_degree_index, cc_index, Geodi
     geodesic_distance_AB = round(x_B - x_A, 4)
 
     random.seed(ExternalSimutime)
-    N = Nvec[network_size_index]
-    target_ED = kvec[average_degree_index]
-    if average_degree_index<4:
-        ED = smallED_matrix[average_degree_index][cc_index]
-        if ED == 0:
-            raise RuntimeError("Not exist")
-        beta = smallbeta_matrix[average_degree_index][cc_index]
-    else:
-        ED = kvec[average_degree_index]
-        beta = betavec[cc_index]
+    ED = kvec[average_degree_index]
+    beta = betavec[cc_index]
 
     C_G = cc_vec[cc_index]
-    print("input para:", (N, ED, beta,C_G,geodesic_distance_AB))
+    print("input para:", (N, ED, beta, C_G, geodesic_distance_AB))
 
     rg = RandomGenerator(-12)
     rseed = random.randint(0, 100)
@@ -275,11 +239,11 @@ if __name__ == '__main__':
     # """
     # Run code
     # """
-    # ED = sys.argv[1]
-    # cc_index = sys.argv[2]
-    # Geodistance_index = sys.argv[3]
-    # ExternalSimutime = sys.argv[4]
-    # neighbour_distance(5, int(ED), int(cc_index), int(Geodistance_index), int(ExternalSimutime))
+    ED = sys.argv[1]
+    cc_index = sys.argv[2]
+    Geodistance_index = sys.argv[3]
+    ExternalSimutime = sys.argv[4]
+    neighbour_distance(5, int(ED), int(cc_index), int(Geodistance_index), int(ExternalSimutime))
 
     # """
     # Run code locally
@@ -289,18 +253,3 @@ if __name__ == '__main__':
     # for ED in range(28):
     #     for ExternalSimutime in range(10):
     #         neighbour_distance(5, int(ED), int(cc_index), int(Geodistance_index), int(ExternalSimutime))
-
-    """
-    TEST REAL CC
-    """
-    network_size_index = 5
-    Geodistance_index = 0
-    real_degree_dict={}
-    for cc_index in [5]:
-        real_avg_degree_vec=[]
-        for average_degree_index in range(2,28):
-            real_avg_degree = test_ED(network_size_index, average_degree_index, cc_index, Geodistance_index)
-            real_avg_degree_vec.append(real_avg_degree)
-        real_degree_dict[cc_index] = real_avg_degree_vec
-        print(real_avg_degree_vec)
-    print(real_degree_dict)

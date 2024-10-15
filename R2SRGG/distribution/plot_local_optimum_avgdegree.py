@@ -1395,8 +1395,8 @@ if __name__ == '__main__':
 
     # plot average deviation vs real_avg_degree for clean data
     # first time need to run the two line below:
-    for beta in [2.55, 3.2, 3.99, 5.15, 7.99, 300]:
-        load_10000nodenetwork_results_clean(beta)
+    for C_G in [0.1,0.2,0.3,0.4,0.5,0.6]:
+        load_10000nodenetwork_results_clean(C_G)
 
     plot_local_optimum_with_realED_diffCG_clean()
 
