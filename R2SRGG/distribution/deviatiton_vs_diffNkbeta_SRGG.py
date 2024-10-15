@@ -577,9 +577,10 @@ if __name__ == '__main__':
     ## generate_proper_network(N, ED)
     """
     EDdic = {}
-    C_G_vec = [0.1,0.2,0.3,0.4,0.5,0.6]
+    C_G_vec = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
     betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
     kvec = list(range(6, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    print(len(kvec))
     count = 0
     for beta in range(len(betavec)):
         count = count+1
