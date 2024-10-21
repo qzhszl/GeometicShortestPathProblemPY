@@ -257,9 +257,9 @@ def load_10000nodenetwork_results_fixdistance(cc,geodesic_distance_AB):
     print(exemptionlist)
     # real_ave_degree_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\real_ave_degree_Beta{betan}.txt".format(betan=beta)
     # np.savetxt(real_ave_degree_Name, real_ave_degree_vec)
-    ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\ave_deviation_C_G{betan}.txt".format(betan=cc)
+    ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\ave_deviation_C_G{betan}Dis{geodesic_distance_AB}.txt".format(betan=cc,geodesic_distance_AB = geodesic_distance_AB)
     np.savetxt(ave_deviation_Name, ave_deviation_vec)
-    std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\std_deviation_C_G{betan}.txt".format(betan=cc)
+    std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\std_deviation_C_G{betan}Dis{geodesic_distance_AB}.txt".format(betan=cc,geodesic_distance_AB = geodesic_distance_AB)
     np.savetxt(std_deviation_Name, std_deviation_vec)
     return ave_deviation_vec,std_deviation_vec, exemptionlist
 
@@ -315,11 +315,9 @@ def plot_local_optimum_with_realED_diffCG_fix_distance_clean(Geodistance_index):
     N = 10000
     count = 0
     for C_G in C_G_vec:
-        ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\ave_deviation_C_G{betan}.txt".format(
-            betan=C_G)
+        ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\ave_deviation_C_G{betan}Dis{geodesic_distance_AB}.txt".format(betan=C_G,geodesic_distance_AB = geodesic_distance_AB)
         ave_deviation_vec = np.loadtxt(ave_deviation_Name)
-        std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\std_deviation_C_G{betan}.txt".format(
-            betan=C_G)
+        std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\std_deviation_C_G{betan}Dis{geodesic_distance_AB}.txt".format(betan=C_G,geodesic_distance_AB = geodesic_distance_AB)
         std_deviation_vec = np.loadtxt(std_deviation_Name)
         # real_ave_degree_vec, ave_deviation_vec, std_deviation_vec = load_10000nodenetwork_results(beta)
 
@@ -422,5 +420,6 @@ if __name__ == '__main__':
     #         load_10000nodenetwork_results_fixdistance(cc,geodesic_distance_AB)
     # # _______________________________________________________________________
 
-    plot_local_optimum_with_realED_diffCG_fix_distance_clean(3)
+    plot_local_optimum_with_realED_diffCG_fix_distance_clean(2)
+
 

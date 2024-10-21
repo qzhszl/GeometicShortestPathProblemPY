@@ -2,9 +2,11 @@
 """
 @Project: Geometric shortest path problem
 @Author: Zhihao Qiu
-@Date: 10-10-2024
+@Date: 24-10-2024
 This .m is simulation for Maksim's mean field explanation.
-We generate two nodes with fixed coordinates, find all their common neighbours
+We generate SRGG and see how the average link distance and radius change following the changement of beta and ED
+2. ave geo distance changed with different ed and beta
+3. radius(max ave geo distance) changed with different ed and beta
 """
 import numpy as np
 import networkx as nx
@@ -12,28 +14,13 @@ import random
 import math
 import sys
 
-from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
-# from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
+# from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
+from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs
 
-def test_clustering():
-    """
-    :return: For networkx, c_i for isolated node is 0!
-    """
-    G = nx.Graph()
-    # Add nodes
-    G.add_nodes_from([1, 2, 3, 4])
-    # Add links (edges)
-    edges = [(1, 2), (2, 3), (1, 3),(1,5),(2,5)]
-    G.add_edges_from(edges)
-    print(nx.clustering(G))
-    print("clu:", nx.average_clustering(G))
-    common_neighbors = list(nx.common_neighbors(G, 1, 2))
-    print(common_neighbors)
 
-
-def neighbour_distance_inlargeSRGG_clu_cc_givennodepair(N, ED, beta, cc, rg, ExternalSimutime, geodesic_distance_AB,x_A,y_A,x_B,y_B,target_ED):
+def Ave_distance_link_and_radius(N, ED, beta, rg, ExternalSimutime):
     """
     :param N:
     :param ED:
@@ -60,42 +47,53 @@ def neighbour_distance_inlargeSRGG_clu_cc_givennodepair(N, ED, beta, cc, rg, Ext
         # Randomly generate 10 networks
         Network_generate_time = 10
 
-        for network in range(Network_generate_time):
-            # N = 100 # FOR TEST
-            G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
-            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-            print("real ED:", real_avg)
-            ave_clu = nx.average_clustering(G)
-            print("clu:", ave_clu)
-            components = list(nx.connected_components(G))
-            largest_component = max(components, key=len)
-            LCC_number = len(largest_component)
-            print("LCC", LCC_number)
-            nodei = N-2
-            nodej = N-1
 
-            # Find the common neighbours
-            common_neighbors = list(nx.common_neighbors(G, nodei, nodej))
-            SPnodenum_vec.append(len(common_neighbors))
-            if common_neighbors:
-                xSource = Coorx[nodei]
-                ySource = Coory[nodei]
-                xEnd = Coorx[nodej]
-                yEnd = Coory[nodej]
-                # length_geodesic.append(distR2(xSource, ySource, xEnd, yEnd)) # for test
-                # Compute deviation for the shortest path of each node pair
-                deviations_for_a_nodepair = []
-                for SPnode in common_neighbors:
-                    xMed = Coorx[SPnode]
-                    yMed = Coory[SPnode]
-                    dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
-                    deviations_for_a_nodepair.append(dist)
+        # N = 100 # FOR TEST
+        G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
 
-                deviation_vec = deviation_vec+deviations_for_a_nodepair
+        # # load a network
+        # FileNetworkName = "/home/zqiu1/GSPP/SSRGGpy/R2/distribution/NetworkSRGG/network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+        #     Nn=N, EDn=ED, betan=beta)
+        # G = loadSRGGandaddnode(N, FileNetworkName)
+        # # load coordinates with noise
+        # Coorx = []
+        # Coory = []
+        #
+        # FileNetworkCoorName = "/home/zqiu1/GSPP/SSRGGpy/R2/distribution/NetworkSRGG/network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+        #     Nn=N, EDn=ED, betan=beta)
+        # with open(FileNetworkCoorName, "r") as file:
+        #     for line in file:
+        #         if line.startswith("#"):
+        #             continue
+        #         data = line.strip().split("\t")  # 使用制表符分割
+        #         Coorx.append(float(data[0]))
+        #         Coory.append(float(data[1]))
 
-                ave_deviation.append(np.mean(deviations_for_a_nodepair))
-                max_deviation.append(max(deviations_for_a_nodepair))
-                min_deviation.append(min(deviations_for_a_nodepair))
+        nodei = N-2
+        nodej = N-1
+
+        # average distance of the distance
+        common_neighbors = list(nx.common_neighbors(G, nodei, nodej))
+        SPnodenum_vec.append(len(common_neighbors))
+        if common_neighbors:
+            xSource = Coorx[nodei]
+            ySource = Coory[nodei]
+            xEnd = Coorx[nodej]
+            yEnd = Coory[nodej]
+            # length_geodesic.append(distR2(xSource, ySource, xEnd, yEnd)) # for test
+            # Compute deviation for the shortest path of each node pair
+            deviations_for_a_nodepair = []
+            for SPnode in common_neighbors:
+                xMed = Coorx[SPnode]
+                yMed = Coory[SPnode]
+                dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+                deviations_for_a_nodepair.append(dist)
+
+            deviation_vec = deviation_vec+deviations_for_a_nodepair
+
+            ave_deviation.append(np.mean(deviations_for_a_nodepair))
+            max_deviation.append(max(deviations_for_a_nodepair))
+            min_deviation.append(min(deviations_for_a_nodepair))
 
         deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistancedeviation_neighbour_nodes_N{Nn}ED{EDn}CG{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
             Nn = N,EDn=target_ED, betan=cc, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
@@ -113,6 +111,8 @@ def neighbour_distance_inlargeSRGG_clu_cc_givennodepair(N, ED, beta, cc, rg, Ext
         SPnodenum_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistanceneighbournodenum_N{Nn}ED{EDn}CG{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
             Nn = N,EDn=target_ED, betan=cc, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
         np.savetxt(SPnodenum_vec_name, SPnodenum_vec,fmt="%i")
+
+
 
 def neighbour_distance(network_size_index, average_degree_index, cc_index, Geodistance_index ,ExternalSimutime):
     # for control cc

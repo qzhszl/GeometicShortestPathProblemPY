@@ -22,8 +22,7 @@ def probability_with_diff_beta(avg, beta):
         prob_vec.append(prob)
     return [0.01*i for i in range(1,1001)],prob_vec
 
-def plot_probability_with_diff_beta():
-    avg = 2
+def plot_probability_with_diff_beta(avg):
     count = 0
     beta_vec = [2.2,4,8,16,32,1024]
     legend = [r"$\beta=2.2$", r"$\beta=2^2$", r"$\beta=2^3$", r"$\beta=2^4$", r"$\beta=2^5$", r"$\beta=2^{10}$"]
@@ -36,18 +35,23 @@ def plot_probability_with_diff_beta():
     plt.ylabel('Probability P(x)', fontsize=26)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
-    plt.title(r'avg = 2')
+    titlename = r"$avg={beta}$".format(
+        beta=avg)
+    plt.title(titlename,fontsize=26)
     plt.legend(fontsize=20, loc="upper right")
     plt.tick_params(axis='both', which="both", length=6, width=1)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\Provsdis_avg{avg}.pdf".format(
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\Provsdis_avg{avg}.pdf".format(
+    #     avg=avg)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\Provsdis_avg{avg}.png".format(
         avg=avg)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
-    plt.show()
+    plt.savefig(picname, format='png', bbox_inches='tight', dpi=600)
+    # plt.show()
     plt.close()
 
 
-def plot_probability_with_diff_avg():
-    beta = 128
+def plot_probability_with_diff_avg(beta):
     count = 0
     avg_vec = [2,4,8,16,32,64,128]
     legend = [r"$avg=2$", r"$avg=2^2$", r"$avg=2^3$", r"$avg=2^4$", r"$avg=2^5$", r"$avg=2^{6}$", r"$avg=2^{7}$"]
@@ -62,15 +66,21 @@ def plot_probability_with_diff_avg():
     plt.yticks(fontsize=26)
     titlename = r"$\beta={beta}$".format(
         beta=beta)
-    plt.title(titlename)
+    plt.title(titlename,fontsize=26)
     plt.legend(fontsize=20, loc="upper right")
     plt.tick_params(axis='both', which="both", length=6, width=1)
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\Provsdis_beta{avg}.pdf".format(
         avg=beta)
     plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
-    plt.show()
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\Provsdis_beta{avg}.png".format(
+        avg=beta)
+    plt.savefig(picname, format='png', bbox_inches='tight', dpi=600)
+    # plt.show()
     plt.close()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    plot_probability_with_diff_avg()
+    for avg in [2,5,10,100]:
+        plot_probability_with_diff_beta(avg)
+    for beta in [2.2,4,8,128]:
+        plot_probability_with_diff_avg(beta)
