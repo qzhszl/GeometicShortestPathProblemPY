@@ -31,22 +31,10 @@ def Ave_distance_link_and_radius(N, ED, beta, rg, ExternalSimutime):
     The generated network, the selected node pair and all the deviation of both shortest path and baseline nodes will be recorded.
     """
     if N> ED:
-        deviation_vec = []  # deviation of all shortest path nodes for all node pairs
-        baseline_deviation_vec = []  # deviation of all shortest path nodes for all node pairs
-        # For each node pair:
-        ave_deviation = []
-        max_deviation = []
-        min_deviation = []
-        ave_baseline_deviation =[]
-        length_geodesic = []
-        hopcount_vec = []
-        SPnodenum_vec =[]
+        ave_geodistance_link_vec = []
+        ave_geodistance_radius_vec = []
 
         # load a network
-
-        # Randomly generate 10 networks
-        Network_generate_time = 10
-
 
         # N = 100 # FOR TEST
         G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
@@ -72,45 +60,23 @@ def Ave_distance_link_and_radius(N, ED, beta, rg, ExternalSimutime):
         nodei = N-2
         nodej = N-1
 
-        # average distance of the distance
-        common_neighbors = list(nx.common_neighbors(G, nodei, nodej))
-        SPnodenum_vec.append(len(common_neighbors))
-        if common_neighbors:
+        # Average_distance_of_the_graph
+        for edge in G.edges():
+            node_i, node_j = edge
             xSource = Coorx[nodei]
             ySource = Coory[nodei]
             xEnd = Coorx[nodej]
             yEnd = Coory[nodej]
-            # length_geodesic.append(distR2(xSource, ySource, xEnd, yEnd)) # for test
-            # Compute deviation for the shortest path of each node pair
-            deviations_for_a_nodepair = []
-            for SPnode in common_neighbors:
-                xMed = Coorx[SPnode]
-                yMed = Coory[SPnode]
-                dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
-                deviations_for_a_nodepair.append(dist)
+            ave_geodistance_link_vec.append(distR2(xSource, ySource, xEnd, yEnd))
 
-            deviation_vec = deviation_vec+deviations_for_a_nodepair
 
-            ave_deviation.append(np.mean(deviations_for_a_nodepair))
-            max_deviation.append(max(deviations_for_a_nodepair))
-            min_deviation.append(min(deviations_for_a_nodepair))
-
-        deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistancedeviation_neighbour_nodes_N{Nn}ED{EDn}CG{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+        deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ave_distance_link_radius\\Givendistancedeviation_neighbour_nodes_N{Nn}ED{EDn}CG{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
             Nn = N,EDn=target_ED, betan=cc, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
         np.savetxt(deviation_vec_name, deviation_vec)
         # For each node pair:
-        ave_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistanceave_neighbour_nodes_deviation_N{Nn}ED{EDn}CG{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+        ave_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ave_distance_link_radius\\Givendistanceave_neighbour_nodes_deviation_N{Nn}ED{EDn}CG{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
             Nn = N,EDn=target_ED, betan=cc, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
         np.savetxt(ave_deviation_name, ave_deviation)
-        max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistancemax_neighbour_nodes_deviation_N{Nn}ED{EDn}CG{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
-            Nn = N,EDn=target_ED, betan=cc, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
-        np.savetxt(max_deviation_name, max_deviation)
-        min_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistancemin_neighbour_nodes_deviation_N{Nn}ED{EDn}CG{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
-            Nn = N,EDn=target_ED, betan=cc, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
-        np.savetxt(min_deviation_name, min_deviation)
-        SPnodenum_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistanceneighbournodenum_N{Nn}ED{EDn}CG{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
-            Nn = N,EDn=target_ED, betan=cc, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
-        np.savetxt(SPnodenum_vec_name, SPnodenum_vec,fmt="%i")
 
 
 
