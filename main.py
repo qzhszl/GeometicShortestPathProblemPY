@@ -49,6 +49,19 @@ def IOforGraph():
     print(G.edges)
 
 
+def IOfordict():
+    max_weights = {}
+    radius_name = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\output.txt"
+    with open(radius_name, "w") as f:
+        for key, value in max_weights.items():
+            f.write(f"{key}: {value:.4f}\n")
+    with open("max_weights_dict.txt", "r") as f:
+        for line in f:
+            # 移除换行符，并按": "拆分每行
+            key, value = line.strip().split(": ")
+            # 将键转换为整数，值转换为浮点数，并添加到字典中
+            max_weights[int(key)] = float(value)
+
 def sprintffilename():
     N=1
     filename = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\testnetworkNode{NodeNum}.txt".format(NodeNum = N)
