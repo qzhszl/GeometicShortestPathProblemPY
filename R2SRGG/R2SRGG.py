@@ -91,6 +91,36 @@ def dist_to_geodesic_R2(px, py, ax, ay, bx, by):
     return np.linalg.norm(np.array([px, py]) - nearest_point), nearest_point
 
 
+def dist_to_geodesic_perpendicular_R2(px, py, ax, ay, bx, by):
+    # the distance between AB and an extra point P
+    # return the distance and the nearest point between A and B
+    # 向量 AB 和 AP
+    AB = np.array([bx - ax, by - ay])
+    AP = np.array([px - ax, py - ay])
+    # 计算 AB 的平方长度
+    AB_squared = np.dot(AB, AB)
+    if abs(AB_squared) < 0.0000001:
+        # A 和 B 是同一个点
+        return np.linalg.norm(AP)
+    # 计算投影的比例 t
+    t = np.dot(AP, AB) / AB_squared
+    nearest_point = np.array([ax, ay]) + t * AB
+
+    # 返回点到最近点的距离
+    return np.linalg.norm(np.array([px, py]) - nearest_point), nearest_point
+
+def point_to_line_distance_from_points(x, y, xb, yb, xc, yc):
+    # 计算直线BC的系数
+    A = yc - yb
+    B = xb - xc
+    C = xc * yb - xb * yc
+
+    # 计算点A到直线BC的距离
+    numerator = abs(A * x + B * y + C)
+    denominator = math.sqrt(A ** 2 + B ** 2)
+    return numerator / denominator
+
+
 def R2SRGG(N, avg, beta, rg, Coorx=None, Coory=None, SaveNetworkPath=None):
     """
     Program generates Soft Random Geometric Graph on a 2d unit square
@@ -252,11 +282,19 @@ def check_realdegree_vs_expecteddegree():
         print("real ED:", real_avg)
 
 
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # rg = RandomGenerator(-12)
     # R2SRGG(110,5,4,rg)
-    check_realdegree_vs_expecteddegree()
+    # check_realdegree_vs_expecteddegree()
+
+    a,_ = dist_to_geodesic_perpendicular_R2(0.3, 0.7,0.4, 0.7, 0.6, 0.7)
+    print(a)
+    distance = point_to_line_distance_from_points(0.3, 0.7,0.4, 0.7, 0.6, 0.7)
+    print(f"Point A to line BC distance: {distance}")
+
 
 
 

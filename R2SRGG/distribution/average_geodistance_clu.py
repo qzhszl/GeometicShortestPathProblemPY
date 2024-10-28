@@ -30,6 +30,8 @@ def Ave_distance_link_and_radius(N, ED, beta, ExternalSimutime):
     length of the geo distances.
     The generated network, the selected node pair and all the deviation of both shortest path and baseline nodes will be recorded.
     """
+
+
     if N> ED:
         # load a network
 
@@ -56,14 +58,14 @@ def Ave_distance_link_and_radius(N, ED, beta, ExternalSimutime):
 
         # # load a network locally
         try:
-            FileNetworkName = "/home/zqiu1/GSPP/SSRGGpy/R2/distribution/NetworkSRGG/network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-            Nn=N, EDn=ED, betan=beta)
+            FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                Nn=N, EDn=ED, betan=beta)
             G = loadSRGGandaddnode(N, FileNetworkName)
             # load coordinates with noise
             Coorx = []
             Coory = []
 
-            FileNetworkCoorName = "/home/zqiu1/GSPP/SSRGGpy/R2/distribution/NetworkSRGG/network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
                 Nn=N, EDn=ED, betan=beta)
             with open(FileNetworkCoorName, "r") as file:
                 for line in file:
@@ -114,6 +116,8 @@ def Ave_distance_link_and_radius(N, ED, beta, ExternalSimutime):
         ave_geodistance_link_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ave_distance_link_radius\\linkweight_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
         nx.write_edgelist(G,ave_geodistance_link_name,data=['weight'])
+
+        print("finished", (N, ED, beta, ExternalSimutime))
         # G  = nx.read_edgelist(ave_geodistance_link_name, nodetype=int, data=(("weight", float),))
         # total_weight = 0
         # edge_count = 0
@@ -130,6 +134,16 @@ def Ave_distance_link_and_radius(N, ED, beta, ExternalSimutime):
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    for ED in EDvec:
-        for beta in betavec:
+    avg_vec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    beta_vec = [2.2, 4, 8, 16, 32, 64, 128]
+
+    for ED in avg_vec:
+        for beta in beta_vec:
             Ave_distance_link_and_radius(10000, ED, beta, 0)
+
+    avg_vec = [2, 5, 10, 20, 50, 100]
+    beta_vec = [2.2, 2.4, 2.6, 2.8] + list(range(3, 16))
+    for ED in avg_vec:
+        for beta in beta_vec:
+            Ave_distance_link_and_radius(10000, ED, beta, 0)
+
