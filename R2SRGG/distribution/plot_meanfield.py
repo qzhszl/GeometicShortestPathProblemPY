@@ -11,8 +11,10 @@ from R2SRGG.R2SRGG import loadSRGGandaddnode
 from collections import defaultdict
 from scipy.optimize import curve_fit
 import math
+import json
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
-
+from collections import Counter
+import pandas as pd
 
 def load_small_network_results(N, beta):
     # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
@@ -875,7 +877,135 @@ def plot_common_neighbour_deviation_vs_beta():
     plt.close()
 
 
+def analysis_plot_for_onegraph():
+    betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128]
+    N = 10000
+    ED = 5
+    Geodistance_index = 0
+    distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5],
+                     [0.25, 0.25, 0.75, 0.75]]
+    x_A = distance_list[Geodistance_index][0]
+    y_A = distance_list[Geodistance_index][1]
+    x_B = distance_list[Geodistance_index][2]
+    y_B = distance_list[Geodistance_index][3]
+    ExternalSimutime = 1
 
+    ave_dev_list = []
+    error_list = []
+    ave_common_neighbour_list =[]
+    has_neightbour_num_list = []
+
+    neighbour_list_all = []
+    deviation_all = []
+
+
+    for beta in betavec:
+        print("beta", beta)
+        filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\"
+        common_neigthbour_name = filefolder_name2 + "common_neigthbour_list_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
+            Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime)
+        with open(common_neigthbour_name, 'r') as file:
+            common_neigthbour_dict = {int(k): v for k, v in json.load(file).items()}
+        # print(common_neigthbour_dict)
+        deviations_name = filefolder_name2 + "common_neigthbour_deviationlist_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
+            Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime)
+        with open(deviations_name, 'r') as file:
+            deviations_dict = {int(k): v for k, v in json.load(file).items()}
+        # print(deviations_dict)
+
+        # common neighbour list
+        common_neighbour_list = [item for sublist in common_neigthbour_dict.values() for item in sublist]
+
+        value_counts = Counter(common_neighbour_list)
+        print("frequency", value_counts)
+        common_neighbour_num = [len(sublist) for sublist in common_neigthbour_dict.values()]
+        common_neighbour_num = [num for num in common_neighbour_num if num > 0]
+        has_neightbour_num_list.append(len(common_neighbour_num))
+
+        # print("neighbour num:", common_neighbour_num)
+        # common neighbour list
+        common_neigthbour_list_unique = list(set(common_neighbour_list))
+        deviations_list = [item for sublist in deviations_dict.values() for item in sublist]
+        ave_dev_list.append(np.mean(deviations_list))
+        error_list.append(np.std(deviations_list))
+        ave_common_neighbour_list.append(np.mean(common_neighbour_num))
+
+        # print(deviations_list)
+        corresponding_deviation_list_unique = [deviations_list[common_neighbour_list.index(value)] for value in
+                                               common_neigthbour_list_unique]
+        neighbour_list_all = neighbour_list_all+ common_neigthbour_list_unique
+        deviation_all = deviation_all+ corresponding_deviation_list_unique
+
+        # print("unique neighbour:", common_neigthbour_list_unique)
+        # print("unique deviation:", corresponding_deviation_list_unique)
+
+    neighbour_list_all_unique = list(set(neighbour_list_all))
+    corresponding_deviation_list_all_unique = [deviation_all[neighbour_list_all.index(value)] for value in
+                                           neighbour_list_all_unique]
+
+
+    #____________________________________print and save the unqiue neighbour list and the corresponding deviaiton
+    # print(neighbour_list_all_unique)
+    # print(corresponding_deviation_list_all_unique)
+    # sorted_list1, sorted_list2 = zip(*sorted(zip(neighbour_list_all_unique, corresponding_deviation_list_all_unique), key=lambda x: x[1], reverse=True))
+    #
+    # # 转换为列表形式
+    # sorted_list1 = list(sorted_list1)
+    # sorted_list2 = list(sorted_list2)
+    # print("neighbour node index:",sorted_list1)
+    # print("corresponding deviation",sorted_list2)
+    #
+    # df = pd.DataFrame({
+    #     'neighbour node index': sorted_list1,
+    #     'corresponding deviation': sorted_list2
+    # })
+    #
+    # # 显示表格
+    # print(df)
+    #
+    # # 如果需要，可以将表格保存为CSV文件
+    # df.to_csv('output_table.csv', index=False)
+
+    # plot the figure_______________________________________________
+    # fig, ax1 = plt.subplots(figsize=(12, 8))
+    # ax1.errorbar(betavec, ave_dev_list, yerr=error_list, linestyle="--", linewidth=3, elinewidth=1, capsize=5,
+    #              marker='o', markersize=16, color=[0.8500, 0.3250, 0.0980])
+    #
+    # plt.xlabel(r'$\beta$', fontsize=26)
+    # ax1.set_ylabel('average deviation', color=[0.8500, 0.3250, 0.0980], fontsize=26)
+    # ax1.tick_params(axis='y', labelcolor=[0.8500, 0.3250, 0.0980])
+    #
+    # # # 创建第二个坐标轴，共享 x 轴
+    # ax2 = ax1.twinx()
+    # ax2.plot(betavec, has_neightbour_num_list, 'b--', label='y2 data')  # 'r--' 表示红色虚线
+    # ax2.set_ylabel('valid sample times', color='b', fontsize=26)
+    # ax2.tick_params(axis='y', labelcolor='b')
+    # #
+    # # # 创建第三个坐标轴，共享 x 轴
+    # # # 使用 `spines` 将第三个y轴移动到图的右侧，并设置合适的颜色
+    # ax3 = ax1.twinx()
+    # ax3.spines["right"].set_position(("outward", 60))  # 将第三个 y 轴向右偏移一些
+    # ax3.plot(betavec, ave_common_neighbour_list, 'g-.', label='y3 data')  # 'g-.' 表示绿色点划线
+    # ax3.set_ylabel('average common neighbour number', color='g', fontsize=26)
+    # ax3.tick_params(axis='y', labelcolor='g')
+    #
+    # plt.xscale('log')
+    # # plt.yscale('log')
+    #
+    #
+    # plt.xticks(fontsize=26)
+    # plt.yticks(fontsize=26)
+    # # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # # plt.legend(fontsize=20)
+    # plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\CommonNeighbourDeviationvsbetawithdiffED_cleanloglogforonegraph.pdf"
+    # #
+    # # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\CommonNeighbourDeviationvsEDwithdiffED{ED}_curvefitloglog.pdf".format(
+    # #     betan=ED)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.show()
+    # plt.close()
+    # print(ave_dev_list)
 
 
 # Press the green button in the gutter to run the script.
@@ -943,5 +1073,9 @@ if __name__ == '__main__':
     # kvec = [2, 5, 10, 20, 100]
     # for ED in kvec:
     #     load_10000nodenetwork_commonneighbour_results_beta(ED)
-    plot_common_neighbour_deviation_vs_beta()
+    # plot_common_neighbour_deviation_vs_beta()
 
+    """
+    plot or evaluate deviation vs defferent beta for one graph coordinates
+    """
+    analysis_plot_for_onegraph()

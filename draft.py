@@ -1,44 +1,79 @@
-# for 10000 node
-betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
-beta = betavec[beta_index]
-cc = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
-C_G = cc[beta_index]
+"""
+    :param N:
+    :param ED:
+    :param ExternalSimutime:
+    :return:
+    for each node pair, we record the ave,max,min of distance from the shortest path to the geodesic,
+    length of the geo distances.
+    The generated network, the selected node pair and all the deviation of both shortest path and baseline nodes will be recorded.
+    """
+    if N> ED:
+        deviation_vec = []  # deviation of all shortest path nodes for all node pairs
+        baseline_deviation_vec = []  # deviation of all shortest path nodes for all node pairs
+        # For each node pair:
+        ave_deviation = []
+        max_deviation = []
+        min_deviation = []
+        ave_baseline_deviation =[]
+        length_geodesic = []
+        hopcount_vec = []
+        SPnodenum_vec =[]
 
-kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-ED_bound = input_ED * 0.05
+        # load a network
 
-min_ED = 1
-max_ED = N - 1
-count = 0
-rg = RandomGenerator(-12)
-G, Coorx, Coory = R2SRGG(N, input_ED, beta, rg)
-real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-ED = input_ED
-while abs(input_ED - real_avg) > ED_bound and count < 20:
-    count = count + 1
-    if input_ED - real_avg > 0:
-        min_ED = ED
-        ED = min_ED + 0.5 * (max_ED - min_ED)
-    else:
-        max_ED = ED
-        ED = min_ED + 0.5 * (max_ED - min_ED)
-        pass
-    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
-    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+        # Randomly generate 10 networks
+        Network_generate_time = 10
 
-print("input para:", (N, input_ED, beta))
-print("real ED:", real_avg)
-print("clu:", nx.average_clustering(G))
-components = list(nx.connected_components(G))
-largest_component = max(components, key=len)
-print("LCC", len(largest_component))
-if count < 20:
-    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_N{Nn}ED{EDn}CC{betan}.txt".format(
-        Nn=N, EDn=input_ED, betan=C_G)
-    nx.write_edgelist(G, FileNetworkName)
+        for network in range(Network_generate_time):
+            # N = 100 # FOR TEST
+            G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
+            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+            print("real ED:", real_avg)
+            ave_clu = nx.average_clustering(G)
+            print("clu:", ave_clu)
+            components = list(nx.connected_components(G))
+            largest_component = max(components, key=len)
+            LCC_number = len(largest_component)
+            print("LCC", LCC_number)
+            nodei = N-2
+            nodej = N-1
 
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_coordinates_N{Nn}ED{EDn}CC{betan}.txt".format(
-        Nn=N, EDn=input_ED, betan=C_G)
-    with open(FileNetworkCoorName, "w") as file:
-        for data1, data2 in zip(Coorx, Coory):
-            file.write(f"{data1}\t{data2}\n")
+            # Find the common neighbours
+            common_neighbors = list(nx.common_neighbors(G, nodei, nodej))
+            SPnodenum_vec.append(len(common_neighbors))
+            if common_neighbors:
+                xSource = Coorx[nodei]
+                ySource = Coory[nodei]
+                xEnd = Coorx[nodej]
+                yEnd = Coory[nodej]
+                # length_geodesic.append(distR2(xSource, ySource, xEnd, yEnd)) # for test
+                # Compute deviation for the shortest path of each node pair
+                deviations_for_a_nodepair = []
+                for SPnode in common_neighbors:
+                    xMed = Coorx[SPnode]
+                    yMed = Coory[SPnode]
+                    dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+                    deviations_for_a_nodepair.append(dist)
+
+                deviation_vec = deviation_vec+deviations_for_a_nodepair
+
+                ave_deviation.append(np.mean(deviations_for_a_nodepair))
+                max_deviation.append(max(deviations_for_a_nodepair))
+                min_deviation.append(min(deviations_for_a_nodepair))
+
+        deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistancedeviation_neighbour_nodes_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn = N,EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
+        np.savetxt(deviation_vec_name, deviation_vec)
+        # For each node pair:
+        ave_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistanceave_neighbour_nodes_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn = N,EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
+        np.savetxt(ave_deviation_name, ave_deviation)
+        max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistancemax_neighbour_nodes_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn = N,EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
+        np.savetxt(max_deviation_name, max_deviation)
+        min_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistancemin_neighbour_nodes_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn = N,EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
+        np.savetxt(min_deviation_name, min_deviation)
+        SPnodenum_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\Givendistanceneighbournodenum_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn = N,EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance = geodesic_distance_AB)
+        np.savetxt(SPnodenum_vec_name, SPnodenum_vec, fmt="%i")

@@ -8,6 +8,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
 import SphericalSoftRandomGeomtricGraph
+import json
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
@@ -50,6 +51,7 @@ def IOforGraph():
 
 
 def IOfordict():
+    # IO for value is float
     max_weights = {}
     radius_name = "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\output.txt"
     with open(radius_name, "w") as f:
@@ -61,6 +63,13 @@ def IOfordict():
             key, value = line.strip().split(": ")
             # 将键转换为整数，值转换为浮点数，并添加到字典中
             max_weights[int(key)] = float(value)
+    # IO for value is list
+    with open('data.json', 'w') as file:
+        json.dump({str(k): v for k, v in data.items()}, file)
+
+    # 从文件加载字典（将键从字符串转换回整数）
+    with open('data.json', 'r') as file:
+        loaded_data = {int(k): v for k, v in json.load(file).items()}
 
 def sprintffilename():
     N=1

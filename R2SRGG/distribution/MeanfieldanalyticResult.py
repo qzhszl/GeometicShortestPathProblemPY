@@ -9,11 +9,13 @@ We generate two nodes with fixed coordinates, find all their common neighbours
 import numpy as np
 import networkx as nx
 import random
+import json
 import math
 import sys
 
-from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
-# from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
+from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair,dist_to_geodesic_perpendicular_R2
+# from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair, \
+#     dist_to_geodesic_perpendicular_R2
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs
 
@@ -290,6 +292,176 @@ def neighbour_distance_beta(network_size_index, average_degree_index, cc_index, 
     print("ok")
 
     # Press the green button in the gutter to run the script.
+
+
+def compute_common_neighbour_deviation(G,Coorx,Coory,N):
+    nodei = N - 2
+    nodej = N - 1
+    # Find the common neighbours
+    common_neighbors = list(nx.common_neighbors(G, nodei, nodej))
+    if common_neighbors:
+        xSource = Coorx[nodei]
+        ySource = Coory[nodei]
+        xEnd = Coorx[nodej]
+        yEnd = Coory[nodej]
+        # length_geodesic.append(distR2(xSource, ySource, xEnd, yEnd)) # for test
+        # Compute deviation for the shortest path of each node pair
+        deviations_for_a_nodepair = []
+        for SPnode in common_neighbors:
+            xMed = Coorx[SPnode]
+            yMed = Coory[SPnode]
+            # dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+            dist, _ = dist_to_geodesic_perpendicular_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+            deviations_for_a_nodepair.append(dist)
+    else:
+        deviations_for_a_nodepair = []
+    return common_neighbors, deviations_for_a_nodepair
+
+
+def neighbour_distance_with_beta_one_graph():
+    """
+    From the results from neighbour_distance_beta(), we observed that the deviation of common neighbours grows with
+    the increment of beta, which contradict the results according to the deviation of the shortest path
+    The function are investigating why this contradiction appear.
+    The main idea is:
+    1. freeze the coordinates of the graph
+    2. place i and j in (0.49),(0.5),(0.5),(0.5)
+    3. for every beta, get the list of the common neighbours and see what will change
+    4. do deviation for both "from a point to the geodesic" and "from a point to the line that geodesic belongs to(perpendicular distance)"
+    :return:
+    """
+    N = 10000
+    ED = 5
+    betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    # betavec = [2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8]
+    Geodistance_index = 0
+    distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5],
+                     [0.25, 0.25, 0.75, 0.75]]
+    x_A = distance_list[Geodistance_index][0]
+    y_A = distance_list[Geodistance_index][1]
+    x_B = distance_list[Geodistance_index][2]
+    y_B = distance_list[Geodistance_index][3]
+    geodesic_distance_AB = round(x_B - x_A, 2)
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
+
+    beta = 2.2
+    ExternalSimutime = 1
+    network_index = 2
+
+    # load initial network
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\"
+    FileNetworkName = filefolder_name + "network_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+        Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+    G = loadSRGGandaddnode(N,FileNetworkName)
+    coorx = []
+    coory = []
+    FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+        Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+    print(FileNetworkCoorName)
+    with open(FileNetworkCoorName, "r") as file:
+        for line in file:
+            if line.startswith("#"):
+                continue
+            data = line.strip().split("\t")  # 使用制表符分割
+            coorx.append(float(data[0]))
+            coory.append(float(data[1]))
+
+    common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
+    print(common_neighbors)
+    print(deviations_for_a_nodepair)
+
+    for beta_index in range(len(betavec)):
+        G, coorx, coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B, coorx, coory)
+        print(coorx[N-1], coory[N-1])
+        print(coorx[N-2], coory[N-2])
+        common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
+        print(common_neighbors)
+        print(deviations_for_a_nodepair)
+
+
+def neighbour_distance_with_beta_one_graph_clu(beta_index):
+    """
+    From the results from neighbour_distance_beta(), we observed that the deviation of common neighbours grows with
+    the increment of beta, which contradict the results according to the deviation of the shortest path
+    The function are investigating why this contradiction appear.
+    The main idea is:
+    1. freeze the coordinates of the graph
+    2. place i and j in (0.49),(0.5),(0.5),(0.5)
+    3. for every beta, get the list of the common neighbours and see what will change
+    4. do deviation for both "from a point to the geodesic" and "from a point to the line that geodesic belongs to(perpendicular distance)"
+    :return:
+    """
+    N = 10000
+    ED = 5
+    betavec = [2.2,2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4,5,6,7, 8,9,10, 16, 32, 64, 128]
+    Geodistance_index = 0
+    distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5],
+                     [0.25, 0.25, 0.75, 0.75]]
+    x_A = distance_list[Geodistance_index][0]
+    y_A = distance_list[Geodistance_index][1]
+    x_B = distance_list[Geodistance_index][2]
+    y_B = distance_list[Geodistance_index][3]
+    geodesic_distance_AB = round(x_B - x_A, 2)
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
+
+    inputbeta_network = 2.2
+    ExternalSimutime = 1
+    network_index = 2
+    beta = betavec[beta_index]
+
+    # load initial network
+
+
+    # filefolder_name = "/home/zqiu1/GSPP/SSRGGpy/R2/distribution/NetworkSRGG"
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\"
+    coorx = []
+    coory = []
+    FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+        Nn=N, EDn=ED, betan=inputbeta_network, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+
+    with open(FileNetworkCoorName, "r") as file:
+        for line in file:
+            if line.startswith("#"):
+                continue
+            data = line.strip().split("\t")  # 使用制表符分割
+            coorx.append(float(data[0]))
+            coory.append(float(data[1]))
+    common_neighbors_dic = {}
+    deviations_for_a_nodepair_dic = {}
+    connectedornot_dic = {}
+    for simu_times in range(100):
+        G, coorx, coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B, coorx, coory)
+        if nx.has_path(G,N-1,N-2):
+            connectedornot_dic[simu_times] = 1
+        else:
+            connectedornot_dic[simu_times] = 0
+        common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
+        common_neighbors_dic[simu_times] = common_neighbors
+        deviations_for_a_nodepair_dic[simu_times] = deviations_for_a_nodepair
+
+    filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\perpendiculardistance\\"
+    common_neigthbour_name = filefolder_name2 + "common_neigthbour_list_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
+        Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime)
+    with open(common_neigthbour_name, 'w') as file:
+        json.dump({str(k): v for k, v in common_neighbors_dic.items()}, file)
+
+    deviations_name = filefolder_name2 + "common_neigthbour_deviationlist_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
+        Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime)
+    with open(deviations_name, 'w') as file:
+        json.dump({str(k): v for k, v in deviations_for_a_nodepair_dic.items()}, file)
+
+    connected_deviations_name = filefolder_name2 + "common_neigthbour_connection_list_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
+        Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime)
+    with open(connected_deviations_name, 'w') as file:
+        json.dump({str(k): v for k, v in deviations_for_a_nodepair_dic.items()}, file)
+
+
 if __name__ == '__main__':
     # network_size_index = 4
     # average_degree_index = 2
@@ -353,7 +525,7 @@ if __name__ == '__main__':
     #     for ExternalSimutime in range(10):
     #         neighbour_distance(5, int(ED), int(cc_index), int(Geodistance_index), int(ExternalSimutime))
 
-    neighbour_distance_beta(5,0,0,0,0)
+    # neighbour_distance_beta(5,0,0,0,0)
     # """
     # Run code beta
     # """
@@ -362,3 +534,18 @@ if __name__ == '__main__':
     # Geodistance_index = sys.argv[3]
     # ExternalSimutime = sys.argv[4]
     # neighbour_distance_beta(5, int(ED), int(cc_index), int(Geodistance_index), int(ExternalSimutime))
+
+    """
+    check neighbour distance 
+    """
+    # neighbour_distance_with_beta_one_graph()
+    # N = 10000
+    # for k in range(2,10):
+    #     print(math.sqrt(k/(math.pi*N)))
+    """
+    check neighbour distance for clu
+    """
+    betaindex = sys.argv[1]
+    # betaindex = 0
+    neighbour_distance_with_beta_one_graph_clu(int(betaindex)) # beta index change from 0 to 19
+
