@@ -881,6 +881,8 @@ def analysis_plot_for_onegraph():
     betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128]
     N = 10000
     ED = 5
+    effective_radius = math.sqrt(ED/math.pi/(N-1))
+    print(effective_radius)
     Geodistance_index = 0
     distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5],
                      [0.25, 0.25, 0.75, 0.75]]
@@ -986,7 +988,6 @@ def analysis_plot_for_onegraph():
         y2 = coory[N-2]
         x3 = coorx[N - 1]
         y3 = coory[N - 1]
-        print(x2,y2,x3,y3)
         distance_i_list.append(distR2(x1,y1,x2,y2))
         distance_j_list.append(distR2(x1, y1, x3, y3))
     df = pd.DataFrame({

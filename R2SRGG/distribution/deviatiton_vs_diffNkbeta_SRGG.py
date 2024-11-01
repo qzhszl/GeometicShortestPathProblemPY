@@ -576,21 +576,21 @@ if __name__ == '__main__':
     """
     ## generate_proper_network(N, ED)
     """
-    EDdic = {}
-    C_G_vec = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
-    betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
-    kvec = list(range(6, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    print(len(kvec))
-    count = 0
-    for beta in range(len(betavec)):
-        count = count+1
-        ED_VEC = []
-        for ED_input in kvec:
-            real_input_ED = generate_proper_network(10000, ED_input, beta)
-            ED_VEC.append(real_input_ED)
-        print(ED_VEC)
-        EDdic[C_G_vec[count]] = ED_VEC
-    print(EDdic)
+    # EDdic = {}
+    # C_G_vec = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+    # betavec = [2.55, 3.2, 3.99, 5.15, 7.99, 300]
+    # kvec = list(range(6, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    # print(len(kvec))
+    # count = 0
+    # for beta in range(len(betavec)):
+    #     count = count+1
+    #     ED_VEC = []
+    #     for ED_input in kvec:
+    #         real_input_ED = generate_proper_network(10000, ED_input, beta)
+    #         ED_VEC.append(real_input_ED)
+    #     print(ED_VEC)
+    #     EDdic[C_G_vec[count]] = ED_VEC
+    # print(EDdic)
 
 
     # ED = sys.argv[1]
@@ -699,3 +699,29 @@ if __name__ == '__main__':
     #         with open(FileNetworkCoorName, "w") as file:
     #             for data1, data2 in zip(Coorx, Coory):
     #                 file.write(f"{data1}\t{data2}\n")
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
+    N = 10000
+    ED = 5
+    beta = 2.2
+    x_A = 0.495
+    y_A = 0.5
+    x_B = 0.505
+    y_B = 0.5
+    ExternalSimutime = 0
+    network_index = 0
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\"
+    # Randomly generate 10 networks
+
+    G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
+    FileNetworkName = filefolder_name + "network_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+        Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+    nx.write_edgelist(G, FileNetworkName)
+
+    FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+        Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(Coorx, Coory):
+            file.write(f"{data1}\t{data2}\n")
