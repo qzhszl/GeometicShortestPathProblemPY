@@ -7,7 +7,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
-from R2SRGG.R2SRGG import loadSRGGandaddnode
+from R2SRGG.R2SRGG import loadSRGGandaddnode, distR2
 from collections import defaultdict
 from scipy.optimize import curve_fit
 import math
@@ -944,14 +944,15 @@ def analysis_plot_for_onegraph():
                                            neighbour_list_all_unique]
 
 
-    #____________________________________print and save the unqiue neighbour list and the corresponding deviaiton
-    # print(neighbour_list_all_unique)
-    # print(corresponding_deviation_list_all_unique)
-    # sorted_list1, sorted_list2 = zip(*sorted(zip(neighbour_list_all_unique, corresponding_deviation_list_all_unique), key=lambda x: x[1], reverse=True))
-    #
-    # # 转换为列表形式
-    # sorted_list1 = list(sorted_list1)
-    # sorted_list2 = list(sorted_list2)
+
+    #____________________________________print and save the unqiue neighbour list and the corresponding deviaiton and coordinates
+    print(neighbour_list_all_unique)
+    print(corresponding_deviation_list_all_unique)
+    sorted_list1, sorted_list2 = zip(*sorted(zip(neighbour_list_all_unique, corresponding_deviation_list_all_unique), key=lambda x: x[1], reverse=True))
+
+    # 转换为列表形式
+    sorted_list1 = list(sorted_list1)
+    sorted_list2 = list(sorted_list2)
     # print("neighbour node index:",sorted_list1)
     # print("corresponding deviation",sorted_list2)
     #
@@ -962,9 +963,44 @@ def analysis_plot_for_onegraph():
     #
     # # 显示表格
     # print(df)
-    #
+
     # # 如果需要，可以将表格保存为CSV文件
     # df.to_csv('output_table.csv', index=False)
+
+    # # corrdinates:
+    coorx = []
+    coory = []
+    with open("D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\network_coordinates_N10000ED5beta2.2xA0.49yA0.5xB0.5yB0.5Simu1networktime2.txt") as file:
+        for line in file:
+            if line.startswith("#"):
+                continue
+            data = line.strip().split("\t")
+            coorx.append(float(data[0]))
+            coory.append(float(data[1]))
+    distance_i_list = []
+    distance_j_list = []
+    for node_index in sorted_list1:
+        x1 = coorx[node_index]
+        y1 = coory[node_index]
+        x2 = coorx[N-2]
+        y2 = coory[N-2]
+        x3 = coorx[N - 1]
+        y3 = coory[N - 1]
+        print(x2,y2,x3,y3)
+        distance_i_list.append(distR2(x1,y1,x2,y2))
+        distance_j_list.append(distR2(x1, y1, x3, y3))
+    df = pd.DataFrame({
+        'dis_ix': distance_i_list,
+        'dis_jx': distance_j_list
+    })
+
+    # 显示表格
+    print(df)
+
+    # 如果需要，可以将表格保存为CSV文件
+    # df.to_csv('output_table.csv', index=False)
+
+
 
     # plot the figure_______________________________________________
     # fig, ax1 = plt.subplots(figsize=(12, 8))
@@ -1078,4 +1114,5 @@ if __name__ == '__main__':
     """
     plot or evaluate deviation vs defferent beta for one graph coordinates
     """
+
     analysis_plot_for_onegraph()
