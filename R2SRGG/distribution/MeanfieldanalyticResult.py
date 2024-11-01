@@ -414,12 +414,11 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index):
     ExternalSimutime = 1
     network_index = 2
     beta = betavec[beta_index]
-
+    print("beta:",beta)
     # load initial network
 
-
-    # filefolder_name = "/home/zqiu1/GSPP/SSRGGpy/R2/distribution/NetworkSRGG"
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\"
+    filefolder_name = "/home/zqiu1/GSPP/SSRGGpy/R2/distribution/NetworkSRGG/"
+    # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\"
     coorx = []
     coory = []
     FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
@@ -436,14 +435,18 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index):
     deviations_for_a_nodepair_dic = {}
     connectedornot_dic = {}
     for simu_times in range(100):
+        print(simu_times)
         G, coorx, coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B, coorx, coory)
         if nx.has_path(G,N-1,N-2):
             connectedornot_dic[simu_times] = 1
         else:
             connectedornot_dic[simu_times] = 0
         common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
+        print("node",common_neighbors)
+        print("dev", deviations_for_a_nodepair)
         common_neighbors_dic[simu_times] = common_neighbors
         deviations_for_a_nodepair_dic[simu_times] = deviations_for_a_nodepair
+
 
     filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\perpendiculardistance\\"
     common_neigthbour_name = filefolder_name2 + "common_neigthbour_list_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
@@ -459,7 +462,7 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index):
     connected_deviations_name = filefolder_name2 + "common_neigthbour_connection_list_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
         Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime)
     with open(connected_deviations_name, 'w') as file:
-        json.dump({str(k): v for k, v in deviations_for_a_nodepair_dic.items()}, file)
+        json.dump({str(k): v for k, v in connectedornot_dic.items()}, file)
 
 
 if __name__ == '__main__':
