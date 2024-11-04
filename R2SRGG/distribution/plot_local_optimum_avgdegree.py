@@ -7,6 +7,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
+from scipy.optimize import curve_fit
+
 from R2SRGG.R2SRGG import loadSRGGandaddnode
 from collections import defaultdict
 import math
@@ -468,6 +470,8 @@ def plot_local_optimum_with_realED2(beta):
              30]
             x = [x[a] for a in filter_index]
             y = [y[a] for a in filter_index]
+            print(x)
+            print(y)
             error = [error[a] for a in filter_index]
         elif N>100:
             x = real_ave_degree_dict[N]
@@ -475,6 +479,8 @@ def plot_local_optimum_with_realED2(beta):
             x = x[0:cuttail[N_index]]
             y = ave_deviation_dict[N]
             y = y[0:cuttail[N_index]]
+            print(x)
+            print(y)
             error = std_deviation_dict[N]
             error = error[0:cuttail[N_index]]
         else:
@@ -512,10 +518,186 @@ def plot_local_optimum_with_realED2(beta):
     plt.tick_params(axis='both', which="both",length=6, width=1)
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumBeta{betan}2.pdf".format(
         betan=beta)
-    plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
+def analyse_local_optimum_with_diffED_tail():
+    """
+    The results are based on the plot_local_optimum_with_realED2()
+    We checked the data 3 points:
+    1. whether the slope of the tail follows the <k>^(1/2)
+    :return:
+    """
+    Nvec = [100, 10000]
+    fig, ax = plt.subplots(figsize=(9, 6))
+    beta = 8
+    colors = [[0, 0.4470, 0.7410],
+              [0.8500, 0.3250, 0.0980],
+              [0.9290, 0.6940, 0.1250],
+              [0.4940, 0.1840, 0.5560],
+              [0.4660, 0.6740, 0.1880]]
+    x_dic = {100: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 19, 21, 23, 25, 27, 29, 31],
+             10000: [1.535, 2.3388, 3.0858, 3.885, 4.6738, 5.435, 6.1376, 6.9178, 7.6912,
+                     8.4774, 9.2908, 10.037, 10.7688, 11.6146, 15.3092, 19.273, 22.8322, 26.7782,
+                     30.423, 37.8676, 45.5538, 52.7842, 59.8508]}
+    y_dic = {
+        100: [0.04486272955903646, 0.08271803920667539, 0.10217807919903567, 0.0973051691703707, 0.0906554276818128,
+              0.08694971128688211, 0.08445621830353241, 0.08439564522559129, 0.08365839172483538, 0.08651702815304013,
+              0.08939024678409463, 0.08840592225439187, 0.09229530706050895, 0.09348592598817931, 0.09774683807580578,
+              0.10072145944111077, 0.10357256402624641, 0.10533681658273401, 0.11403048765531756, 0.11433702505430877,
+              0.11844978424412508, 0.12184460683340481],
+        10000: [0.00288125, 0.00538421, 0.01645766, 0.06271673, 0.05693332, 0.03579269,
+                0.03517003, 0.02955597, 0.02756434, 0.02833479, 0.02518618, 0.02663983,
+                0.02803844, 0.02847542, 0.02949756, 0.0303218, 0.0341523, 0.03737956,
+                0.03192923, 0.03703796, 0.03490155, 0.0366545, 0.03711506]}
+    legend = [r"$N=10^2$", r"$N=10^4$"]
+    for N_index in range(2):
+        N = Nvec[N_index]
+        x = x_dic[N]
+        y = y_dic[N]
+        plt.plot(x, y, linestyle="-", linewidth=3, marker='o', markersize=16,
+                     label=legend[N_index], color=colors[N_index])
+
+    # plt.ylim(0, 0.30)
+    # plt.yticks([0, 0.1, 0.2, 0.3])
+    x1 = x_dic[100]
+    listslice_index = x1.index(13)
+    x1 = x1[listslice_index:]
+    y1 = y_dic[100]
+    y1 = y1[listslice_index:]
+    params, covariance = curve_fit(power_law, x1, y1)
+
+    # 获取拟合的参数
+    a_fit, k_fit = params
+    print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+
+    # 绘制原始数据和拟合曲线
+
+    plt.plot(x1, power_law(x1, *params), linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
+    # plt.plot(x1, [xv**(1/2) for xv in x1], linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
+
+    x2 = x_dic[10000]
+    listslice_index2 = x2.index(15.3092)
+    x2 = x2[listslice_index2:]
+    y2 = y_dic[10000]
+    y2 = y2[listslice_index2:]
+    params2, covariance2 = curve_fit(power_law, x2, y2)
+
+    # 获取拟合的参数
+    a_fit2, k_fit2 = params2
+    print(f"拟合结果: a = {a_fit2}, k = {k_fit2}")
+
+    # 绘制原始数据和拟合曲线
+
+    plt.plot(x2, power_law(x2, *params2), linewidth=5, label=f'fit curve: $y={a_fit2:.4f}x^{{{k_fit2:.2f}}}$', color='green')
+    # plt.plot(x1, [xv**(1/2) for xv in x1], linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
+
+
+    plt.xscale('log')
+    plt.yscale("log")
+    plt.xlabel('Expected degree, E[D]', fontsize=26)
+    plt.ylabel('Average deviation', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.legend(fontsize=20)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumBeta{betan}2.pdf".format(
+        betan=beta)
+    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+    plt.close()
+
+def analyse_local_optimum_with_diffED_tail():
+    """
+    The results are based on the plot_local_optimum_with_realED2()
+    We checked the data 3 points:
+    1. whether the slope of the tail follows the <k>^(1/2)
+    :return:
+    """
+    Nvec = [100, 10000]
+    fig, ax = plt.subplots(figsize=(9, 6))
+    beta = 8
+    colors = [[0, 0.4470, 0.7410],
+              [0.8500, 0.3250, 0.0980],
+              [0.9290, 0.6940, 0.1250],
+              [0.4940, 0.1840, 0.5560],
+              [0.4660, 0.6740, 0.1880]]
+    x_dic = {100: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 19, 21, 23, 25, 27, 29, 31],
+             10000: [1.535, 2.3388, 3.0858, 3.885, 4.6738, 5.435, 6.1376, 6.9178, 7.6912,
+                     8.4774, 9.2908, 10.037, 10.7688, 11.6146, 15.3092, 19.273, 22.8322, 26.7782,
+                     30.423, 37.8676, 45.5538, 52.7842, 59.8508]}
+    y_dic = {
+        100: [0.04486272955903646, 0.08271803920667539, 0.10217807919903567, 0.0973051691703707, 0.0906554276818128,
+              0.08694971128688211, 0.08445621830353241, 0.08439564522559129, 0.08365839172483538, 0.08651702815304013,
+              0.08939024678409463, 0.08840592225439187, 0.09229530706050895, 0.09348592598817931, 0.09774683807580578,
+              0.10072145944111077, 0.10357256402624641, 0.10533681658273401, 0.11403048765531756, 0.11433702505430877,
+              0.11844978424412508, 0.12184460683340481],
+        10000: [0.00288125, 0.00538421, 0.01645766, 0.06271673, 0.05693332, 0.03579269,
+                0.03517003, 0.02955597, 0.02756434, 0.02833479, 0.02518618, 0.02663983,
+                0.02803844, 0.02847542, 0.02949756, 0.0303218, 0.0341523, 0.03737956,
+                0.03192923, 0.03703796, 0.03490155, 0.0366545, 0.03711506]}
+    legend = [r"$N=10^2$", r"$N=10^4$"]
+    for N_index in range(2):
+        N = Nvec[N_index]
+        x = x_dic[N]
+        y = y_dic[N]
+        plt.plot(x, y, linestyle="-", linewidth=3, marker='o', markersize=16,
+                     label=legend[N_index], color=colors[N_index])
+
+    # plt.ylim(0, 0.30)
+    # plt.yticks([0, 0.1, 0.2, 0.3])
+    x1 = x_dic[100]
+    listslice_index = x1.index(13)
+    x1 = x1[listslice_index:]
+    y1 = y_dic[100]
+    y1 = y1[listslice_index:]
+    params, covariance = curve_fit(power_law, x1, y1)
+
+    # 获取拟合的参数
+    a_fit, k_fit = params
+    print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+
+    # 绘制原始数据和拟合曲线
+
+    plt.plot(x1, power_law(x1, *params), linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
+    # plt.plot(x1, [xv**(1/2) for xv in x1], linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
+
+    x2 = x_dic[10000]
+    listslice_index2 = x2.index(15.3092)
+    x2 = x2[listslice_index2:]
+    y2 = y_dic[10000]
+    y2 = y2[listslice_index2:]
+    params2, covariance2 = curve_fit(power_law, x2, y2)
+
+    # 获取拟合的参数
+    a_fit2, k_fit2 = params2
+    print(f"拟合结果: a = {a_fit2}, k = {k_fit2}")
+
+    # 绘制原始数据和拟合曲线
+
+    plt.plot(x2, power_law(x2, *params2), linewidth=5, label=f'fit curve: $y={a_fit2:.4f}x^{{{k_fit2:.2f}}}$', color='green')
+    # plt.plot(x1, [xv**(1/2) for xv in x1], linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
+
+
+    plt.xscale('log')
+    plt.yscale("log")
+    plt.xlabel('Expected degree, E[D]', fontsize=26)
+    plt.ylabel('Average deviation', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.legend(fontsize=20)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumBeta{betan}2.pdf".format(
+        betan=beta)
+    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+    plt.close()
+
+def power_law(x, a, k):
+    return a * x ** k
 
 def plot_local_optimum_with_realED_diffCG():
     """
@@ -1335,11 +1517,14 @@ if __name__ == '__main__':
     # STEP 3
     # betavec = [4, 8]
     # # betavec = [8]
-    # for beta in betavec:
-    #     # load_10000nodenetwork_results(beta)
-    #     plot_local_optimum_with_realED2(beta)
+    for beta in betavec:
+        load_10000nodenetwork_results(beta)
+        plot_local_optimum_with_realED2(beta)
 
-    # STEP 4
+
+    """
+    # STEP 4 plot local optimum: deviation versus expected degree
+    """
     # plot_local_optimum_with_realED2(4)
     # plot_local_optimum_with_realED2(8)
 
@@ -1393,11 +1578,22 @@ if __name__ == '__main__':
     #     print("real ED:", real_avg)
 
 
+    """
+    step 12
     # plot average deviation vs real_avg_degree for clean data
     # first time need to run the two line below:
-    for C_G in [0.1,0.2,0.3,0.4,0.5,0.6]:
-        load_10000nodenetwork_results_clean(C_G)
+    """
+    # for C_G in [0.1,0.2,0.3,0.4,0.5,0.6]:
+    #     load_10000nodenetwork_results_clean(C_G)
+    #
+    # plot_local_optimum_with_realED_diffCG_clean()
 
-    plot_local_optimum_with_realED_diffCG_clean()
+
+    """
+    Step 13 
+    check local optimum with ED for different N and beta is fixed
+    following work after step 4
+    """
+    analyse_local_optimum_with_diffED()
 
 
