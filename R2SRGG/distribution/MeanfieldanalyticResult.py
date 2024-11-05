@@ -311,8 +311,8 @@ def compute_common_neighbour_deviation(G,Coorx,Coory,N):
         for SPnode in common_neighbors:
             xMed = Coorx[SPnode]
             yMed = Coory[SPnode]
-            # dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
-            dist, _ = dist_to_geodesic_perpendicular_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+            dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+            # dist, _ = dist_to_geodesic_perpendicular_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
             deviations_for_a_nodepair.append(dist)
     else:
         deviations_for_a_nodepair = []
@@ -435,7 +435,7 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index):
     common_neighbors_dic = {}
     deviations_for_a_nodepair_dic = {}
     connectedornot_dic = {}
-    for simu_times in range(100):
+    for simu_times in range(1000):
         print(simu_times)
         G, coorx, coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B, coorx, coory)
         if nx.has_path(G,N-1,N-2):
@@ -449,7 +449,7 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index):
         deviations_for_a_nodepair_dic[simu_times] = deviations_for_a_nodepair
 
 
-    filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\perpendiculardistance\\"
+    filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\"
     common_neigthbour_name = filefolder_name2 + "common_neigthbour_list_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
         Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime)
     with open(common_neigthbour_name, 'w') as file:

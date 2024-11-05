@@ -336,6 +336,7 @@ def distance_inlargeSRGG_clu(N,ED,beta,ExternalSimutime):
         min_deviation = []
         ave_baseline_deviation =[]
         length_geodesic = []
+        hopcount_vec = []
         SPnodenum_vec =[]
 
         # load a network
@@ -369,7 +370,7 @@ def distance_inlargeSRGG_clu(N,ED,beta,ExternalSimutime):
         print("LCC", LCC_number)
 
         # Randomly choose 100 connectede node pairs
-        nodepair_num = 100
+        nodepair_num = 10
         unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
         filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
             Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -378,10 +379,12 @@ def distance_inlargeSRGG_clu(N,ED,beta,ExternalSimutime):
         largest_component = []
 
         for node_pair in unique_pairs:
+            print("node_pair:",node_pair)
             nodei = node_pair[0]
             nodej = node_pair[1]
             # Find the shortest path nodes
             SPNodelist = all_shortest_path_node(G, nodei, nodej)
+            hopcount_vec.append(nx.shortest_path_length(G, nodei, nodej))
             SPnodenum = len(SPNodelist)
             SPnodenum_vec.append(SPnodenum)
             if SPnodenum>0:
@@ -442,7 +445,9 @@ def distance_inlargeSRGG_clu(N,ED,beta,ExternalSimutime):
         SPnodenum_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\SPnodenum_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
             Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(SPnodenum_vec_name, SPnodenum_vec,fmt="%i")
-
+        hopcount_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                    Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        np.savetxt(hopcount_Name, hopcount_vec)
 
 def distance_inlargeSRGG_clu_cc(N, ED, beta, cc, ExternalSimutime):
     """
@@ -581,7 +586,7 @@ def distance_inlargeSRGG_clu_cc(N, ED, beta, cc, ExternalSimutime):
 def distance_inSRGG(network_size_index, average_degree_index, beta_index, ExternalSimutime):
     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    betavec = [2.2, 4, 8, 16, 32, 64, 128]
 
     random.seed(ExternalSimutime)
     N = Nvec[network_size_index]
@@ -668,10 +673,20 @@ if __name__ == '__main__':
     #         for beta_index in range(7):
     #             distance_inSRGG(N_index, ED_index, beta_index, 0)
 
-    ED = sys.argv[1]
-    cc_index = sys.argv[2]
+    """
+    Step 2 try to see with different beta and input AVG 
+    """
+    ED_index = sys.argv[1]
+    beta_index = sys.argv[2]
     ExternalSimutime = sys.argv[3]
-    distance_inSRGG_withEDCC(5, int(ED), int(cc_index), int(ExternalSimutime))
+    distance_inSRGG_clu(7, int(ED_index), int(beta_index), int(ExternalSimutime))
+
+
+
+    # ED = sys.argv[1]
+    # cc_index = sys.argv[2]
+    # ExternalSimutime = sys.argv[3]
+    # distance_inSRGG_withEDCC(5, int(ED), int(cc_index), int(ExternalSimutime))
 
     # i = sys.argv[1]
     # exemptionlist = np.loadtxt("/home/zqiu1/GSPP/SSRGGpy/R2/distribution/notrun.txt")

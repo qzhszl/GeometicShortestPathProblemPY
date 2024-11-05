@@ -425,7 +425,10 @@ def load_10000nodenetwork_results_beta_fixdistance(beta,geodesic_distance_AB):
                         deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\Givendistancedeviation_shortest_path_nodes_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
                             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
                         ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
-                        ave_deviation_for_a_para_comb.extend(list(ave_deviation_for_a_para_comb_10times))
+                        try:
+                            ave_deviation_for_a_para_comb.extend(list(ave_deviation_for_a_para_comb_10times))
+                        except:
+                            ave_deviation_for_a_para_comb.append(ave_deviation_for_a_para_comb_10times)
                     except FileNotFoundError:
                         exemptionlist.append((N, ED, beta, ExternalSimutime))
 
@@ -581,8 +584,10 @@ if __name__ == '__main__':
     # # load data: the first time use it
     # #_______________________________________________________________________
     distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
-    betavec = [2.2, 4, 8, 16, 32, 128]
-    for Geodistance_index in range(1,2):
+    # betavec = [2.2, 4, 8, 16, 32, 128]
+    # betavec = [2.2, 4, 8, 16, 32, 128]
+    betavec = [4,8]
+    for Geodistance_index in range(1):
         x_A = distance_list[Geodistance_index][0]
         y_A = distance_list[Geodistance_index][1]
         x_B = distance_list[Geodistance_index][2]
@@ -593,6 +598,6 @@ if __name__ == '__main__':
             load_10000nodenetwork_results_beta_fixdistance(beta,geodesic_distance_AB)
     # # # _______________________________________________________________________
 
-    plot_local_optimum_with_realED_diffbeta_fix_distance(1)
+    # plot_local_optimum_with_realED_diffbeta_fix_distance(0)
 
 
