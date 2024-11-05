@@ -290,12 +290,14 @@ if __name__ == '__main__':
     # R2SRGG(110,5,4,rg)
     # check_realdegree_vs_expecteddegree()
 
-    a,_ = dist_to_geodesic_perpendicular_R2(0.3, 0.7,0.4, 0.7, 0.6, 0.7)
+    x=  random.random()
+    y = random.random()
+    ax = random.random()
+    ay = random.random()
+    bx = random.random()
+    by = random.random()
+    print(x,y,ax,ay,bx,by)
+    a, _ = dist_to_geodesic_perpendicular_R2(x, y, ax, ay, bx, by)
     print(a)
-    distance = point_to_line_distance_from_points(0.3, 0.7,0.4, 0.7, 0.6, 0.7)
+    distance = point_to_line_distance_from_points(x, y, ax, ay, bx, by)
     print(f"Point A to line BC distance: {distance}")
-
-
-
-
-
