@@ -761,7 +761,7 @@ def plot_common_neighbour_deviation_vs_inputED_with_diffbeta(beta):
 
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\perpendiculardistance\\CommonNeighbourDeviationvsEDwithdiffbeta{betan}_curvefitloglog.pdf".format(
         betan=beta)
-    plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -1030,7 +1030,8 @@ def plot_common_neighbour_deviation_vs_beta():
 
 
 def analysis_plot_for_onegraph():
-    betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128]
+    # betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128]
+    betavec= [2.2, 2.4, 2.8, 3]
     N = 10000
     ED = 5
     effective_radius = math.sqrt(ED/math.pi/(N-1))
@@ -1055,7 +1056,7 @@ def analysis_plot_for_onegraph():
 
     for beta in betavec:
         print("beta", beta)
-        filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\"
+        filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\test1000\\"
         common_neigthbour_name = filefolder_name2 + "common_neigthbour_list_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
             Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime)
         with open(common_neigthbour_name, 'r') as file:
@@ -1156,45 +1157,45 @@ def analysis_plot_for_onegraph():
 
 
     # plot the figure_______________________________________________
-    # fig, ax1 = plt.subplots(figsize=(12, 8))
-    # ax1.errorbar(betavec, ave_dev_list, yerr=error_list, linestyle="--", linewidth=3, elinewidth=1, capsize=5,
-    #              marker='o', markersize=16, color=[0.8500, 0.3250, 0.0980])
+    fig, ax1 = plt.subplots(figsize=(12, 8))
+    ax1.errorbar(betavec, ave_dev_list, yerr=error_list, linestyle="--", linewidth=3, elinewidth=1, capsize=5,
+                 marker='o', markersize=16, color=[0.8500, 0.3250, 0.0980])
+
+    plt.xlabel(r'$\beta$', fontsize=26)
+    ax1.set_ylabel('average deviation', color=[0.8500, 0.3250, 0.0980], fontsize=26)
+    ax1.tick_params(axis='y', labelcolor=[0.8500, 0.3250, 0.0980])
+
+    # # 创建第二个坐标轴，共享 x 轴
+    ax2 = ax1.twinx()
+    ax2.plot(betavec, has_neightbour_num_list, 'b--', label='y2 data')  # 'r--' 表示红色虚线
+    ax2.set_ylabel('valid sample times', color='b', fontsize=26)
+    ax2.tick_params(axis='y', labelcolor='b')
     #
-    # plt.xlabel(r'$\beta$', fontsize=26)
-    # ax1.set_ylabel('average deviation', color=[0.8500, 0.3250, 0.0980], fontsize=26)
-    # ax1.tick_params(axis='y', labelcolor=[0.8500, 0.3250, 0.0980])
+    # # 创建第三个坐标轴，共享 x 轴
+    # # 使用 `spines` 将第三个y轴移动到图的右侧，并设置合适的颜色
+    ax3 = ax1.twinx()
+    ax3.spines["right"].set_position(("outward", 60))  # 将第三个 y 轴向右偏移一些
+    ax3.plot(betavec, ave_common_neighbour_list, 'g-.', label='y3 data')  # 'g-.' 表示绿色点划线
+    ax3.set_ylabel('average common neighbour number', color='g', fontsize=26)
+    ax3.tick_params(axis='y', labelcolor='g')
+
+    plt.xscale('log')
+    # plt.yscale('log')
+
+
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=20)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\CommonNeighbourDeviationvsbetawithdiffED_cleanloglogforonegraph.pdf"
     #
-    # # # 创建第二个坐标轴，共享 x 轴
-    # ax2 = ax1.twinx()
-    # ax2.plot(betavec, has_neightbour_num_list, 'b--', label='y2 data')  # 'r--' 表示红色虚线
-    # ax2.set_ylabel('valid sample times', color='b', fontsize=26)
-    # ax2.tick_params(axis='y', labelcolor='b')
-    # #
-    # # # 创建第三个坐标轴，共享 x 轴
-    # # # 使用 `spines` 将第三个y轴移动到图的右侧，并设置合适的颜色
-    # ax3 = ax1.twinx()
-    # ax3.spines["right"].set_position(("outward", 60))  # 将第三个 y 轴向右偏移一些
-    # ax3.plot(betavec, ave_common_neighbour_list, 'g-.', label='y3 data')  # 'g-.' 表示绿色点划线
-    # ax3.set_ylabel('average common neighbour number', color='g', fontsize=26)
-    # ax3.tick_params(axis='y', labelcolor='g')
-    #
-    # plt.xscale('log')
-    # # plt.yscale('log')
-    #
-    #
-    # plt.xticks(fontsize=26)
-    # plt.yticks(fontsize=26)
-    # # plt.title('Errorbar Curves with Minimum Points after Peak')
-    # # plt.legend(fontsize=20)
-    # plt.tick_params(axis='both', which="both", length=6, width=1)
-    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\CommonNeighbourDeviationvsbetawithdiffED_cleanloglogforonegraph.pdf"
-    # #
-    # # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\CommonNeighbourDeviationvsEDwithdiffED{ED}_curvefitloglog.pdf".format(
-    # #     betan=ED)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\CommonNeighbourDeviationvsEDwithdiffED{ED}_curvefitloglog.pdf".format(
+    #     betan=ED)
     # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
-    # plt.show()
-    # plt.close()
-    # print(ave_dev_list)
+    plt.show()
+    plt.close()
+    print(ave_dev_list)
 
 
 def analysis_plot_for_onegraph_perpendicular():
@@ -1487,7 +1488,7 @@ if __name__ == '__main__':
     """
     plot average NEIGHBOUR deviation vs input_avg_degree
     """
-    # load_10000nodenetwork_results_perpendicular(4)
+    load_10000nodenetwork_results_perpendicular(4)
     plot_common_neighbour_deviation_vs_inputED_with_diffbeta(4)
     """
     plot average NEIGHBOUR deviation vs real_avg_degree for clean data
