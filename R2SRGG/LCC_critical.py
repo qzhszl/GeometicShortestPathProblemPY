@@ -4,9 +4,10 @@
 @Author: Zhihao Qiu
 @Date: 7-11-2024
 """
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def LCC_critical(beta):
+    input_avg = range(100)
+    input_avg = [round(0.1*(i+1),1) for i in input_avg]
+    print(input_avg)
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    LCC_critical(4)
