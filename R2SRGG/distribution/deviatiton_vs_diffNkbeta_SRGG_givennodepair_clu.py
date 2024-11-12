@@ -473,13 +473,15 @@ def distance_inlargeSRGG_clu_beta_givennodepair(N, ED, beta, rg, ExternalSimutim
 def distance_inSRGG_withavgbeta(network_size_index, average_degree_index, beta_index, Geodistance_index, ExternalSimutime):
     Nvec = [10, 100, 200, 500, 1000, 10000]
     kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    kvec = [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     betavec = [2.2, 4, 8, 16, 32,128]
 
     # avg_vec = [2, 5, 10, 20, 50, 100]
     # beta_vec = [2.2, 2.4, 2.6, 2.8] + list(range(3, 16))
 
     # distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
-    distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
+    # distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
+    distance_list = [[0.491, 0.5, 0.509, 0.5]]
     x_A = distance_list[Geodistance_index][0]
     y_A = distance_list[Geodistance_index][1]
     x_B = distance_list[Geodistance_index][2]

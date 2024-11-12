@@ -86,11 +86,13 @@ def RandomGeometricGraph(N, avg, rg, radius = None, Coorx=None, Coory=None, Save
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    rg = RandomGenerator(-12)  # Seed initialization
-    for _ in range(random.randint(0, 100)):
-        rg.ran1()
-    # radius = 0.012616293440543984
-    G, xx, yy = RandomGeometricGraph(10000,5,rg)
-    print(nx.number_of_nodes(G))
-    print(nx.number_of_edges(G))
-    print(2*nx.number_of_edges(G)/nx.number_of_nodes(G))
+    # rg = RandomGenerator(-12)  # Seed initialization
+    # for _ in range(random.randint(0, 100)):
+    #     rg.ran1()
+    # # radius = 0.012616293440543984
+    # G, xx, yy = RandomGeometricGraph(10000,5,rg)
+    # print(nx.number_of_nodes(G))
+    # print(nx.number_of_edges(G))
+    # print(2*nx.number_of_edges(G)/nx.number_of_nodes(G))
+    radius = math.sqrt(10/((10000-1)*math.pi))
+    print(radius)
