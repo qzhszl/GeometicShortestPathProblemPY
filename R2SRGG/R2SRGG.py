@@ -7,6 +7,8 @@ Soft random geometric graph on 2-d Euclidean space
 """
 import math
 import random
+import time
+
 import networkx as nx
 
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
@@ -290,14 +292,21 @@ if __name__ == '__main__':
     # R2SRGG(110,5,4,rg)
     # check_realdegree_vs_expecteddegree()
 
-    x=  random.random()
-    y = random.random()
-    ax = random.random()
-    ay = random.random()
-    bx = random.random()
-    by = random.random()
-    print(x,y,ax,ay,bx,by)
-    a, _ = dist_to_geodesic_perpendicular_R2(x, y, ax, ay, bx, by)
-    print(a)
-    distance = point_to_line_distance_from_points(x, y, ax, ay, bx, by)
-    print(f"Point A to line BC distance: {distance}")
+    # x=  random.random()
+    # y = random.random()
+    # ax = random.random()
+    # ay = random.random()
+    # bx = random.random()
+    # by = random.random()
+    # print(x,y,ax,ay,bx,by)
+    # a, _ = dist_to_geodesic_perpendicular_R2(x, y, ax, ay, bx, by)
+    # print(a)
+    # distance = point_to_line_distance_from_points(x, y, ax, ay, bx, by)
+    # print(f"Point A to line BC distance: {distance}")
+
+    rg = RandomGenerator(-12)
+    start = time.time()
+
+    R2SRGG_withgivennodepair(10000, 9999, 4, rg, 0.495, 0.505, 0.5, 0.5)
+    end = time.time()
+    print(end-start)
