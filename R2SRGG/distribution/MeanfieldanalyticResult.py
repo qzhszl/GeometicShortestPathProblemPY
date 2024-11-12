@@ -311,8 +311,8 @@ def compute_common_neighbour_deviation(G,Coorx,Coory,N):
         for SPnode in common_neighbors:
             xMed = Coorx[SPnode]
             yMed = Coory[SPnode]
-            dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
-            # dist, _ = dist_to_geodesic_perpendicular_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+            # dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+            dist, _ = dist_to_geodesic_perpendicular_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
             deviations_for_a_nodepair.append(dist)
     else:
         deviations_for_a_nodepair = []
@@ -383,7 +383,7 @@ def neighbour_distance_with_beta_one_graph():
         print(deviations_for_a_nodepair)
 
 
-def neighbour_distance_with_beta_one_graph_clu(beta_index):
+def neighbour_distance_with_beta_one_graph_clu(beta_index,ExternalSimutime):
     """
     From the results from neighbour_distance_beta(), we observed that the deviation of common neighbours grows with
     the increment of beta, which contradict the results according to the deviation of the shortest path
@@ -396,8 +396,8 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index):
     :return:
     """
     N = 10000
-    ED = 5
-    betavec = [2.2,2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4,5,6,7, 8,9,10, 16, 32, 64, 128]
+    ED = 10
+    betavec = [2.2,2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4,5,6,7, 8,9,10, 16, 32, 64, 128,256,512]
     Geodistance_index = 0
     distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5],
                      [0.25, 0.25, 0.75, 0.75]]
@@ -412,9 +412,10 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index):
         rg.ran1()
 
     inputbeta_network = 2.2
-    ExternalSimutime = 1
+    INputExternalSimutime = 1
     network_index = 2
     beta = betavec[beta_index]
+    inputED_network = 5
     print("beta:",beta)
     # load initial network
 
@@ -423,7 +424,7 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index):
     coorx = []
     coory = []
     FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
-        Nn=N, EDn=ED, betan=inputbeta_network, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+        Nn=N, EDn=inputED_network, betan=inputbeta_network, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=INputExternalSimutime, nt=network_index)
 
     with open(FileNetworkCoorName, "r") as file:
         for line in file:
@@ -550,6 +551,7 @@ if __name__ == '__main__':
     check neighbour distance for clu
     """
     betaindex = sys.argv[1]
+    simu_index = sys.argv[2]
     # betaindex = 0
-    neighbour_distance_with_beta_one_graph_clu(int(betaindex)) # beta index change from 0 to 19
+    neighbour_distance_with_beta_one_graph_clu(int(betaindex), int(simu_index)) # beta index change from 0 to 19
 

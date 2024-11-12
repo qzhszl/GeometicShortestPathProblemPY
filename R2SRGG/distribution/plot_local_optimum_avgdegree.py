@@ -78,6 +78,8 @@ def load_large_network_results(N, beta):
 
 
 def load_10000nodenetwork_results(beta):
+    # load data for beta = beta, the deviation of each k in kvec
+
     # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
@@ -618,6 +620,94 @@ def analyse_local_optimum_with_diffED_tail():
     plt.close()
 
 
+def load_LCC_second_LCC_data(beta):
+    """
+    function for loading data for analysis first peak about Lcc AND second Lcc
+    :param beta:
+    :return:
+    """
+    xA = 0.25
+    yA = 0.25
+    xB = 0.75
+    yB = 0.75
+    input_avg_vec = np.arange(1, 6.1, 0.1)
+    input_avg_vec2 = np.arange(6.2, 10.1, 0.2)
+    input_avg_vec = list(input_avg_vec) + list(input_avg_vec2)
+    N = 10000
+    filefolder_name_lcc = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\LCC\\"
+    LCC_vec = []
+    LCC_std_vec = []
+    second_LCC_vec = []
+    second_LCC_std_vec = []
+    for ED in input_avg_vec:
+        LCC_oneED = []
+        second_LCC_oneED = []
+        for simutime in range(10):
+            LCC_onesimu = []
+            second_LCC_onesimu = []
+            LCCname = filefolder_name_lcc + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}simu{simu}.txt".format(
+                Nn=N, EDn=ED, betan=beta, xA=xA, yA=yA, xB=xB, yB=yB, simu=simutime)
+            with open(LCCname, "r") as file:
+                for line in file:
+                    if line.startswith("#"):
+                        continue
+                    else:
+                        data = line.strip().split("\t")
+                        LCC_onesimu.append(int(data[0]))
+                        second_LCC_onesimu.append(int(data[1]))
+            LCC_oneED = LCC_oneED + LCC_onesimu
+            second_LCC_oneED = second_LCC_oneED + second_LCC_onesimu
+        LCC_vec.append(np.mean(LCC_oneED))
+        LCC_std_vec.append(np.std(LCC_oneED))
+        second_LCC_vec.append(np.mean(second_LCC_oneED))
+        second_LCC_std_vec.append(np.std(second_LCC_oneED))
+    return LCC_vec,LCC_std_vec,second_LCC_vec,second_LCC_std_vec
+
+def load_LCC_second_LCC_data_small_network(beta):
+    """
+    function for loading data for analysis first peak about Lcc AND second Lcc
+    :param beta:
+    :return:
+    """
+    xA = 0.25
+    yA = 0.25
+    xB = 0.75
+    yB = 0.75
+    input_avg_vec = np.arange(1, 4.2, 0.1)
+    input_avg_vec2 = np.arange(4.1, 8.1, 0.1)
+    input_avg_vec3 = np.arange(9, 30, 1)
+    input_avg_vec = list(input_avg_vec) + list(input_avg_vec2)[1:] + list(input_avg_vec3)
+    N = 100
+    filefolder_name_lcc = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\LCC\\"
+    LCC_vec = []
+    LCC_std_vec = []
+    second_LCC_vec = []
+    second_LCC_std_vec = []
+    for ED in input_avg_vec:
+        LCC_oneED = []
+        second_LCC_oneED = []
+        for simutime in range(10):
+            LCC_onesimu = []
+            second_LCC_onesimu = []
+            LCCname = filefolder_name_lcc + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}simu{simu}.txt".format(
+                Nn=N, EDn=ED, betan=beta, xA=xA, yA=yA, xB=xB, yB=yB, simu=simutime)
+            with open(LCCname, "r") as file:
+                for line in file:
+                    if line.startswith("#"):
+                        continue
+                    else:
+                        data = line.strip().split("\t")
+                        LCC_onesimu.append(int(data[0]))
+                        second_LCC_onesimu.append(int(data[1]))
+            LCC_oneED = LCC_oneED + LCC_onesimu
+            second_LCC_oneED = second_LCC_oneED + second_LCC_onesimu
+        LCC_vec.append(np.mean(LCC_oneED))
+        LCC_std_vec.append(np.std(LCC_oneED))
+        second_LCC_vec.append(np.mean(second_LCC_oneED))
+        second_LCC_std_vec.append(np.std(second_LCC_oneED))
+    return LCC_vec,LCC_std_vec,second_LCC_vec,second_LCC_std_vec
+
+
 def analyse_local_optimum_with_diffED_firstpeak():
     """
     The results are based on the plot_local_optimum_with_realED2()
@@ -630,6 +720,7 @@ def analyse_local_optimum_with_diffED_firstpeak():
     beta = 4
     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     fileflodername = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\"
+
     LCC = []
     for ED in kvec:
         filename = fileflodername + "network_N{Nn}ED{EDn}Beta{betan}.txt".format(
@@ -639,16 +730,19 @@ def analyse_local_optimum_with_diffED_firstpeak():
         largest_component = max(components, key=len)
         LCC_number = len(largest_component)
         LCC.append(LCC_number)
+    print(LCC)
+    LCC_vec, LCC_std_vec, second_LCC_vec, second_LCC_std_vec = load_LCC_second_LCC_data(beta)
+
 
     Nvec = [100, 10000]
-    beta = 8
     colors = [[0, 0.4470, 0.7410],
               [0.8500, 0.3250, 0.0980],
               [0.9290, 0.6940, 0.1250],
               [0.4940, 0.1840, 0.5560],
               [0.4660, 0.6740, 0.1880]]
     x_dic = {100: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 19, 21, 23, 25, 27, 29, 31],
-             10000: kvec[0:23]}
+             10000: kvec[0:24]}
+
     y_dic = {
         100: [0.0941342400308666, 0.11562131645104153, 0.11103150326856681, 0.10797367304090624, 0.10492340822031251,
               0.10456671266895967, 0.10563094356702428, 0.10567521602153218, 0.1059839015128367, 0.11208596350920187,
@@ -659,25 +753,31 @@ def analyse_local_optimum_with_diffED_firstpeak():
                 0.05291581, 0.05562735, 0.0572445, 0.05908386, 0.05646044, 0.05822908,
                 0.05466406, 0.05566516, 0.05342556, 0.0520834, 0.05376526, 0.05172981,
                 0.05271027, 0.05189549, 0.05250138, 0.05120223, 0.05315753]}
+
+    ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\1000realization\\ave_deviation_Beta{betan}.txt".format(
+        betan=beta)
+    y_dic[10000] =np.loadtxt(ave_deviation_Name)
+
+
     print(len(x_dic[10000]))
     legend = [r"$N=10^2$", r"$N=10^4$"]
 
     fig, ax1 = plt.subplots(figsize=(12, 8))
-    for N_index in range(2):
+    for N_index in range(1,2):
         N = Nvec[N_index]
         x = x_dic[N]
         y = y_dic[N]
         ax1.plot(x, y, linestyle="-", linewidth=3, marker='o', markersize=16,
                  label=legend[N_index], color=colors[N_index])
 
-    x1 = x_dic[100]
-    listslice_index = x1.index(13)
-    x1 = x1[listslice_index:]
-    y1 = y_dic[100]
-    y1 = y1[listslice_index:]
-    params, covariance = curve_fit(power_law, x1, y1)
-    a_fit, k_fit = params
-    ax1.plot(x1, power_law(x1, *params), linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
+    # x1 = x_dic[100]
+    # listslice_index = x1.index(13)
+    # x1 = x1[listslice_index:]
+    # y1 = y_dic[100]
+    # y1 = y1[listslice_index:]
+    # params, covariance = curve_fit(power_law, x1, y1)
+    # a_fit, k_fit = params
+    # ax1.plot(x1, power_law(x1, *params), linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
 
     x2 = x_dic[10000]
     listslice_index2 = x2.index(35)
@@ -695,23 +795,135 @@ def analyse_local_optimum_with_diffED_firstpeak():
     plt.xlabel('input avg', fontsize=26)
     ax1.set_ylabel('average deviation', fontsize=26)
     ax1.legend(fontsize=20)
+    ax1.tick_params(axis='x', labelsize=26)
+    ax1.tick_params(axis='y', labelsize=26)
+
+    # ax2 = ax1.twinx()
+    # ax2.plot(kvec, LCC, linestyle="-", linewidth=3, marker='o', color="blue", label='LCC')
+    # ax2.set_ylabel('Number of nodes', color='b', fontsize=26)
+    # ax2.tick_params(axis='y', labelcolor='b')
 
     ax2 = ax1.twinx()
-    ax2.plot(kvec[0:23], LCC[0:23], linestyle="-", linewidth=3, marker='o', color="blue", label='LCC')
-    ax2.set_ylabel('LCC', color='b', fontsize=26)
+    input_avg_vec = np.arange(1, 6.1, 0.1)
+    input_avg_vec2 = np.arange(6.2, 10.1, 0.2)
+    input_avg_vec = list(input_avg_vec)+ list(input_avg_vec2)
+    # ax2.errorbar(input_avg_vec, LCC_vec, LCC_std_vec, linestyle="-", linewidth=3, marker='o', color="blue", label='LCC')
+    # ax2.errorbar(input_avg_vec, LCC_vec, LCC_std_vec, linestyle="-", linewidth=3, marker='o', color="blue", label='LCC')
+    #
+    # ax2.errorbar(input_avg_vec, second_LCC_vec, second_LCC_std_vec, linestyle="-", linewidth=3, marker='o', color="green",
+    #              label='Second LCC')
+
+    ax2.plot(input_avg_vec, LCC_vec, linestyle="-", linewidth=3, marker='o', color="blue", label='LCC')
+
+    ax2.plot(input_avg_vec, second_LCC_vec, linestyle="-", linewidth=3, marker='o',
+                 color="purple",
+                 label='Second LCC')
+    ax2.set_ylabel('Number of nodes', color='b', fontsize=26)
     ax2.tick_params(axis='y', labelcolor='b')
+    ax2.legend(fontsize=20, loc = 'center right')
+    ax2.tick_params(axis='x', labelsize=26)
+    ax2.tick_params(axis='y', labelsize=26)
 
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.xticks(fontsize=26)
-    plt.yticks(fontsize=26)
+
 
     plt.tick_params(axis='both', which="both", length=6, width=1)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumBeta{betan}diffNcurvefit.pdf".format(
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimum_comp_with_LCC_Beta{betan}.pdf".format(
         betan=beta)
     plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
+
+def analyse_local_optimum_with_diffED_firstpeak_small_network():
+    """
+    The results are based on the plot_local_optimum_with_realED2()
+    We checked the data 3 points:
+    1. whether the peak happens where the LCC appear
+    :return:
+    """
+
+    N = 10000
+    beta = 4
+    kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 19, 21, 23, 25, 27, 29, 31]
+    LCC_vec, LCC_std_vec, second_LCC_vec, second_LCC_std_vec = load_LCC_second_LCC_data_small_network(beta)
+
+    Nvec = [100, 10000]
+    colors = [[0, 0.4470, 0.7410],
+              [0.8500, 0.3250, 0.0980],
+              [0.9290, 0.6940, 0.1250],
+              [0.4940, 0.1840, 0.5560],
+              [0.4660, 0.6740, 0.1880]]
+    x_dic = {100: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 19, 21, 23, 25, 27, 29, 31]}
+
+    y_dic = {
+        100: [0.0941342400308666, 0.11562131645104153, 0.11103150326856681, 0.10797367304090624, 0.10492340822031251,
+              0.10456671266895967, 0.10563094356702428, 0.10567521602153218, 0.1059839015128367, 0.11208596350920187,
+              0.11000001392289922, 0.11554853189542773, 0.11599318476431886, 0.11874523084390971, 0.122524449779534,
+              0.12601873173480152, 0.12697846547307626, 0.1350446922244735, 0.1379754851333052, 0.14169685440174795,
+              0.1466336763433363, 0.1509530394683909]}
+
+    legend = [r"$N=10^2$", r"$N=10^4$"]
+
+    fig, ax1 = plt.subplots(figsize=(12, 8))
+    for N_index in range(1):
+        N = Nvec[N_index]
+        x = x_dic[N]
+        y = y_dic[N]
+        ax1.plot(x, y, linestyle="-", linewidth=3, marker='o', markersize=16,
+                 label=legend[N_index], color=colors[N_index])
+
+    x1 = x_dic[100]
+    listslice_index = x1.index(12)
+    x1 = x1[listslice_index:]
+    y1 = y_dic[100]
+    y1 = y1[listslice_index:]
+    params, covariance = curve_fit(power_law, x1, y1)
+    a_fit, k_fit = params
+    ax1.plot(x1, power_law(x1, *params), linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
+
+    plt.xscale('log')
+    ax1.set_yscale("log")
+    plt.xlabel('input avg', fontsize=26)
+    ax1.set_ylabel('average deviation', fontsize=26)
+    ax1.legend(fontsize=20)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+
+    # ax2 = ax1.twinx()
+    # ax2.plot(kvec, LCC, linestyle="-", linewidth=3, marker='o', color="blue", label='LCC')
+    # ax2.set_ylabel('Number of nodes', color='b', fontsize=26)
+    # ax2.tick_params(axis='y', labelcolor='b')
+
+    ax2 = ax1.twinx()
+    input_avg_vec = np.arange(1, 4.2, 0.1)
+    input_avg_vec2 = np.arange(4.1, 8.1, 0.1)
+    input_avg_vec3 = np.arange(9, 30, 1)
+    input_avg_vec = list(input_avg_vec) + list(input_avg_vec2)[1:]+list(input_avg_vec3)
+    # ax2.errorbar(input_avg_vec, LCC_vec, LCC_std_vec, linestyle="-", linewidth=3, marker='o', color="blue", label='LCC')
+    # ax2.errorbar(input_avg_vec, LCC_vec, LCC_std_vec, linestyle="-", linewidth=3, marker='o', color="blue", label='LCC')
+    #
+    # ax2.errorbar(input_avg_vec, second_LCC_vec, second_LCC_std_vec, linestyle="-", linewidth=3, marker='o', color="green",
+    #              label='Second LCC')
+
+    ax2.plot(input_avg_vec, LCC_vec, linestyle="-", linewidth=3, marker='o', color="blue", label='LCC')
+
+    ax2.plot(input_avg_vec, second_LCC_vec, linestyle="-", linewidth=3, marker='o',
+                 color="purple",
+                 label='Second LCC')
+    ax2.set_ylabel('Number of nodes', color='b', fontsize=26)
+    ax2.tick_params(axis='y', labelcolor='b')
+    ax2.legend(fontsize=20, loc = 'center right')
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimum_comp_with_LCC_Beta{betan}100ndoe.pdf".format(
+        betan=beta)
+    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+    plt.close()
 
 def power_law(x, a, k):
     return a * x ** k
@@ -1753,7 +1965,7 @@ if __name__ == '__main__':
     # for beta in betavec:
     #     localoptimum = plot_local_optimum_function(beta)
     #     print(localoptimum)
-    plot_local_optimum_function2()
+    # plot_local_optimum_function2()
 
     """
     # STEP 6 plot local optimum with ED with hopcount
@@ -1809,6 +2021,11 @@ if __name__ == '__main__':
     """
     Step 13 
     check local optimum with ED for different N and beta is fixed
-    following work after step 4
+    first load data when the first usage
     """
+    # load_10000nodenetwork_results(4)
+    # load_10000nodenetwork_results(8)
     # analyse_local_optimum_with_diffED_firstpeak()
+    # analyse_local_optimum_with_diffED_firstpeak_small_network()
+
+

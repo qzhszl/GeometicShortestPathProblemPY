@@ -651,7 +651,7 @@ def load_10000nodenetwork_results_perpendicular(beta):
     return real_ave_degree_vec, ave_deviation_vec,std_deviation_vec, exemptionlist
 
 
-def plot_common_neighbour_deviation_vs_inputED_with_diffbeta(beta):
+def plot_common_neighbour_deviation_vs_inputED_with_beta(beta):
     """
     the x-axis is the input expected degree(avg), the y-axis is the average deviation of common neighbours, different line is different beta
     N  = 10000 NODES
@@ -726,9 +726,9 @@ def plot_common_neighbour_deviation_vs_inputED_with_diffbeta(beta):
     # 绘制原始数据和拟合曲线
     ky = []
     for k in x:
-        ky.append(0.000004 * k ** 1.5)
-    plt.plot(x, power_law(x, *params),linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
-    plt.plot(x, ky, linewidth=5, label=f'analytic dev: $y=0.000004x^{{1.5}}$', color='red')
+        ky.append(0.001799 * k ** 0.4994)
+    plt.plot(x, power_law(x, *params),linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$', color='red')
+    plt.plot(x, ky, linewidth=5, label=f'analytic dev: $y=0.001799x^{{0.4994}}$', color='green')
 
     plt.xscale('log')
     plt.yscale('log')
@@ -759,9 +759,9 @@ def plot_common_neighbour_deviation_vs_inputED_with_diffbeta(beta):
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\CommonNeighbourDeviationvsEDwithdiffc_G_cleanloglog.pdf".format(
     #     betan=beta)
 
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\perpendiculardistance\\CommonNeighbourDeviationvsEDwithdiffbeta{betan}_curvefitloglog.pdf".format(
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\perpendiculardistance\\CommonNeighbourDeviationvsEDwithbeta{betan}_curvefitloglog.pdf".format(
         betan=beta)
-    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -992,7 +992,55 @@ def plot_common_neighbour_deviation_vs_beta():
     #
     # # 绘制原始数据和拟合曲线
     #
-    # plt.plot(x, power_law(x, *params),linewidth=5, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$', color='red')
+    x = [2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3, 4, 8, 16, 32, 64, 128]
+    y = [0.00394470873975416,
+         0.00439234238766202,
+         0.00468218618453523,
+         0.00488385878126608,
+         0.00503151866630833,
+         0.00514405348050723,
+         0.00523271451302694,
+         0.00530456666368898,
+         0.00536422789736759,
+         0.00568066835292559,
+         0.00608361187212414,
+         0.00634179852226192,
+         0.00649123013340050,
+         0.00655376519106841,
+         0.00657177826323796, ]
+    y2 = [0.00548850518357175,
+          0.00613939346931540,
+          0.00656394330034977,
+          0.00686109019737665,
+          0.00707947100496055,
+          0.00724616865954540,
+          0.00737746014952552,
+          0.00748368808594065,
+          0.00757166811973617,
+          0.00803237713498198,
+          0.00860939228955042,
+          0.00897935027624826,
+          0.00920279073808779,
+          0.00931155960526456,
+          0.00934827350549730]
+
+    y3 = [0.00285245141811962,
+          0.00315338935799247,
+          0.00334757076311117,
+          0.00348232380619884,
+          0.00358087361710999,
+          0.00365600038984246,
+          0.00371526772790542,
+          0.00376339480416946,
+          0.00380344974175436,
+          0.00401792092827223,
+          0.00429543189144612,
+          0.00447163325469157,
+          0.00456418521134041,
+          0.00459601651621629,
+          0.00460431439882719]
+    plt.plot(x, y,linewidth=5, label=f'fit curve: avg = 10$', color='red')
+    plt.plot(x, y3, linewidth=5, label=f'fit curve: avg = 20$', color='red')
 
     plt.xscale('log')
     plt.yscale('log')
@@ -1030,8 +1078,8 @@ def plot_common_neighbour_deviation_vs_beta():
 
 
 def analysis_plot_for_onegraph():
-    # betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128]
-    betavec= [2.2, 2.4, 2.8, 3]
+    betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128]
+    # betavec= [2.2, 2.4, 2.8, 3]
     N = 10000
     ED = 5
     effective_radius = math.sqrt(ED/math.pi/(N-1))
@@ -1188,11 +1236,11 @@ def analysis_plot_for_onegraph():
     # plt.title('Errorbar Curves with Minimum Points after Peak')
     # plt.legend(fontsize=20)
     plt.tick_params(axis='both', which="both", length=6, width=1)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\CommonNeighbourDeviationvsbetawithdiffED_cleanloglogforonegraph.pdf"
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\CommonNeighbourDeviationvsbetaloglogforonegraph.pdf"
     #
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\CommonNeighbourDeviationvsEDwithdiffED{ED}_curvefitloglog.pdf".format(
     #     betan=ED)
-    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
     print(ave_dev_list)
@@ -1474,22 +1522,10 @@ if __name__ == '__main__':
 
 
     """
-    assure all the graph has reasonable ED and CC
+    plot average perpendicular NEIGHBOUR deviation vs input_avg_degree compared with analytic results obtained by matlab
     """
-    # smallED_matrix = [[2.6,2.6,2.6,2.6,0,0,0],
-    #                   [4.3,4,4,4,4,0],
-    #                   [5.6,5.4,5.2,5.2,5.2,5.2,5.2],
-    #                   [7.5,6.7,6.5,6.5,6.5,6.5]]
-    # smallbeta_matrix = [[3.1,4.5,6,300,0,0],
-    #                   [2.7,	3.5,4.7,7.6,300,0],
-    #                   [2.7,	3.4,4.3,5.7,11,	300],
-    #                   [2.55,3.2,4,5.5,8.5,300]]
-    # print(smallbeta_matrix[3][5])
-    """
-    plot average NEIGHBOUR deviation vs input_avg_degree
-    """
-    load_10000nodenetwork_results_perpendicular(4)
-    plot_common_neighbour_deviation_vs_inputED_with_diffbeta(4)
+    # load_10000nodenetwork_results_perpendicular(4)
+    # plot_common_neighbour_deviation_vs_inputED_with_beta(4)
     """
     plot average NEIGHBOUR deviation vs real_avg_degree for clean data
     first time need to run the two line below:
@@ -1512,7 +1548,7 @@ if __name__ == '__main__':
     # kvec = [2, 5, 10, 20, 100]
     # for ED in kvec:
     #     load_10000nodenetwork_commonneighbour_results_beta(ED)
-    # plot_common_neighbour_deviation_vs_beta()
+    plot_common_neighbour_deviation_vs_beta()
 
     """
     plot or evaluate deviation vs different beta for one graph coordinates
