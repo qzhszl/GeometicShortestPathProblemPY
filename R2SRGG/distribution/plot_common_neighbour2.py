@@ -19,8 +19,8 @@ import pandas as pd
 
 def load_10000nodenetwork_results_perpendicular(beta):
     # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    # kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
-    kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848]
+    kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    # kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848,1389]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\"
     exemptionlist =[]
@@ -32,7 +32,7 @@ def load_10000nodenetwork_results_perpendicular(beta):
             for ED in kvec:
                 try:
                     deviations_name = filefolder_name2 + "common_neigthbour_deviationlist_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
-                        Nn=N, EDn=ED, betan=beta, xA=0.491, yA=0.5, xB=0.509, yB=0.5, simu=0)
+                        Nn=N, EDn=ED, betan=beta, xA=-0.005, yA=0, xB=0.005, yB=0, simu=0)
                     with open(deviations_name, 'r') as file:
                         deviations_dict = {int(k): v for k, v in json.load(file).items()}
 
@@ -62,7 +62,7 @@ def plot_common_neighbour_deviation_vs_inputED_with_beta(beta):
     """
 
     N = 10000
-    kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848]
+    kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
     beta_vec = [beta]
     Geodistance_index = 0
     distance_list = [[0.491, 0.5, 0.509, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5],
@@ -328,5 +328,5 @@ def plot_common_neighbour_deviation_vs_beta():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    load_10000nodenetwork_results_perpendicular(8)
-    plot_common_neighbour_deviation_vs_inputED_with_beta(8)
+    load_10000nodenetwork_results_perpendicular(4)
+    plot_common_neighbour_deviation_vs_inputED_with_beta(4)
