@@ -45,6 +45,12 @@ def common_neighbour_generator(N, avg, beta, rg, Coorx, Coory):
     # Create graph and remove self-loops
     G = nx.Graph()
     G.add_edges_from(zip(s, t))
+    if not G.has_node(9999):
+        G.add_node(9999)
+
+    # 检查节点 9998 是否在图中，如果不在则添加
+    if not G.has_node(9998):
+        G.add_node(9998)
     # if G.number_of_nodes() < N:
     #     ExpectedNodeList = [i for i in range(0, N)]
     #     Nodelist = list(G.nodes)
@@ -77,7 +83,7 @@ def compute_common_neighbour_deviation(G, Coorx, Coory, N):
     return common_neighbors, deviations_for_a_nodepair
 
 
-def neighbour_distance_with_beta_one_graph_clu(beta_index,ExternalSimutime):
+def neighbour_distance_ED_beta_one_graph(ED_index, beta_index,ExternalSimutime):
     """
     From the results from neighbour_distance_beta(), we observed that the deviation of common neighbours grows with
     the increment of beta, which contradict the results according to the deviation of the shortest path
@@ -90,8 +96,9 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index,ExternalSimutime):
     :return:
     """
     N = 10000
-    ED = 10
-    betavec = [2.2,2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4,5,6,7, 8,9,10, 16, 32, 64, 128, 256, 512]
+    ED_vec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128, 256, 512]
+    ED = ED_vec[ED_index]
     Geodistance_index = 0
     distance_list = [[0.491, 0.5, 0.509, 0.5],[0.25, 0.5, 0.75, 0.5]]
     x_A = distance_list[Geodistance_index][0]
@@ -109,6 +116,7 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index,ExternalSimutime):
     network_index = 2
     beta = betavec[beta_index]
     inputED_network = 5
+    print("ED:", ED)
     print("beta:",beta)
     # load initial network
 
@@ -130,20 +138,20 @@ def neighbour_distance_with_beta_one_graph_clu(beta_index,ExternalSimutime):
     deviations_for_a_nodepair_dic = {}
     connectedornot_dic = {}
     for simu_times in range(1000):
-        print(simu_times)
+        # print(simu_times)
         G, coorx, coory = common_neighbour_generator(N, ED, beta, rg, coorx, coory)
         if nx.has_path(G,N-1,N-2):
             connectedornot_dic[simu_times] = 1
         else:
             connectedornot_dic[simu_times] = 0
         common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
-        print("node",common_neighbors)
-        print("dev", deviations_for_a_nodepair)
+        # print("node",common_neighbors)
+        # print("dev", deviations_for_a_nodepair)
         common_neighbors_dic[simu_times] = common_neighbors
         deviations_for_a_nodepair_dic[simu_times] = deviations_for_a_nodepair
 
 
-    filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\"
+    filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\"
     common_neigthbour_name = filefolder_name2 + "common_neigthbour_list_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
         Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime)
     with open(common_neigthbour_name, 'w') as file:
@@ -180,4 +188,9 @@ if __name__ == '__main__':
     #         coorx.append(float(data[0]))
     #         coory.append(float(data[1]))
     # common_neighbour_generator(N=10000, avg=10, beta=4, rg=rg, Coorx=coorx, Coory=coory)
-    neighbour_distance_with_beta_one_graph_clu(0, 0)
+    ED_vec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128, 256, 512]
+    for ED in range(23):
+        for beta in range(22):
+            neighbour_distance_ED_beta_one_graph(ED, beta, 0)
+

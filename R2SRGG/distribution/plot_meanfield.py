@@ -1524,17 +1524,8 @@ if __name__ == '__main__':
     """
     plot average perpendicular NEIGHBOUR deviation vs input_avg_degree compared with analytic results obtained by matlab
     """
-    # load_10000nodenetwork_results_perpendicular(4)
-    # plot_common_neighbour_deviation_vs_inputED_with_beta(4)
-    """
-    plot average NEIGHBOUR deviation vs real_avg_degree for clean data
-    first time need to run the two line below:
-    """
-
-    # for C_G in [0.1,0.2,0.3,0.4,0.5,0.6]:
-    #     load_10000nodenetwork_commonneighbour_results_clean(C_G)
-
-    # plot_common_neighbour_deviation_vs_realED_with_diffCG_clean()
+    load_10000nodenetwork_results_perpendicular(4)
+    plot_common_neighbour_deviation_vs_inputED_with_beta(4)
 
     """
     plot average NEIGHBOUR deviation vs beta
