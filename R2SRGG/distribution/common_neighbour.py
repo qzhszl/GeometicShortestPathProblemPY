@@ -77,6 +77,10 @@ def compute_common_neighbour_deviation(G, Coorx, Coory, N):
             yMed = Coory[SPnode]
             # dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
             dist, _ = dist_to_geodesic_perpendicular_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+            # print("common neighbour",SPnode)
+            # print("dist",dist)
+            # print("x", Coorx[SPnode])
+            # print("y", Coory[SPnode])
             deviations_for_a_nodepair.append(dist)
     else:
         deviations_for_a_nodepair = []
@@ -202,24 +206,31 @@ def neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta_index, ExternalS
     # load initial network
 
     # filefolder_name = "/home/zqiu1/GSPP/SSRGGpy/R2/distribution/NetworkSRGG/"
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\"
-    coorx = []
-    coory = []
-    FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}xA{xA}yA{yA}xB{xB}yB{yB}centero.txt".format(
-        Nn=10000, xA=x_A, yA=y_A, xB=x_B, yB=y_B)
-    with open(FileNetworkCoorName, "r") as file:
-        for line in file:
-            if line.startswith("#"):
-                continue
-            data = line.strip().split("\t")  # 使用制表符分割
-            coorx.append(float(data[0]))
-            coory.append(float(data[1]))
+    # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\"
+    # coorx = []
+    # coory = []
+    # FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}xA{xA}yA{yA}xB{xB}yB{yB}centero.txt".format(
+    #     Nn=10000, xA=x_A, yA=y_A, xB=x_B, yB=y_B)
+    # with open(FileNetworkCoorName, "r") as file:
+    #     for line in file:
+    #         if line.startswith("#"):
+    #             continue
+    #         data = line.strip().split("\t")  # 使用制表符分割
+    #         coorx.append(float(data[0]))
+    #         coory.append(float(data[1]))
     common_neighbors_dic = {}
     deviations_for_a_nodepair_dic = {}
     connectedornot_dic = {}
     for simu_times in range(1000):
         # print(simu_times)
-        G, coorx, coory = common_neighbour_generator(N, ED, beta, rg, coorx, coory)
+        x_coords = np.random.uniform(-0.5, 0.5, N)
+        y_coords = np.random.uniform(-0.5, 0.5, N)
+        x_coords[9998] = x_A
+        y_coords[9998] = y_A
+        x_coords[9999] = x_B
+        y_coords[9999] = y_B
+
+        G, coorx, coory = common_neighbour_generator(N, ED, beta, rg, x_coords, y_coords)
         if nx.has_path(G, N - 1, N - 2):
             connectedornot_dic[simu_times] = 1
         else:
@@ -270,7 +281,11 @@ if __name__ == '__main__':
     # for ED in range(23):
     #     for beta in range(22):
     #         neighbour_distance_ED_beta_one_graph_centerO(ED, beta, 0)
-    for ED in range(23):
-        beta_index = 9
-        neighbour_distance_ED_beta_one_graph_centerO(ED, beta_index, 0)
+    # for ED in range(23):
+    #     beta_index = 9
+    #     neighbour_distance_ED_beta_one_graph_centerO(ED, beta_index, 0)
+
+    for beta in range(22):
+        ED_index = 8
+        neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta, 0)
 
