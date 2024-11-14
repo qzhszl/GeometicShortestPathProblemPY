@@ -225,9 +225,9 @@ def plot_common_neighbour_deviation_vs_beta_with_ED(ED):
     N = 10000
     count = 0
     for ED in [ED]:
-        ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\ave_deviation_ED{ED}.txt".format(
+        ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\ave_deviation_ED{ED}.txt".format(
             ED = ED)
-        std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\std_deviation_ED{ED}.txt".format(
+        std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\std_deviation_ED{ED}.txt".format(
             ED = ED)
         ave_deviation_vec = np.loadtxt(ave_deviation_Name)
         std_deviation_vec = np.loadtxt(std_deviation_Name)
@@ -246,7 +246,7 @@ def plot_common_neighbour_deviation_vs_beta_with_ED(ED):
               [0.4940, 0.1840, 0.5560],
               [0.4660, 0.6740, 0.1880],
               [0.3010, 0.7450, 0.9330]]
-    for count in range(len(betavec)):
+    for count in range(1):
     # for count in [5]:
         x = betavec
         # print(len(x))
@@ -255,7 +255,7 @@ def plot_common_neighbour_deviation_vs_beta_with_ED(ED):
         # y = y[0:cuttail[N_index]]
         error = std_deviation_dict[count]
         # error = error[0:cuttail[N_index]]
-        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',markersize=16, label=legend[count], color=colors[count])
+        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',markersize=16, label=r"$E[D]=10$", color=colors[count])
 
     x = betavec
     y = [0.0157788349590166,
@@ -280,7 +280,7 @@ def plot_common_neighbour_deviation_vs_beta_with_ED(ED):
          0.0262871130529518,
          0.0263053868898680,
          0.0263099642618328]
-    plt.plot(x, y,linewidth=5, label=f'fit curve: avg = 10$', color='red')
+    plt.plot(x, [i/4 for i in y],linewidth=5, label=f'fit curve', color='red')
 
     plt.xscale('log')
     plt.yscale('log')
@@ -294,11 +294,11 @@ def plot_common_neighbour_deviation_vs_beta_with_ED(ED):
     plt.tick_params(axis='both', which="both",length=6, width=1)
 
 
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\CommonNeighbourDeviationvsbetawithdiffED_cleanloglog.pdf"
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\CommonNeighbourDeviationvsbetaED{ED}loglog.pdf".format(ED = ED)
 
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\CommonNeighbourDeviationvsEDwithdiffED{ED}_curvefitloglog.pdf".format(
     #     betan=ED)
-    plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -310,4 +310,4 @@ if __name__ == '__main__':
 
 
     load_10000nodenetwork_results_perpendicular_withED(10)
-    plot_common_neighbour_deviation_vs_beta_with_ED(4)
+    plot_common_neighbour_deviation_vs_beta_with_ED(10)
