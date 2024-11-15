@@ -45,13 +45,11 @@ def load_10000nodenetwork_results_perpendicular(beta):
                 ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
                 std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
     print(exemptionlist)
-    real_ave_degree_Name = filefolder_name2 + "real_ave_degree_Beta{betan}.txt".format(betan=beta)
-    np.savetxt(real_ave_degree_Name, real_ave_degree_vec)
-    ave_deviation_Name = filefolder_name2 + "ave_deviation_Beta{betan}.txt".format(betan=beta)
+    ave_deviation_Name = filefolder_name2 + "ave_deviation_beta{betan}.txt".format(betan=beta)
     np.savetxt(ave_deviation_Name, ave_deviation_vec)
-    std_deviation_Name = filefolder_name2 + "std_deviation_Beta{betan}.txt".format(betan=beta)
+    std_deviation_Name = filefolder_name2 + "std_deviation_beta{betan}.txt".format(betan=beta)
     np.savetxt(std_deviation_Name, std_deviation_vec)
-    return real_ave_degree_vec, ave_deviation_vec,std_deviation_vec, exemptionlist
+    return ave_deviation_vec,std_deviation_vec, exemptionlist
 
 def plot_common_neighbour_deviation_vs_inputED_with_beta(beta):
     """
@@ -280,7 +278,30 @@ def plot_common_neighbour_deviation_vs_beta_with_ED(ED):
          0.0262871130529518,
          0.0263053868898680,
          0.0263099642618328]
-    plt.plot(x, [i/4 for i in y],linewidth=5, label=f'fit curve', color='red')
+
+    y = [0.00394470873975416,
+    0.00468218618453523,
+    0.00503151866630833,
+    0.00523271451302694,
+    0.00536422789736759,
+    0.00545849735252747,
+    0.00553086431967991,
+    0.00558931902360061,
+    0.00563835543786541,
+    0.00568066835292559,
+    0.00583509866326134,
+    0.00594030650258196,
+    0.00602006556141316,
+    0.00608361187212414,
+    0.00613576342019746,
+    0.00617945085922738,
+    0.00634179852226192,
+    0.00649123013340050,
+    0.00655376519106841,
+    0.00657177826323796,
+    0.00657634672246699,
+    0.00657749106545820]
+    plt.plot(x, y,linewidth=5, label=f'fit curve', color='red')
 
     plt.xscale('log')
     plt.yscale('log')
@@ -303,11 +324,154 @@ def plot_common_neighbour_deviation_vs_beta_with_ED(ED):
     plt.close()
 
 
+def load_common_neighbour_num(beta):
+    # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
+    kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    # kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848,1389]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\"
+    exemptionlist =[]
+    for N in [10000]:
+        ave_num_vec = []
+        std_num_vec = []
+        for beta in [beta]:
+            for ED in kvec:
+                try:
+                    neighbour_name = filefolder_name2 + "common_neigthbour_list_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}.json".format(
+                        Nn=N, EDn=ED, betan=beta, xA=-0.005, yA=0, xB=0.005, yB=0, simu=0)
+                    with open(neighbour_name, 'r') as file:
+                        neighbournode_dict = {int(k): v for k, v in json.load(file).items()}
+
+                    ave_deviation_for_a_para_comb = []
+                    for neighbour_dev in [dev for dev in neighbournode_dict.values()]:
+                        ave_deviation_for_a_para_comb.append(len(neighbour_dev))
+                except FileNotFoundError:
+                    exemptionlist.append((N, ED, beta))
+
+                ave_num_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                std_num_vec.append(np.std(ave_deviation_for_a_para_comb))
+    print(exemptionlist)
+    ave_deviation_Name = filefolder_name2 + "ave_commonneighbournum_beta{betan}.txt".format(betan=beta)
+    np.savetxt(ave_deviation_Name, ave_num_vec)
+    std_deviation_Name = filefolder_name2 + "std_commonneighbournum_beta{betan}.txt".format(betan=beta)
+    np.savetxt(std_deviation_Name, std_num_vec)
+    return ave_num_vec,std_num_vec, exemptionlist
+
+def plot_common_neighbour_num_vs_inputED_with_beta(beta):
+    """
+    the x-axis is the input expected degree(avg), the y-axis is the average deviation of common neighbours, different line is different beta
+    N  = 10000 NODES
+    when use this function, use load_10000nodenetwork_results_clean(beta) before
+    :return:
+    """
+
+    N = 10000
+    kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    beta_vec = [beta]
+    ave_deviation_dict = {}
+    std_deviation_dict = {}
+    count = 0
+    for beta in beta_vec:
+        ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\ave_commonneighbournum_beta{beta}.txt".format(
+            beta=beta)
+        std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\std_commonneighbournum_beta{beta}.txt".format(
+            beta=beta)
+        ave_deviation_vec = np.loadtxt(ave_deviation_Name)
+        std_deviation_vec = np.loadtxt(std_deviation_Name)
+        # real_ave_degree_vec, ave_deviation_vec, std_deviation_vec = load_10000nodenetwork_results(beta)
+
+        ave_deviation_dict[count] = ave_deviation_vec
+        std_deviation_dict[count] = std_deviation_vec
+        count = count+1
+
+    lengend = [r"$\beta=2^2$"]
+    fig, ax = plt.subplots(figsize=(12, 8))
+
+    colors = [[0, 0.4470, 0.7410],
+              [0.8500, 0.3250, 0.0980],
+              [0.9290, 0.6940, 0.1250],
+              [0.4940, 0.1840, 0.5560],
+              [0.4660, 0.6740, 0.1880],
+              [0.3010, 0.7450, 0.9330]]
+
+    # for count in range(len(beta_vec)):
+    for count in [0]:
+        beta = beta_vec[count]
+        x = kvec[0:20]
+        y = ave_deviation_dict[count][0:20]
+        print(y)
+        error = std_deviation_dict[count][0:20]
+        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',markersize=16, label=lengend[count], color=colors[count])
+
+        # # # 找到峰值后最低点的坐标
+        # peak_index = np.argmax(y[0:peakcut[count]])
+        # post_peak_y = y[peak_index:]
+        # post_peak_min_index = peak_index + np.argmin(post_peak_y)
+        # post_peak_min_x = x[post_peak_min_index]
+        # LO_ED.append(post_peak_min_x)
+        # post_peak_min_y = y[post_peak_min_index]
+        # LO_Dev.append(post_peak_min_y)
+
+        # 标出最低点
+        # plt.plot(post_peak_min_x, post_peak_min_y, 'o', color=colors[count], markersize=25, markerfacecolor="none")
+
+    # 拟合幂律曲线
+    params, covariance = curve_fit(power_law, x, y)
+
+    # 获取拟合的参数
+    a_fit, k_fit = params
+    print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+
+    # 绘制原始数据和拟合曲线
+    # ky = []
+    # for k in x:
+    #     ky.append(0.007 * k ** 0.4994)
+    # plt.plot(x, power_law(x, *params),linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$', color='red')
+    # plt.plot(x, ky, linewidth=5, label=f'analytic dev: $y=0.001799x^{{0.4994}}$', color='green')
+
+    plt.xscale('log')
+    plt.yscale('log')
+
+    plt.xlabel('Input avg',fontsize = 26)
+    plt.ylabel('Average common neighbour num',fontsize = 26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.legend(fontsize=20)
+    plt.tick_params(axis='both', which="both",length=6, width=1)
+
+    # inset_ax = inset_axes(ax, width="40%", height="30%")
+    # inset_ax = fig.add_axes([0.58, 0.55, 0.3, 0.3])
+    # inset_ax.plot(c_g_vec, LO_Dev,linewidth=3, marker='o', markersize=10, color = "b")
+    # inset_ax.set_xlabel("$C_G$",fontsize=18)
+    # inset_ax.set_ylabel(r"Local $\min(\overline{d}(q,\gamma(i,j)))$",fontsize=18)
+    # inset_ax.tick_params(axis='y', labelsize=18)
+    # inset_ax.tick_params(axis='x', labelsize=18)
+    # inset_ax.set_xlim(0, 0.6)
+    # inset_ax.text(0.8, 0.85, r'$N = 10^4$', transform=inset_ax.transAxes,
+    #               fontsize=20, verticalalignment='center', horizontalalignment='center')
+    # inset_ax2 = inset_ax.twinx()
+    # inset_ax2.plot(c_g_vec, LO_ED, 'r-', label='log(x+1)')
+    # inset_ax2.set_ylabel(r"Local minimum $E[D]$", color='r',fontsize=18)
+    # inset_ax2.tick_params(axis='y', labelcolor='r')
+
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\CommonNeighbourDeviationvsEDwithdiffc_G_cleanloglog.pdf".format(
+    #     betan=beta)
+
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\CommonNeighbourDeviationvsEDwithbeta{betan}_curvefitloglog.pdf".format(
+        betan=beta)
+    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+    plt.close()
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # load_10000nodenetwork_results_perpendicular(4)
-    # plot_common_neighbour_deviation_vs_inputED_with_beta(4)
+    load_10000nodenetwork_results_perpendicular(4)
+    plot_common_neighbour_deviation_vs_inputED_with_beta(4)
 
 
-    load_10000nodenetwork_results_perpendicular_withED(10)
-    plot_common_neighbour_deviation_vs_beta_with_ED(10)
+    # load_10000nodenetwork_results_perpendicular_withED(10)
+    # plot_common_neighbour_deviation_vs_beta_with_ED(10)
+
+    # load_common_neighbour_num(4)
+    # plot_common_neighbour_num_vs_inputED_with_beta(4)

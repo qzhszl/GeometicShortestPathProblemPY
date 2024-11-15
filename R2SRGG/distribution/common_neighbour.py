@@ -186,7 +186,7 @@ def neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta_index, ExternalS
     """
     N = 10000
     ED_vec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
-    betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128, 256, 512]
+    betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128, 256, 512,1024]
     ED = ED_vec[ED_index]
     Geodistance_index = 0
     distance_list = [[-0.005, 0, 0.005, 0]]
@@ -221,7 +221,7 @@ def neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta_index, ExternalS
     common_neighbors_dic = {}
     deviations_for_a_nodepair_dic = {}
     connectedornot_dic = {}
-    for simu_times in range(10000):
+    for simu_times in range(1000):
         # print(simu_times)
         x_coords = np.random.uniform(-0.5, 0.5, N)
         y_coords = np.random.uniform(-0.5, 0.5, N)
@@ -276,16 +276,27 @@ if __name__ == '__main__':
     #         coorx.append(float(data[0]))
     #         coory.append(float(data[1]))
     # common_neighbour_generator(N=10000, avg=10, beta=4, rg=rg, Coorx=coorx, Coory=coory)
-    ED_vec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
-    betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128, 256, 512,1024]
-    # for ED in range(23):
-    #     for beta in range(22):
-    #         neighbour_distance_ED_beta_one_graph_centerO(ED, beta, 0)
+    # ED_vec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    # betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128, 256, 512,1024]
+    for ED in range(23):
+        for beta in range(23):
+            neighbour_distance_ED_beta_one_graph_centerO(ED, beta, 0)
     # for ED in range(23):
     #     beta_index = 9
     #     neighbour_distance_ED_beta_one_graph_centerO(ED, beta_index, 0)
 
-    for beta in range(23):
-        ED_index = 8
-        neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta, 0)
+    # for beta in range(23):
+    #     ED_index = 8
+    #     neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta, 0)
 
+
+    # x_coords = np.random.uniform(-0.5, 0.5, 10000)
+    # y_coords = np.random.uniform(-0.5, 0.5, 10000)
+    # x_coords[9998] = -0.005
+    # y_coords[9998] = 0
+    # x_coords[9999] = 0.005
+    # y_coords[9999] = 0
+    # rg = RandomGenerator(-12)
+    # G, coorx, coory = common_neighbour_generator(10000, 9999, 4, rg, x_coords, y_coords)
+    # print(G.degree(9999))
+    # print(G.degree(9998))
