@@ -7,6 +7,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
+from scipy.optimize import curve_fit
+
 from R2SRGG.R2SRGG import loadSRGGandaddnode
 
 def load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index):
@@ -106,6 +108,15 @@ def plot_dev_vs_avg_tail_fixnode(beta,Geodistance_index):
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
                      markersize=16, label=legend[count], color=colors[count])
 
+        params, covariance = curve_fit(power_law, x, y)
+
+        # 获取拟合的参数
+        a_fit, k_fit = params
+        print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        plt.plot(x, power_law(x, *params),linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$', color='red')
+
+
+
     plt.xscale('log')
     plt.xlabel('Input avg', fontsize=26)
     plt.ylabel('Average deviation of shortest path', fontsize=26)
@@ -122,9 +133,11 @@ def plot_dev_vs_avg_tail_fixnode(beta,Geodistance_index):
     plt.show()
     plt.close()
 
+def power_law(x, a, k):
+    return a * x ** k
 
 if __name__ == '__main__':
-    for beta in [4]:
-        for Geodistance_index in range(2):
-            load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
-    # plot_dev_vs_avg_tail_fixnode(4,1)
+    # for beta in [4]:
+    #     for Geodistance_index in range(2):
+    #         load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
+    plot_dev_vs_avg_tail_fixnode(4,1)
