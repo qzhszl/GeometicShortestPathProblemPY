@@ -19,7 +19,8 @@ import pandas as pd
 
 def load_10000nodenetwork_results_perpendicular(beta):
     # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    # kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    kvec = [2, 4, 6, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
     # kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848,1389]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\"
@@ -51,7 +52,7 @@ def load_10000nodenetwork_results_perpendicular(beta):
     np.savetxt(std_deviation_Name, std_deviation_vec)
     return ave_deviation_vec,std_deviation_vec, exemptionlist
 
-def plot_common_neighbour_deviation_vs_inputED_with_beta(beta):
+def plot_common_neighbour_deviation_vs_inputED_with_beta():
     """
     the x-axis is the input expected degree(avg), the y-axis is the average deviation of common neighbours, different line is different beta
     N  = 10000 NODES
@@ -60,20 +61,26 @@ def plot_common_neighbour_deviation_vs_inputED_with_beta(beta):
     """
 
     N = 10000
-    kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
-    beta_vec = [beta]
-    Geodistance_index = 0
-    distance_list = [[0.491, 0.5, 0.509, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5],
-                     [0.25, 0.25, 0.75, 0.75]]
-    x_A = distance_list[Geodistance_index][0]
-    y_A = distance_list[Geodistance_index][1]
-    x_B = distance_list[Geodistance_index][2]
-    y_B = distance_list[Geodistance_index][3]
-    geodesic_distance_AB = round(x_B - x_A, 2)
+    # kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    kvec = [2, 4, 6, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    beta_vec = [2.2, 4, 1024]
     ave_deviation_dict = {}
     std_deviation_dict = {}
+    fit_dict = {0: [0.00760893759645091, 0.0103051139633686, 0.0124131890037138, 0.0157788349590166, 0.0197339570951867,
+                    0.0253391411704235, 0.0319719308028291, 0.0403213400565421, 0.0506759812458007, 0.0632423072584533,
+                    0.0782947568618745, 0.0958826062514099, 0.115652409217921, 0.137014883082301, 0.158886876385613,
+                    0.179860931541738, 0.198634891371539, 0.214211619125101],
+                1: [0.0101715461564396, 0.0143767460956019, 0.0176041258247969, 0.0227226734117023, 0.0287388397972281,
+                    0.0373287130077852, 0.0476451376172505, 0.0609230159371083, 0.0778961553865061, 0.0992441521765563,
+                    0.125592944969997, 0.156194616110123, 0.187468052088612, 0.214130839271701, 0.232393013362504,
+                    0.242397097997248, 0.246972993383001, 0.248840948918370],
+                2: [0.0114086690735459, 0.0164157154921302, 0.0202460750664669, 0.0263111169380495, 0.0334322315775513,
+                    0.0435952533599455, 0.0557983872948996, 0.0715227959226965, 0.0917065617123175, 0.117421906937243,
+                    0.150441217695291, 0.192678632972192, 0.235611650020771, 0.250000000000000, 0.250000000000000,
+                    0.250000000000000, 0.250000000000000, 0.250000000000000]}
+
     count = 0
-    for beta in beta_vec:
+    for beta in beta_vec[0:2]:
         ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\ave_deviation_beta{beta}.txt".format(
             beta=beta)
         std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\std_deviation_beta{beta}.txt".format(
@@ -86,7 +93,7 @@ def plot_common_neighbour_deviation_vs_inputED_with_beta(beta):
         std_deviation_dict[count] = std_deviation_vec
         count = count+1
 
-    lengend = [r"$\beta=2^2$"]
+    lengend = [r"$\beta=2.2$", r"$\beta=2^2$",r"$\beta=2^9$"]
     fig, ax = plt.subplots(figsize=(12, 8))
 
     colors = [[0, 0.4470, 0.7410],
@@ -97,38 +104,23 @@ def plot_common_neighbour_deviation_vs_inputED_with_beta(beta):
               [0.3010, 0.7450, 0.9330]]
 
     # for count in range(len(beta_vec)):
-    for count in [0]:
+    for count in range(2):
         beta = beta_vec[count]
         x = kvec
         y = ave_deviation_dict[count]
         error = std_deviation_dict[count]
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',markersize=16, label=lengend[count], color=colors[count])
+        # 拟合幂律曲线
+        params, covariance = curve_fit(power_law, x, y)
+        # 获取拟合的参数
+        a_fit, k_fit = params
+        print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        # 绘制原始数据和拟合曲线
+        plt.plot(x, power_law(x, *params),linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$', )
+        ky = fit_dict[count]
+        plt.plot(x, ky, linewidth=5, label=f'analytic dev: $y=0.001799x^{{0.4994}}$', color=colors[count])
 
-        # # # 找到峰值后最低点的坐标
-        # peak_index = np.argmax(y[0:peakcut[count]])
-        # post_peak_y = y[peak_index:]
-        # post_peak_min_index = peak_index + np.argmin(post_peak_y)
-        # post_peak_min_x = x[post_peak_min_index]
-        # LO_ED.append(post_peak_min_x)
-        # post_peak_min_y = y[post_peak_min_index]
-        # LO_Dev.append(post_peak_min_y)
 
-        # 标出最低点
-        # plt.plot(post_peak_min_x, post_peak_min_y, 'o', color=colors[count], markersize=25, markerfacecolor="none")
-
-    # 拟合幂律曲线
-    params, covariance = curve_fit(power_law, x, y)
-
-    # 获取拟合的参数
-    a_fit, k_fit = params
-    print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-
-    # 绘制原始数据和拟合曲线
-    ky = []
-    for k in x:
-        ky.append(0.007 * k ** 0.4994)
-    plt.plot(x, power_law(x, *params),linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$', color='red')
-    plt.plot(x, ky, linewidth=5, label=f'analytic dev: $y=0.001799x^{{0.4994}}$', color='green')
 
     plt.xscale('log')
     plt.yscale('log')
@@ -161,7 +153,7 @@ def plot_common_neighbour_deviation_vs_inputED_with_beta(beta):
 
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\CommonNeighbourDeviationvsEDwithbeta{betan}_curvefitloglog.pdf".format(
         betan=beta)
-    plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -466,8 +458,9 @@ def plot_common_neighbour_num_vs_inputED_with_beta(beta):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    load_10000nodenetwork_results_perpendicular(4)
-    plot_common_neighbour_deviation_vs_inputED_with_beta(4)
+    for beta in [2.2,4]:
+        load_10000nodenetwork_results_perpendicular(beta)
+    plot_common_neighbour_deviation_vs_inputED_with_beta()
 
 
     # load_10000nodenetwork_results_perpendicular_withED(10)
