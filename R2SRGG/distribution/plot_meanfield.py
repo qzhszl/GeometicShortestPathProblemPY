@@ -1539,7 +1539,7 @@ if __name__ == '__main__':
     # kvec = [2, 5, 10, 20, 100]
     # for ED in kvec:
     #     load_10000nodenetwork_commonneighbour_results_beta(ED)
-    plot_common_neighbour_deviation_vs_beta()
+    # plot_common_neighbour_deviation_vs_beta()
 
     """
     plot or evaluate deviation vs different beta for one graph coordinates

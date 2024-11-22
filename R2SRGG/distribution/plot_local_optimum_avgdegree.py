@@ -633,6 +633,7 @@ def load_LCC_second_LCC_data(beta):
     input_avg_vec = np.arange(1, 6.1, 0.1)
     input_avg_vec2 = np.arange(6.2, 10.1, 0.2)
     input_avg_vec = list(input_avg_vec) + list(input_avg_vec2)
+    input_avg_vec = np.arange(1, 6.1, 0.2)
     N = 10000
     filefolder_name_lcc = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\LCC\\"
     LCC_vec = []
@@ -640,6 +641,7 @@ def load_LCC_second_LCC_data(beta):
     second_LCC_vec = []
     second_LCC_std_vec = []
     for ED in input_avg_vec:
+        ED = round(ED, 1)
         LCC_oneED = []
         second_LCC_oneED = []
         for simutime in range(10):
@@ -647,16 +649,19 @@ def load_LCC_second_LCC_data(beta):
             second_LCC_onesimu = []
             LCCname = filefolder_name_lcc + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}simu{simu}.txt".format(
                 Nn=N, EDn=ED, betan=beta, xA=xA, yA=yA, xB=xB, yB=yB, simu=simutime)
-            with open(LCCname, "r") as file:
-                for line in file:
-                    if line.startswith("#"):
-                        continue
-                    else:
-                        data = line.strip().split("\t")
-                        LCC_onesimu.append(int(data[0]))
-                        second_LCC_onesimu.append(int(data[1]))
-            LCC_oneED = LCC_oneED + LCC_onesimu
-            second_LCC_oneED = second_LCC_oneED + second_LCC_onesimu
+            try:
+                with open(LCCname, "r") as file:
+                    for line in file:
+                        if line.startswith("#"):
+                            continue
+                        else:
+                            data = line.strip().split("\t")
+                            LCC_onesimu.append(int(data[0]))
+                            second_LCC_onesimu.append(int(data[1]))
+                LCC_oneED = LCC_oneED + LCC_onesimu
+                second_LCC_oneED = second_LCC_oneED + second_LCC_onesimu
+            except:
+                print("Not data",ED,simutime)
         LCC_vec.append(np.mean(LCC_oneED))
         LCC_std_vec.append(np.std(LCC_oneED))
         second_LCC_vec.append(np.mean(second_LCC_oneED))
@@ -2028,4 +2033,8 @@ if __name__ == '__main__':
     # analyse_local_optimum_with_diffED_firstpeak()
     # analyse_local_optimum_with_diffED_firstpeak_small_network()
 
-
+    LCC_vec,LCC_std_vec,second_LCC_vec,second_LCC_std_vec = load_LCC_second_LCC_data(32)
+    input_avg_vec = np.arange(1, 6.1, 0.2)
+    plt.plot(input_avg_vec,LCC_vec)
+    plt.plot(input_avg_vec, second_LCC_vec)
+    plt.show()

@@ -6,6 +6,7 @@
 """
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 import networkx as nx
 from R2SRGG.R2SRGG import loadSRGGandaddnode
 
@@ -14,7 +15,7 @@ def load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index):
     kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\tail\\"
-    distance_list = [[0.491, 0.5, 0.509, 0.5], [0.25, 0.5, 0.75, 0.5]]
+    distance_list = [[0.491, 0.5, 0.509, 0.5], [0.25, 0.5, 0.75, 0.5],[0.45, 0.5, 0.55, 0.5]]
     x_A = distance_list[Geodistance_index][0]
     y_A = distance_list[Geodistance_index][1]
     x_B = distance_list[Geodistance_index][2]
@@ -59,7 +60,7 @@ def plot_dev_vs_avg_tail_fixnode(beta,Geodistance_index):
     :return:
     """
     N = 10000
-    distance_list = [[0.491, 0.5, 0.509, 0.5], [0.25, 0.5, 0.75, 0.5]]
+    distance_list = [[0.491, 0.5, 0.509, 0.5], [0.25, 0.5, 0.75, 0.5],[0.45, 0.5, 0.55, 0.5]]
     x_A = distance_list[Geodistance_index][0]
     y_A = distance_list[Geodistance_index][1]
     x_B = distance_list[Geodistance_index][2]
@@ -71,6 +72,7 @@ def plot_dev_vs_avg_tail_fixnode(beta,Geodistance_index):
     std_deviation_dict = {}
 
     kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    kvecsupp = [10, 16, 27, 44, 49, 56, 64, 72, 81, 92, 104, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
     betavec = [beta]
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\tail\\"
 
@@ -100,21 +102,32 @@ def plot_dev_vs_avg_tail_fixnode(beta,Geodistance_index):
 
     for count in range(len(betavec)):
         beta = betavec[count]
-        x = kvec
-        y = ave_deviation_dict[count]
-        error = std_deviation_dict[count]
+        x = kvec[0:9]
+        y = ave_deviation_dict[count][0:9]
+        error = std_deviation_dict[count][0:9]
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
                      markersize=16, label=legend[count], color=colors[count])
+        params, covariance = curve_fit(power_law, x[5:9], y[5:9])
+        # 获取拟合的参数
+        a_fit, k_fit = params
+        print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        plt.plot(x[5:9], power_law(x[5:9], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+                 color='red')
+        # params, covariance = curve_fit(power_law, x[10:13], y[10:13])
+        # a_fit, k_fit = params
+        # plt.plot(x[10:13], power_law(x[10:13], *params), linewidth=5,
+        #          label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+        #          color='green')
 
     plt.xscale('log')
+    plt.yscale('log')
     plt.xlabel('Input avg', fontsize=26)
     plt.ylabel('Average deviation of shortest path', fontsize=26)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=20, loc="upper left")
+    plt.legend(fontsize=20, loc="lower right")
     plt.tick_params(axis='both', which="both", length=6, width=1)
-
 
     picname = filefolder_name+"LocalOptimum_dev_vs_avg_diffbeta_distance{dis}.pdf".format(
         dis=geodesic_distance_AB)
@@ -122,9 +135,39 @@ def plot_dev_vs_avg_tail_fixnode(beta,Geodistance_index):
     plt.show()
     plt.close()
 
+def plot_avg_linkdistance_vs_ED():
+    N = 10000
+    kvec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389]
+    y = []
+    for ED in kvec:
+        print(ED)
+        for beta in [4]:
+            linkweight_filename = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ave_distance_link_radius\\SPlinkweight_N{Nn}ED{EDn}beta{betan}.txt".format(
+                Nn=N, EDn=ED, betan=beta)
+            link_weight = np.loadtxt(linkweight_filename)
+            y.append(np.mean(link_weight))
+
+
+    plt.xlabel(r'$E[D]$', fontsize=26)
+    plt.ylabel('geodistance of shortest path link', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.xscale('log')
+    plt.yscale('log')
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=20, loc="upper right")
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    plt.plot(kvec, y)
+    plt.show()
+
+
+def power_law(x, a, k):
+    return a * x ** k
 
 if __name__ == '__main__':
     for beta in [4]:
-        for Geodistance_index in range(2):
+        for Geodistance_index in [2]:
             load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
-    # plot_dev_vs_avg_tail_fixnode(4,1)
+    plot_dev_vs_avg_tail_fixnode(4,2)
+
+    # plot_avg_linkdistance_vs_ED()
