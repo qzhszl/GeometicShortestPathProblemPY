@@ -610,6 +610,9 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
 def distance_inSRGG_clu(network_size_index, average_degree_index, beta_index, ExternalSimutime):
     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    kvec = [2,2.5,3,3.5,4,4.5,5,5.5,6]
+    kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+
     # kvec = [5,20]
     betavec = [2.1, 4, 8, 16, 32, 64, 128]
     # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]

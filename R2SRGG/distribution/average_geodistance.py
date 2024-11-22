@@ -4,11 +4,17 @@
 @Author: Zhihao Qiu
 @Date: 21-10-2024
 """
+import random
+
 import numpy as np
 import scipy.integrate as integrate
 import math
 import matplotlib.pyplot as plt
 import networkx as nx
+from R2SRGG.R2SRGG import R2SRGG_withgivennodepair, distR2, dist_to_geodesic_R2, R2SRGG, loadSRGGandaddnode
+from SphericalSoftRandomGeomtricGraph import RandomGenerator
+from main import all_shortest_path_node
+
 
 def integrand(x, alpha, beta):
     prob = 1 / (1 + math.exp(beta * math.log(alpha * x)))
@@ -20,6 +26,92 @@ def average_distance_withEDbeta(avg,beta):
     alpha = math.sqrt(alpha)
     result, error = integrate.quad(integrand, 0, 1, args=(alpha, beta))
     return result
+
+def average_shortest_path_distance_withEDbeta(ED,beta):
+    N = 10000
+    Geodistance_index = 1
+    distance_list = [[0.491, 0.5, 0.509, 0.5], [0.25, 0.25, 0.75, 0.75]]
+    x_A = distance_list[Geodistance_index][0]
+    y_A = distance_list[Geodistance_index][1]
+    x_B = distance_list[Geodistance_index][2]
+    y_B = distance_list[Geodistance_index][3]
+    geodesic_distance_AB = x_B - x_A
+    geodesic_distance_AB = round(geodesic_distance_AB, 2)
+
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\"
+    link_weight =[]
+    for ExternalSimutime in range(10):
+        for network_index in range(10):
+            try:
+                FileNetworkName = filefolder_name + "network_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+                    Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+                # G = nx.read_edgelist(FileNetworkName, nodetype=int)
+                G = loadSRGGandaddnode(N, FileNetworkName)
+                FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+                    Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+                Coorx = []
+                Coory = []
+                with open(FileNetworkCoorName, "r") as file:
+                    for line in file:
+                        if line.startswith("#"):
+                            continue
+                        data = line.strip().split("\t")  # 使用制表符分割
+                        Coorx.append(float(data[0]))
+                        Coory.append(float(data[1]))
+                nodei = 9998
+                nodej = 9999
+                if nx.has_path(G, nodei, nodej):
+                    shortest_paths = nx.all_shortest_paths(G, nodei, nodej)
+                    unique_edges = set()
+                    for path in shortest_paths:
+                        edges = {(path[i], path[i + 1]) for i in range(len(path) - 1)}
+                        unique_edges.update(edges)
+                    unique_edges_list = list(unique_edges)
+                    for link in unique_edges_list:
+                        nodea = link[0]
+                        nodeb  =link[1]
+                        xSource = Coorx[nodea]
+                        ySource = Coory[nodea]
+                        xEnd =Coorx[nodeb]
+                        yEnd = Coory[nodeb]
+                        link_weight.append(distR2(xSource, ySource, xEnd, yEnd))
+            except:
+                rg = RandomGenerator(-12)
+                rseed = random.randint(0, 100)
+                for i in range(rseed):
+                    rg.ran1()
+                G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
+                FileNetworkName = filefolder_name + "network_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+                    Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+                nx.write_edgelist(G, FileNetworkName)
+
+                FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+                    Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+                with open(FileNetworkCoorName, "w") as file:
+                    for data1, data2 in zip(Coorx, Coory):
+                        file.write(f"{data1}\t{data2}\n")
+                nodei = 9998
+                nodej = 9999
+                if nx.has_path(G, nodei, nodej):
+                    shortest_paths = nx.all_shortest_paths(G, nodei, nodej)
+                    unique_edges = set()
+                    for path in shortest_paths:
+                        edges = {(path[i], path[i + 1]) for i in range(len(path) - 1)}
+                        unique_edges.update(edges)
+                    unique_edges_list = list(unique_edges)
+                    for link in unique_edges_list:
+                        nodea = link[0]
+                        nodeb = link[1]
+                        xSource = Coorx[nodea]
+                        ySource = Coory[nodea]
+                        xEnd = Coorx[nodeb]
+                        yEnd = Coory[nodeb]
+                        link_weight.append(distR2(xSource, ySource, xEnd, yEnd))
+
+    linkweight_filename = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ave_distance_link_radius\\SPlinkweight_N{Nn}ED{EDn}beta{betan}.txt".format(
+        Nn=N, EDn=ED, betan=beta)
+    np.savetxt(linkweight_filename, link_weight)
+    return link_weight
 
 def plot_average_distance():
     avg_vec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
@@ -164,7 +256,7 @@ def plot_simu_linkdistance_withavg():
 
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ave_distance_link_radius\\linkdistance_withavg_diffbeta.pdf"
 
-    plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -377,7 +469,7 @@ if __name__ == '__main__':
     """
     step3: plot average distance of a link change with beta
     """
-    plot_simu_linkdistance_withavg()
+    # plot_simu_linkdistance_withavg()
 
 
     # """
@@ -386,11 +478,30 @@ if __name__ == '__main__':
     # plot_simu_linkdistance_withbeta()
 
     # """
-    # step5: plot average distance of a link change with beta
+    # step5: plot average distance of a radius change with beta
     # """
     # plot_simu_radius_withavg()
 
     # """
-    # step6: plot average distance of a link change with beta
+    # step6: plot average distance of a radius change with beta
     # """
     # plot_simu_radius_withbeta()
+
+    """
+    test the distance of the shortest path link
+    """
+    # kvec = [16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    # y = []
+    # for ED in kvec:
+    #     print(ED)
+    #     for beta in [4]:
+    #         linkweight = average_shortest_path_distance_withEDbeta(ED, beta)
+    #         y.append(np.mean(linkweight))
+    # print(y)
+    #
+    # plt.plot(kvec,y)
+    # plt.show()
+    input_avg_vec = np.arange(1, 6.1, 0.2)
+    # input_avg_vec = np.arange(6.2, 10.1, 0.2)
+    # print(input_avg_vec)
+    print(len(input_avg_vec))

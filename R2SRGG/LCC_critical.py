@@ -84,14 +84,17 @@ if __name__ == '__main__':
     # beta = beta_vec[int(betaindex)]
     # LCC_critical(N, ED,beta,int(simutime))
 
-    """
-    for small network, run it locally
-    """
-    N = 100
-    beta = 4
-    input_avg_vec = np.arange(9, 30, 1)
+    # """
+    # for small network, run it locally
+    # """
+    N = 10000
+    beta = 2.2
+    # input_avg_vec = np.arange(9, 30, 1)
+    input_avg_vec = np.arange(1, 6.1, 0.2)
+    # input_avg_vec = np.arange(6.2, 10.1, 0.2)
     for ED in input_avg_vec:
         print(ED)
         for simutime in range(10):
+            print(simutime)
             LCC_critical(N, ED, beta, int(simutime))
 
