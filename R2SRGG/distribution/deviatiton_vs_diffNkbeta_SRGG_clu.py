@@ -361,13 +361,13 @@ def distance_inlargeSRGG_clu(N,ED,beta,ExternalSimutime):
         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
         print("real ED:", real_avg)
 
-        ave_clu = nx.average_clustering(G)
-        print("clu:",ave_clu)
-
-        components = list(nx.connected_components(G))
-        largest_component = max(components, key=len)
-        LCC_number = len(largest_component)
-        print("LCC", LCC_number)
+        # ave_clu = nx.average_clustering(G)
+        # print("clu:",ave_clu)
+        #
+        # components = list(nx.connected_components(G))
+        # largest_component = max(components, key=len)
+        # LCC_number = len(largest_component)
+        # print("LCC", LCC_number)
 
         # Randomly choose 100 connectede node pairs
         nodepair_num = 10

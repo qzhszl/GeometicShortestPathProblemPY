@@ -109,8 +109,10 @@ def all_shortest_path_node(G, nodei, nodej):
     for path in shortest_paths:
         PNodeList.update(path)
         count += 1
-        if count > 100000000:
+        if count > 10000000:
+            PNodeList = find_sp_node2(G, nodei, nodej)
             break
+    print("count",count)
     PNodeList.discard(nodei)
     PNodeList.discard(nodej)
     PNodeList = list(PNodeList)
@@ -208,6 +210,30 @@ def hopcount_node(G, node_source, node_destination, node_index):
     """
     hop = min(nx.shortest_path_length(G,node_source,node_index), nx.shortest_path_length(G,node_destination,node_index))
     return hop
+
+def find_sp_node(G, nodei, nodej):
+    SP_list = []
+    distance = nx.shortest_path_length(G, nodei, nodej)
+    for nodek in G.nodes:
+        try:
+            if nx.shortest_path_length(G, nodei, nodek) + nx.shortest_path_length(G, nodej, nodek) == distance:
+                SP_list.append(nodek)
+        except:
+            pass
+    SP_list = [item for item in SP_list if item not in [nodei, nodej]]
+    return SP_list
+
+def find_sp_node2(G, nodei, nodej):
+    SP_list_set = set()
+    distance = nx.shortest_path_length(G, nodei, nodej)
+    for nodek in G.nodes:
+        try:
+            if nx.shortest_path_length(G, nodei, nodek) + nx.shortest_path_length(G, nodej, nodek) == distance:
+                SP_list_set.add(nodek)
+        except:
+            pass
+    return SP_list_set
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
