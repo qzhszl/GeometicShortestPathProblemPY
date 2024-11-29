@@ -71,30 +71,34 @@ if __name__ == '__main__':
     """
     for cluster
     """
-    # N = 10000
-    # beta_vec = [4,8]
+    N = 10000
+    beta_vec = [2.2,64,128]
     # input_avg_vec = np.arange(1, 6.1, 0.1)
     # input_avg_vec = np.arange(6.2, 10.1, 0.2)
-    # # print(input_avg_vec)
-    # # print(len(input_avg_vec))
-    # EDindex = sys.argv[1]
-    # betaindex = sys.argv[2]
-    # simutime = sys.argv[3]
-    # ED = input_avg_vec[int(EDindex)]
-    # beta = beta_vec[int(betaindex)]
-    # LCC_critical(N, ED,beta,int(simutime))
+    kvec = np.arange(2, 6.1, 0.2)
+    input_avg_vec = [round(a, 1) for a in kvec]
+    # print(input_avg_vec)
+    # print(len(input_avg_vec))
+    EDindex = sys.argv[1]
+    betaindex = sys.argv[2]
+    simutime = sys.argv[3]
+    ED = input_avg_vec[int(EDindex)]
+    beta = beta_vec[int(betaindex)]
+    LCC_critical(N, ED,beta,int(simutime))
 
     # """
     # for small network, run it locally
     # """
-    N = 10000
-    beta = 2.2
-    # input_avg_vec = np.arange(9, 30, 1)
-    input_avg_vec = np.arange(1, 6.1, 0.2)
-    # input_avg_vec = np.arange(6.2, 10.1, 0.2)
-    for ED in input_avg_vec:
-        print(ED)
-        for simutime in range(10):
-            print(simutime)
-            LCC_critical(N, ED, beta, int(simutime))
+    # N = 10000
+    # beta = 2.2
+    # # input_avg_vec = np.arange(9, 30, 1)
+    # input_avg_vec = np.arange(2, 6.1, 0.2)
+    # input_avg_vec = [round(a,1) for a in input_avg_vec]
+    # a = input_avg_vec[6]
+    # # input_avg_vec = np.arange(6.2, 10.1, 0.2)
+    # for ED in input_avg_vec:
+    #     print(ED)
+    #     for simutime in range(10):
+    #         print(simutime)
+    #         LCC_critical(N, ED, beta, int(simutime))
 

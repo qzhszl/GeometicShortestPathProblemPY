@@ -389,8 +389,8 @@ def distance_inlargeSRGG_clu(N,ED,beta,rg,ExternalSimutime):
             second_largest_component = connected_components[1]
             second_largest_size = len(second_largest_component)
             second_vec.append(second_largest_size)
-        if ExternalSimutime==0:
-            filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\"
+        filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\"
+        if ExternalSimutime ==0:
             LCCname = filefolder_name + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}.txt".format(
                 Nn=N, EDn=ED, betan=beta)
             with open(LCCname, "w") as file:
@@ -451,12 +451,12 @@ def distance_inlargeSRGG_clu(N,ED,beta,rg,ExternalSimutime):
         ave_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
             Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(ave_deviation_name, ave_deviation)
-        # max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        #     Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
-        # np.savetxt(max_deviation_name, max_deviation)
-        # min_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\min_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        #     Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
-        # np.savetxt(min_deviation_name, min_deviation)
+        max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+            Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        np.savetxt(max_deviation_name, max_deviation)
+        min_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\min_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+            Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        np.savetxt(min_deviation_name, min_deviation)
         ave_baseline_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
             Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(ave_baseline_deviation_name, ave_baseline_deviation)
@@ -701,10 +701,10 @@ if __name__ == '__main__':
     """
     Step 2 try to see with different beta and input AVG 
     """
-    ED_index = sys.argv[1]
-    beta_index = sys.argv[2]
-    ExternalSimutime = sys.argv[3]
-    distance_inSRGG_clu(7, int(ED_index), int(beta_index), int(ExternalSimutime))
+    # ED_index = sys.argv[1]
+    # beta_index = sys.argv[2]
+    # ExternalSimutime = sys.argv[3]
+    # distance_inSRGG_clu(7, int(ED_index), int(beta_index), int(ExternalSimutime))
 
 
 
@@ -713,17 +713,18 @@ if __name__ == '__main__':
     # ExternalSimutime = sys.argv[3]
     # distance_inSRGG_withEDCC(5, int(ED), int(cc_index), int(ExternalSimutime))
 
-    # i = sys.argv[1]
-    # exemptionlist = np.loadtxt("/home/zqiu1/GSPP/SSRGGpy/R2/distribution/notrun.txt")
-    # notrun_pair = exemptionlist[int(i)]
-    # ED = notrun_pair[1]
-    # beta = notrun_pair[2]
-    # ExternalSimutime = notrun_pair[3]
-    # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
-    # ED_index = kvec.index(notrun_pair[1])
-    # beta_index = betavec.index(notrun_pair[2])
-    # distance_inSRGG_clu(7, int(ED_index), int(beta_index), int(ExternalSimutime))
+    i = sys.argv[1]
+    exemptionlist = np.loadtxt("/home/zqiu1/GSPP_SRGG_Dev/notrun.txt")
+    notrun_pair = exemptionlist[int(i)]
+    ED = notrun_pair[1]
+    beta = notrun_pair[2]
+    ExternalSimutime = notrun_pair[3]
+    kvec = np.arange(2, 6.1, 0.2)
+    kvec = [round(a, 1) for a in kvec]
+    betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    ED_index = kvec.index(notrun_pair[1])
+    beta_index = betavec.index(notrun_pair[2])
+    distance_inSRGG_clu(7, int(ED_index), int(beta_index), int(ExternalSimutime))
 
 
 

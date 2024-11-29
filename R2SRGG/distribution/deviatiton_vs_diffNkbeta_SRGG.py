@@ -42,28 +42,30 @@ def generate_r2SRGG():
 
     # Nvec = [200, 500, 1000, 10000]
     Nvec = [10000]
-    kvec = [5,20]
+    kvec = np.arange(2, 6.1, 0.2)
     # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
-    betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
+    betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
+    # betavec = [4]
 
     for N in Nvec:
         for ED in kvec:
+            ED =  round(ED,1)
             for beta in betavec:
                 G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
                 real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
                 print("input para:", (N,ED,beta))
                 print("real ED:", real_avg)
-                print("clu:", nx.average_clustering(G))
-                components = list(nx.connected_components(G))
-                largest_component = max(components, key=len)
-                print("LCC", len(largest_component))
+                # print("clu:", nx.average_clustering(G))
+                # components = list(nx.connected_components(G))
+                # largest_component = max(components, key=len)
+                # print("LCC", len(largest_component))
 
-                FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
                     Nn=N, EDn=ED, betan=beta)
                 nx.write_edgelist(G, FileNetworkName)
 
-                FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
                     Nn=N, EDn=ED, betan=beta)
                 with open(FileNetworkCoorName, "w") as file:
                     for data1, data2 in zip(Coorx, Coory):
@@ -699,29 +701,31 @@ if __name__ == '__main__':
     #         with open(FileNetworkCoorName, "w") as file:
     #             for data1, data2 in zip(Coorx, Coory):
     #                 file.write(f"{data1}\t{data2}\n")
-    rg = RandomGenerator(-12)
-    rseed = random.randint(0, 100)
-    for i in range(rseed):
-        rg.ran1()
-    N = 10000
-    ED = 5
-    beta = 2.2
-    x_A = 0.495
-    y_A = 0.5
-    x_B = 0.505
-    y_B = 0.5
-    ExternalSimutime = 0
-    network_index = 0
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\"
-    # Randomly generate 10 networks
+    # rg = RandomGenerator(-12)
+    # rseed = random.randint(0, 100)
+    # for i in range(rseed):
+    #     rg.ran1()
+    # N = 10000
+    # ED = 5
+    # beta = 2.2
+    # x_A = 0.495
+    # y_A = 0.5
+    # x_B = 0.505
+    # y_B = 0.5
+    # ExternalSimutime = 0
+    # network_index = 0
+    # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\"
+    # # Randomly generate 10 networks
+    #
+    # G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
+    # FileNetworkName = filefolder_name + "network_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+    #     Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+    # nx.write_edgelist(G, FileNetworkName)
+    #
+    # FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
+    #     Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
+    # with open(FileNetworkCoorName, "w") as file:
+    #     for data1, data2 in zip(Coorx, Coory):
+    #         file.write(f"{data1}\t{data2}\n")
 
-    G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
-    FileNetworkName = filefolder_name + "network_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
-        Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
-    nx.write_edgelist(G, FileNetworkName)
-
-    FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}Simu{simu}networktime{nt}.txt".format(
-        Nn=N, EDn=ED, betan=beta, xA=x_A, yA=y_A, xB=x_B, yB=y_B, simu=ExternalSimutime, nt=network_index)
-    with open(FileNetworkCoorName, "w") as file:
-        for data1, data2 in zip(Coorx, Coory):
-            file.write(f"{data1}\t{data2}\n")
+    generate_r2SRGG()

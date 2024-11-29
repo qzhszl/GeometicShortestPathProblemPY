@@ -392,12 +392,12 @@ def distance_inlargeSRGG_clu_beta_givennodepair(N, ED, beta, rg, ExternalSimutim
 
             real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
             print("real ED:", real_avg)
-            ave_clu = nx.average_clustering(G)
-            print("clu:", ave_clu)
-            components = list(nx.connected_components(G))
-            largest_component = max(components, key=len)
-            LCC_number = len(largest_component)
-            print("LCC", LCC_number)
+            # ave_clu = nx.average_clustering(G)
+            # print("clu:", ave_clu)
+            # components = list(nx.connected_components(G))
+            # largest_component = max(components, key=len)
+            # LCC_number = len(largest_component)
+            # print("LCC", LCC_number)
             nodei = N-2
             nodej = N-1
             # Find the shortest path nodes
@@ -474,6 +474,8 @@ def distance_inSRGG_withavgbeta(network_size_index, average_degree_index, beta_i
     Nvec = [10, 100, 200, 500, 1000, 10000]
     # kvec = list(range(2, 20)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]  # log uniformly distributed k
+    kvec = [49,56,64,81,92,104]
+    kvec = [586,663,750,959,1085,1228]
     betavec = [2.2, 4, 8, 16, 32,128]
 
     # avg_vec = [2, 5, 10, 20, 50, 100]
@@ -481,7 +483,7 @@ def distance_inSRGG_withavgbeta(network_size_index, average_degree_index, beta_i
 
     # distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
     # distance_list = [[0.49, 0.5, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
-    distance_list = [[0.491, 0.5, 0.509, 0.5],[0.25, 0.5, 0.75, 0.5]]
+    distance_list = [[0.491, 0.5, 0.509, 0.5],[0.25, 0.5, 0.75, 0.5],[0.45, 0.5, 0.55, 0.5]]
     x_A = distance_list[Geodistance_index][0]
     y_A = distance_list[Geodistance_index][1]
     x_B = distance_list[Geodistance_index][2]

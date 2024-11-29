@@ -2033,8 +2033,17 @@ if __name__ == '__main__':
     # analyse_local_optimum_with_diffED_firstpeak()
     # analyse_local_optimum_with_diffED_firstpeak_small_network()
 
-    LCC_vec,LCC_std_vec,second_LCC_vec,second_LCC_std_vec = load_LCC_second_LCC_data(32)
+    LCC_vec,LCC_std_vec,second_LCC_vec,second_LCC_std_vec = load_LCC_second_LCC_data(128)
     input_avg_vec = np.arange(1, 6.1, 0.2)
+    # input_avg_vec = np.arange(1, 6.1, 0.1)
+    # input_avg_vec2 = np.arange(6.2, 10.1, 0.2)
+    # input_avg_vec = list(input_avg_vec) + list(input_avg_vec2)
+
+
     plt.plot(input_avg_vec,LCC_vec)
     plt.plot(input_avg_vec, second_LCC_vec)
+    max_index = second_LCC_vec.index(max(second_LCC_vec))
+    # 根据索引找到对应的 x
+    result_x = input_avg_vec[max_index]
+    print(result_x)
     plt.show()

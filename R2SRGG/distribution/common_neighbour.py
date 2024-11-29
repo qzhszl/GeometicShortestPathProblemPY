@@ -281,13 +281,13 @@ if __name__ == '__main__':
     # for ED in range(23):
     #     for beta in range(23):
     #         neighbour_distance_ED_beta_one_graph_centerO(ED, beta, 0)
-    for ED in range(23):
-        beta_index = 22
-        neighbour_distance_ED_beta_one_graph_centerO(ED, beta_index, 0)
+    # for ED in range(23):
+    #     beta_index = 22
+    #     neighbour_distance_ED_beta_one_graph_centerO(ED, beta_index, 0)
 
-    # for beta in range(23):
-    #     ED_index = 8
-    #     neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta, 0)
+    for beta in range(23):
+        ED_index = 8
+        neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta, 0)
 
 
     # x_coords = np.random.uniform(-0.5, 0.5, 10000)
@@ -300,3 +300,7 @@ if __name__ == '__main__':
     # G, coorx, coory = common_neighbour_generator(10000, 9999, 4, rg, x_coords, y_coords)
     # print(G.degree(9999))
     # print(G.degree(9998))
+
+
+
+
