@@ -138,4 +138,9 @@ if __name__ == '__main__':
     """
     load_proper_network_paras, save the results in two 
     """
-    load_proper_network_paras()
+    # load_proper_network_paras()
+
+    df = pd.read_csv(
+        "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\inputparameter\\InputED.csv",index_col=0, header=0)
+    print(df.iloc[:, 4])
+
