@@ -126,7 +126,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
     plt.yticks(fontsize=22)
     plt.tick_params(axis='both', which="both", length=6, width=1)
     # Display the plot
-    # plt.show()
+    plt.show()
     figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
                 EDn=ED, betan=beta)
 
@@ -274,19 +274,19 @@ if __name__ == '__main__':
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex,legendpara=0)
     #
     #
+    for Edindex in [0]:
+        for betaindex in [2]:
+            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=1)
+
+
+    # # STEP 3 plot the recall
+    # for Edindex in range(4):
+    #     for betaindex in range(7):
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=0)
+    #
     # for Edindex in [0]:
     #     for betaindex in [1]:
-    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=1)
-
-
-    # STEP 3 plot the recall
-    for Edindex in range(4):
-        for betaindex in range(7):
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=0)
-
-    for Edindex in [0]:
-        for betaindex in [1]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
 
 
 
