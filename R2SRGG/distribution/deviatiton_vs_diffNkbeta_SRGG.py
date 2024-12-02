@@ -728,4 +728,10 @@ if __name__ == '__main__':
     #     for data1, data2 in zip(Coorx, Coory):
     #         file.write(f"{data1}\t{data2}\n")
 
-    generate_r2SRGG()
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
+    G, Coorx, Coory = R2SRGG(10000, 10, 4, rg)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    print("real ED:", real_avg)
