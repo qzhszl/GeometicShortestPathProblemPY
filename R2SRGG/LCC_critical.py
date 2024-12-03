@@ -4,6 +4,7 @@
 @Author: Zhihao Qiu
 @Date: 7-11-2024
 """
+import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 import random
@@ -35,7 +36,7 @@ def LCC_critical(N, ED,beta,simutime):
     yB = 0.75
     LCC_vec = []
     second_vec = []
-    for network_index in range(100):
+    for network_index in range(10):
         # print(network_index)
         G, coorx, coory = R2SRGG_withgivennodepair(N, ED, beta, rg, xA, yA, xB, yB)
         connected_components = sorted(nx.connected_components(G), key=len, reverse=True)
@@ -49,16 +50,20 @@ def LCC_critical(N, ED,beta,simutime):
             second_vec.append(second_largest_size)
         else:
             second_vec.append(0)
-        # print(LCC_vec)
-        # print(second_vec)
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\LCC\\"
-    LCCname = filefolder_name + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}simu{simu}.txt".format(
-        Nn=N, EDn=ED, betan=beta, xA=xA, yA=yA, xB=xB, yB=yB,simu = simutime)
-    with open(LCCname, "w") as file:
-        file.write("# LCC\tSECLCC\n")  # 使用制表符分隔列
-        # 写入数据
-        for name, age in zip(LCC_vec, second_vec):
-            file.write(f"{name}\t{age}\n")
+    print('LCC_vec',LCC_vec)
+    print('LCC', np.mean(LCC_vec))
+    print('sLCC_vec',second_vec)
+    print('sLCC', np.mean(second_vec))
+
+    # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\LCC\\"
+    # LCCname = filefolder_name + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}xA{xA}yA{yA}xB{xB}yB{yB}simu{simu}.txt".format(
+    #     Nn=N, EDn=ED, betan=beta, xA=xA, yA=yA, xB=xB, yB=yB,simu = simutime)
+    # with open(LCCname, "w") as file:
+    #     file.write("# LCC\tSECLCC\n")  # 使用制表符分隔列
+    #     # 写入数据
+    #     for name, age in zip(LCC_vec, second_vec):
+    #         file.write(f"{name}\t{age}\n")
+    return np.mean(LCC_vec), np.mean(second_vec)
 
 
 
@@ -71,34 +76,40 @@ if __name__ == '__main__':
     """
     for cluster
     """
-    N = 10000
-    beta_vec = [2.2,64,128]
-    # input_avg_vec = np.arange(1, 6.1, 0.1)
-    # input_avg_vec = np.arange(6.2, 10.1, 0.2)
-    kvec = np.arange(2, 6.1, 0.2)
-    input_avg_vec = [round(a, 1) for a in kvec]
-    # print(input_avg_vec)
-    # print(len(input_avg_vec))
-    EDindex = sys.argv[1]
-    betaindex = sys.argv[2]
-    simutime = sys.argv[3]
-    ED = input_avg_vec[int(EDindex)]
-    beta = beta_vec[int(betaindex)]
-    LCC_critical(N, ED,beta,int(simutime))
+    # N = 10000
+    # beta_vec = [2.2,64,128]
+    # # input_avg_vec = np.arange(1, 6.1, 0.1)
+    # # input_avg_vec = np.arange(6.2, 10.1, 0.2)
+    # kvec = np.arange(2, 6.1, 0.2)
+    # input_avg_vec = [round(a, 1) for a in kvec]
+    # # print(input_avg_vec)
+    # # print(len(input_avg_vec))
+    # EDindex = sys.argv[1]
+    # betaindex = sys.argv[2]
+    # simutime = sys.argv[3]
+    # ED = input_avg_vec[int(EDindex)]
+    # beta = beta_vec[int(betaindex)]
+    # LCC_critical(N, ED,beta,int(simutime))
 
     # """
     # for small network, run it locally
     # """
-    # N = 10000
-    # beta = 2.2
-    # # input_avg_vec = np.arange(9, 30, 1)
-    # input_avg_vec = np.arange(2, 6.1, 0.2)
-    # input_avg_vec = [round(a,1) for a in input_avg_vec]
-    # a = input_avg_vec[6]
-    # # input_avg_vec = np.arange(6.2, 10.1, 0.2)
-    # for ED in input_avg_vec:
-    #     print(ED)
-    #     for simutime in range(10):
-    #         print(simutime)
-    #         LCC_critical(N, ED, beta, int(simutime))
+    N = 10000
+    beta = 2.2
 
+    # input_avg_vec = np.arange(9, 30, 1)
+    input_avg_vec = np.arange(2, 6.5, 0.2)
+    input_avg_vec = [round(a,1) for a in input_avg_vec]
+    # input_avg_vec = np.arange(6.2, 10.1, 0.2)
+    LCC=[]
+    SLCC = []
+    for ED in input_avg_vec:
+        print(ED)
+        for simutime in range(1):
+            # print(simutime)
+            lccvalue,slccvalue=LCC_critical(N, ED, beta, int(simutime))
+            LCC.append(lccvalue)
+            SLCC.append(slccvalue)
+    plt.plot(input_avg_vec,LCC)
+    plt.plot(input_avg_vec, SLCC)
+    plt.show()
