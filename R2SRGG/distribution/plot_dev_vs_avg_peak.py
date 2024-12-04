@@ -28,7 +28,7 @@ def load_10000nodenetwork_results_peak(beta):
         for beta in [beta]:
             for ED in kvec:
                 ave_deviation_for_a_para_comb=np.array([])
-                for ExternalSimutime in range(50):
+                for ExternalSimutime in range(20):
                     try:
                         deviation_vec_name = filefolder_name + "ave_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
                             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -182,8 +182,8 @@ def find_giant_component(beta):
 
 
 def scattor_peakvs_GLCC():
-    peak_avg = [4,3.4,5.0,5.0,5.8,6]
-    SLCC_avg = [3.2,3.2,5.0,4.8,6,5.6]
+    peak_avg = [4,3.4,5.0,5.0,5.8,5.4,6]
+    SLCC_avg = [3.2,3.2,5.0,4.8,6,5.6,6]
     fig, ax = plt.subplots(figsize=(9, 6))
 
     colors = [[0, 0.4470, 0.7410],
@@ -219,93 +219,11 @@ def scattor_peakvs_GLCC():
 
 
 if __name__ == '__main__':
-    # load_10000nodenetwork_results_peak(16)
-    # betavec = [16]
+    # load_10000nodenetwork_results_peak(64)
+    # betavec = [128]
     # for beta in betavec:
     #     load_10000nodenetwork_results_peak(beta)
     #     plot_dev_vs_avg_peak(beta)
-    # find_giant_component(16)
+    # find_giant_component(128)
     scattor_peakvs_GLCC()
 
-    # kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
-    # # betavec = [2.1, 4, 8, 16, 32, 64, 128]
-    # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
-    #
-    # beta =4
-    # exemptionlist = []
-    # for N in [10000]:
-    #     ave_deviation_vec = []
-    #     std_deviation_vec = []
-    #     real_ave_degree_vec = []
-    #     for beta in [beta]:
-    #         for ED in kvec:
-    #             ave_deviation_for_a_para_comb = np.array([])
-    #             for ExternalSimutime in range(50):
-    #                 try:
-    #                     deviation_vec_name = filefolder_name + "length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-    #                         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-    #                     ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
-    #                     ave_deviation_for_a_para_comb = np.hstack(
-    #                         (ave_deviation_for_a_para_comb, ave_deviation_for_a_para_comb_10times))
-    #                 except FileNotFoundError:
-    #                     exemptionlist.append((N, ED, beta, ExternalSimutime))
-    #
-    #             ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
-    #             std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
-    # print(exemptionlist)
-    # plt.xscale('log')
-    # plt.plot(kvec,ave_deviation_vec)
-    # plt.show()
-
-    # rg = RandomGenerator(-12)
-    # rseed = random.randint(0, 10000)
-    # for i in range(rseed):
-    #     rg.ran1()
-    # kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
-    # N = 10000
-    # beta = 4
-    # ED = 9999
-    # # load a network
-    # FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-    #     Nn=N, EDn=ED, betan=beta)
-    # G = loadSRGGandaddnode(N, FileNetworkName)
-    # # load coordinates with noise
-    # Coorx = []
-    # Coory = []
-    #
-    # FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
-    #     Nn=N, EDn=ED, betan=beta)
-    # with open(FileNetworkCoorName, "r") as file:
-    #     for line in file:
-    #         if line.startswith("#"):
-    #             continue
-    #         data = line.strip().split("\t")  # 使用制表符分割
-    #         Coorx.append(float(data[0]))
-    #         Coory.append(float(data[1]))
-    #
-    # simu1=[]
-    # unique_pairs = find_k_connected_node_pairs(G, 1000)
-    # count = 0
-    # for node_pair in unique_pairs:
-    #     count = count+1
-    #     nodei = node_pair[0]
-    #     nodej = node_pair[1]
-    #     xSource = Coorx[nodei]
-    #     ySource = Coory[nodei]
-    #     xEnd = Coorx[nodej]
-    #     yEnd = Coory[nodej]
-    #     simu1.append(distR2(xSource, ySource, xEnd, yEnd))
-    #
-    # print(np.mean(simu1))
-    # simu2 = []
-    # for simultime in range(1000):
-    #     node1, node2 = random.sample(range(G.number_of_nodes()), 2)
-    #     nodei = node1
-    #     nodej = node2
-    #     xSource = Coorx[nodei]
-    #     ySource = Coory[nodei]
-    #     xEnd = Coorx[nodej]
-    #     yEnd = Coory[nodej]
-    #     simu2.append(distR2(xSource, ySource, xEnd, yEnd))
-    # print("1:",np.mean(simu1))
-    # print("2:",np.mean(simu2))

@@ -219,30 +219,33 @@ def load_10000nodenetwork_maxminave(ED, beta):
         min_deviation_vec = []
         ran_deviation_vec = []
 
-        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-            Nn=N, EDn=ED, betan=beta)
-        G = loadSRGGandaddnode(N, FileNetworkName)
-        real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-        print("real ED:", real_avg)
+        # foldername = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\1000realization\\"
+        foldername = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\1000000realization\\"
 
-        for ExternalSimutime in range(10):
+        # FileNetworkName = foler_name+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+        #     Nn=N, EDn=ED, betan=beta)
+        # G = loadSRGGandaddnode(N, FileNetworkName)
+        # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+        # print("real ED:", real_avg)
+
+        for ExternalSimutime in range(20):
             try:
-                deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\1000realization\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                deviation_vec_name = foldername+ "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                 ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
                 ave_deviation_vec.extend(ave_deviation_for_a_para_comb_10times)
 
-                max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\1000realization\\max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                max_deviation_name = foldername+"max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                 max_deviation_for_a_para_comb_10times = np.loadtxt(max_deviation_name)
                 max_deviation_vec.extend(max_deviation_for_a_para_comb_10times)
 
-                min_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\1000realization\\min_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                min_deviation_name = foldername+"min_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                 min_deviation_for_a_para_comb_10times = np.loadtxt(min_deviation_name)
                 min_deviation_vec.extend(min_deviation_for_a_para_comb_10times)
 
-                ave_baseline_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\1000realization\\ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                ave_baseline_deviation_name = foldername+"ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                 ave_baseline_deviation_for_a_para_comb_10times = np.loadtxt(ave_baseline_deviation_name)
                 ran_deviation_vec.extend(ave_baseline_deviation_for_a_para_comb_10times)
@@ -350,7 +353,8 @@ def plot_distribution(N, ED, beta):
     data3 = min_deviation_vec
     data4 = ran_deviation_vec
 
-    fig, ax = plt.subplots(figsize=(6, 4.5))
+    # fig, ax = plt.subplots(figsize=(6, 4.5))
+    fig, ax = plt.subplots(figsize=(8, 4.5))
 
     datasets = [data1,data2,data3,data4]
     colors = [[0, 0.4470, 0.7410],
@@ -364,24 +368,24 @@ def plot_distribution(N, ED, beta):
         plt.plot(bin_vec[1:len(bin_vec)], hvalue, color=color, label=label, linewidth=5)
 
 
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
     ax.spines['left'].set_position(('data', 0))
     ax.spines['bottom'].set_position(('data', 0))
     # plt.xscale('log')
-    plt.yscale('log')
+    # plt.yscale('log')
     plt.xlim([0,1])
     # plt.yticks([0,5,10,15,20,25])
     # plt.yticks([0, 10, 20, 30, 40, 50])
 
-    plt.xlabel(r'x',fontsize = 35)
-    plt.ylabel(r'$f_{d(q,\gamma(i,j))}(x)$',fontsize = 35)
+    plt.xlabel(r'x',fontsize = 32)
+    plt.ylabel(r'$f_{d(q,\gamma(i,j))}(x)$',fontsize = 32)
     plt.xticks(fontsize=28)
     plt.yticks(fontsize=28)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    # plt.legend(fontsize=30)
+    plt.legend(fontsize=28,handlelength=1, handletextpad=0.5, frameon=False)
     plt.tick_params(axis='both', which="both",length=6, width=1)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionNodenumber{Nn}ED{EDn}Beta{betan}.pdf".format(Nn = N, EDn = ED, betan=beta)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionN{Nn}ED{EDn}Beta{betan}.pdf".format(Nn = N, EDn = ED, betan=beta)
     plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     # plt.close()
@@ -414,7 +418,7 @@ def plot_distribution_10000node(N, ED, beta):
     data3 = min_deviation_vec
     data4 = ran_deviation_vec
 
-    fig, ax = plt.subplots(figsize=(6, 4.5))
+    fig, ax = plt.subplots(figsize=(8, 4.5))
 
     datasets = [data1,data2,data3,data4]
     colors = [[0, 0.4470, 0.7410],
@@ -427,9 +431,19 @@ def plot_distribution_10000node(N, ED, beta):
         print(bin_vec[1:len(bin_vec)])
         plt.plot(bin_vec[1:len(bin_vec)], hvalue, color=color, label=label, linewidth=5)
 
+    text = r"$N = 10^4$, $\beta = {beta}$, $E[D] = {ED}$".format(beta=beta, ED=ED)
+    ax.text(
+        0.4, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+        text,
+        transform=ax.transAxes,  # 使用轴坐标
+        fontsize=26,  # 字体大小
+        ha='center',  # 水平居中对齐
+        va='bottom'  # 垂直对齐方式
+    )
 
-    ax.spines['right'].set_visible(False)
-    ax.spines['top'].set_visible(False)
+
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
     # ax.spines['left'].set_position(('data', 0))
     # ax.spines['bottom'].set_position(('data', 0))
     # plt.xscale('log')
@@ -438,23 +452,23 @@ def plot_distribution_10000node(N, ED, beta):
     # plt.yticks([0,5,10,15,20,25])
     # plt.yticks([0, 10, 20, 30, 40, 50])
 
-    plt.xlabel(r'x',fontsize = 35)
-    plt.ylabel(r'$f_{d(q,\gamma(i,j))}(x)$',fontsize = 35)
+    plt.xlabel(r'x',fontsize = 32)
+    plt.ylabel(r'$f_{d(q,\gamma(i,j))}(x)$',fontsize = 32)
     plt.xticks(fontsize=28)
     plt.yticks(fontsize=28)
 
-    plt.legend(fontsize=28,loc=(0.5,0.36))
+    plt.legend(fontsize=26, handlelength=1, handletextpad=0.5, frameon=False,loc='right')
     plt.tick_params(axis='both', which="both",length=6, width=1)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionNodenumber{Nn}ED{EDn}Beta{betan}.pdf".format(Nn = N, EDn = ED, betan=beta)
-    plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionN{Nn}ED{EDn}Beta{betan}logy.pdf".format(Nn = N, EDn = ED, betan=beta)
+    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     # plt.close()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
-    # plot_distribution(50)
-    plot_distribution_10000node(10000, 6, 4)
+    # plot_distribution(100,5,4)
+    plot_distribution_10000node(10000, 5.0, 4)
 
 
 
