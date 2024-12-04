@@ -219,7 +219,7 @@ def distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime):
 
 
 
-def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
+def distance_inlargeSRGG(N,ED,beta,rg, ExternalSimutime):
     """
     :param N:
     :param ED:
@@ -238,58 +238,90 @@ def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
         ave_deviation = []
         max_deviation = []
         min_deviation = []
-        ave_baseline_deviation =[]
+        ave_baseline_deviation = []
         length_geodesic = []
-        SPnodenum_vec =[]
+        hopcount_vec = []
+        SPnodenum_vec = []
+        LCC_vec = []
+        second_vec = []
 
         # load a network
-        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-            Nn=N, EDn=ED, betan=beta)
-        G = loadSRGGandaddnode(N, FileNetworkName)
-        # load coordinates with noise
-        Coorx = []
-        Coory = []
+        try:
+            FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                Nn=N, EDn=ED, betan=beta)
+            G = loadSRGGandaddnode(N, FileNetworkName)
+            # load coordinates with noise
+            Coorx = []
+            Coory = []
 
-        FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
-            Nn=N, EDn=ED, betan=beta)
-        with open(FileNetworkCoorName, "r") as file:
-            for line in file:
-                if line.startswith("#"):
-                    continue
-                data = line.strip().split("\t")  # 使用制表符分割
-                Coorx.append(float(data[0]))
-                Coory.append(float(data[1]))
+            FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                Nn=N, EDn=ED, betan=beta)
+            with open(FileNetworkCoorName, "r") as file:
+                for line in file:
+                    if line.startswith("#"):
+                        continue
+                    data = line.strip().split("\t")  # 使用制表符分割
+                    Coorx.append(float(data[0]))
+                    Coory.append(float(data[1]))
+        except:
+            G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+            FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                Nn=N, EDn=ED, betan=beta)
+            nx.write_edgelist(G, FileNetworkName)
+            FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                Nn=N, EDn=ED, betan=beta)
+            with open(FileNetworkCoorName, "w") as file:
+                for data1, data2 in zip(Coorx, Coory):
+                    file.write(f"{data1}\t{data2}\n")
 
 
         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
         print("real ED:", real_avg)
 
-        ave_clu = nx.average_clustering(G)
-        print("clu:", ave_clu)
+        # ave_clu = nx.average_clustering(G)
+        # print("clu:", ave_clu)
 
         components = list(nx.connected_components(G))
         largest_component = max(components, key=len)
         LCC_number = len(largest_component)
         print("LCC", LCC_number)
 
-        # Randomly choose 1000 connectede node pairs
+        # Randomly choose 100 connectede node pairs
         nodepair_num = 1000
         unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
         filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-            Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(filename_selecetednodepair, unique_pairs, fmt="%i")
-        components = []
-        largest_component = []
+
+        connected_components = sorted(nx.connected_components(G), key=len, reverse=True)
+        if len(connected_components) > 1:
+            largest_largest_component = connected_components[0]
+            largest_largest_size = len(largest_largest_component)
+            LCC_vec.append(largest_largest_size)
+            # 获取第二大连通分量的节点集合和大小
+            second_largest_component = connected_components[1]
+            second_largest_size = len(second_largest_component)
+            second_vec.append(second_largest_size)
+        if ExternalSimutime == 0:
+            filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\largenetwork\\max_min_ave_ran_deviation\\"
+            LCCname = filefolder_name + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}.txt".format(
+                Nn=N, EDn=ED, betan=beta)
+            with open(LCCname, "w") as file:
+                file.write("# LCC\tSECLCC\n")  # 使用制表符分隔列
+                # 写入数据
+                for name, age in zip(LCC_vec, second_vec):
+                    file.write(f"{name}\t{age}\n")
 
         for node_pair in unique_pairs:
-            print(node_pair)
+            print("node_pair:", node_pair)
             nodei = node_pair[0]
             nodej = node_pair[1]
             # Find the shortest path nodes
             SPNodelist = all_shortest_path_node(G, nodei, nodej)
+            hopcount_vec.append(nx.shortest_path_length(G, nodei, nodej))
             SPnodenum = len(SPNodelist)
             SPnodenum_vec.append(SPnodenum)
-            if SPnodenum>0:
+            if SPnodenum > 0:
                 xSource = Coorx[nodei]
                 ySource = Coory[nodei]
                 xEnd = Coorx[nodej]
@@ -303,7 +335,7 @@ def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
                     dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
                     deviations_for_a_nodepair.append(dist)
 
-                deviation_vec = deviation_vec+deviations_for_a_nodepair
+                deviation_vec = deviation_vec + deviations_for_a_nodepair
 
                 ave_deviation.append(np.mean(deviations_for_a_nodepair))
                 max_deviation.append(max(deviations_for_a_nodepair))
@@ -311,8 +343,8 @@ def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
 
                 baseline_deviations_for_a_nodepair = []
                 # compute baseline's deviation
-                filtered_numbers = [num for num in range(N) if num not in [nodei,nodej]]
-                base_line_node_index = random.sample(filtered_numbers,SPnodenum)
+                filtered_numbers = [num for num in range(N) if num not in [nodei, nodej]]
+                base_line_node_index = random.sample(filtered_numbers, SPnodenum)
 
                 for SPnode in base_line_node_index:
                     xMed = Coorx[SPnode]
@@ -323,14 +355,14 @@ def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
                 baseline_deviation_vec = baseline_deviation_vec + baseline_deviations_for_a_nodepair
 
         deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\deviation_shortest_path_nodes_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-            Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(deviation_vec_name, deviation_vec)
         baseline_deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\deviation_baseline_nodes_num_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-            Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(baseline_deviation_vec_name, baseline_deviation_vec)
         # For each node pair:
         ave_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-            Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(ave_deviation_name, ave_deviation)
         max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
             Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -339,14 +371,17 @@ def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
             Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(min_deviation_name, min_deviation)
         ave_baseline_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-            Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(ave_baseline_deviation_name, ave_baseline_deviation)
         length_geodesic_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-            Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(length_geodesic_name, length_geodesic)
         SPnodenum_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\SPnodenum_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-            Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
-        np.savetxt(SPnodenum_vec_name, SPnodenum_vec,fmt="%i")
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        np.savetxt(SPnodenum_vec_name, SPnodenum_vec, fmt="%i")
+        hopcount_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        np.savetxt(hopcount_Name, hopcount_vec)
 
 
 def distance_inSRGG(network_size_index, average_degree_index, beta_index, ExternalSimutime):
@@ -354,6 +389,11 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
     kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7, 10, 12]
+
+    Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
+    kvec = list(range(2, 15)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700., 999]
+    betavec = [4]
+
 
     random.seed(ExternalSimutime)
     N = Nvec[network_size_index]
@@ -369,7 +409,7 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
     # for large network, we only generate one network and randomly selected 1,000 node pair.
     # for small network, we generate 100 networks and selected all the node pair in the LCC
     if N>100:
-        distance_inlargeSRGG(N, ED, beta, ExternalSimutime)
+        distance_inlargeSRGG(N, ED, beta, rg, ExternalSimutime)
     else:
         # Random select nodepair_num nodes in the largest connected component
         distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
@@ -538,12 +578,31 @@ def generate_proper_network_withgivendistances(N, input_ED_index,beta_index,Geod
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # generate_r2SRGG()
-
+    """
+    run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
+    step1
+    """
     # network_size_index = 2
     # average_degree_index = 7
     # beta_index = 1
     # external_simu_time = 0
     # distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
+    """
+    run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
+    step1
+    """
+    Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
+    kvec = list(range(2, 15)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700., 999]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    betavec = [4]
+
+    print(len(kvec))
+    for N_index in [6]:
+        for ED_index in range(25):
+            for beta_index in range(1):
+                distance_inSRGG(N_index, ED_index, beta_index, 0)
+
+
 
     # N = 50
     # ED = 9
@@ -728,10 +787,13 @@ if __name__ == '__main__':
     #     for data1, data2 in zip(Coorx, Coory):
     #         file.write(f"{data1}\t{data2}\n")
 
-    rg = RandomGenerator(-12)
-    rseed = random.randint(0, 100)
-    for i in range(rseed):
-        rg.ran1()
-    G, Coorx, Coory = R2SRGG(10000, 10, 4, rg)
-    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    print("real ED:", real_avg)
+    """
+    test a network
+    """
+    # rg = RandomGenerator(-12)
+    # rseed = random.randint(0, 100)
+    # for i in range(rseed):
+    #     rg.ran1()
+    # G, Coorx, Coory = R2SRGG(10000, 10, 4, rg)
+    # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    # print("real ED:", real_avg)
