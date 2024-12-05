@@ -528,7 +528,7 @@ def plot_local_optimum_with_realED2(beta):
     plt.tick_params(axis='both', which="both", length=6, width=1)
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}2.pdf".format(
         betan=beta)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -1957,7 +1957,7 @@ if __name__ == '__main__':
     """
     # STEP 4 plot local optimum: deviation versus expected degree
     """
-    # plot_local_optimum_with_realED2(4)
+    plot_local_optimum_with_realED2(4)
     # plot_local_optimum_with_realED2(8)
 
     # STEP 5
@@ -2033,17 +2033,17 @@ if __name__ == '__main__':
     # analyse_local_optimum_with_diffED_firstpeak()
     # analyse_local_optimum_with_diffED_firstpeak_small_network()
 
-    LCC_vec,LCC_std_vec,second_LCC_vec,second_LCC_std_vec = load_LCC_second_LCC_data(128)
-    input_avg_vec = np.arange(1, 6.1, 0.2)
-    # input_avg_vec = np.arange(1, 6.1, 0.1)
-    # input_avg_vec2 = np.arange(6.2, 10.1, 0.2)
-    # input_avg_vec = list(input_avg_vec) + list(input_avg_vec2)
-
-
-    plt.plot(input_avg_vec,LCC_vec)
-    plt.plot(input_avg_vec, second_LCC_vec)
-    max_index = second_LCC_vec.index(max(second_LCC_vec))
-    # 根据索引找到对应的 x
-    result_x = input_avg_vec[max_index]
-    print(result_x)
-    plt.show()
+    # LCC_vec,LCC_std_vec,second_LCC_vec,second_LCC_std_vec = load_LCC_second_LCC_data(128)
+    # input_avg_vec = np.arange(1, 6.1, 0.2)
+    # # input_avg_vec = np.arange(1, 6.1, 0.1)
+    # # input_avg_vec2 = np.arange(6.2, 10.1, 0.2)
+    # # input_avg_vec = list(input_avg_vec) + list(input_avg_vec2)
+    #
+    #
+    # plt.plot(input_avg_vec,LCC_vec)
+    # plt.plot(input_avg_vec, second_LCC_vec)
+    # max_index = second_LCC_vec.index(max(second_LCC_vec))
+    # # 根据索引找到对应的 x
+    # result_x = input_avg_vec[max_index]
+    # print(result_x)
+    # plt.show()
