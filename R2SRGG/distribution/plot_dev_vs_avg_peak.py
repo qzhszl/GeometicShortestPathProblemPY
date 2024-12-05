@@ -192,10 +192,10 @@ def scattor_peakvs_GLCC():
               [0.4940, 0.1840, 0.5560],
               [0.4660, 0.6740, 0.1880]]
 
-    plt.scatter(peak_avg, SLCC_avg, marker='o', s=60, color=colors[0], label=r"$E[D]$")
+    plt.scatter(peak_avg, SLCC_avg, marker='o', s=150, color=colors[0], label=r"$E[D]$")
     x = np.linspace(3,6,10)
     y = np.linspace(3, 6, 10)
-    plt.plot(x,y,"--",color=colors[1],label=r"$y=x$")
+    plt.plot(x,y,"--",color=colors[1],label=r"$y=x$",linewidth=5)
     # plt.scatter(ave_deviation_vec, spnodenum_vec, marker='o', c=colors[1],markersize=16, label=r"$N=10^2$")
 
     # ax.spines['right'].set_visible(False)
@@ -204,12 +204,12 @@ def scattor_peakvs_GLCC():
     # plt.yticks([0, 0.1, 0.2, 0.3])
 
     # plt.xscale('log')
-    plt.xlabel(r'$E[D]_{dev_{max}}$', fontsize=26)
-    plt.ylabel(r'$E[D]_{SLCC_{max}}$', fontsize=26)
+    plt.xlabel(r'$E[D]_{dev_{max}}$', fontsize=32)
+    plt.ylabel(r'$E[D]_{SLCC_{max}}$', fontsize=32)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     plt.title('N = 10000',fontsize=26)
-    plt.legend(fontsize=20)
+    plt.legend(fontsize=26)
     plt.tick_params(axis='both', which="both", length=6, width=1)
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
     picname = filefolder_name + "scattor_slcc_vs_peak.pdf"

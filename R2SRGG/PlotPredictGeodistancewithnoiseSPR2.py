@@ -274,9 +274,9 @@ if __name__ == '__main__':
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex,legendpara=0)
     #
     #
-    for Edindex in [0]:
-        for betaindex in [2]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=1)
+    # for Edindex in [0]:
+    #     for betaindex in [2]:
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=1)
 
 
     # # STEP 3 plot the recall
@@ -288,6 +288,20 @@ if __name__ == '__main__':
     #     for betaindex in [1]:
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
 
+    x = [1, 2, 3, 4]
+    y1 = [1, 4, 9, 16]
+    y2 = [1, 3, 6, 10]
 
+    colorvec = ["#D08082","#C89FBF","#62ABC7","#7A7DB1",'#6FB494']
+    colorvec2 = ['#9FA9C9','#D36A6A']
 
+    # 使用Hex颜色代码
+    for i in range(10):
+    plt.plot(x, y1, color="#D08082", label="Line 1")  # 橙色
+    plt.plot(x, y2, color="#C89FBF", label="Line 2")  # 绿色
+
+    # 添加标题和图例
+    plt.title("Hex Color Example")
+    plt.legend()
+    plt.show()
 

@@ -303,7 +303,7 @@ def distance_inlargeSRGG(N,ED,beta,rg, ExternalSimutime):
             second_largest_size = len(second_largest_component)
             second_vec.append(second_largest_size)
         if ExternalSimutime == 0:
-            filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\largenetwork\\max_min_ave_ran_deviation\\"
+            filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\"
             LCCname = filefolder_name + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}.txt".format(
                 Nn=N, EDn=ED, betan=beta)
             with open(LCCname, "w") as file:
@@ -313,7 +313,7 @@ def distance_inlargeSRGG(N,ED,beta,rg, ExternalSimutime):
                     file.write(f"{name}\t{age}\n")
 
         for node_pair in unique_pairs:
-            print("node_pair:", node_pair)
+            # print("node_pair:", node_pair)
             nodei = node_pair[0]
             nodej = node_pair[1]
             # Find the shortest path nodes
@@ -391,7 +391,7 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
     betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7, 10, 12]
 
     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    kvec = list(range(2, 15)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700., 999]
+    kvec = list(range(2, 15)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999]
     betavec = [4]
 
 
@@ -591,6 +591,11 @@ if __name__ == '__main__':
     run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
     step1
     """
+    kvec = np.arange(2.2, 7.1, 0.2)
+    kvec = [round(a, 1) for a in kvec]
+    print(kvec.index(5.0))
+
+
     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     kvec = list(range(2, 15)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700., 999]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]

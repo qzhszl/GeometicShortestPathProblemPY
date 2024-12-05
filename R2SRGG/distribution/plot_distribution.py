@@ -448,7 +448,12 @@ def plot_distribution_10000node(N, ED, beta):
     # ax.spines['bottom'].set_position(('data', 0))
     # plt.xscale('log')
     plt.yscale('log')
-    plt.xlim([0,1])
+
+    plt.xlim([0,1.4])
+
+    ymin = 0.001  # 设置最低点
+    current_ylim = ax.get_ylim()  # 获取当前的 y 轴范围
+    ax.set_ylim(ymin, current_ylim[1])  # 保持最大值不变
     # plt.yticks([0,5,10,15,20,25])
     # plt.yticks([0, 10, 20, 30, 40, 50])
 

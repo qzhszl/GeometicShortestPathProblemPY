@@ -112,7 +112,7 @@ def all_shortest_path_node(G, nodei, nodej):
         if count > 10000000:
             PNodeList = find_sp_node2(G, nodei, nodej)
             break
-    print("count",count)
+    # print("count",count)
     PNodeList.discard(nodei)
     PNodeList.discard(nodej)
     PNodeList = list(PNodeList)
