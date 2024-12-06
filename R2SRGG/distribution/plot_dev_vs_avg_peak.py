@@ -14,7 +14,7 @@ from R2SRGG.R2SRGG import loadSRGGandaddnode
 
 def load_10000nodenetwork_results_peak(beta):
     # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    kvec = np.arange(2, 6.1, 0.2)
+    kvec = np.arange(2, 7.1, 0.2)
     kvec = [round(a, 1) for a in kvec]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
@@ -64,7 +64,7 @@ def plot_dev_vs_avg_peak(beta):
     ave_deviation_dict = {}
     std_deviation_dict = {}
 
-    kvec = np.arange(2, 6.1, 0.2)
+    kvec = np.arange(2, 7.1, 0.2)
     kvec = [round(a, 1) for a in kvec]
 
     betavec = [beta]
@@ -132,7 +132,7 @@ def load_LCC_second_LCC_data(beta):
     :param beta:
     :return:
     """
-    kvec = np.arange(2, 6.1, 0.2)
+    kvec = np.arange(2, 7.1, 0.2)
     input_avg_vec = [round(a, 1) for a in kvec]
     N = 10000
     filefolder_name_lcc = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
@@ -169,7 +169,7 @@ def load_LCC_second_LCC_data(beta):
 
 def find_giant_component(beta):
     LCC_vec, second_LCC_vec = load_LCC_second_LCC_data(beta)
-    kvec = np.arange(2, 6.1, 0.2)
+    kvec = np.arange(2, 7.1, 0.2)
     input_avg_vec = [round(a, 1) for a in kvec]
     # print(len(input_avg_vec))
     # print(second_LCC_vec)
@@ -183,8 +183,8 @@ def find_giant_component(beta):
 
 
 def scattor_peakvs_GLCC():
-    peak_avg = [4,3.4,5.0,5.0,5.8,5.4,6]
-    SLCC_avg = [3.2,3.2,5.0,4.8,6,5.6,6]
+    peak_avg = [4,3.4,5.0,5.0,5.8,5.4,6,6.4]
+    SLCC_avg = [3.2,3.2,5.0,4.8,6,5.6,6,6.0]
     fig, ax = plt.subplots(figsize=(9, 6))
 
     colors = [[0, 0.4470, 0.7410],
@@ -221,10 +221,10 @@ def scattor_peakvs_GLCC():
 
 if __name__ == '__main__':
     # load_10000nodenetwork_results_peak(64)
-    betavec = [4]
+    betavec = [128]
     for beta in betavec:
-        # load_10000nodenetwork_results_peak(beta)
+        load_10000nodenetwork_results_peak(beta)
         plot_dev_vs_avg_peak(beta)
-    # find_giant_component(4)
+    find_giant_component(128)
     # scattor_peakvs_GLCC()
 

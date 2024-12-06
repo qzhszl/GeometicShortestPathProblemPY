@@ -391,7 +391,7 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
     betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7, 10, 12]
 
     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    kvec = list(range(2, 15)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999]
+    kvec = [2, 3, 3.5] + list(range(4, 16)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999]
     betavec = [4]
 
 
@@ -603,7 +603,7 @@ if __name__ == '__main__':
 
     print(len(kvec))
     for N_index in [6]:
-        for ED_index in range(25):
+        for ED_index in [2]:
             for beta_index in range(1):
                 distance_inSRGG(N_index, ED_index, beta_index, 0)
 
