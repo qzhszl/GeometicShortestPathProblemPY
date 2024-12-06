@@ -451,7 +451,7 @@ def plot_distribution_10000node(N, ED, beta):
 
     plt.xlim([0,1.4])
 
-    ymin = 0.001  # 设置最低点
+    ymin = 0.0001  # 设置最低点
     current_ylim = ax.get_ylim()  # 获取当前的 y 轴范围
     ax.set_ylim(ymin, current_ylim[1])  # 保持最大值不变
     # plt.yticks([0,5,10,15,20,25])
@@ -465,7 +465,7 @@ def plot_distribution_10000node(N, ED, beta):
     plt.legend(fontsize=26, handlelength=1, handletextpad=0.5, frameon=False,loc='right')
     plt.tick_params(axis='both', which="both",length=6, width=1)
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionN{Nn}ED{EDn}Beta{betan}logy.pdf".format(Nn = N, EDn = ED, betan=beta)
-    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     # plt.close()
 

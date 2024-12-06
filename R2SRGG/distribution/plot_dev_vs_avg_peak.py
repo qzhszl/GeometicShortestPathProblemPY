@@ -100,6 +100,7 @@ def plot_dev_vs_avg_peak(beta):
         y = ave_deviation_dict[count]
         print(y)
         error = std_deviation_dict[count]
+        print(error)
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
                      markersize=16, label=legend[count], color=colors[count])
         y = list(y)
@@ -220,10 +221,10 @@ def scattor_peakvs_GLCC():
 
 if __name__ == '__main__':
     # load_10000nodenetwork_results_peak(64)
-    # betavec = [128]
-    # for beta in betavec:
-    #     load_10000nodenetwork_results_peak(beta)
-    #     plot_dev_vs_avg_peak(beta)
-    # find_giant_component(128)
-    scattor_peakvs_GLCC()
+    betavec = [4]
+    for beta in betavec:
+        # load_10000nodenetwork_results_peak(beta)
+        plot_dev_vs_avg_peak(beta)
+    # find_giant_component(4)
+    # scattor_peakvs_GLCC()
 

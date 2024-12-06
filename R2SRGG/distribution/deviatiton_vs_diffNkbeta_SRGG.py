@@ -287,7 +287,7 @@ def distance_inlargeSRGG(N,ED,beta,rg, ExternalSimutime):
         print("LCC", LCC_number)
 
         # Randomly choose 100 connectede node pairs
-        nodepair_num = 1000
+        nodepair_num = 10000
         unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
         filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -597,7 +597,7 @@ if __name__ == '__main__':
 
 
     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    kvec = list(range(2, 15)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700., 999]
+    kvec = [2, 3, 3.5] + list(range(4, 16)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     betavec = [4]
 

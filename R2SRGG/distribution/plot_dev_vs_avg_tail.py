@@ -98,6 +98,7 @@ def plot_dev_vs_avg_tail(beta):
         y = ave_deviation_dict[count]
         print(y)
         error = std_deviation_dict[count]
+        print(error)
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
                      markersize=16, label=legend[count], color=colors[count])
         params, covariance = curve_fit(power_law, x[8:15], y[8:15])
@@ -123,7 +124,7 @@ def plot_dev_vs_avg_tail(beta):
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
     picname = filefolder_name+"tailLocalOptimum_dev_vs_avg_beta{beta}.pdf".format(beta=beta)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -339,14 +340,14 @@ if __name__ == '__main__':
     # for beta in [4]:
     #     for Geodistance_index in [2]:
     #         load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
-    plot_dev_vs_avg_tail_fixnode(4,2)
+    # plot_dev_vs_avg_tail_fixnode(4,2)
 
     """
     # FUNCTION 2 FOR all node pair
     """
     # for beta in [4]:
     #     load_10000nodenetwork_results_tail(beta)
-    # plot_dev_vs_avg_tail(4)
+    plot_dev_vs_avg_tail(4)
 
     """
     # FUNCTION 3 FOR link geometric distance
