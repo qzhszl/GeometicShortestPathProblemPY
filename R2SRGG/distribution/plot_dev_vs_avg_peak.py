@@ -192,24 +192,33 @@ def scattor_peakvs_GLCC():
               [0.9290, 0.6940, 0.1250],
               [0.4940, 0.1840, 0.5560],
               [0.4660, 0.6740, 0.1880]]
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
 
-    plt.scatter(peak_avg, SLCC_avg, marker='o', s=150, color=colors[0], label=r"$E[D]$")
+    plt.scatter(peak_avg, SLCC_avg, marker='o', s=150, color=colors[3], label=r"$E[D]$")
     x = np.linspace(3,6,10)
     y = np.linspace(3, 6, 10)
-    plt.plot(x,y,"--",color=colors[1],label=r"$y=x$",linewidth=5)
+    plt.plot(x,y,"--",color=colors[0],label=r"$y=x$",linewidth=5)
     # plt.scatter(ave_deviation_vec, spnodenum_vec, marker='o', c=colors[1],markersize=16, label=r"$N=10^2$")
 
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
     # plt.ylim(0, 0.30)
     # plt.yticks([0, 0.1, 0.2, 0.3])
+    text = r"$N = 10^4$"
+    ax.text(
+        0.5, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+        text,
+        transform=ax.transAxes,  # 使用轴坐标
+        fontsize=26,  # 字体大小
+        ha='center',  # 水平居中对齐
+        va='bottom'  # 垂直对齐方式
+    )
 
     # plt.xscale('log')
     plt.xlabel(r'$E[D]_{dev_{max}}$', fontsize=32)
     plt.ylabel(r'$E[D]_{SLCC_{max}}$', fontsize=32)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
-    plt.title('N = 10000',fontsize=26)
     plt.legend(fontsize=26)
     plt.tick_params(axis='both', which="both", length=6, width=1)
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
@@ -221,10 +230,10 @@ def scattor_peakvs_GLCC():
 
 if __name__ == '__main__':
     # load_10000nodenetwork_results_peak(64)
-    betavec = [128]
-    for beta in betavec:
-        load_10000nodenetwork_results_peak(beta)
-        plot_dev_vs_avg_peak(beta)
-    find_giant_component(128)
-    # scattor_peakvs_GLCC()
+    # betavec = [128]
+    # for beta in betavec:
+    #     load_10000nodenetwork_results_peak(beta)
+    #     plot_dev_vs_avg_peak(beta)
+    # find_giant_component(128)
+    scattor_peakvs_GLCC()
 
