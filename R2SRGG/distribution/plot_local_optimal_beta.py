@@ -366,7 +366,7 @@ def plot_local_optimum_with_beta(ED):
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 7, 8, 10, 12, 16, 32, 64, 128]
     betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
-    Nvec = [10,100,1000,10000]
+    Nvec = [10, 100, 1000, 10000]
     clustering_coefficient_dict = {}
     ave_deviation_dict = {}
     std_deviation_dict = {}
@@ -403,11 +403,13 @@ def plot_local_optimum_with_beta(ED):
                 std_deviation_dict[N] = std_deviation_vec
 
     fig, ax = plt.subplots(figsize=(9, 6))
-    colors = [[0, 0.4470, 0.7410],
-              [0.8500, 0.3250, 0.0980],
-              [0.9290, 0.6940, 0.1250],
-              [0.4940, 0.1840, 0.5560],
-              [0.4660, 0.6740, 0.1880]]
+    # colors = [[0, 0.4470, 0.7410],
+    #           [0.8500, 0.3250, 0.0980],
+    #           [0.9290, 0.6940, 0.1250],
+    #           [0.4940, 0.1840, 0.5560],
+    #           [0.4660, 0.6740, 0.1880]]
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    lengend = [r"$N=10$", r"$N=10^2$", r"$N=10^3$", r"$N=10^4$"]
 
     for N_index in range(len(Nvec)):
         N = Nvec[N_index]
@@ -415,9 +417,9 @@ def plot_local_optimum_with_beta(ED):
         error = std_deviation_dict[N]
         if N < ED:
             plt.errorbar([], y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
-                         label=f'N={N}', markersize=16, color=colors[N_index])
+                         label=lengend[N_index], markersize=16, color=colors[N_index])
         else:
-            plt.errorbar(betavec, y, yerr=error, linestyle="--", linewidth=3, elinewidth= 1, capsize=5,marker='o',label=f'N={N}',markersize=16,color=colors[N_index])
+            plt.errorbar(betavec, y, yerr=error, linestyle="--", linewidth=3, elinewidth= 1, capsize=5,marker='o',label=lengend[N_index],markersize=16,color=colors[N_index])
 
         # # 找到峰值后最低点的坐标
         # peak_index = np.argmax(y[0:10])
@@ -432,17 +434,17 @@ def plot_local_optimum_with_beta(ED):
     # plt.xscale('log')
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
-    plt.xlabel(r'$\beta$', fontsize=26)
+    plt.xlabel(r'Temperature parameter $\beta$', fontsize=26)
     plt.ylabel('Average Deviation', fontsize=26)
     plt.xscale('log')
     # plt.yscale('log')
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
-    plt.legend(fontsize=20, loc=(0.65, 0.58))
+    plt.legend(fontsize=26, loc=(0.6, 0.5))
     plt.tick_params(axis='both', which="both", length=6, width=1)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DeviationVsbeta{EDn}logy.pdf".format(
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DeviationVsbetaED{EDn}logy.pdf".format(
         EDn=ED)
-    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
     plt.show()
 
@@ -661,15 +663,19 @@ if __name__ == '__main__':
     #     G = loadSRGGandaddnode(N, FileNetworkName)
     #     clustering_coefficient = nx.average_clustering(G)
     #     print(clustering_coefficient)
-
+    """
+    Plot deviation versus different beta
+    """
     # first time plot deviation with different beta
     # load_10000nodenetwork_results_beta(20)
     # plot_local_optimum_with_beta(20)
 
     # second time plot deviation with different beta
-    # plot_local_optimum_with_beta(20)
+    plot_local_optimum_with_beta(20)
 
-    # plot deviation with clustering coefficient
-    plot_local_optimum_with_cc(20)
+    """
+    plot deviation with clustering coefficient
+    """
+    # plot_local_optimum_with_cc(20)
 
 
