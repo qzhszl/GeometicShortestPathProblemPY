@@ -392,7 +392,8 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
 
     Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     kvec = [2, 3, 3.5] + list(range(4, 16)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999]
-    betavec = [4]
+    betavec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
+
 
 
     random.seed(ExternalSimutime)
@@ -591,20 +592,23 @@ if __name__ == '__main__':
     run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
     step1
     """
-    kvec = np.arange(2.2, 7.1, 0.2)
-    kvec = [round(a, 1) for a in kvec]
-    print(kvec.index(5.0))
+    # kvec = np.arange(2.2, 7.1, 0.2)
+    # kvec = [round(a, 1) for a in kvec]
+    # print(kvec.index(5.0))
+    #
+    #
+    # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
+    # kvec = [2, 3, 3.5] + list(range(4, 16)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999]
+    # # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    # betavec = [4]
 
-
-    Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     kvec = [2, 3, 3.5] + list(range(4, 16)) + [20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999]
-    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
-    betavec = [4]
-
-    print(len(kvec))
-    for N_index in [6]:
-        for ED_index in [2]:
-            for beta_index in range(1):
+    betavec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
+    print(kvec.index(20))
+    print(len(betavec))
+    for N_index in [0,3]:
+        for ED_index in [4,9,15]:
+            for beta_index in range(15):
                 distance_inSRGG(N_index, ED_index, beta_index, 0)
 
 

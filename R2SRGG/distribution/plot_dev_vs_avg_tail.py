@@ -82,7 +82,7 @@ def plot_dev_vs_avg_tail(beta):
         count = count + 1
 
     # legend = [r"$\beta=2.2$", r"$\beta=2^2$", r"$\beta=2^3$", r"$\beta=2^4$", r"$\beta=2^5$", r"$\beta=2^7$"]
-    legend = [r"$\beta=2^2$"]
+    legend = [r"average devation of shortest path"]
     fig, ax = plt.subplots(figsize=(12, 8))
 
     colors = [[0, 0.4470, 0.7410],
@@ -91,7 +91,7 @@ def plot_dev_vs_avg_tail(beta):
               [0.4940, 0.1840, 0.5560],
               [0.4660, 0.6740, 0.1880],
               [0.3010, 0.7450, 0.9330]]
-
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     for count in range(len(betavec)):
         beta = betavec[count]
         x = kvec
@@ -100,26 +100,61 @@ def plot_dev_vs_avg_tail(beta):
         error = std_deviation_dict[count]
         print(error)
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
-                     markersize=16, label=legend[count], color=colors[count])
+                     markersize=16, label=legend[count], color=colors[3])
         params, covariance = curve_fit(power_law, x[8:15], y[8:15])
         # 获取拟合的参数
         a_fit, k_fit = params
-        print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-        plt.plot(x[8:15], power_law(x[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
-                 color='red')
+        # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        # plt.plot(x[8:15], power_law(x[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+        #          color=colors[0])
+
+        # curve fit no shelter
+        x_curve = x[8:15]
+        a_fit = 0.01
+        params = a_fit,k_fit
+        y_curve = power_law(x[8:15], *params)
+        plt.plot(x_curve, y_curve, linewidth=5,
+                 label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+                 color=colors[0])
+
         # params, covariance = curve_fit(power_law, x[10:13], y[10:13])
         # a_fit, k_fit = params
         # plt.plot(x[10:13], power_law(x[10:13], *params), linewidth=5,
         #          label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
         #          color='green')
 
+    analyticy01 = [0.0408034319117630, 0.0494268009073655,
+                   0.0601867525680230, 0.0710647201399454, 0.0826468337716141, 0.0951878331783714, 0.110052892139220,
+                   0.129841960064955, 0.155820990403079, 0.184934349828600, 0.211071618297930, 0.229651984548116,
+                   0.240562299611654, 0.246042131559725, 0.248443310742824]
+    kvecanalyticy01 = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+
+    plt.plot(kvecanalyticy01, analyticy01,linestyle="--",marker='v',markersize=16, linewidth=5, label=f'analytic results from common neighbour model',
+             color=colors[4])
+    params, covariance = curve_fit(power_law, kvecanalyticy01[4:11], analyticy01[4:11])
+    # 获取拟合的参数
+    a_fit, k_fit = params
+    print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+    # plt.plot(kvecanalyticy01[4:11], power_law(kvecanalyticy01[4:11], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+    #          color=colors[1])
+
+    text = r"$N = 10^4,\beta = 4$"
+    ax.text(
+        0.2, 0.88,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+        text,
+        transform=ax.transAxes,  # 使用轴坐标
+        fontsize=26,  # 字体大小
+        ha='center',  # 水平居中对齐
+        va='bottom'  # 垂直对齐方式
+    )
+
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('E[D]', fontsize=26)
-    plt.ylabel('Average deviation of shortest path', fontsize=26)
+    plt.ylabel('Deviation', fontsize=26)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
-    plt.title('1000 simulations, N=10000',fontsize=26)
+    # plt.title('1000 simulations, N=10000',fontsize=26)
     plt.legend(fontsize=20, loc="lower right")
     plt.tick_params(axis='both', which="both", length=6, width=1)
 

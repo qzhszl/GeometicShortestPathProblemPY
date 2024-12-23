@@ -16,6 +16,7 @@ def load_small_network_results_beta(N, ED):
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 10, 12, 16, 32, 64, 128]
     betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
+    betavec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
     exemptionlist =[]
     ave_deviation_vec = []
     std_deviation_vec =[]
@@ -43,6 +44,7 @@ def load_large_network_results_beta(N, ED):
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6,8, 10, 12,16,32,64,128]
     betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
+    betavec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
     exemptionlist =[]
     ave_deviation_vec = []
     clustering_coefficient_vec =[]
@@ -81,6 +83,7 @@ def load_10000nodenetwork_results_beta(ED):
     betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
     # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 10, 12, 16, 32, 64, 128]
     # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
+    betavec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
     N=10000
     exemptionlist =[]
 
@@ -89,30 +92,32 @@ def load_10000nodenetwork_results_beta(ED):
     clustering_coefficient_vec =[]
     for beta in betavec:
         ave_deviation_for_a_para_comb=[]
-        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-            Nn=N, EDn=ED, betan=beta)
-        G = loadSRGGandaddnode(N, FileNetworkName)
-        clustering_coefficient = nx.average_clustering(G)
-        # print("real ED:", real_avg)
-        clustering_coefficient_vec.append(clustering_coefficient)
+        # original path D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\
+        # FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+        #     Nn=N, EDn=ED, betan=beta)
+        # G = loadSRGGandaddnode(N, FileNetworkName)
+        # clustering_coefficient = nx.average_clustering(G)
+        # # print("real ED:", real_avg)
+        # clustering_coefficient_vec.append(clustering_coefficient)
 
-        for ExternalSimutime in range(10):
+        for ExternalSimutime in range(20):
             try:
-                deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                 ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
                 ave_deviation_for_a_para_comb.extend(ave_deviation_for_a_para_comb_10times)
             except FileNotFoundError:
                 exemptionlist.append((N, ED, beta, ExternalSimutime))
-                print(exemptionlist)
+
         ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
         std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
-    clustering_coefficient_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\clustering_coefficient_ED{EDn}.txt".format(EDn=ED)
+    clustering_coefficient_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\clustering_coefficient_ED{EDn}.txt".format(EDn=ED)
     np.savetxt(clustering_coefficient_Name, clustering_coefficient_vec)
-    ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\ave_deviation_ED{EDn}.txt".format(EDn=ED)
+    ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\ave_deviation_ED{EDn}.txt".format(EDn=ED)
     np.savetxt(ave_deviation_Name, ave_deviation_vec)
-    std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\std_deviation_ED{EDn}.txt".format(EDn=ED)
+    std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\std_deviation_ED{EDn}.txt".format(EDn=ED)
     np.savetxt(std_deviation_Name, std_deviation_vec)
+    print(exemptionlist)
     return clustering_coefficient_vec, ave_deviation_vec,std_deviation_vec
 
 
@@ -366,11 +371,17 @@ def plot_local_optimum_with_beta(ED):
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 7, 8, 10, 12, 16, 32, 64, 128]
     betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
+    betavec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
+    print(len(betavec))
+
     Nvec = [10, 100, 1000, 10000]
     clustering_coefficient_dict = {}
     ave_deviation_dict = {}
     std_deviation_dict = {}
 
+    # original file path
+    # clustering_coefficient_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\clustering_coefficient_ED{EDn}.txt".format(
+    #     EDn=ED)
     for N in Nvec:
         if N < 200:
             for ED in [ED]:
@@ -386,13 +397,14 @@ def plot_local_optimum_with_beta(ED):
                 std_deviation_dict[N] = std_deviation_vec
         else:
             for ED in [ED]:
-                clustering_coefficient_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\clustering_coefficient_ED{EDn}.txt".format(
+
+                clustering_coefficient_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\clustering_coefficient_ED{EDn}.txt".format(
                     EDn=ED)
 
-                ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\ave_deviation_ED{EDn}.txt".format(
+                ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\ave_deviation_ED{EDn}.txt".format(
                     EDn=ED)
 
-                std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\10000node\\std_deviation_ED{EDn}.txt".format(
+                std_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\std_deviation_ED{EDn}.txt".format(
                     EDn=ED)
                 clustering_coefficient_vec = np.loadtxt(clustering_coefficient_Name)
                 ave_deviation_vec= np.loadtxt(ave_deviation_Name)
@@ -411,11 +423,12 @@ def plot_local_optimum_with_beta(ED):
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     lengend = [r"$N=10$", r"$N=10^2$", r"$N=10^3$", r"$N=10^4$"]
 
-    for N_index in range(len(Nvec)):
+    for N_index in range(4):
         N = Nvec[N_index]
         y = ave_deviation_dict[N]
+        print(len(y))
         error = std_deviation_dict[N]
-        if N < ED:
+        if N <= ED:
             plt.errorbar([], y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
                          label=lengend[N_index], markersize=16, color=colors[N_index])
         else:
@@ -442,7 +455,7 @@ def plot_local_optimum_with_beta(ED):
     plt.yticks(fontsize=26)
     plt.legend(fontsize=26, loc=(0.6, 0.5))
     plt.tick_params(axis='both', which="both", length=6, width=1)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DeviationVsbetaED{EDn}logy.pdf".format(
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsbetaED{EDn}logy2.pdf".format(
         EDn=ED)
     plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
@@ -667,11 +680,11 @@ if __name__ == '__main__':
     Plot deviation versus different beta
     """
     # first time plot deviation with different beta
-    # load_10000nodenetwork_results_beta(20)
-    # plot_local_optimum_with_beta(20)
+    # load_10000nodenetwork_results_beta(10)
+    # plot_local_optimum_with_beta(5)
 
     # second time plot deviation with different beta
-    plot_local_optimum_with_beta(20)
+    plot_local_optimum_with_beta(10)
 
     """
     plot deviation with clustering coefficient

@@ -32,7 +32,7 @@ import shutil
 
 from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
-from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs
+from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs, hopcount_node
 
 
 def generate_r2SRGG():
@@ -225,7 +225,7 @@ def distance_inlargeSRGG(N,ED,beta,ExternalSimutime):
             for line in file:
                 if line.startswith("#"):
                     continue
-                data = line.strip().split("\t")  # 使用制表符分割
+                data = line.strip().split("\t")  # ???????
                 Coorx.append(float(data[0]))
                 Coory.append(float(data[1]))
 
@@ -339,12 +339,14 @@ def distance_inlargeSRGG_clu(N,ED,beta,rg,ExternalSimutime):
         ave_baseline_deviation =[]
         length_geodesic = []
         hopcount_vec = []
+        max_dev_node_hopcount = []
+        corresponding_sp_max_dev_node_hopcount = []
         SPnodenum_vec =[]
         LCC_vec =[]
         second_vec = []
 
         source_folder = "/home/zqiu1/GSPP_SRGG_Dev/NetworkSRGG/"
-        # 目标文件夹
+        # ?????
         destination_folder = "/work/zqiu1/"
         network_template = "network_N{Nn}ED{EDn}Beta{betan}.txt"
         networkcoordinate_template  = "network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt"
@@ -364,7 +366,7 @@ def distance_inlargeSRGG_clu(N,ED,beta,rg,ExternalSimutime):
                 for line in file:
                     if line.startswith("#"):
                         continue
-                    data = line.strip().split("\t")  # 使用制表符分割
+                    data = line.strip().split("\t")
                     Coorx.append(float(data[0]))
                     Coory.append(float(data[1]))
         except ValueError:
@@ -404,7 +406,7 @@ def distance_inlargeSRGG_clu(N,ED,beta,rg,ExternalSimutime):
             largest_largest_component = connected_components[0]
             largest_largest_size = len(largest_largest_component)
             LCC_vec.append(largest_largest_size)
-            # 获取第二大连通分量的节点集合和大小
+            # ?????????????????
             second_largest_component = connected_components[1]
             second_largest_size = len(second_largest_component)
             second_vec.append(second_largest_size)
@@ -413,8 +415,8 @@ def distance_inlargeSRGG_clu(N,ED,beta,rg,ExternalSimutime):
             LCCname = filefolder_name + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}.txt".format(
                 Nn=N, EDn=ED, betan=beta)
             with open(LCCname, "w") as file:
-                file.write("# LCC\tSECLCC\n")  # 使用制表符分隔列
-                # 写入数据
+                file.write("# LCC\tSECLCC\n")  # ????????
+                # ????
                 for name, age in zip(LCC_vec, second_vec):
                     file.write(f"{name}\t{age}\n")
 
@@ -446,6 +448,13 @@ def distance_inlargeSRGG_clu(N,ED,beta,rg,ExternalSimutime):
                 ave_deviation.append(np.mean(deviations_for_a_nodepair))
                 max_deviation.append(max(deviations_for_a_nodepair))
                 min_deviation.append(min(deviations_for_a_nodepair))
+
+                max_value = max(deviations_for_a_nodepair)
+                max_index = deviations_for_a_nodepair.index(max_value)
+                maxhop_node_index = SPNodelist[max_index]
+                max_dev_node_hopcount.append(hopcount_node(G, nodei, nodej, maxhop_node_index))
+                corresponding_sp_max_dev_node_hopcount.append(nx.shortest_path_length(G, nodei, nodej))
+
 
                 baseline_deviations_for_a_nodepair = []
                 # compute baseline's deviation
@@ -489,6 +498,13 @@ def distance_inlargeSRGG_clu(N,ED,beta,rg,ExternalSimutime):
                     Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
         np.savetxt(hopcount_Name, hopcount_vec)
 
+        max_dev_node_hopcount_name = "/work/zqiu1/max_dev_node_hopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        np.savetxt(max_dev_node_hopcount_name, max_dev_node_hopcount, fmt="%i")
+        max_dev_node_hopcount_name2 = "/work/zqiu1/sphopcountmax_dev_node_hopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        np.savetxt(max_dev_node_hopcount_name2, corresponding_sp_max_dev_node_hopcount, fmt="%i")
+
 def distance_inlargeSRGG_clu_cc(N, ED, beta, cc, ExternalSimutime):
     """
     :param N:
@@ -525,7 +541,7 @@ def distance_inlargeSRGG_clu_cc(N, ED, beta, cc, ExternalSimutime):
             for line in file:
                 if line.startswith("#"):
                     continue
-                data = line.strip().split("\t")  # 使用制表符分割
+                data = line.strip().split("\t")  # ???????
                 Coorx.append(float(data[0]))
                 Coory.append(float(data[1]))
 
@@ -658,10 +674,12 @@ def distance_inSRGG_clu(network_size_index, average_degree_index, beta_index, Ex
     kvec = [round(a, 1) for a in kvec]
     kvec2 = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
     kvec = kvec + kvec2
+    kvec = [5,10,20]
 
     # kvec = [5,20]
-    betavec = [2.2, 4, 8, 16, 32, 64, 128]
-    # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
+    # betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    betavec = [2.3, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
+    betavec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
 
     random.seed(ExternalSimutime)
     N = Nvec[network_size_index]
@@ -762,9 +780,4 @@ if __name__ == '__main__':
     beta_index = sys.argv[2]
     ExternalSimutime = sys.argv[3]
     distance_inSRGG_clu(7, int(ED), int(beta_index), int(ExternalSimutime))
-
-
-
-
-
 

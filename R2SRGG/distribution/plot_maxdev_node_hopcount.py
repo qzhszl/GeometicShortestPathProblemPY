@@ -9,14 +9,29 @@ import matplotlib.pyplot as plt
 import networkx as nx
 
 def plot_maxdev_node_hocount(N, ED, beta):
-    ExternalSimutime = 0
-    SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\SPhopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-    SP_hopcount  = np.loadtxt(SPhopcount_name,dtype=int)
+    SP_hopcount = []
+    max_dev_node_hopcount = []
 
-    max_dev_node_hopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\max_dev_node_hopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-    max_dev_node_hopcount = np.loadtxt(max_dev_node_hopcount_name,dtype=int)
+    # # small network only have 0
+    # ExternalSimutime = 0
+    # SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\SPhopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+    #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    # SP_hopcount = np.loadtxt(SPhopcount_name, dtype=int)
+    # max_dev_node_hopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\max_dev_node_hopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+    #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    # max_dev_node_hopcount = np.loadtxt(max_dev_node_hopcount_name, dtype=int)
+
+    for ExternalSimutime in range(20):
+        # small network only have 0
+        SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\sphopcountmax_dev_node_hopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        SP_hopcount_foronesimu = np.loadtxt(SPhopcount_name,dtype=int)
+        SP_hopcount.extend(SP_hopcount_foronesimu)
+
+        max_dev_node_hopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\max_dev_node_hopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+        max_dev_node_hopcount_forone = np.loadtxt(max_dev_node_hopcount_name,dtype=int)
+        max_dev_node_hopcount.extend(max_dev_node_hopcount_forone)
 
     data_dic = {}
     for hp_index in range(len(SP_hopcount)):
@@ -40,7 +55,7 @@ def plot_maxdev_node_hocount(N, ED, beta):
         plt.ylabel(r'$f_{h(q_{max})}(x)$', fontsize=35)
         plt.xticks(fontsize=28)
         plt.yticks(fontsize=28)
-        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.pdf".format(
+        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.pdf".format(
             Nn=N, EDn=ED, betan=beta,key = key)
         # plt.show()
         plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
@@ -50,4 +65,4 @@ def plot_maxdev_node_hocount(N, ED, beta):
 
 if __name__ == '__main__':
     # plot_distribution(50)
-    plot_maxdev_node_hocount(100, 5, 3)
+    plot_maxdev_node_hocount(10000, 5, 4)

@@ -180,6 +180,8 @@ def plot_common_neighbour_deviation_vs_inputED_with_specific_beta(beta):
                     0.125593997720973, 0.156194169972083, 0.187466684013283, 0.214128786563206, 0.232390711757237,
                     0.242395489917114, 0.246972194614430, 0.248840614187891]}
 
+
+
     count = 0
     for beta in [beta]:
         ave_deviation_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\neighbour_distance\\commonneighbourmodel\\ave_deviation_beta{beta}.txt".format(
@@ -607,11 +609,12 @@ if __name__ == '__main__':
     # plot_common_neighbour_deviation_vs_inputED_with_beta()
 
     # load_10000nodenetwork_results_perpendicular(4)
-    # plot_common_neighbour_deviation_vs_inputED_with_specific_beta(4)
+    plot_common_neighbour_deviation_vs_inputED_with_specific_beta(4)
 
 
     # load_10000nodenetwork_results_perpendicular_withED(10)
-    plot_common_neighbour_deviation_vs_beta_with_ED(10)
+    # plot_common_neighbour_deviation_vs_beta_with_ED(10)
 
     # load_common_neighbour_num(4)
     # plot_common_neighbour_num_vs_inputED_with_beta(4)
+
