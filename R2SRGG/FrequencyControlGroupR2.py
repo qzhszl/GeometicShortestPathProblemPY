@@ -143,7 +143,7 @@ def nodeSPfrequency_loaddata_R2_clu(N, ED, beta, noise_amplitude, nodei, nodej):
     for i in range(100):
         # print("fresimu time:", i)
 
-        source_folder = "/home/zqiu1/GSPP/SSRGGpy/R2/EuclideanSoftRGGnetwork/"
+        source_folder = "/shares/bulk/zqiu1/"
         destination_folder = "/work/zqiu1/"
         network_template = "NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt"
 
@@ -157,6 +157,10 @@ def nodeSPfrequency_loaddata_R2_clu(N, ED, beta, noise_amplitude, nodei, nodej):
             destination_file = destination_folder + network_template.format(EDn=ED, betan=beta, no=noise_amplitude, ST=i)
             shutil.copy(source_file, destination_file)
             print(f"Copied: {source_file} -> {destination_file}")
+
+            FileNetworkName = "/work/zqiu1/NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                EDn=ED, betan=beta, no=noise_amplitude, ST=i)
+            H = loadSRGGandaddnode(N, FileNetworkName)
 
         try:
             PNodeList = all_shortest_path_node(H, nodei, nodej)

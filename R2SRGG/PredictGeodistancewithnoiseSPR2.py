@@ -116,13 +116,13 @@ def generate_r2SRGG_withdiffinput_clu(Edindex, betaindex, noise_amplitude):
     for i in range(rseed):
         rg.ran1()
 
-    FileNetworkName = "/home/zqiu1/GSPP/SSRGGpy/R2/NoiseNotinUnit/NetworkOriginalED{EDn}Beta{betan}Noise0.txt".format(
+    FileNetworkName = "/home/zqiu1/GSPP/SSRGGpy/R2/NoiseNotinUnit/EuclideanSoftRGGnetwork/NetworkOriginalED{EDn}Beta{betan}Noise0.txt".format(
         EDn=ED, betan=beta)
     G = loadSRGGandaddnode(N,FileNetworkName)
 
     Coorx=[]
     Coory=[]
-    FileNetworkCoorName = "/home/zqiu1/GSPP/SSRGGpy/R2/NoiseNotinUnit/CoorED{EDn}Beta{betan}Noise0mothernetwork.txt".format(
+    FileNetworkCoorName = "/home/zqiu1/GSPP/SSRGGpy/R2/NoiseNotinUnit/EuclideanSoftRGGnetwork/CoorED{EDn}Beta{betan}Noise0mothernetwork.txt".format(
         EDn=ED, betan=beta)
     with open(FileNetworkCoorName, "r") as file:
         for line in file:
@@ -143,7 +143,7 @@ def generate_r2SRGG_withdiffinput_clu(Edindex, betaindex, noise_amplitude):
 
     Coorx = add_uniform_random_noise_to_coordinates_R2(Coorx, noise_amplitude)
     Coory = add_uniform_random_noise_to_coordinates_R2(Coory, noise_amplitude)
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt".format(
+    FileNetworkCoorName = "/shares/bulk/zqiu1/CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt".format(
         EDn=ED, betan=beta, no=noise_amplitude)
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coorx, Coory):
@@ -152,7 +152,7 @@ def generate_r2SRGG_withdiffinput_clu(Edindex, betaindex, noise_amplitude):
     for ExternalSimutime in range(100):
         print(ExternalSimutime)
         H, Coorx1, Coory1 = R2SRGG(N, ED, beta, rg, Coorx, Coory)
-        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\Noise\\NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+        FileNetworkName = "/shares/bulk/zqiu1/NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
             EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
         nx.write_edgelist(H, FileNetworkName)
 
@@ -194,10 +194,10 @@ def generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude):
 
     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
     print("real ED:", real_avg)
-    print("clu:", nx.average_clustering(G))
-    components = list(nx.connected_components(G))
-    largest_component = max(components, key=len)
-    print("LCC",len(largest_component))
+    # print("clu:", nx.average_clustering(G))
+    # components = list(nx.connected_components(G))
+    # largest_component = max(components, key=len)
+    # print("LCC",len(largest_component))
 
 
     Coorx = add_uniform_random_noise_to_coordinates_R2(Coorx, noise_amplitude)
@@ -462,10 +462,11 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, b
     for i in range(random.randint(0, 100)):
         rg.ran1()
 
-    source_folder = "GSPP/SSRGGpy/R2/NoiseNotinUnit/EuclideanSoftRGGnetwork/"
+    # source_folder = "/home/zqiu1/GSPP/SSRGGpy/R2/NoiseNotinUnit/EuclideanSoftRGGnetwork/"
+    source_folder = "/shares/bulk/zqiu1/"
     destination_folder = "/work/zqiu1/"
     network_template = "NetworkOriginalED{EDn}Beta{betan}Noise0.txt"
-    networkcoordinate_template = "CoorED{EDn}Beta{betan}Noise0mothernetwork.txt"
+    networkcoordinate_template = "CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt"
 
     try:
         FileOriNetworkName = "/work/zqiu1/NetworkOriginalED{EDn}Beta{betan}Noise0.txt".format(
@@ -475,9 +476,8 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, b
         # load coordinates with noise
         Coorx = []
         Coory = []
-        FileOriNetworkCoorName = "CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt".format(
+        FileOriNetworkCoorName = "/work/zqiu1/CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt".format(
             EDn=ED, betan=beta, no=noise_amplitude)
-
         with open(FileOriNetworkCoorName, "r") as file:
             for line in file:
                 if line.startswith("#"):
@@ -490,12 +490,28 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, b
         source_file = source_folder + network_template.format(EDn=ED, betan=beta)
         destination_file = destination_folder + network_template.format(EDn=ED, betan=beta)
         shutil.copy(source_file, destination_file)
-        print(f"Copied: {source_file} -> {destination_file}")
-        source_file = source_folder + networkcoordinate_template.format(EDn=ED, betan=beta)
-        destination_file = destination_folder + networkcoordinate_template.format(EDn=ED, betan=beta)
+        # print(f"Copied: {source_file} -> {destination_file}")
+        source_file = source_folder + networkcoordinate_template.format(EDn=ED, betan=beta,no=noise_amplitude)
+        destination_file = destination_folder + networkcoordinate_template.format(EDn=ED, betan=beta,no=noise_amplitude)
         shutil.copy(source_file, destination_file)
-        print(f"Copied: {source_file} -> {destination_file}")
+        # print(f"Copied: {source_file} -> {destination_file}")
 
+        FileOriNetworkName = "/work/zqiu1/NetworkOriginalED{EDn}Beta{betan}Noise0.txt".format(
+            EDn=ED, betan=beta)
+        G = loadSRGGandaddnode(N, FileOriNetworkName)
+
+        # load coordinates with noise
+        Coorx = []
+        Coory = []
+        FileOriNetworkCoorName = "/work/zqiu1/CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt".format(
+            EDn=ED, betan=beta, no=noise_amplitude)
+        with open(FileOriNetworkCoorName, "r") as file:
+            for line in file:
+                if line.startswith("#"):
+                    continue
+                data = line.strip().split("\t")  # 使用制表符分割
+                Coorx.append(float(data[0]))
+                Coory.append(float(data[1]))
 
     real_avg = 2*nx.number_of_edges(G)/nx.number_of_nodes(G)
     print("real ED:", real_avg)
@@ -516,7 +532,7 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, b
         nodei = nodepair[0]
         nodej = nodepair[1]
 
-        tic = time.time()
+        # tic = time.time()
 
         # Find shortest path nodes
         SPNodelist = all_shortest_path_node(G, nodei, nodej)
@@ -525,9 +541,9 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, b
         SPnum_nodepair.append(SPnodenum)
 
         Predicted_truecase_num = SPnodenum
-        toc = time.time() - tic
-        print("SP finding time:", toc)
-        print("SP num:", SPnodenum)
+        # toc = time.time() - tic
+        # print("SP finding time:", toc)
+        # print("SP num:", SPnodenum)
 
         # Create label array
         Label_med = np.zeros(N)
@@ -872,9 +888,9 @@ def check_data_wehavenow():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # STEP 1 generate a lot of SRGG and SRGG with noise
-    for Edindex in [4]:
-        for betaindex in [2,3,4]:
-            generate_r2SRGG_mothernetwork(Edindex, betaindex)
+    # for Edindex in range(5):
+    #     for betaindex in range(5):
+    #         generate_r2SRGG_mothernetwork(Edindex, betaindex)
     # for Edindex in range(4):
     #     for betaindex in range(7):
     #         for noise_amplitude in [1]:
@@ -888,15 +904,38 @@ if __name__ == '__main__':
     #     generate_r2SRGG_withdiffinput_clu(int(ED), int(beta), noise_amplitude)
 
 
-    # STEP 2.1 test and run the simu
+    # STEP 2.11 test and run the simu
     # predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2(1, 3, 0, 0)
 
-    # # STEP 2.2
+    """
+    # STEP 2.12 run simu on cluster
+    """
     # ED = sys.argv[1]
     # beta = sys.argv[2]
     # noise = sys.argv[3]
     # ExternalSimutime = sys.argv[4]
-    # predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(int(ED), int(beta), int(noise), int(ExternalSimutime))
+    # ED_list = [2, 3.5, 5, 10, 100, 1000, N - 1]  # Expected degrees
+    # ED = ED_list[Edindex]
+    # print("ED:", ED)
+    #
+    # beta_list = [2.1, 4, 8, 16, 32, 64, 128]
+    # beta_list = [2.1, 4, 8, 32, 128]
+    # beta = beta_list[betaindex]
+    # print("beta:", beta)
+    #
+    # noise_amplitude_list = [0, 0.001, 0.01, 0.1, 1]
+    # noise_amplitude = noise_amplitude_list[noiseindex]
+    # print("noise amplitude:", noise_amplitude)
+
+
+    """
+    # # STEP 2.2 run simu on cluster
+    """
+    ED = sys.argv[1]
+    beta = sys.argv[2]
+    noise = sys.argv[3]
+    ExternalSimutime = sys.argv[4]
+    predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(int(ED), int(beta), int(noise), int(ExternalSimutime))
 
     # STEP 2.3
     # check_data_wehavenow()

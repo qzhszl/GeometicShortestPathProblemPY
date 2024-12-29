@@ -35,7 +35,7 @@ def degree_vs_radius(N,avg):
     while not flag:
         G,_,_= RandomGeometricGraph(N,avg,rg,radius)
         real_degree = G.number_of_edges() * 2 / G.number_of_nodes()
-        print("current <k>:", real_degree)
+        # print("current <k>:", real_degree)
         if abs(avg - real_degree) < 0.1:
             flag = True
             print("current <k>:", real_degree)
