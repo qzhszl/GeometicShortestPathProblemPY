@@ -6,7 +6,9 @@
 """
 import itertools
 import math
+import os
 import random
+import shutil
 import time
 
 # import matplotlib.pyplot as plt
@@ -21,7 +23,7 @@ import sys
 # import seaborn as sns
 import pandas as pd
 
-from main import find_nonnan_indices
+from main import find_nonnan_indices, all_shortest_path_node
 
 
 # from main import find_nonnan_indices
@@ -140,32 +142,28 @@ def nodeSPfrequency_loaddata_R2_clu(N, ED, beta, noise_amplitude, nodei, nodej):
     NodeFrequency = np.zeros(N)  # Initialize node frequency
     for i in range(100):
         # print("fresimu time:", i)
-        tic = time.time()
-        FileNetworkName = "/home/zqiu1/GSPP/SSRGGpy/R2/EuclideanSoftRGGnetwork/NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-            EDn=ED, betan=beta, no=noise_amplitude, ST=i)
-        H = loadSRGGandaddnode(N, FileNetworkName)
-        try:
-            shortest_paths = nx.all_shortest_paths(H, nodei, nodej)
-            PNodeList = set()  # Use a set to keep unique nodes
-            count = 0
-            for path in shortest_paths:
-                PNodeList.update(path)
-                count += 1
-                if count > 10000000:
-                    break
-            # print("pathlength", len(path))
-            # print("pathnum",count)
-        except nx.NetworkXNoPath:
-            PNodeList = set()  # If there's no path, continue with an empty set
-        # time31 = time.time()
-        # print("timeallsp0",time31-time3)
-        # Remove the starting and ending nodes from the list
-        PNodeList.discard(nodei)
-        PNodeList.discard(nodej)
 
+        source_folder = "/home/zqiu1/GSPP/SSRGGpy/R2/EuclideanSoftRGGnetwork/"
+        destination_folder = "/work/zqiu1/"
+        network_template = "NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt"
+
+        try:
+            FileNetworkName = "/work/zqiu1/NetworkwithNoiseED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                EDn=ED, betan=beta, no=noise_amplitude, ST=i)
+            H = loadSRGGandaddnode(N, FileNetworkName)
+        except:
+            os.makedirs(destination_folder, exist_ok=True)
+            source_file = source_folder + network_template.format(EDn=ED, betan=beta, no=noise_amplitude, ST=i)
+            destination_file = destination_folder + network_template.format(EDn=ED, betan=beta, no=noise_amplitude, ST=i)
+            shutil.copy(source_file, destination_file)
+            print(f"Copied: {source_file} -> {destination_file}")
+
+        try:
+            PNodeList = all_shortest_path_node(H, nodei, nodej)
+        except:
+            PNodeList=[]
         for node in PNodeList:
             NodeFrequency[node] += 1
-        print("time",time.time() - tic)
     return NodeFrequency
 
 
@@ -1265,10 +1263,15 @@ if __name__ == '__main__':
 
     # a = nodeSPfrequency_loaddata_R2(N=10000, ED=5, beta=4, noise_amplitude=0, nodei=1, nodej=2)
     # print(a)
-    arr = np.array([10, 30, 20, 50, 50, 40, 90, 70, 80])
-    # 找出最大的N个数及其索引
-    N = 4
-    values, indices = find_top_n_values(arr, N)
+    # arr = np.array([10, 30, 20, 50, 50, 40, 90, 70, 80])
+    # # 找出最大的N个数及其索引
+    # N = 4
+    # values, indices = find_top_n_values(arr, N)
+    #
+    # print("最大的N个数的值：", values)
+    # print("最大的N个数的索引：", indices)
 
-    print("最大的N个数的值：", values)
-    print("最大的N个数的索引：", indices)
+    G = nx.Graph()
+    G.add_edges_from([(1, 2), (1, 4),(3,5)])
+    PNodeList = all_shortest_path_node(G, 1, 3)
+    a = 1

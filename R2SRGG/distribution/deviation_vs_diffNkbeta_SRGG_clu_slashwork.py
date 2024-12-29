@@ -346,7 +346,6 @@ def distance_inlargeSRGG_clu(N,ED,beta,rg,ExternalSimutime):
         second_vec = []
 
         source_folder = "/home/zqiu1/GSPP_SRGG_Dev/NetworkSRGG/"
-        # ?????
         destination_folder = "/work/zqiu1/"
         network_template = "network_N{Nn}ED{EDn}Beta{betan}.txt"
         networkcoordinate_template  = "network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt"

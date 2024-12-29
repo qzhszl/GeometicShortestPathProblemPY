@@ -14,7 +14,7 @@ from R2SRGG.R2SRGG import loadSRGGandaddnode
 
 def load_10000nodenetwork_results_peak(beta):
     # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    kvec = np.arange(2, 7.1, 0.2)
+    kvec = np.arange(2.5, 5, 0.1)
     kvec = [round(a, 1) for a in kvec]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
@@ -64,7 +64,8 @@ def plot_dev_vs_avg_peak(beta):
     ave_deviation_dict = {}
     std_deviation_dict = {}
 
-    kvec = np.arange(2, 7.1, 0.2)
+    # kvec = np.arange(2, 7.1, 0.2)
+    kvec = np.arange(2.5, 5, 0.1)
     kvec = [round(a, 1) for a in kvec]
 
     betavec = [beta]
@@ -98,9 +99,9 @@ def plot_dev_vs_avg_peak(beta):
         beta = betavec[count]
         x = kvec
         y = ave_deviation_dict[count]
-        print(y)
+        # print(y)
         error = std_deviation_dict[count]
-        print(error)
+        # print(error)
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
                      markersize=16, label=legend[count], color=colors[count])
         y = list(y)
@@ -132,7 +133,7 @@ def load_LCC_second_LCC_data(beta):
     :param beta:
     :return:
     """
-    kvec = np.arange(2, 7.1, 0.2)
+    kvec = np.arange(2.5, 5, 0.1)
     input_avg_vec = [round(a, 1) for a in kvec]
     N = 10000
     filefolder_name_lcc = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
@@ -169,7 +170,7 @@ def load_LCC_second_LCC_data(beta):
 
 def find_giant_component(beta):
     LCC_vec, second_LCC_vec = load_LCC_second_LCC_data(beta)
-    kvec = np.arange(2, 7.1, 0.2)
+    kvec = np.arange(2.5, 5, 0.1)
     input_avg_vec = [round(a, 1) for a in kvec]
     # print(len(input_avg_vec))
     # print(second_LCC_vec)
@@ -183,8 +184,8 @@ def find_giant_component(beta):
 
 
 def scattor_peakvs_GLCC():
-    peak_avg = [4,3.4,5.0,5.0,5.8,5.4,6,6.4]
-    SLCC_avg = [3.2,3.2,5.0,4.8,6,5.6,6,6.0]
+    peak_avg = [4, 3.4, 5.0, 5.0, 5.8, 5.4, 6, 6.4, 3.2, 3.1, 2.6, 2.7, 2.9, 2.9]
+    SLCC_avg = [3.8, 3.2, 5.0, 4.8, 6, 5.6, 6, 6.0, 3.1, 2.9, 2.6, 2.7, 2.8, 2.7]
     fig, ax = plt.subplots(figsize=(9, 6))
 
     colors = [[0, 0.4470, 0.7410],
@@ -195,8 +196,8 @@ def scattor_peakvs_GLCC():
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
 
     plt.scatter(peak_avg, SLCC_avg, marker='o', s=150, color=colors[3], label=r"$E[D]$")
-    x = np.linspace(3,6,10)
-    y = np.linspace(3, 6, 10)
+    x = np.linspace(2.5,6,10)
+    y = np.linspace(2.5, 6, 10)
     plt.plot(x,y,"--",color=colors[0],label=r"$y=x$",linewidth=5)
     # plt.scatter(ave_deviation_vec, spnodenum_vec, marker='o', c=colors[1],markersize=16, label=r"$N=10^2$")
 
@@ -230,10 +231,10 @@ def scattor_peakvs_GLCC():
 
 if __name__ == '__main__':
     # load_10000nodenetwork_results_peak(64)
-    # betavec = [128]
+    # betavec = [3,3.1,3.2,3.3,3.4,3.5,3.6,3.7]
     # for beta in betavec:
     #     load_10000nodenetwork_results_peak(beta)
     #     plot_dev_vs_avg_peak(beta)
-    # find_giant_component(128)
+    #     find_giant_component(beta)
     scattor_peakvs_GLCC()
 
