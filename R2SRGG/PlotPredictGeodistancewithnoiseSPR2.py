@@ -489,13 +489,24 @@ def plot_heatmap_precision(noiseindex):
                 Geo_matrix[EDindex][betaindex] = np.mean(PrecisonGeodis_specificnoise)
 
     print(exemptionlist)
+    x_labels = ["2.1", "4", "8", "32", "128"]  # 横坐标
+    y_labels = ["100", "10", "5", "3.5", "2"]  # 纵坐标
     plt.figure()
     df = pd.DataFrame(RGG_matrix,
                       index=[ED_list],  # DataFrame的行标签设置为大写字母
                       columns=beta_list)  # 设置DataFrame的列标签
-    sns.heatmap(data=df, vmin=0, annot=True, fmt=".2f", cbar=True,
-                cbar_kws={'label': 'Precision'})
+    h1 = sns.heatmap(data=df, vmin=0, vmax=0.9, annot=True, fmt=".2f", cbar=True, annot_kws={"size": 20},
+                cbar_kws={'label': 'Precision'}, xticklabels=x_labels,  # 指定自定义 x 轴标签
+    yticklabels=y_labels)
     # plt.title("50% links are removed when computing Nearly Shortest Path Node")
+    plt.xticks(fontsize=20)  # x 轴刻度字体大小
+    plt.yticks(fontsize=20)  # y 轴刻度字体大小
+
+    cbar = h1.collections[0].colorbar  # 获取颜色条对象
+    cbar.ax.tick_params(labelsize=20)  # 设置颜色条刻度字体大小
+    cbar.ax.set_ylabel("Precision", fontsize=20)  # 设置颜色条标签字体大小
+
+
     plt.xlabel(r"Temperature $\beta$",fontsize = 25)
     plt.ylabel(r"Expected degree $E[D]$", fontsize = 25)
     RGG_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\HeatmapPrecisionRGGNoise{No}.pdf".format(No = noise_amplitude)
@@ -508,8 +519,16 @@ def plot_heatmap_precision(noiseindex):
     df = pd.DataFrame(SRGG_matrix,
                       index=[ED_list],  # DataFrame的行标签设置为大写字母
                       columns=beta_list)  # 设置DataFrame的列标签
-    sns.heatmap(data=df, vmin=0, annot=True, fmt=".2f", cbar=True,
-                cbar_kws={'label': 'Precision'})
+    h2 = sns.heatmap(data=df, vmin=0, vmax=0.9, annot=True, fmt=".2f", cbar=True, annot_kws={"size": 20},
+                     cbar_kws={'label': 'Precision'}, xticklabels=x_labels,  # 指定自定义 x 轴标签
+                     yticklabels=y_labels)
+    # plt.title("50% links are removed when computing Nearly Shortest Path Node")
+    plt.xticks(fontsize=20)  # x 轴刻度字体大小
+    plt.yticks(fontsize=20)  # y 轴刻度字体大小
+
+    cbar = h2.collections[0].colorbar  # 获取颜色条对象
+    cbar.ax.tick_params(labelsize=20)  # 设置颜色条刻度字体大小
+    cbar.ax.set_ylabel("Precision", fontsize=20)  # 设置颜色条标签字体大小
     # plt.title("50% links are removed when computing Nearly Shortest Path Node")
     plt.xlabel(r"Temperature $\beta$", fontsize=25)
     plt.ylabel(r"Expected degree $E[D]$", fontsize=25)
@@ -525,8 +544,16 @@ def plot_heatmap_precision(noiseindex):
     df = pd.DataFrame(Geo_matrix,
                       index=[ED_list],  # DataFrame的行标签设置为大写字母
                       columns=beta_list)  # 设置DataFrame的列标签
-    sns.heatmap(data=df, vmin=0, annot=True, fmt=".2f", cbar=True,
-                cbar_kws={'label': 'Precision'})
+    h3 = sns.heatmap(data=df, vmin=0, vmax=0.9, annot=True, fmt=".2f", cbar=True, annot_kws={"size": 20},
+                     cbar_kws={'label': 'Precision'}, xticklabels=x_labels,  # 指定自定义 x 轴标签
+                     yticklabels=y_labels)
+    # plt.title("50% links are removed when computing Nearly Shortest Path Node")
+    plt.xticks(fontsize=20)  # x 轴刻度字体大小
+    plt.yticks(fontsize=20)  # y 轴刻度字体大小
+
+    cbar = h3.collections[0].colorbar  # 获取颜色条对象
+    cbar.ax.tick_params(labelsize=20)  # 设置颜色条刻度字体大小
+    cbar.ax.set_ylabel("Precision", fontsize=20)  # 设置颜色条标签字体大小
     # plt.title("50% links are removed when computing Nearly Shortest Path Node")
     plt.xlabel(r"Temperature $\beta$", fontsize=25)
     plt.ylabel(r"Expected degree $E[D]$", fontsize=25)
