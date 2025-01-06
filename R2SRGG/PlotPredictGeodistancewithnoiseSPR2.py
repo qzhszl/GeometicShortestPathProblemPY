@@ -498,9 +498,9 @@ def plot_heatmap_precision(noiseindex):
     # plt.title("50% links are removed when computing Nearly Shortest Path Node")
     plt.xlabel(r"Temperature $\beta$",fontsize = 25)
     plt.ylabel(r"Expected degree $E[D]$", fontsize = 25)
-    # plt.savefig(
-    #     "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\NSP0_1LinkRemove\\PRAUCHeatmapNSP0_1LinkRemove.pdf",
-    #     format='pdf', bbox_inches='tight', dpi=600)
+    RGG_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\HeatmapPrecisionRGGNoise{No}.pdf".format(No = noise_amplitude)
+    plt.savefig(RGG_heatmap_name,
+        format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -513,9 +513,10 @@ def plot_heatmap_precision(noiseindex):
     # plt.title("50% links are removed when computing Nearly Shortest Path Node")
     plt.xlabel(r"Temperature $\beta$", fontsize=25)
     plt.ylabel(r"Expected degree $E[D]$", fontsize=25)
-    # plt.savefig(
-    #     "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\NSP0_1LinkRemove\\PRAUCHeatmapNSP0_1LinkRemove.pdf",
-    #     format='pdf', bbox_inches='tight', dpi=600)
+    SRGG_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\HeatmapPrecisionSRGGNoise{No}.pdf".format(
+        No=noise_amplitude)
+    plt.savefig(SRGG_heatmap_name,
+                format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
 
     plt.close()
@@ -529,9 +530,10 @@ def plot_heatmap_precision(noiseindex):
     # plt.title("50% links are removed when computing Nearly Shortest Path Node")
     plt.xlabel(r"Temperature $\beta$", fontsize=25)
     plt.ylabel(r"Expected degree $E[D]$", fontsize=25)
-    # plt.savefig(
-    #     "D:\\data\\geometric shortest path problem\\SSRGG\\PRAUC\\NSP0_1LinkRemove\\PRAUCHeatmapNSP0_1LinkRemove.pdf",
-    #     format='pdf', bbox_inches='tight', dpi=600)
+    Geo_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\HeatmapPrecisionGeoNoise{No}.pdf".format(
+        No=noise_amplitude)
+    plt.savefig(Geo_heatmap_name,
+                format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
 
 
