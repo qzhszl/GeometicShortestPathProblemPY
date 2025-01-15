@@ -387,7 +387,7 @@ def plot_heatmap_precision(noiseindex):
 
     N = 10000
     ED_list = [2, 3.5, 5, 10, 100, 1000, N - 1]  # Expected degrees
-    ED_list = [2, 3.5, 5, 10, 100]  # Expected degrees
+    ED_list = [2, 3.5, 5, 10, 100,1000]  # Expected degrees
     beta_list = [2.1, 4, 8, 32, 128]
 
     noise_amplitude_list = [0, 0.001, 0.01, 0.1, 1]
@@ -406,7 +406,7 @@ def plot_heatmap_precision(noiseindex):
             beta = beta_list[betaindex]
             print(beta)
             precision_list = []
-            if ED in [5,10]:
+            if ED in [0.1]:
                 PrecisonRGG_specificnoise = []
                 for ExternalSimutime in range(20):
                     try:
@@ -490,11 +490,16 @@ def plot_heatmap_precision(noiseindex):
 
     print(exemptionlist)
     x_labels = ["2.1", "4", "8", "32", "128"]  # 横坐标
-    y_labels = ["100", "10", "5", "3.5", "2"]  # 纵坐标
+    # y_labels = ["100", "10", "5", "3.5", "2"]  # 纵坐标
+    y_labels = ["2", "3.5", "5", "10", "100","1000"]  # 纵坐标
     plt.figure()
     df = pd.DataFrame(RGG_matrix,
                       index=[ED_list],  # DataFrame的行标签设置为大写字母
                       columns=beta_list)  # 设置DataFrame的列标签
+    # h1 = sns.heatmap(data=df, vmin=0, vmax=0.9, annot=True, fmt=".2f", cbar=True, annot_kws={"size": 20},
+    #                  cbar_kws={'label': 'Precision'})
+    # plt.show()
+
     h1 = sns.heatmap(data=df, vmin=0, vmax=0.9, annot=True, fmt=".2f", cbar=True, annot_kws={"size": 20},
                 cbar_kws={'label': 'Precision'}, xticklabels=x_labels,  # 指定自定义 x 轴标签
     yticklabels=y_labels)
@@ -614,4 +619,4 @@ if __name__ == '__main__':
     """
     Plot the heatmap for the precision and recall
     """
-    plot_heatmap_precision(2)
+    plot_heatmap_precision(0)
