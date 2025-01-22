@@ -3,222 +3,27 @@
 @Project: Geometric shortest path problem
 @Author: Zhihao Qiu
 @Date: 2024/11/17
-This file is for the peak of the shortest path deviation
-
+This file is for the minimum of the shortest path
+we first prove the degree is because of the relative deviation decrease for the shortest path(about k and s)
 """
+import random
+from collections import Counter
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
 import networkx as nx
-from R2SRGG.R2SRGG import loadSRGGandaddnode
-
-def load_10000nodenetwork_results_peak(beta):
-    # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
-    kvec = np.arange(2, 6.1, 0.2)
-    kvec = [round(a, 1) for a in kvec]
-
-    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
-
-    print(beta)
-    exemptionlist =[]
-    for N in [10000]:
-        ave_deviation_vec = []
-        std_deviation_vec = []
-        real_ave_degree_vec =[]
-        for beta in [beta]:
-            for ED in kvec:
-                ave_deviation_for_a_para_comb=np.array([])
-                for ExternalSimutime in range(50):
-                    try:
-                        deviation_vec_name = filefolder_name + "ave_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
-                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                        ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
-                        ave_deviation_for_a_para_comb = np.hstack(
-                            (ave_deviation_for_a_para_comb, ave_deviation_for_a_para_comb_10times))
-                    except FileNotFoundError:
-                        exemptionlist.append((N, ED, beta, ExternalSimutime))
-
-                ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
-                std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
-    print(exemptionlist)
-    print(len(exemptionlist))
-    # np.savetxt("notrun.txt", exemptionlist)
-
-    ave_deviation_Name = filefolder_name + "peakave_deviation_N{Nn}_beta{betan}.txt".format(
-        Nn=N, betan=beta)
-    np.savetxt(ave_deviation_Name, ave_deviation_vec)
-    std_deviation_Name = filefolder_name + "peakstd_deviation_N{Nn}_beta{betan}.txt".format(Nn=N,
-                                                                                        betan=beta)
-    np.savetxt(std_deviation_Name, std_deviation_vec)
-    return ave_deviation_vec, std_deviation_vec, exemptionlist
-
-def plot_dev_vs_avg_peak(beta):
-    """
-    the x-axis is the expected degree, the y-axis is the average deviation, different line is different c_G
-    inset is the min(average deviation) vs c_G
-    the x-axis is real (approximate) degree
-    when use this function, use before
-    :return:
-    """
-    N = 10000
-    ave_deviation_dict = {}
-    std_deviation_dict = {}
-
-    kvec = np.arange(2, 6.1, 0.2)
-    kvec = [round(a, 1) for a in kvec]
-
-    betavec = [beta]
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
-
-    count = 0
-    for beta in betavec:
-        ave_deviation_Name = filefolder_name + "peakave_deviation_N{Nn}_beta{betan}.txt".format(
-            Nn=N, betan=beta)
-        ave_deviation_vec = np.loadtxt(ave_deviation_Name)
-        std_deviation_Name = filefolder_name + "peakstd_deviation_N{Nn}_beta{betan}.txt".format(Nn=N,
-                                                                                            betan=beta)
-        std_deviation_vec = np.loadtxt(std_deviation_Name)
-
-        ave_deviation_dict[count] = ave_deviation_vec
-        std_deviation_dict[count] = std_deviation_vec
-        count = count + 1
-
-    # legend = [r"$\beta=2.2$", r"$\beta=2^2$", r"$\beta=2^3$", r"$\beta=2^4$", r"$\beta=2^5$", r"$\beta=2^7$"]
-    legend = [r"$\beta=2^2$"]
-    fig, ax = plt.subplots(figsize=(12, 8))
-
-    colors = [[0, 0.4470, 0.7410],
-              [0.8500, 0.3250, 0.0980],
-              [0.9290, 0.6940, 0.1250],
-              [0.4940, 0.1840, 0.5560],
-              [0.4660, 0.6740, 0.1880],
-              [0.3010, 0.7450, 0.9330]]
-
-    for count in range(len(betavec)):
-        beta = betavec[count]
-        x = kvec
-        y = ave_deviation_dict[count]
-        print(y)
-        error = std_deviation_dict[count]
-        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
-                     markersize=16, label=legend[count], color=colors[count])
-        y = list(y)
-        max_index = y.index(max(y))
-        # 根据索引找到对应的 x
-        result_x = x[max_index]
-        print(beta,result_x)
-
-
-    plt.xscale('log')
-    plt.yscale('log')
-    plt.xlabel('E[D]', fontsize=26)
-    plt.ylabel('Average deviation of shortest path', fontsize=26)
-    plt.xticks(fontsize=26)
-    plt.yticks(fontsize=26)
-    plt.title('1000 simulations, N=10000',fontsize=26)
-    plt.legend(fontsize=20, loc="lower right")
-    plt.tick_params(axis='both', which="both", length=6, width=1)
-
-    picname = filefolder_name+"peakLocalOptimum_dev_vs_avg_beta{beta}.pdf".format(beta=beta)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
-    plt.show()
-    plt.close()
-
-
-def load_LCC_second_LCC_data(beta):
-    """
-    function for loading data for analysis first peak about Lcc AND second Lcc
-    :param beta:
-    :return:
-    """
-    kvec = np.arange(2, 6.1, 0.2)
-    input_avg_vec = [round(a, 1) for a in kvec]
-    N = 10000
-    filefolder_name_lcc = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
-
-    LCC_vec = []
-    LCC_std_vec = []
-    second_LCC_vec = []
-    second_LCC_std_vec = []
-    for ED in input_avg_vec:
-        LCC_oneED = []
-        second_LCC_oneED = []
-        for simutime in range(1):
-            LCC_onesimu = []
-            second_LCC_onesimu = []
-            LCCname = filefolder_name_lcc + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}.txt".format(
-                Nn=N, EDn=ED, betan=beta)
-            try:
-                with open(LCCname, "r") as file:
-                    for line in file:
-                        if line.startswith("#"):
-                            continue
-                        else:
-                            data = line.strip().split("\t")
-                            LCC_onesimu.append(int(data[0]))
-                            second_LCC_onesimu.append(int(data[1]))
-                LCC_oneED = LCC_oneED + LCC_onesimu
-                second_LCC_oneED = second_LCC_oneED + second_LCC_onesimu
-            except:
-                print("Not data",ED,simutime)
-        LCC_vec.append(np.mean(LCC_oneED))
-        second_LCC_vec.append(np.mean(second_LCC_oneED))
-
-    return LCC_vec,second_LCC_vec
-
-def find_giant_component(beta):
-    LCC_vec, second_LCC_vec = load_LCC_second_LCC_data(beta)
-    kvec = np.arange(2, 6.1, 0.2)
-    input_avg_vec = [round(a, 1) for a in kvec]
-    # print(len(input_avg_vec))
-    # print(second_LCC_vec)
-    plt.plot(input_avg_vec, LCC_vec)
-    plt.plot(input_avg_vec, second_LCC_vec)
-    max_index = second_LCC_vec.index(max(second_LCC_vec))
-    # 根据索引找到对应的 x
-    result_x = input_avg_vec[max_index]
-    print("GLCC",result_x)
-    plt.show()
-
-
-def scattor_peakvs_GLCC():
-    peak_avg = [4,3.4,5.0,5.0,5.4]
-    SLCC_avg = [3.2,3.2,5.0,4.8,5.4]
-    fig, ax = plt.subplots(figsize=(9, 6))
-
-    colors = [[0, 0.4470, 0.7410],
-              [0.8500, 0.3250, 0.0980],
-              [0.9290, 0.6940, 0.1250],
-              [0.4940, 0.1840, 0.5560],
-              [0.4660, 0.6740, 0.1880]]
-
-    plt.scatter(peak_avg, SLCC_avg, marker='o', s=60, color=colors[0], label=r"$N=10^4$")
-    x = np.linspace(3,6,10)
-    y = np.linspace(3, 6, 10)
-    plt.plot(x,y,"--",color=colors[1],label=r"$y=x$")
-    # plt.scatter(ave_deviation_vec, spnodenum_vec, marker='o', c=colors[1],markersize=16, label=r"$N=10^2$")
-
-    # ax.spines['right'].set_visible(False)
-    # ax.spines['top'].set_visible(False)
-    # plt.ylim(0, 0.30)
-    # plt.yticks([0, 0.1, 0.2, 0.3])
-
-    # plt.xscale('log')
-    plt.xlabel(r'$E[D]_{dev_{max}}$', fontsize=26)
-    plt.ylabel(r'$E[D]_{SLCC_{max}}$', fontsize=26)
-    plt.xticks(fontsize=26)
-    plt.yticks(fontsize=26)
-    # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=20)
-    plt.tick_params(axis='both', which="both", length=6, width=1)
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
-    picname = filefolder_name + "scattor_slcc_vs_peak.pdf"
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
-    plt.show()
+from R2SRGG.R2SRGG import loadSRGGandaddnode, distR2
+from SphericalSoftRandomGeomtricGraph import RandomGenerator
+from main import find_k_connected_node_pairs
 
 
 def check_meandistancebetweentwonodes():
+    """
+    This function simulated the average distance between arbitrary two nodes
+    :return:
+    """
+
     rg = RandomGenerator(-12)
     rseed = random.randint(0, 10000)
     for i in range(rseed):
@@ -272,23 +77,12 @@ def check_meandistancebetweentwonodes():
     print("1:", np.mean(simu1))
     print("2:", np.mean(simu2))
 
-
-
-if __name__ == '__main__':
-    # load_10000nodenetwork_results_peak(16)
-
-    # betavec = [32]
-    # for beta in betavec:
-    #     load_10000nodenetwork_results_peak(beta)
-    #     plot_dev_vs_avg_peak(beta)
-    # find_giant_component(32)
-    # scattor_peakvs_GLCC()
-
+def real_ave_geodesic_length_in_simu():
     kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
 
-    beta =4
+    beta = 4
     exemptionlist = []
     for N in [10000]:
         ave_deviation_vec = []
@@ -311,7 +105,216 @@ if __name__ == '__main__':
                 std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
     print(exemptionlist)
     plt.xscale('log')
-    plt.plot(kvec,ave_deviation_vec)
+    plt.plot(kvec, ave_deviation_vec)
     plt.show()
 
+
+def filter_data_from_hop_geo_dev(N, ED, beta):
+    """
+    :param N: network size of SRGG
+    :param ED: expected degree of the SRGG
+    :param beta: temperature parameter of the SRGG
+    :return: a dict: key is hopcount, value is list for relative deviation = ave deviation of the shortest paths nodes for a node pair / geodesic of the node pair
+    """
+    exemptionlist = []
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
+    hopcount_for_a_para_comb = np.array([])
+    geodistance_for_a_para_comb = np.array([])
+    ave_deviation_for_a_para_comb = np.array([])
+
+    ExternalSimutimeNum = 100
+    for ExternalSimutime in range(ExternalSimutimeNum):
+        try:
+            # load data for hopcount for all node pairs
+            hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+            hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
+            hopcount_for_a_para_comb = np.hstack(
+                (hopcount_for_a_para_comb, hopcount_for_a_para_comb_10times))
+
+            # load data for geo distance for all node pairs
+            geodistance_vec_name = filefolder_name + "length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+            geodistance_for_a_para_comb_10times = np.loadtxt(geodistance_vec_name)
+            geodistance_for_a_para_comb = np.hstack(
+                (geodistance_for_a_para_comb, geodistance_for_a_para_comb_10times))
+            # load data for ave_deviation for all node pairs
+            deviation_vec_name = filefolder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+            ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
+
+            ave_deviation_for_a_para_comb = np.hstack(
+                (ave_deviation_for_a_para_comb, ave_deviation_for_a_para_comb_10times))
+        except FileNotFoundError:
+            exemptionlist.append((N, ED, beta, ExternalSimutime))
+
+    hopcount_for_a_para_comb = hopcount_for_a_para_comb[hopcount_for_a_para_comb>1]
+    counter = Counter(hopcount_for_a_para_comb)
+    print(counter)
+
+    relative_dev = ave_deviation_for_a_para_comb/geodistance_for_a_para_comb
+    hop_relativedev_dict = {}
+    for key in np.unique(hopcount_for_a_para_comb):
+        hop_relativedev_dict[key] = relative_dev[hopcount_for_a_para_comb == key].tolist()
+    return hop_relativedev_dict
+
+def relative_deviation_vsdiffk():
+    """
+    plot the relative deviation of the shortest path
+    :return:
+    """
+    # kvec = [6.0, 10, 16, 27, 44, 72, 118]
+    # kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    kvec = [6.0, 10, 16, 27, 44, 72, 118]
+
+    # kvec = [6.0, 10, 16, 27, 44,72,118]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
+
+    beta = 4
+    exemptionlist = []
+    fixed_hop = 5.0
+    for N in [10000]:
+        ave_deviation_vec = []
+        std_deviation_vec = []
+        ave_relative_deviation_vec = []
+        std_relative_deviation_vec = []
+
+        for beta in [beta]:
+            for ED in kvec:
+                print("ED:", ED)
+                #------------------------------------------------- PLOT how the deviation change
+                ave_deviation_for_a_para_comb = np.array([])
+                for ExternalSimutime in range(100):
+                    try:
+                        deviation_vec_name = filefolder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
+                        ave_deviation_for_a_para_comb = np.hstack(
+                            (ave_deviation_for_a_para_comb, ave_deviation_for_a_para_comb_10times))
+                    except FileNotFoundError:
+                        exemptionlist.append((N, ED, beta, ExternalSimutime))
+
+                ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+
+                #----------------------------------------------------
+                hop_relativedev_dict = filter_data_from_hop_geo_dev(N, ED, beta)
+
+                print(hop_relativedev_dict.keys())
+
+                relative_dev_vec_foroneparacombine = hop_relativedev_dict[fixed_hop]
+                print("DATA NUM:",len(relative_dev_vec_foroneparacombine))
+                ave_relative_deviation_vec.append(np.mean(relative_dev_vec_foroneparacombine))
+                std_relative_deviation_vec.append(np.std(relative_dev_vec_foroneparacombine))
+
+    print(exemptionlist)
+    # plot the figure of deviation
+    plt.figure()
+    plt.xscale('log')
+    plt.plot(kvec, ave_deviation_vec)
+    plt.show()
+
+    fig, ax = plt.subplots(figsize=(12, 8))
+    fixed_hop = int(fixed_hop)
+    plt.errorbar(kvec, ave_relative_deviation_vec,std_relative_deviation_vec, label=f'hopcount: {fixed_hop}')
+    plt.xscale('log')
+    plt.xlabel('E[D]', fontsize=26)
+    plt.ylabel('Average relative deviation of shortest path', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.legend(fontsize=20, loc="lower right")
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    picname = filefolder_name + "LocalMinimum_relative_ev_vs_avg_beta{beta}.pdf".format(beta=beta)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+    plt.close()
+
+def relative_deviation_vsdiffk_diffhop():
+    """
+    plot the relative deviation of the shortest path
+    :return:
+    """
+    # colors = [[0, 0.4470, 0.7410],
+    #           [0.8500, 0.3250, 0.0980],
+    #           [0.9290, 0.6940, 0.1250],
+    #           [0.4940, 0.1840, 0.5560],
+    #           [0.4660, 0.6740, 0.1880]]
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # kvec = [6.0, 10, 16, 27, 44, 72, 118]
+    # kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    # kvec = [6.0, 10, 16, 27, 44, 72, 118]
+
+    kvec = [6.0,8,10, 12,16, 20,27,34,44,56,72,92,118]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
+
+    beta = 4
+    exemptionlist = []
+    N = 10000
+    fixed_hop_vec = [4.0, 8.0, 12.0, 16.0, 20.0]
+    fig, ax = plt.subplots(figsize=(12, 8))
+    colorindex = 0
+    for fixed_hop in fixed_hop_vec:
+        ave_deviation_vec = []
+        std_deviation_vec = []
+        ave_relative_deviation_vec = []
+        std_relative_deviation_vec = []
+
+        for beta in [beta]:
+            for ED in kvec:
+                print("ED:", ED)
+                #----------------------------------------------------
+                hop_relativedev_dict = filter_data_from_hop_geo_dev(N, ED, beta)
+
+                print(hop_relativedev_dict.keys())
+                try:
+                    relative_dev_vec_foroneparacombine = hop_relativedev_dict[fixed_hop]
+                    print("DATA NUM:",len(relative_dev_vec_foroneparacombine))
+                    ave_relative_deviation_vec.append(np.mean(relative_dev_vec_foroneparacombine))
+                    std_relative_deviation_vec.append(np.std(relative_dev_vec_foroneparacombine))
+                except:
+                    pass
+
+        fixed_hop = int(fixed_hop)
+
+        plt.errorbar(kvec[0:len(ave_relative_deviation_vec)-1], ave_relative_deviation_vec[0:len(ave_relative_deviation_vec)-1], std_relative_deviation_vec[0:len(ave_relative_deviation_vec)-1],
+                     label=f'hopcount: {fixed_hop}', color=colors[colorindex], linestyle="--", linewidth=3, elinewidth=1,
+                     capsize=5, marker='o', markersize=16)
+        colorindex = colorindex +1
+
+    plt.xscale('log')
+    plt.xlabel('E[D]', fontsize=32)
+    plt.ylabel('Relative deviation', fontsize=32)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.legend(fontsize=26, loc="best")
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    picname = filefolder_name + "LocalMinimum_relative_dev_vs_avg_beta{beta}.pdf".format(beta=beta)
+    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+    plt.close()
+
+
+
+if __name__ == '__main__':
+    # """
+    # simulation of the average distance if we pick up an arbitrary node pair from an SRGG
+    # """
+    # check_meandistancebetweentwonodes()
+    #
+    # """
+    #  simulation of the average distance in our simulation
+    # """
+    # real_ave_geodesic_length_in_simu()
+
+    """
+    check the relative deviation of the shortest path
+    """
+    # filter_data_from_hop_geo_dev(10000,5.0,4)
+    relative_deviation_vsdiffk()
+    # relative_deviation_vsdiffk_diffhop()
 
