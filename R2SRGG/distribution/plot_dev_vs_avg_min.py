@@ -299,6 +299,156 @@ def relative_deviation_vsdiffk_diffhop():
     plt.close()
 
 
+def filter_data_from_hop_geo_dev_givendistance(N, ED, beta,geodesic_distance_AB):
+    """
+    :param N: network size of SRGG
+    :param ED: expected degree of the SRGG
+    :param beta: temperature parameter of the SRGG
+    :return: a dict: key is hopcount, value is list for relative deviation = ave deviation of the shortest paths nodes for a node pair / geodesic of the node pair
+    """
+    exemptionlist = []
+    filefolder_name = "E:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\"
+    filefolder_name2 = "E:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\tail\\"
+
+    hopcount_for_a_para_comb = np.array([])
+    geodistance_for_a_para_comb = np.array([])
+    ave_deviation_for_a_para_comb = np.array([])
+
+    ExternalSimutimeNum = 50
+    for ExternalSimutime in range(ExternalSimutimeNum):
+        try:
+            # load data for hopcount for all node pairs
+            hopcount_vec_name = filefolder_name2 + "Givendistancehopcount_sp_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+
+            hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
+            hopcount_for_a_para_comb = np.hstack(
+                (hopcount_for_a_para_comb, hopcount_for_a_para_comb_10times))
+
+            # load data for geo distance for all node pairs
+            geodistance_vec_name = filefolder_name2 + "Givendistancelength_geodesic_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+
+            geodistance_for_a_para_comb_10times = np.loadtxt(geodistance_vec_name)
+            geodistance_for_a_para_comb = np.hstack(
+                (geodistance_for_a_para_comb, geodistance_for_a_para_comb_10times))
+            # load data for ave_deviation for all node pairs
+            deviation_vec_name = filefolder_name2 + "Givendistanceave_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+            ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
+
+            ave_deviation_for_a_para_comb = np.hstack(
+                (ave_deviation_for_a_para_comb, ave_deviation_for_a_para_comb_10times))
+        except FileNotFoundError:
+            # load data for hopcount for all node pairs
+            hopcount_vec_name = filefolder_name + "Givendistancehopcount_sp_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+
+            hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
+            hopcount_for_a_para_comb = np.hstack(
+                (hopcount_for_a_para_comb, hopcount_for_a_para_comb_10times))
+
+            # load data for geo distance for all node pairs
+            geodistance_vec_name = filefolder_name + "Givendistancelength_geodesic_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+
+            geodistance_for_a_para_comb_10times = np.loadtxt(geodistance_vec_name)
+            geodistance_for_a_para_comb = np.hstack(
+                (geodistance_for_a_para_comb, geodistance_for_a_para_comb_10times))
+            # load data for ave_deviation for all node pairs
+            deviation_vec_name = filefolder_name + "Givendistanceave_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+            ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
+
+            ave_deviation_for_a_para_comb = np.hstack(
+                (ave_deviation_for_a_para_comb, ave_deviation_for_a_para_comb_10times))
+        except:
+            exemptionlist.append((N, ED, beta, ExternalSimutime))
+
+    hopcount_for_a_para_comb = hopcount_for_a_para_comb[hopcount_for_a_para_comb>1]
+    counter = Counter(hopcount_for_a_para_comb)
+    print(counter)
+
+    relative_dev = ave_deviation_for_a_para_comb/geodistance_for_a_para_comb
+    hop_relativedev_dict = {}
+    for key in np.unique(hopcount_for_a_para_comb):
+        hop_relativedev_dict[key] = relative_dev[hopcount_for_a_para_comb == key].tolist()
+    return hop_relativedev_dict
+
+
+def relative_deviation_vsdiffk_diffhop_givendistance():
+    """
+    plot the relative deviation of the shortest path
+    :return:
+    """
+    # colors = [[0, 0.4470, 0.7410],
+    #           [0.8500, 0.3250, 0.0980],
+    #           [0.9290, 0.6940, 0.1250],
+    #           [0.4940, 0.1840, 0.5560],
+    #           [0.4660, 0.6740, 0.1880]]
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # kvec = [6.0, 10, 16, 27, 44, 72, 118]
+    # kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    # kvec = [6.0, 10, 16, 27, 44, 72, 118]
+
+    kvec = [6.0,8,10,12,16,20,27,34,44,56,72,92,118]
+    kvec = [5,6,7,8,9, 10, 16, 27, 44, 72, 118]
+    # kvec = [10, 16, 27, 44, 72, 118]
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    filefolder_name = "E:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\"
+    filefolder_name2 = "E:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\tail\\"
+
+    beta = 4
+    Geodistance = 0.5
+    exemptionlist = []
+    N = 10000
+    fixed_hop_vec = [4.0, 8.0, 12.0, 16.0, 20.0]
+    # fixed_hop_vec = [3.0]
+    fig, ax = plt.subplots(figsize=(12, 8))
+    colorindex = 0
+    for fixed_hop in fixed_hop_vec:
+        ave_deviation_vec = []
+        std_deviation_vec = []
+        ave_relative_deviation_vec = []
+        std_relative_deviation_vec = []
+        x = []
+        for beta in [beta]:
+            for ED in kvec:
+                print("ED:", ED)
+                #----------------------------------------------------
+                hop_relativedev_dict = filter_data_from_hop_geo_dev_givendistance(N, ED, beta,Geodistance)
+
+                print(hop_relativedev_dict.keys())
+                try:
+                    relative_dev_vec_foroneparacombine = hop_relativedev_dict[fixed_hop]
+                    print("DATA NUM:",len(relative_dev_vec_foroneparacombine))
+                    x.append(ED)
+                    ave_relative_deviation_vec.append(np.mean(relative_dev_vec_foroneparacombine))
+                    std_relative_deviation_vec.append(np.std(relative_dev_vec_foroneparacombine))
+                except:
+                    pass
+
+        fixed_hop = int(fixed_hop)
+
+        plt.errorbar(x[0:len(ave_relative_deviation_vec)-1], ave_relative_deviation_vec[0:len(ave_relative_deviation_vec)-1], std_relative_deviation_vec[0:len(ave_relative_deviation_vec)-1],
+                     label=f'hopcount: {fixed_hop}', color=colors[colorindex], linestyle="--", linewidth=3, elinewidth=1,
+                     capsize=5, marker='o', markersize=16)
+        colorindex = colorindex +1
+
+    # plt.xscale('log')
+    plt.xlabel('E[D]', fontsize=32)
+    plt.ylabel('Relative deviation', fontsize=32)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.legend(fontsize=26, loc="best")
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    picname = filefolder_name + "LocalMinimum_relative_dev_vs_avg_beta{beta}_givendistance.pdf".format(beta=beta)
+    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+    plt.close()
+
 
 if __name__ == '__main__':
     # """
@@ -315,6 +465,12 @@ if __name__ == '__main__':
     check the relative deviation of the shortest path
     """
     # filter_data_from_hop_geo_dev(10000,5.0,4)
-    relative_deviation_vsdiffk()
+    # relative_deviation_vsdiffk()
     # relative_deviation_vsdiffk_diffhop()
+
+    """
+    draw the picture for given distance 
+    """
+
+    relative_deviation_vsdiffk_diffhop_givendistance()
 

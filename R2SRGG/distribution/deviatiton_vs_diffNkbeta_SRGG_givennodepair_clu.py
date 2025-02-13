@@ -374,6 +374,7 @@ def distance_inlargeSRGG_clu_beta_givennodepair(N, ED, beta, rg, ExternalSimutim
 
         # load a network
         filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\"
+        filefolder_name = "/work/zqiu1/"
         # Randomly generate 10 networks
         Network_generate_time = 20
 
