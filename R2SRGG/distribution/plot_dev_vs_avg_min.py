@@ -394,6 +394,8 @@ def relative_deviation_vsdiffk_diffhop_givendistance():
 
     kvec = [6.0,8,10,12,16,20,27,34,44,56,72,92,118]
     kvec = [5,6,7,8,9, 10, 16, 27, 44, 72, 118]
+
+    kvec = [6, 8, 10, 16, 27, 44, 72, 118]
     # kvec = [10, 16, 27, 44, 72, 118]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     filefolder_name = "E:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\"
@@ -403,7 +405,7 @@ def relative_deviation_vsdiffk_diffhop_givendistance():
     Geodistance = 0.5
     exemptionlist = []
     N = 10000
-    fixed_hop_vec = [4.0, 8.0, 12.0, 16.0, 20.0]
+    fixed_hop_vec = [4.0, 8.0, 12.0, 16.0]
     # fixed_hop_vec = [3.0]
     fig, ax = plt.subplots(figsize=(12, 8))
     colorindex = 0
@@ -436,11 +438,24 @@ def relative_deviation_vsdiffk_diffhop_givendistance():
                      capsize=5, marker='o', markersize=16)
         colorindex = colorindex +1
 
-    # plt.xscale('log')
+    # plt.text(2, 5, r"$d_{ij} = 0.5$", fontsize=26)
+    text = r"$N = 10^4$,$\beta = 4$, $d_{ij} = 0.5$"
+    plt.text(
+        0.3, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+        text,
+        transform=ax.transAxes,  # 使用轴坐标
+        fontsize=26,  # 字体大小
+        ha='center',  # 水平居中对齐
+        va='bottom'  # 垂直对齐方式
+    )
+
+
+    plt.xscale('log')
     plt.xlabel('E[D]', fontsize=32)
     plt.ylabel('Relative deviation', fontsize=32)
+    yticks = np.arange(0.03, 0.19, 0.03)
     plt.xticks(fontsize=26)
-    plt.yticks(fontsize=26)
+    plt.yticks(yticks,fontsize=26)
     plt.legend(fontsize=26, loc="best")
     plt.tick_params(axis='both', which="both", length=6, width=1)
 

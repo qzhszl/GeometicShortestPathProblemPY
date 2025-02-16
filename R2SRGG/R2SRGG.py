@@ -288,8 +288,8 @@ def check_realdegree_vs_expecteddegree():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # rg = RandomGenerator(-12)
-    # R2SRGG(110,5,4,rg)
+    rg = RandomGenerator(-12)
+    R2SRGG(110,5,4,rg)
     # check_realdegree_vs_expecteddegree()
 
     # x=  random.random()
@@ -311,27 +311,27 @@ if __name__ == '__main__':
     # end = time.time()
     # print(end-start)
 
-    N = 10000
-    ED = 5
-    beta = 2.2
-    x_A = -0.005
-    y_A = 0
-    x_B = 0.005
-    y_B = 0
-    ExternalSimutime = 0
-    network_index = 0
-    x_coords = np.random.uniform(-0.5, 0.5, N)
-    y_coords = np.random.uniform(-0.5, 0.5, N)
-    x_coords[9998] = x_A
-    y_coords[9998] = y_A
-    x_coords[9999] = x_B
-    y_coords[9999] = y_B
-
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\"
-    # Randomly generate 10 networks
-    FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}xA{xA}yA{yA}xB{xB}yB{yB}centero.txt".format(
-        Nn=N, xA=x_A, yA=y_A, xB=x_B, yB=y_B)
-    with open(FileNetworkCoorName, "w") as file:
-        for data1, data2 in zip(x_coords, y_coords):
-            file.write(f"{data1}\t{data2}\n")
+    # N = 10000
+    # ED = 5
+    # beta = 2.2
+    # x_A = -0.005
+    # y_A = 0
+    # x_B = 0.005
+    # y_B = 0
+    # ExternalSimutime = 0
+    # network_index = 0
+    # x_coords = np.random.uniform(-0.5, 0.5, N)
+    # y_coords = np.random.uniform(-0.5, 0.5, N)
+    # x_coords[9998] = x_A
+    # y_coords[9998] = y_A
+    # x_coords[9999] = x_B
+    # y_coords[9999] = y_B
+    #
+    # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\givendistance\\"
+    # # Randomly generate 10 networks
+    # FileNetworkCoorName = filefolder_name + "network_coordinates_N{Nn}xA{xA}yA{yA}xB{xB}yB{yB}centero.txt".format(
+    #     Nn=N, xA=x_A, yA=y_A, xB=x_B, yB=y_B)
+    # with open(FileNetworkCoorName, "w") as file:
+    #     for data1, data2 in zip(x_coords, y_coords):
+    #         file.write(f"{data1}\t{data2}\n")
 
