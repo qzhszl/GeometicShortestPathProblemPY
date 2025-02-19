@@ -41,9 +41,9 @@ def plot_maxdev_node_hocount(N, ED, beta):
             data_dic[SP_hopcount[hp_index]] = [max_dev_node_hopcount[hp_index]]
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     for key, values in data_dic.items():
-        fig, ax = plt.subplots(figsize=(6, 4.5))
-        ax.spines['right'].set_visible(False)
-        ax.spines['top'].set_visible(False)
+        fig, ax = plt.subplots(figsize=(6, 3))
+        # ax.spines['right'].set_visible(False)
+        # ax.spines['top'].set_visible(False)
         bins = np.arange(min(values) - 0.5, max(values) + 1.5, 1)  # 间隔为1的bin，确保每个柱中心对齐刻度线
         plt.hist(values, bins=bins,alpha=0.7, color=colors[3], edgecolor=colors[3],density=True)  # 绘制直方图
         plt.xticks(np.arange(min(values), max(values) + 1, 1))
@@ -55,10 +55,10 @@ def plot_maxdev_node_hocount(N, ED, beta):
         plt.ylabel(r'$f_{h(q_{max})}(x)$', fontsize=35)
         plt.xticks(fontsize=28)
         plt.yticks(fontsize=28)
-        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.pdf".format(
+        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.png".format(
             Nn=N, EDn=ED, betan=beta,key = key)
         # plt.show()
-        plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+        plt.savefig(picname, format='png', bbox_inches='tight', dpi=600)
         # 清空图像，以免影响下一个图
         plt.close()
 

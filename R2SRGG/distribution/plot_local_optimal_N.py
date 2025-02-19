@@ -69,7 +69,7 @@ def plot_local_optimum_with_N(ED, beta):
         0.5, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
         text,
         transform=ax.transAxes,  # 使用轴坐标
-        fontsize=26,  # 字体大小
+        fontsize=30,  # 字体大小
         ha='center',  # 水平居中对齐
         va='bottom'  # 垂直对齐方式
     )
@@ -80,15 +80,15 @@ def plot_local_optimum_with_N(ED, beta):
     plt.ylabel('Average Deviation', fontsize=28)
     plt.xscale('log')
     # plt.yscale('log')
-    plt.xticks(fontsize=26)
+    plt.xticks(fontsize=30)
     yticks = np.arange(0,0.21,0.1)
-    plt.yticks(yticks, fontsize=26)
+    plt.yticks(yticks, fontsize=30)
     # plt.legend(fontsize=26, loc=(0.6, 0.5))
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsNlogx.png".format(
         EDn=ED)
-    plt.savefig(picname, format='png', bbox_inches='tight', dpi=600)
+    plt.savefig(picname, format='png', bbox_inches='tight', dpi=600, transparent = True)
 
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsNlogx.pdf".format(
     #     EDn=ED)
