@@ -1524,7 +1524,7 @@ if __name__ == '__main__':
     """
     plot average perpendicular NEIGHBOUR deviation vs input_avg_degree compared with analytic results obtained by matlab
     """
-    load_10000nodenetwork_results_perpendicular(4)
+    # load_10000nodenetwork_results_perpendicular(4)
     plot_common_neighbour_deviation_vs_inputED_with_beta(4)
 
     """

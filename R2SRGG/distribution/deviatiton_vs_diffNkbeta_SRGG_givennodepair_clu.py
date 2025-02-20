@@ -373,7 +373,7 @@ def distance_inlargeSRGG_clu_beta_givennodepair(N, ED, beta, rg, ExternalSimutim
         SPnodenum_vec =[]
 
         # load a network
-        filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\"
+        # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\"
         filefolder_name = "/work/zqiu1/"
         # Randomly generate 10 networks
         Network_generate_time = 20
@@ -514,6 +514,165 @@ def distance_inSRGG_withavgbeta(network_size_index, average_degree_index, beta_i
         # Random select nodepair_num nodes in the largest connected component
         distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime)
     print("ok")
+
+
+
+def deviation_inSRGG_one_SP(network_size_index, average_degree_index, beta_index, Geodistance_index, ExternalSimutime):
+    """
+    :param network_size_index:
+    :param average_degree_index:
+    :param beta_index:
+    :param Geodistance_index:
+    :param ExternalSimutime:
+    :return: In this case, only one random sp (not all the sp are computed)
+    """
+    Nvec = [10000]
+    kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]  # log uniformly distributed k
+    betavec = [4]
+    distance_list = [[0.25, 0.25, 0.75, 0.75]]
+    x_A = distance_list[Geodistance_index][0]
+    y_A = distance_list[Geodistance_index][1]
+    x_B = distance_list[Geodistance_index][2]
+    y_B = distance_list[Geodistance_index][3]
+    geodesic_distance_AB = distR2(x_A, y_A, x_B, y_B)
+    geodesic_distance_AB = round(geodesic_distance_AB, 2)
+
+    random.seed(ExternalSimutime)
+    N = Nvec[network_size_index]
+    ED = kvec[average_degree_index]
+    beta = betavec[beta_index]
+    print("input para:", (N, ED, beta, geodesic_distance_AB, ExternalSimutime))
+
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
+
+    # for large network, we only generate one network and randomly selected 1,000 node pair.
+    # for small network, we generate 100 networks and selected all the node pair in the LCC
+    if N > 100:
+        distance_inlargeSRGG_oneSP_clu_givennodepair(N, ED, beta, rg, ExternalSimutime, geodesic_distance_AB, x_A,                                              y_A, x_B, y_B)
+    else:
+        # Random select nodepair_num nodes in the largest connected component
+        pass
+    print("ok")
+
+
+def distance_inlargeSRGG_oneSP_clu_givennodepair(N, ED, beta, rg, ExternalSimutime, geodesic_distance_AB, x_A, y_A,
+                                                 x_B, y_B):
+    if N > ED:
+        deviation_vec = []  # deviation of all shortest path nodes for all node pairs
+        baseline_deviation_vec = []  # deviation of all shortest path nodes for all node pairs
+        # For each node pair:
+        ave_deviation = []
+        max_deviation = []
+        min_deviation = []
+        ave_baseline_deviation = []
+        length_geodesic = []
+        hopcount_vec = []
+        SPnodenum_vec = []
+        delta_vec = [] # delta is the Euclidean geometric distance between two nodes
+
+        # load a network
+        filefolder_name = "/work/zqiu1/"
+        # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\OneSP\\"
+        # Randomly generate 10 networks
+        Network_generate_time = 20
+
+        for network_index in range(Network_generate_time):
+            # N = 100 # FOR TEST
+            G, Coorx, Coory = R2SRGG_withgivennodepair(N, ED, beta, rg, x_A, y_A, x_B, y_B)
+            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+            print("real ED:", real_avg)
+            nodei = N - 2
+            nodej = N - 1
+            # Find the shortest path nodes
+            try:
+                SPNodelist = nx.shortest_path(G, nodei, nodej)
+                hopcount_vec.append(nx.shortest_path_length(G, nodei, nodej))
+                SPnodenum = len(SPNodelist)-2
+                SPnodenum_vec.append(SPnodenum)
+                if SPnodenum > 0:
+                    xSource = Coorx[nodei]
+                    ySource = Coory[nodei]
+                    xEnd = Coorx[nodej]
+                    yEnd = Coory[nodej]
+                    length_geodesic.append(distR2(xSource, ySource, xEnd, yEnd))
+                    # Compute deviation for the shortest path of each node pair
+                    deviations_for_a_nodepair = []
+                    for SPnode in SPNodelist[1:len(SPNodelist)-1]:
+                        xMed = Coorx[SPnode]
+                        yMed = Coory[SPnode]
+                        dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+                        deviations_for_a_nodepair.append(dist)
+
+                    deviation_vec = deviation_vec + deviations_for_a_nodepair
+
+                    ave_deviation.append(np.mean(deviations_for_a_nodepair))
+                    max_deviation.append(max(deviations_for_a_nodepair))
+                    min_deviation.append(min(deviations_for_a_nodepair))
+
+                    # Compute delta for the shortest path of each node pair:
+                    delta_for_a_nodepair = []
+                    for i in range(len(SPNodelist) - 2):  # 计算相隔节点的距离
+                        node1 = SPNodelist[i]
+                        node2 = SPNodelist[i + 2]
+
+                        delta = distR2(Coorx[node1], Coory[node1], Coorx[node2], Coory[node2])
+                        delta_for_a_nodepair.append(delta)
+
+                    delta_vec = delta_vec + delta_for_a_nodepair
+
+                    baseline_deviations_for_a_nodepair = []
+                    # compute baseline's deviation
+                    filtered_numbers = [num for num in range(N) if num not in [nodei, nodej]]
+                    base_line_node_index = random.sample(filtered_numbers, SPnodenum)
+
+                    for SPnode in base_line_node_index:
+                        xMed = Coorx[SPnode]
+                        yMed = Coory[SPnode]
+                        dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+                        baseline_deviations_for_a_nodepair.append(dist)
+                    ave_baseline_deviation.append(np.mean(baseline_deviations_for_a_nodepair))
+                    baseline_deviation_vec = baseline_deviation_vec + baseline_deviations_for_a_nodepair
+            except:
+                pass
+
+        deviation_vec_name = filefolder_name + "Givendistancedeviation_shortest_path_nodes_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+        np.savetxt(deviation_vec_name, deviation_vec)
+        baseline_deviation_vec_name = filefolder_name + "Givendistancedeviation_baseline_nodes_num_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+        np.savetxt(baseline_deviation_vec_name, baseline_deviation_vec)
+        # For each node pair:
+        ave_deviation_name = filefolder_name + "Givendistanceave_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+        np.savetxt(ave_deviation_name, ave_deviation)
+        max_deviation_name = filefolder_name + "Givendistancemax_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+        np.savetxt(max_deviation_name, max_deviation)
+        min_deviation_name = filefolder_name + "Givendistancemin_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+        np.savetxt(min_deviation_name, min_deviation)
+        ave_baseline_deviation_name = filefolder_name + "Givendistanceave_baseline_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+        np.savetxt(ave_baseline_deviation_name, ave_baseline_deviation)
+        # length_geodesic_name = filefolder_name + "Givendistancelength_geodesic_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+        #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+        # np.savetxt(length_geodesic_name, length_geodesic)
+        SPnodenum_vec_name = filefolder_name + "GivendistanceSPnodenum_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+        np.savetxt(SPnodenum_vec_name, SPnodenum_vec, fmt="%i")
+        hopcount_Name = filefolder_name + "Givendistancehopcount_sp_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+        np.savetxt(hopcount_Name, hopcount_vec)
+        delta_Name = filefolder_name + "Givendistance_delta_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
+            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
+        np.savetxt(delta_Name, delta_vec)
+
+
+
+
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # network_size_index = 4
@@ -554,16 +713,30 @@ if __name__ == '__main__':
 
 
     """
-    test and run the code for different input ED and beta
+    test and run the code for different input ED and beta for given distance
     """
     # test the code
+
     # distance_inSRGG_withavgbeta(5, int(4), int(0), int(0), int(0))
+
+    # run the code
+    # ED = sys.argv[1]
+    # cc_index = sys.argv[2]
+    # Geodistance_index = sys.argv[3]
+    # ExternalSimutime = sys.argv[4]
+    # distance_inSRGG_withavgbeta(5, int(ED), int(cc_index), int(Geodistance_index), int(ExternalSimutime))
+
+    """
+    test and run the code for different input ED and beta FOR ONE SP case
+    """
+    # test the code
+    # deviation_inSRGG_one_SP(0, int(0), int(0), int(0), int(0))
     # run the code
     ED = sys.argv[1]
-    cc_index = sys.argv[2]
+    beta_index = sys.argv[2]
     Geodistance_index = sys.argv[3]
     ExternalSimutime = sys.argv[4]
-    distance_inSRGG_withavgbeta(5, int(ED), int(cc_index), int(Geodistance_index), int(ExternalSimutime))
+    deviation_inSRGG_one_SP(0, int(ED), int(beta_index), int(Geodistance_index), int(ExternalSimutime))
 
 
 

@@ -583,21 +583,21 @@ if __name__ == '__main__':
     """
     # # load data: the first time use it
     # #_______________________________________________________________________
-    distance_list = [[0.491, 0.5, 0.509, 0.5], [0.25, 0.25, 0.75, 0.75]]
-    # betavec = [2.2, 4, 8, 16, 32, 128]
-    # betavec = [2.2, 4, 8, 16, 32, 128]
-    betavec = [4,8]
-    for Geodistance_index in range(1):
-        x_A = distance_list[Geodistance_index][0]
-        y_A = distance_list[Geodistance_index][1]
-        x_B = distance_list[Geodistance_index][2]
-        y_B = distance_list[Geodistance_index][3]
-        geodesic_distance_AB = x_B - x_A
-        geodesic_distance_AB = round(geodesic_distance_AB,2)
-        for beta in betavec:
-            load_10000nodenetwork_results_beta_fixdistance(beta,geodesic_distance_AB)
+    # distance_list = [[0.491, 0.5, 0.509, 0.5], [0.25, 0.25, 0.75, 0.75]]
+    # # betavec = [2.2, 4, 8, 16, 32, 128]
+    # # betavec = [2.2, 4, 8, 16, 32, 128]
+    # betavec = [4,8]
+    # for Geodistance_index in range(1):
+    #     x_A = distance_list[Geodistance_index][0]
+    #     y_A = distance_list[Geodistance_index][1]
+    #     x_B = distance_list[Geodistance_index][2]
+    #     y_B = distance_list[Geodistance_index][3]
+    #     geodesic_distance_AB = x_B - x_A
+    #     geodesic_distance_AB = round(geodesic_distance_AB,2)
+    #     for beta in betavec:
+    #         load_10000nodenetwork_results_beta_fixdistance(beta,geodesic_distance_AB)
     # # # _______________________________________________________________________
 
-    # plot_local_optimum_with_realED_diffbeta_fix_distance(0)
+    plot_local_optimum_with_realED_diffbeta_fix_distance(1)
 
 

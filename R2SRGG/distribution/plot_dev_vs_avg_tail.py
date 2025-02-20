@@ -276,28 +276,28 @@ def plot_dev_vs_avg_tail_fixnode(beta,Geodistance_index):
         #          color='red')
 
 
-        # #  for distance = 0.5
-        # params, covariance = curve_fit(power_law, x[8:15], y[8:15])
-        # # 获取拟合的参数
-        # a_fit, k_fit = params
-        # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-        # plt.plot(x[8:15], power_law(x[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
-        #          color='red')
-
         #  for distance = 0.5
-        params, covariance = curve_fit(power_law, x[6:12], y[6:12])
+        params, covariance = curve_fit(power_law, x[8:15], y[8:15])
         # 获取拟合的参数
         a_fit, k_fit = params
         print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-        plt.plot(x[6:12], power_law(x[6:12], *params), linewidth=5,
-                 label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+        plt.plot(x[8:15], power_law(x[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
                  color='red')
+
+        # #  for distance = 0.1
+        # params, covariance = curve_fit(power_law, x[6:12], y[6:12])
+        # # 获取拟合的参数
+        # a_fit, k_fit = params
+        # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        # plt.plot(x[6:12], power_law(x[6:12], *params), linewidth=5,
+        #          label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+        #          color='red')
 
 
     # analyticy001 = [0.0102, 0.0144, 0.0176, 0.0227, 0.0287, 0.0373, 0.0477, 0.0609, 0.0779, 0.0992, 0.1256, 0.1562, 0.1875, 0.2141, 0.2324]
-    # analyticy05 = [0.0197, 0.0272, 0.0326, 0.0406, 0.0491, 0.0596, 0.0702, 0.0814, 0.0938, 0.1088, 0.1291, 0.1557, 0.1851, 0.2113, 0.2299]
-    analyticy01 = [0.0147, 0.0181, 0.0205, 0.0244, 0.0296, 0.0377, 0.0479, 0.0611, 0.0780, 0.0993, 0.1256, 0.1562, 0.1874, 0.2140, 0.2323]
-    plt.plot(x[0:12], analyticy01[0:12], linewidth=5, label=f'analytic results of common neighbour model',
+    analyticy05 = [0.0197, 0.0272, 0.0326, 0.0406, 0.0491, 0.0596, 0.0702, 0.0814, 0.0938, 0.1088, 0.1291, 0.1557, 0.1851, 0.2113, 0.2299]
+    # analyticy01 = [0.0147, 0.0181, 0.0205, 0.0244, 0.0296, 0.0377, 0.0479, 0.0611, 0.0780, 0.0993, 0.1256, 0.1562, 0.1874, 0.2140, 0.2323]
+    plt.plot(x[0:12], analyticy05[0:12], linewidth=5, label=f'analytic results of common neighbour model',
              color='green')
     #0.01
     # params, covariance = curve_fit(power_law, x[1:9], analyticy001[1:9])
@@ -306,21 +306,21 @@ def plot_dev_vs_avg_tail_fixnode(beta,Geodistance_index):
     # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
     # plt.plot(x[1:9], power_law(x[1:9], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
     #          color='purple')
-    # # 05
-    # params, covariance = curve_fit(power_law, x[7:14], analyticy05[7:14])
-    # # 获取拟合的参数
-    # a_fit, k_fit = params
-    # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-    # plt.plot(x[7:14], power_law(x[7:14], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
-    #          color='purple')
-
-    # # 01
-    params, covariance = curve_fit(power_law, x[4:12], analyticy01[4:12])
+    # 05
+    params, covariance = curve_fit(power_law, x[7:14], analyticy05[7:14])
     # 获取拟合的参数
     a_fit, k_fit = params
     print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-    plt.plot(x[4:12], power_law(x[4:12], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+    plt.plot(x[7:14], power_law(x[7:14], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
              color='purple')
+
+    # # 01
+    # params, covariance = curve_fit(power_law, x[4:12], analyticy01[4:12])
+    # # 获取拟合的参数
+    # a_fit, k_fit = params
+    # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+    # plt.plot(x[4:12], power_law(x[4:12], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+    #          color='purple')
 
 
     plt.xscale('log')
@@ -375,14 +375,14 @@ if __name__ == '__main__':
     # for beta in [4]:
     #     for Geodistance_index in [2]:
     #         load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
-    # plot_dev_vs_avg_tail_fixnode(4,2)
+    plot_dev_vs_avg_tail_fixnode(4,1)
 
     """
     # FUNCTION 2 FOR all node pair
     """
     # for beta in [4]:
     #     load_10000nodenetwork_results_tail(beta)
-    plot_dev_vs_avg_tail(4)
+    # plot_dev_vs_avg_tail(4)
 
     """
     # FUNCTION 3 FOR link geometric distance
