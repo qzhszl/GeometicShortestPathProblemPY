@@ -48,7 +48,7 @@ def load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index):
                 ave_deviation_for_a_para_comb=np.array([])
                 delta_for_a_para_comb = np.array([])
                 hop_for_a_para_comb = np.array([])
-                for ExternalSimutime in range(50):
+                for ExternalSimutime in range(250):
                     try:
                         deviation_vec_name = filefolder_name + "Givendistanceave_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}Geodistance{Geodistance}.txt".format(
                             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
@@ -66,6 +66,7 @@ def load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index):
                             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime, Geodistance=geodesic_distance_AB)
 
                         hop_for_a_para_comb_10times = np.loadtxt(hop_Name)
+                        hop_for_a_para_comb_10times = hop_for_a_para_comb_10times[hop_for_a_para_comb_10times != 1]
                         hop_for_a_para_comb = np.hstack(
                             (hop_for_a_para_comb, hop_for_a_para_comb_10times))
 
@@ -397,16 +398,16 @@ def power_law(x, a, k):
 
 if __name__ == '__main__':
     # load data first
-    # for beta in [4]:
-    #     for Geodistance_index in [0]:
-    #         load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
+    for beta in [4]:
+        for Geodistance_index in [0]:
+            load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
     """
     # FUNCTION 1 FOR fixed node pair dev vs ED
     """
     # for beta in [4]:
     #     for Geodistance_index in [0]:
     #         load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
-    # plot_dev_vs_avg_tail_fixnode(4,0)
+    plot_dev_vs_avg_tail_fixnode(4,0)
 
     """
     # FUNCTION 2 FOR fixed node pair DELTA vs ED
