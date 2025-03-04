@@ -41,12 +41,18 @@ def generate_r2SRGG():
         rg.ran1()
 
     # Nvec = [200, 500, 1000, 10000]
-    Nvec = [10000]
-    kvec = np.arange(2, 6.1, 0.2)
+    Nvec = [100000]
+    # kvec = np.arange(2, 6.1, 0.2)
+    kvec = [2, 4, 6, 11, 20, 34, 61, 108, 190, 336, 595, 1051, 1857, 3282, 5800, 10250, 18116, 32016, 56582,
+            99999]  # for N = 10^5
     # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     betavec = [2.2, 4, 8, 16, 32, 64, 128]
+
     # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
     # betavec = [4]
+    kvec = [2]  # for N = 10^5
+    # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    betavec = [2.2]
 
     for N in Nvec:
         for ED in kvec:
@@ -578,7 +584,7 @@ def generate_proper_network_withgivendistances(N, input_ED_index,beta_index,Geod
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # generate_r2SRGG()
+    generate_r2SRGG()
     """
     run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
     step1

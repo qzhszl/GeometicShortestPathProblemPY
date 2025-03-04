@@ -298,8 +298,8 @@ def plot_delta_vs_avg_tail_fixnode(beta,Geodistance_index):
         count = count + 1
 
     # legend = [r"$\beta=2.2$", r"$\beta=2^2$", r"$\beta=2^3$", r"$\beta=2^4$", r"$\beta=2^5$", r"$\beta=2^7$"]
-    legend = [r"$\delta, \beta=4$"]
-    legend2 = [r"$h(P^*_{ij}),\beta=4$"]
+    legend = r'$\delta$, $\beta=4$'
+    legend2 = r'$h(P^*_{ij}),\beta=4$'
 
     colors = [[0, 0.4470, 0.7410],
               [0.8500, 0.3250, 0.0980],
@@ -316,22 +316,33 @@ def plot_delta_vs_avg_tail_fixnode(beta,Geodistance_index):
         print(y)
         error = std_delta_dict[count]
         ax1.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
-                     markersize=16, label=legend[count], color=colors[0])
+                     markersize=16, label=legend, color=colors[0])
         y2 = ave_hop_dict[count]
         error2 = std_hop_dict[count]
         ax2.errorbar(x, y2, yerr=error2, linestyle="-", linewidth=3, elinewidth=1, capsize=5, marker='o',
-                     markersize=16, label=legend[count], color=colors[1])
+                     markersize=16, label=legend2, color=colors[1])
 
+    # 拟合数据
+    popt1, _ = curve_fit(power_law, x[0:6], y[0:6])
+    popt2, _ = curve_fit(power_law, x[1:6], y2[1:6])
+
+    # 预测拟合值
+    y1_fit = power_law(x[0:6], *popt1)
+    y2_fit = power_law(x[1:6], *popt2)
+    ax1.loglog(x[0:6], y1_fit, 'b-', linewidth=3, label=fr'Fit 1: {popt1[0]:.2f}*x^{popt1[1]:.2f}')
+    ax2.loglog(x[1:6], y2_fit, 'r-',  linewidth=3, label=fr'Fit 2: {popt2[0]:.2f}*x^{popt2[1]:.2f}')
 
     plt.xscale('log')
-    # plt.yscale('log')
-    plt.xlabel('E[D]', fontsize=26)
+    plt.yscale('log')
+    ax1.set_yscale("log")
+    ax1.set_xlabel('E[D]', fontsize=26)
     ax1.set_ylabel('Average delta of shortest path', fontsize=26,color=colors[0])
     ax2.set_ylabel('Average hopcount of shortest path', fontsize=26,color=colors[1])
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     plt.title(fr'N = $10^4$, $\beta = 4$, node $i$:({x_A},{y_A}), node $j$:({x_B},{y_B})', fontsize=26)
-    # plt.legend(fontsize=20, loc="lower right")
+    ax1.legend(loc='center right',fontsize = 20,bbox_to_anchor=(1, 0.7))
+    ax2.legend(loc='center right',fontsize = 20)
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
     picname = filefolder_name+"tailLocalOptimum_deltaandhop_vs_avg_beta{beta}_distance{dis}.pdf".format(beta=beta,
@@ -379,15 +390,26 @@ def plot_delta_vs_ED():
             plt.ylabel(r'$\delta$', fontsize=26)
             plt.xticks(fontsize=26)
             plt.yticks(fontsize=26)
+            text = f"ED:{ED}"
+            plt.text(
+                0.5, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+                text,
+                transform=ax.transAxes,  # 使用轴坐标
+                fontsize=26,  # 字体大小
+                ha='center',  # 水平居中对齐
+                va='bottom'  # 垂直对齐方式
+            )
+
+
             # plt.xscale('log')
             # plt.yscale('log')
             # plt.title('Errorbar Curves with Minimum Points after Peak')
             # plt.legend(fontsize=20, loc="upper right")
             plt.tick_params(axis='both', which="both", length=6, width=1)
-            plt.show()
+            # plt.show()
             picname = filefolder_name+"delta_distribution{Nn}ED{EDn}Beta{betan}.pdf".format(
                 Nn=N, EDn=ED, betan=beta)
-            plt.show()
+            # plt.show()
             plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
             # 清空图像，以免影响下一个图
             plt.close()
@@ -398,16 +420,16 @@ def power_law(x, a, k):
 
 if __name__ == '__main__':
     # load data first
-    for beta in [4]:
-        for Geodistance_index in [0]:
-            load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
+    # for beta in [4]:
+    #     for Geodistance_index in [0]:
+    #         load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
     """
     # FUNCTION 1 FOR fixed node pair dev vs ED
     """
     # for beta in [4]:
     #     for Geodistance_index in [0]:
     #         load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
-    plot_dev_vs_avg_tail_fixnode(4,0)
+    # plot_dev_vs_avg_tail_fixnode(4,0)
 
     """
     # FUNCTION 2 FOR fixed node pair DELTA vs ED
