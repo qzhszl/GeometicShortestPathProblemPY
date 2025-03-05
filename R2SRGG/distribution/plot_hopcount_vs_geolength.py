@@ -55,7 +55,7 @@ def plot_hopcount_vs_geolength(N, ED, beta):
 
     picname = filefoldername+ "hopvsgeolength{Nn}ED{EDn}Beta{betan}.pdf".format(
         Nn=N, EDn=ED, betan=beta)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     # 清空图像，以免影响下一个图
     plt.close()

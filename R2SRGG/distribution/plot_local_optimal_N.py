@@ -39,7 +39,7 @@ def plot_local_optimum_with_N(ED, beta):
                 ave_deviation_for_a_para_comb = []
                 for ExternalSimutime in range(20):
                     try:
-                        deviation_vec_name = "E:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        deviation_vec_name = "D:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                         ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
                         ave_deviation_for_a_para_comb.extend(ave_deviation_for_a_para_comb_10times)
