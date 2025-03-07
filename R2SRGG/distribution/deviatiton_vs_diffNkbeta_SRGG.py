@@ -224,6 +224,133 @@ def distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime):
         np.savetxt(max_dev_node_hopcount_name, max_dev_node_hopcount, fmt="%i")
 
 
+def distance_insmallSRGG_local(N, ED, beta, rg):
+    """
+    :param N:
+    :param ED:
+    :param beta:
+    :param rg:
+    :return:
+    for each graph, we record the real average degree, LCC number, clustering coefficient
+    for each node pair, we only record the ave,max,min of distance from the shortest path to the geodesic,
+    length of the geo distances.
+    """
+    if N> ED:
+        # For graph:
+        real_ave_degree = []
+        LCC_num = []
+        clustering_coefficient = []
+        count_vec =[]
+        # For each node pair:
+        ave_deviation = []
+        max_deviation = []
+        min_deviation = []
+        ave_baseline_deviation =[]
+        length_geodesic = []
+        SP_hopcount = []
+        max_dev_node_hopcount = []
+        SPnodenum_vec =[]
+        simu_times = 10000
+        for simu_index in range(simu_times):
+            G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+
+            print("real ED:", real_avg)
+            real_ave_degree.append(real_avg)
+
+            # pick up all the node pairs in the LCC and save them in the unique_pairs
+            unique_pairs = find_all_connected_node_pairs(G)
+            count = 0
+            for node_pair in unique_pairs:
+                nodei = node_pair[0]
+                nodej = node_pair[1]
+                # Find the shortest path nodes
+                SPNodelist = all_shortest_path_node(G, nodei, nodej)
+                SPnodenum = len(SPNodelist)
+                SPnodenum_vec.append(SPnodenum)
+
+                if SPnodenum>0:
+                    # hopcount of the SP
+                    SP_hopcount_fornodepair = nx.shortest_path_length(G,nodei,nodej)
+                    SP_hopcount.append(SP_hopcount_fornodepair)
+
+                    xSource = Coorx[nodei]
+                    ySource = Coory[nodei]
+                    xEnd = Coorx[nodej]
+                    yEnd = Coory[nodej]
+                    length_geodesic.append(distR2(xSource, ySource, xEnd, yEnd))
+                    # Compute deviation for the shortest path of each node pair
+                    deviations_for_a_nodepair = []
+                    hop_for_a_nodepair = []
+                    for SPnode in SPNodelist:
+                        xMed = Coorx[SPnode]
+                        yMed = Coory[SPnode]
+                        dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+                        deviations_for_a_nodepair.append(dist)
+                        # hop = hopcount_node(G, nodei, nodej, SPnode)
+                        # hop_for_a_nodepair.append(hop)
+                    ave_deviation.append(np.mean(deviations_for_a_nodepair))
+                    max_deviation.append(max(deviations_for_a_nodepair))
+                    min_deviation.append(min(deviations_for_a_nodepair))
+
+                    max_value = max(deviations_for_a_nodepair)
+                    max_index = deviations_for_a_nodepair.index(max_value)
+                    maxhop_node_index = SPNodelist[max_index]
+                    max_dev_node_hopcount.append(hopcount_node(G, nodei, nodej, maxhop_node_index))
+
+                    count = count + 1
+
+                    baseline_deviations_for_a_nodepair = []
+                    # compute baseline's deviation
+                    filtered_numbers = [num for num in range(N) if num not in [nodei,nodej]]
+                    base_line_node_index = random.sample(filtered_numbers,SPnodenum)
+
+                    for SPnode in base_line_node_index:
+                        xMed = Coorx[SPnode]
+                        yMed = Coory[SPnode]
+                        dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
+                        baseline_deviations_for_a_nodepair.append(dist)
+                    ave_baseline_deviation.append(np.mean(baseline_deviations_for_a_nodepair))
+            count_vec.append(count)
+
+        real_ave_degree_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\real_ave_degree_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn = N, EDn=ED, betan=beta)
+        # np.savetxt(real_ave_degree_name, real_ave_degree)
+        LCC_num_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\LCC_num_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn = N, EDn=ED, betan=beta)
+        # np.savetxt(LCC_num_name, LCC_num, fmt="%i")
+        clustering_coefficient_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\clustering_coefficient_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn = N, EDn=ED, betan=beta)
+        # np.savetxt(clustering_coefficient_name, clustering_coefficient)
+        # For each node pair:
+        ave_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\ave_deviation_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn = N, EDn=ED, betan=beta)
+        np.savetxt(ave_deviation_name, ave_deviation)
+        max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\max_deviation_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn = N, EDn=ED, betan=beta)
+        # np.savetxt(max_deviation_name, max_deviation)
+        min_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\min_deviation_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn = N, EDn=ED, betan=beta)
+        # np.savetxt(min_deviation_name, min_deviation)
+        ave_baseline_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn = N, EDn=ED, betan=beta)
+        # np.savetxt(ave_baseline_deviation_name, ave_baseline_deviation)
+        length_geodesic_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\length_geodesic_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn = N, EDn=ED, betan=beta)
+        np.savetxt(length_geodesic_name, length_geodesic)
+        SPnodenum_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\SPnodenum_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn = N, EDn=ED, betan=beta)
+        # np.savetxt(SPnodenum_vec_name, SPnodenum_vec, fmt="%i")
+        nodepairs_for_eachgraph_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\nodepairs_for_eachgraph_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn=N, EDn=ED, betan=beta)
+        # np.savetxt(nodepairs_for_eachgraph_vec_name, count_vec, fmt="%i")
+
+        SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\SPhopcount_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn=N, EDn=ED, betan=beta)
+        np.savetxt(SPhopcount_name, SP_hopcount, fmt="%i")
+        max_dev_node_hopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\max_dev_node_hopcount_N{Nn}ED{EDn}Beta{betan}.txt".format(
+            Nn=N, EDn=ED, betan=beta)
+        # np.savetxt(max_dev_node_hopcount_name, max_dev_node_hopcount, fmt="%i")
 
 def distance_inlargeSRGG(N,ED,beta,rg, ExternalSimutime):
     """
@@ -617,36 +744,27 @@ if __name__ == '__main__':
     #         for beta_index in range(15):
     #             distance_inSRGG(N_index, ED_index, beta_index, 0)
 
+    """
+    run simulations for small networks(N = 100)
+    step1
+    """
+    rg = RandomGenerator(-12)
+    kvec = [2, 3, 4, 5, 6, 8, 10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 100]
+    N = 100
+    betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    for ED in kvec:
+        for beta in betavec:
+            print(ED,beta)
+            distance_insmallSRGG_local(N, ED, beta, rg)
 
-    # N = 50
     # ED = 9
     # beta = 4
-    # rg=  RandomGenerator(-12)
-    # G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
-    # try:
-    #     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    # except:
-    #     flag = 0
-    #     while flag == 0:
-    #         G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
-    #         if nx.number_of_edges(G) > 0:
-    #             flag = 1
-    #             real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    #
-    # print("real ED:", real_avg)
-    # ave_clu = nx.average_clustering(G)
-    # print("clu:", ave_clu)
-    # components = list(nx.connected_components(G))
-    # largest_component = max(components, key=len)
-    # LCC_number = len(largest_component)
-    # print("LCC", LCC_number)
 
     # for N_index in [0,3]:
     #     for ED_index in range(24):
     #         for beta_index in range(14):
     #             distance_inSRGG(N_index, ED_index, beta_index, 0)
 
-    # shortest_path_lengthfornetwork(10000, 8)
 
     """
     ## generate_proper_network(N, ED)
@@ -736,9 +854,9 @@ if __name__ == '__main__':
     #     for data1, data2 in zip(Coorx, Coory):
     #         file.write(f"{data1}\t{data2}\n")
 
-    # """
-    #     generate proper cc and ED network for fixed distance node pair
-    # """
+    """
+        generate proper cc and ED network for fixed distance node pair
+    """
     # cc = 0.2
     # distance_list = [[0.25, 0.25, 0.3, 0.3], [0.25, 0.25, 0.5, 0.5], [0.25, 0.25, 0.75, 0.75]]
     # betavec = [2.55]
