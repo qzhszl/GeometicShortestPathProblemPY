@@ -10,6 +10,7 @@ import random
 import time
 
 import networkx as nx
+from numpy.random import random_integers
 
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 import numpy as np
@@ -289,8 +290,38 @@ def check_realdegree_vs_expecteddegree():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     rg = RandomGenerator(-12)
-    R2SRGG(110,5,4,rg)
+    for i in range(random.randint(1, 1000)):
+        rg.ran1()
+    # betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    # N_vec = [100,1000,10000]
+    # ED_vec = [10,20,72]
+    # betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    # N_vec = [100,1000,10000]
+    # ED_vec = [10,20,72]
+    #
+    # for ED in ED_vec:
+    #     for beta in betavec:
+    #         for N in N_vec:
+    #             G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    #             real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    #             print("inputpara:",(N,ED,beta))
+    #             print("real ED:", real_avg)
     # check_realdegree_vs_expecteddegree()
+    G, Coorx, Coory = R2SRGG(100, 15, 8, rg)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    print("inputpara:", (100, 18,128))
+    print("real ED:", real_avg)
+
+    # G, Coorx, Coory = R2SRGG(1000, 14, 4, rg)
+    # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    # print("inputpara:", (1000, 27, 128))
+    # print("real ED:", real_avg)
+    #
+    # G, Coorx, Coory = R2SRGG(1000, 72, 4, rg)
+    # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    # print("inputpara:", (10000, 27, 128))
+    # print("real ED:", real_avg)
+
 
     # x=  random.random()
     # y = random.random()

@@ -92,7 +92,8 @@ def plot_spnum_vs_hopcount():
     # 计算每个 hopcount 对应的均值和标准差
     mean_values = [np.mean(path_num_vec[hopcount_vec == h]) for h in unique_hops]
     std_values = [np.std(path_num_vec[hopcount_vec == h]) for h in unique_hops]
-
+    length_value = [len(path_num_vec[hopcount_vec == h]) for h in unique_hops]
+    print(length_value)
     # 绘制误差条形图 (Errorbar)
     fig, ax = plt.subplots(figsize=(6, 4.5))
     plt.errorbar(unique_hops, mean_values, yerr=std_values, fmt='o-', capsize=5, capthick=2, markersize=8, linewidth=2)
@@ -105,7 +106,7 @@ def plot_spnum_vs_hopcount():
     plt.xlabel('Hopcount', fontsize=14, fontweight='bold')
     plt.ylabel('Shortest path number', fontsize=14, fontweight='bold')
     # plt.title('Path Number vs. Hop Count', fontsize=16)
-    text = rf"$N = 10^4$" "\n" r"$E[D] = {N}$" "\n" r"$\beta = 4$".format(N = N)
+    text = rf"$N = {N}$" "\n" r"$E[D] = {ED}$" "\n" r"$\beta = {beta}$".format(N = N,ED = ED, beta = beta)
     plt.text(
         0.25, 0.65,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
         text,
@@ -118,6 +119,9 @@ def plot_spnum_vs_hopcount():
     # 显示网格
     # plt.grid(True, linestyle='--', alpha=0.6)
     # 显示图形
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\pathnums\\SPnumvsHopcountN{N}ED{ED}beta{beta}.pdf".format(
+        N = N,ED = ED, beta = beta)
+    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
 
 
@@ -125,10 +129,10 @@ def plot_spnum_vs_hopcount():
 
 if __name__ == '__main__':
 
-    for ED in [2,4,8,16,32,64,128]:
-        pathnum_vs_hopcount(ED)
+    # for ED in [2,4,8,16,32,64,128]:
+    #     pathnum_vs_hopcount(ED)
 
-    # plot_spnum_vs_hopcount()
+    plot_spnum_vs_hopcount()
 
     # geolength_index = sys.argv[1]
     # ExternalSimutime = sys.argv[2]

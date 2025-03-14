@@ -88,7 +88,7 @@ def plot_local_optimum_with_N(ED, beta):
 
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsNlogx.png".format(
         EDn=ED)
-    plt.savefig(picname, format='png', bbox_inches='tight', dpi=600, transparent = True)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600, transparent = True)
 
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsNlogx.pdf".format(
     #     EDn=ED)

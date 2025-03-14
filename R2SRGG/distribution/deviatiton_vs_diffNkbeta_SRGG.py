@@ -250,7 +250,7 @@ def distance_insmallSRGG_local(N, ED, beta, rg):
         SP_hopcount = []
         max_dev_node_hopcount = []
         SPnodenum_vec =[]
-        simu_times = 10000
+        simu_times = 100
         for simu_index in range(simu_times):
             G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
             real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
@@ -711,7 +711,7 @@ def generate_proper_network_withgivendistances(N, input_ED_index,beta_index,Geod
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    generate_r2SRGG()
+    # generate_r2SRGG()
     """
     run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
     step1
@@ -749,8 +749,10 @@ if __name__ == '__main__':
     step1
     """
     rg = RandomGenerator(-12)
-    kvec = [2, 3, 4, 5, 6, 8, 10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 100]
-    N = 100
+    # kvec = [10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 100]
+
+    kvec = [2, 3, 4, 5, 6, 9, 11, 15, 20, 27, 37, 49, 65, 87, 117, 156, 209, 279, 373, 499]
+    N = 500
     betavec = [2.2, 4, 8, 16, 32, 64, 128]
     for ED in kvec:
         for beta in betavec:

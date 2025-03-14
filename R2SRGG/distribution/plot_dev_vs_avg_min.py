@@ -465,6 +465,9 @@ def relative_deviation_vsdiffk_diffhop_givendistance():
     plt.close()
 
 
+
+
+
 if __name__ == '__main__':
     # """
     # simulation of the average distance if we pick up an arbitrary node pair from an SRGG

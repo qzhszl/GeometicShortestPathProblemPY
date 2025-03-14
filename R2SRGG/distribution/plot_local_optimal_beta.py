@@ -11,6 +11,11 @@ from R2SRGG.R2SRGG import loadSRGGandaddnode
 from collections import defaultdict
 import math
 
+"""
+plot the figure of how the deviation changes with different beta, when the expected degree is fixed.
+"""
+
+
 def load_small_network_results_beta(N, ED):
     # return betavec = [2.1, 4, 8, 16, 32, 64, 128] and corresponding
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]

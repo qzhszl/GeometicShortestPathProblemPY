@@ -59,6 +59,49 @@ def common_neighbour_generator(N, avg, beta, rg, Coorx, Coory):
     return G, xx, yy
 
 
+def common_neighbour_generator2(N, avg, beta, rg, Coorx, Coory):
+    assert beta > 2
+    assert avg > 0
+    assert N > 1
+
+    R = 2.0  # manually tuned value
+    alpha = (2 * N / avg * R * R) * (math.pi / (math.sin(2 * math.pi / beta) * beta))
+    alpha = math.sqrt(alpha)
+    s = []
+    t = []
+    # Assign coordinates
+    xx = Coorx
+    yy = Coory
+
+    # make connections
+    for i in range(N-2,N):
+        for j in range(i):
+            dist = math.sqrt((xx[i] - xx[j]) ** 2 + (yy[i] - yy[j]) ** 2)
+            assert dist > 0
+            try:
+                prob = 1 / (1 + (alpha*dist)**beta)
+            except:
+                prob = 0
+            if rg.ran1() < prob:
+                s.append(i)
+                t.append(j)
+    # Create graph and remove self-loops
+    G = nx.Graph()
+    G.add_edges_from(zip(s, t))
+    if not G.has_node(9999):
+        G.add_node(9999)
+
+    # 检查节点 9998 是否在图中，如果不在则添加
+    if not G.has_node(9998):
+        G.add_node(9998)
+    # if G.number_of_nodes() < N:
+    #     ExpectedNodeList = [i for i in range(0, N)]
+    #     Nodelist = list(G.nodes)
+    #     difference = [item for item in ExpectedNodeList if item not in Nodelist]
+    #     G.add_nodes_from(difference)
+    return G, xx, yy
+
+
 def compute_common_neighbour_deviation(G, Coorx, Coory, N):
     nodei = N - 2
     nodej = N - 1
@@ -257,6 +300,9 @@ def neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta_index, ExternalS
     with open(connected_deviations_name, 'w') as file:
         json.dump({str(k): v for k, v in connectedornot_dic.items()}, file)
 
+
+
+
 if __name__ == '__main__':
     # rg = RandomGenerator(-12)
     # rseed = random.randint(0, 10000)
@@ -275,6 +321,10 @@ if __name__ == '__main__':
     #         data = line.strip().split("\t")  # 使用制表符分割
     #         coorx.append(float(data[0]))
     #         coory.append(float(data[1]))
+
+    """
+    common neighbour model changes with different ED
+    """
     # common_neighbour_generator(N=10000, avg=10, beta=4, rg=rg, Coorx=coorx, Coory=coory)
     # ED_vec = [2, 3, 4, 5, 6, 7, 8, 9, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
     # betavec = [2.2, 2.4, 2.6, 2.8, 3, 3.2, 3.4, 3.6, 3.8, 4, 5, 6, 7, 8, 9, 10, 16, 32, 64, 128, 256, 512,1024]
@@ -285,21 +335,39 @@ if __name__ == '__main__':
     #     beta_index = 22
     #     neighbour_distance_ED_beta_one_graph_centerO(ED, beta_index, 0)
 
-    for beta in range(23):
-        ED_index = 8
-        neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta, 0)
+
+    """
+    common neighbour model changes with different beta
+    """
+    # for beta in range(23):
+    #     ED_index = 8
+    #     neighbour_distance_ED_beta_one_graph_centerO(ED_index, beta, 0)
+
+    """
+    check common_neighbour_generator
+    """
+
+    x_coords = np.random.uniform(-0.5, 0.5, 10000)
+    y_coords = np.random.uniform(-0.5, 0.5, 10000)
+    x_coords[9998] = -0.005
+    y_coords[9998] = 0
+    x_coords[9999] = 0.005
+    y_coords[9999] = 0
+    rg = RandomGenerator(-12)
+    N = 10000
+    avg = 100
+    G, coorx, coory = common_neighbour_generator(10000, avg, 4, rg, x_coords, y_coords)
+    print(G.degree(9999))
+    print(G.degree(9998))
+    common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
+    print(len(common_neighbors),np.mean(deviations_for_a_nodepair))
 
 
-    # x_coords = np.random.uniform(-0.5, 0.5, 10000)
-    # y_coords = np.random.uniform(-0.5, 0.5, 10000)
-    # x_coords[9998] = -0.005
-    # y_coords[9998] = 0
-    # x_coords[9999] = 0.005
-    # y_coords[9999] = 0
-    # rg = RandomGenerator(-12)
-    # G, coorx, coory = common_neighbour_generator(10000, 9999, 4, rg, x_coords, y_coords)
-    # print(G.degree(9999))
-    # print(G.degree(9998))
+    G, coorx, coory = common_neighbour_generator2(10000, avg, 4, rg, x_coords, y_coords)
+    print(G.degree(9999))
+    print(G.degree(9998))
+    common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
+    print(len(common_neighbors), np.mean(deviations_for_a_nodepair))
 
 
 

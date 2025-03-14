@@ -13,9 +13,12 @@ import json
 import math
 import sys
 
+from scipy import integrate
+
 # from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair,dist_to_geodesic_perpendicular_R2
 from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair, \
     dist_to_geodesic_perpendicular_R2
+from R2SRGG.distribution.common_neighbour import common_neighbour_generator
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs
 
@@ -196,6 +199,44 @@ def neighbour_distance_with_ED_clu(ED_index, beta_index):
         json.dump({str(k): v for k, v in connectedornot_dic.items()}, file)
 
 
+def check_probability_of_a_node_is_common_neighbour_node():
+    x_coords = np.random.uniform(-0.5, 0.5, 10000)
+    y_coords = np.random.uniform(-0.5, 0.5, 10000)
+    x_coords[9998] = -0.005
+    y_coords[9998] = 0
+    x_coords[9999] = 0.005
+    y_coords[9999] = 0
+    rg = RandomGenerator(-12)
+    N = 10000
+    avg = 100
+    beta = 4
+    G, coorx, coory = common_neighbour_generator(N, avg, 4, rg, x_coords, y_coords)
+    common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
+    print(len(common_neighbors)/N, np.mean(deviations_for_a_nodepair))
+
+    delta = 0.005
+    R=2
+    alpha = (2 * N / avg * R * R) * (math.pi / (math.sin(2 * math.pi / beta) * beta))
+    alpha = math.sqrt(alpha)
+    probability = compute_probability(alpha, beta, delta)
+    print(f"Pr[Ω=1] ≈ {probability:.6f}")
+
+
+def conditional_probability(x, y, alpha, beta, delta):
+    term1 = 1 + (alpha * np.sqrt((x + delta) ** 2 + y ** 2)) ** beta
+    term2 = 1 + (alpha * np.sqrt((x - delta) ** 2 + y ** 2)) ** beta
+    return 1 / (term1 * term2)
+
+def compute_probability(alpha, beta, delta):
+    result, _ = integrate.dblquad(
+        conditional_probability,  # Function to integrate
+        -0.5, 0.5,               # Limits for x
+        lambda x: -0.5, lambda x: 0.5,  # Limits for y
+        args=(alpha, beta, delta)  # Additional parameters
+    )
+    return result
+
+
 
 if __name__ == '__main__':
 
@@ -209,7 +250,12 @@ if __name__ == '__main__':
     """
     check neighbour distance for clu
     """
-    EDindex = sys.argv[1]
-    betaindex = sys.argv[2]
-    # betaindex = 0
-    neighbour_distance_with_ED_one_graph_clu(int(EDindex),int(betaindex))
+    # EDindex = sys.argv[1]
+    # betaindex = sys.argv[2]
+    # # betaindex = 0
+    # neighbour_distance_with_ED_one_graph_clu(int(EDindex),int(betaindex))
+
+    """
+    check neighbour distance for clu
+    """
+    check_probability_of_a_node_is_common_neighbour_node()
