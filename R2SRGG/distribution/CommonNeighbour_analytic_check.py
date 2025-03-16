@@ -6,6 +6,7 @@
 This .m is simulation for Maksim's mean field explanation.
 We generate two nodes with fixed coordinates(0.495,0.5),(0.505,0.5), find all their common neighbours
 """
+import matplotlib.pyplot as plt
 import numpy as np
 import networkx as nx
 import random
@@ -14,6 +15,7 @@ import math
 import sys
 
 from scipy import integrate
+from scipy.optimize import curve_fit
 
 # from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair,dist_to_geodesic_perpendicular_R2
 from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair, \
@@ -199,35 +201,55 @@ def neighbour_distance_with_ED_clu(ED_index, beta_index):
         json.dump({str(k): v for k, v in connectedornot_dic.items()}, file)
 
 
-def check_probability_of_a_node_is_common_neighbour_node():
+def check_probability_of_a_node_is_common_neighbour_node(N,avg,beta,delta):
     x_coords = np.random.uniform(-0.5, 0.5, 10000)
     y_coords = np.random.uniform(-0.5, 0.5, 10000)
-    x_coords[9998] = -0.005
+    x_coords[9998] = -delta
     y_coords[9998] = 0
-    x_coords[9999] = 0.005
+    x_coords[9999] = delta
     y_coords[9999] = 0
     rg = RandomGenerator(-12)
-    N = 10000
-    avg = 100
-    beta = 4
-    G, coorx, coory = common_neighbour_generator(N, avg, 4, rg, x_coords, y_coords)
+    # N = 10000
+    # avg = 100
+    # beta = 4
+    G, coorx, coory = common_neighbour_generator(N, avg, beta, rg, x_coords, y_coords)
     common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
-    print(len(common_neighbors)/N, np.mean(deviations_for_a_nodepair))
+    p_simu = len(common_neighbors)/N
+    # print(len(common_neighbors)/N, np.mean(deviations_for_a_nodepair))
 
-    delta = 0.005
-    R=2
+    # delta = 0.005
+    R = 2
     alpha = (2 * N / avg * R * R) * (math.pi / (math.sin(2 * math.pi / beta) * beta))
     alpha = math.sqrt(alpha)
     probability = compute_probability(alpha, beta, delta)
-    print(f"Pr[Ω=1] ≈ {probability:.6f}")
+    # print(f"Pr[Ω=1] ≈ {probability:.6f}")
+    return p_simu, probability
 
 
 def conditional_probability(x, y, alpha, beta, delta):
+    """
+    probability that node k(x,y) is a common neighbour of node i and j, given (x,y)
+    :param x:
+    :param y:
+    :param alpha:
+    :param beta:
+    :param delta:
+    :return:
+    """
     term1 = 1 + (alpha * np.sqrt((x + delta) ** 2 + y ** 2)) ** beta
     term2 = 1 + (alpha * np.sqrt((x - delta) ** 2 + y ** 2)) ** beta
     return 1 / (term1 * term2)
 
 def compute_probability(alpha, beta, delta):
+    """
+    probability that node k is a common neighbour of node i and j
+    :param x:
+    :param y:
+    :param alpha:
+    :param beta:
+    :param delta:
+    :return:
+    """
     result, _ = integrate.dblquad(
         conditional_probability,  # Function to integrate
         -0.5, 0.5,               # Limits for x
@@ -236,6 +258,54 @@ def compute_probability(alpha, beta, delta):
     )
     return result
 
+def check_absolute_y():
+    """
+    int_{-1}^1 |y| f_Y(y) dy = 2
+    when we remove the absolute value, the pdf of y f_Y(y) does not change
+    :return:
+    """
+    random_number = np.random.uniform(0, 0.5,100000)
+    print(np.mean(abs(random_number)))
+
+def integrand(x, y,alpha,beta,delta):
+    return conditional_probability(x, y, alpha, beta, delta) * y
+
+def compute_Expected_abs_y(alpha,beta,delta):
+    integral_result, _ = integrate.dblquad(integrand, 0, 1/2, lambda y: -1/2, lambda y: 1/2, args=(alpha,beta,delta))
+    Pr_Omega = compute_probability(alpha, beta, delta)  # 请替换为 Pr[Ω=1] 的值
+    final_result = (2 / Pr_Omega) * integral_result
+    return final_result
+
+def check_Expected_abs_y(N,avg,beta,delta,simutime):
+    simu_res_vec =[]
+    for i in range(simutime):
+        x_coords = np.random.uniform(-0.5, 0.5, 10000)
+        y_coords = np.random.uniform(-0.5, 0.5, 10000)
+        x_coords[9998] = -delta
+        y_coords[9998] = 0
+        x_coords[9999] = delta
+        y_coords[9999] = 0
+        rg = RandomGenerator(-12)
+        G, coorx, coory = common_neighbour_generator(N, avg, beta, rg, x_coords, y_coords)
+        common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
+        # print(len(common_neighbors))
+        # p_simu = len(common_neighbors) / N
+        if deviations_for_a_nodepair:
+            simu_res = np.mean(deviations_for_a_nodepair)
+            simu_res_vec.append(simu_res)
+    # print(len(common_neighbors)/N, np.mean(deviations_for_a_nodepair))
+
+    simu_res_mean = (np.mean(simu_res_vec))
+    # delta = 0.005
+    R = 2
+    alpha = (2 * N / avg * R * R) * (math.pi / (math.sin(2 * math.pi / beta) * beta))
+    alpha = math.sqrt(alpha)
+    ana_res = compute_Expected_abs_y(alpha,beta,delta)
+    # print(ana_res)
+    return ana_res,simu_res_mean
+
+def power_law(x, a, k):
+    return a * x ** k
 
 
 if __name__ == '__main__':
@@ -258,4 +328,48 @@ if __name__ == '__main__':
     """
     check neighbour distance for clu
     """
-    check_probability_of_a_node_is_common_neighbour_node()
+    # Simu_vec = []
+    # Analaytic_result = []
+    # avg_vec = [5, 10, 20, 100]
+    # beta_vec = [2.2, 4, 8, 64, 128]
+    # for avg in avg_vec:
+    #     for beta in beta_vec:
+    #         print(avg, beta)
+    #         for i in range(1000):
+    #             p_simu, probability = check_probability_of_a_node_is_common_neighbour_node(10000,avg,beta,0.01)
+    #             Simu_vec.append(p_simu)
+    #             Analaytic_result.append(probability)
+    #         print("simu:",np.mean(Simu_vec))
+    #         print("analytic:", np.mean(Analaytic_result))
+
+    # check_absolute_y()
+
+    avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    beta_vec = [4]
+    ana_vec =[]
+    simu_vec =[]
+    for avg in avg_vec:
+        for beta in beta_vec:
+            print("ED", avg, beta)
+            ana_res,simu_res = check_Expected_abs_y(10000, avg, beta, 0.25,simutime=1)
+            print("ana:",ana_res)
+            print("sim:",simu_res)
+            ana_vec.append(ana_res)
+            simu_vec.append(simu_res)
+
+    params, covariance = curve_fit(power_law, avg_vec[8:15], ana_vec[8:15])
+    # 获取拟合的参数
+    a_fit, k_fit = params
+    print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+    plt.plot(avg_vec[8:15], power_law(avg_vec[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+             color='red')
+
+    plt.plot(avg_vec,ana_vec)
+    plt.plot(avg_vec,simu_vec)
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel('E[D]', fontsize=26)
+    plt.ylabel('Average deviation of common neighbour model', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.show()
