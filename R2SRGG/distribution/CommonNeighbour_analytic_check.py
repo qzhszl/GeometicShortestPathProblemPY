@@ -209,8 +209,8 @@ def check_probability_of_a_node_is_common_neighbour_node():
     rg = RandomGenerator(-12)
     N = 10000
     avg = 100
-    beta = 4
-    G, coorx, coory = common_neighbour_generator(N, avg, 4, rg, x_coords, y_coords)
+    beta = 16
+    G, coorx, coory = common_neighbour_generator(N, avg, beta, rg, x_coords, y_coords)
     common_neighbors, deviations_for_a_nodepair = compute_common_neighbour_deviation(G, coorx, coory, N)
     print(len(common_neighbors)/N, np.mean(deviations_for_a_nodepair))
 
