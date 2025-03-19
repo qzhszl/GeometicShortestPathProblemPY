@@ -345,7 +345,7 @@ if __name__ == '__main__':
     # check_absolute_y()
 
     avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
-    beta_vec = [128]
+    beta_vec = [4]
     for delta in [0.005,0.01,0.05,0.1,0.15,0.25]:
         ana_vec = []
         simu_vec = []
@@ -365,7 +365,7 @@ if __name__ == '__main__':
         # plt.plot(avg_vec[8:15], power_law(avg_vec[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
         #          color='red')
 
-        plt.plot(avg_vec,ana_vec,label = f"{delta}")
+        plt.plot(avg_vec,ana_vec,label = fr"$\delta:${delta}")
         # plt.plot(avg_vec,simu_vec)
     plt.xscale('log')
     plt.yscale('log')
