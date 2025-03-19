@@ -329,17 +329,18 @@ def check_modelwithdistance():
         simu_vec = []
         for avg in avg_vec:
             for beta in beta_vec:
-                print("ED", avg, beta)
+                # print("ED", avg, beta)
                 ana_res,simu_res = check_Expected_abs_y(10000, avg, beta, delta,simutime=0)
-                print("ana:",ana_res)
-                print("sim:",simu_res)
+                # print("ana:",ana_res)
+                # print("sim:",simu_res)
                 ana_vec.append(ana_res)
                 simu_vec.append(simu_res)
-        # print(ana_vec)
-        # params, covariance = curve_fit(power_law, avg_vec[8:15], ana_vec[8:15])
-        # # 获取拟合的参数
-        # a_fit, k_fit = params
-        # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        print("delta:",delta)
+        params, covariance = curve_fit(power_law, avg_vec[8:15], ana_vec[8:15])
+        # params, covariance = curve_fit(power_law, avg_vec[-3:], ana_vec[-3:15])
+        # 获取拟合的参数
+        a_fit, k_fit = params
+        print(f"拟合结果: a = {a_fit}, k = {k_fit}")
         # plt.plot(avg_vec[8:15], power_law(avg_vec[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
         #          color='red')
 
@@ -397,11 +398,12 @@ def check_model_withalpha():
 
 
 def check_modelwithN():
-    beta = 4
-    delta_vec = [0.005,0.26]
+    beta = 128
+    delta_vec = [0.001,0.005,0.01,0.05,0.1,0.15,0.2,0.25]
     for delta in delta_vec:
-        for N in [1000]:
-            log_spaced_points = np.logspace(np.log10(5), np.log10(N - 1), num=20)
+        print("delta:",delta)
+        for N in [10000]:
+            log_spaced_points = np.logspace(np.log10(5), np.log10(10*N), num=20)
             # Round the points to the nearest integer
             rounded_points_499 = np.round(log_spaced_points).astype(int)
             # Remove duplicates to ensure unique values
@@ -417,15 +419,14 @@ def check_modelwithN():
             ana_vec = []
             simu_vec = []
             for avg in avg_vec:
-                print("ED", avg, beta)
+
                 ana_res,simu_res = check_Expected_abs_y(N, avg, beta, delta,simutime=0)
-                print("ana:",ana_res)
-                print("sim:",simu_res)
+
                 ana_vec.append(ana_res)
                 simu_vec.append(simu_res)
             # print(ana_vec)
 
-            if delta == 0.26:
+            if delta in delta_vec:
                 params, covariance = curve_fit(power_law, avg_vec[-50:], ana_vec[-50:])
                 # 获取拟合的参数
                 a_fit, k_fit = params
@@ -436,11 +437,12 @@ def check_modelwithN():
                 params, covariance = curve_fit(power_law, avg_vec[-65:], ana_vec[-65:])
                 # 获取拟合的参数
                 a_fit, k_fit = params
+                print(f"拟合结果: a = {a_fit}, k = {k_fit}")
                 plt.plot(avg_vec[-65:], power_law(avg_vec[-65:], *params), linewidth=5,
                          label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
                          color='yellow')
 
-            plt.plot(avg_vec,ana_vec,label = f"{N},{delta_vec}")
+            plt.plot(avg_vec,ana_vec,label = f"{N},{delta}")
             # plt.plot(avg_vec,simu_vec)
     plt.xscale('log')
     plt.yscale('log')
@@ -493,9 +495,9 @@ if __name__ == '__main__':
 
 
     """
-    check alpha
+    check distance
     """
-    # check_model_withalpha()
+    # check_modelwithdistance()
 
     """
     check alpha
