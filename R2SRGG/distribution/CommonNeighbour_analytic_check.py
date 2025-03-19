@@ -273,7 +273,10 @@ def integrand(x, y,alpha,beta,delta):
 def compute_Expected_abs_y(alpha,beta,delta):
     integral_result, _ = integrate.dblquad(integrand, 0, 1/2, lambda y: -1/2, lambda y: 1/2, args=(alpha,beta,delta))
     Pr_Omega = compute_probability(alpha, beta, delta)  # 请替换为 Pr[Ω=1] 的值
-    final_result = (2 / Pr_Omega) * integral_result
+    try:
+        final_result = (2 / Pr_Omega) * integral_result
+    except:
+        final_result = 0
     return final_result
 
 def check_Expected_abs_y(N,avg,beta,delta,simutime):
@@ -308,44 +311,19 @@ def power_law(x, a, k):
     return a * x ** k
 
 
-if __name__ == '__main__':
+def check_Expected_abs_y_alpha(N,avg,beta,delta):
+    # delta = 0.005
+    R = 2
+    alpha = (2 * N / avg * R * R) * (math.pi / (math.sin(2 * math.pi / beta) * beta))
+    alpha = math.sqrt(alpha)
+    ana_res = compute_Expected_abs_y(alpha,beta,delta)
+    # print(ana_res)
+    return ana_res
 
-    """
-    check neighbour distance 
-    """
-    # neighbour_distance_with_beta_one_graph()
-    # N = 10000
-    # for k in range(2,10):
-    #     print(math.sqrt(k/(math.pi*N)))
-    """
-    check neighbour distance for clu
-    """
-    # EDindex = sys.argv[1]
-    # betaindex = sys.argv[2]
-    # # betaindex = 0
-    # neighbour_distance_with_ED_one_graph_clu(int(EDindex),int(betaindex))
 
-    """
-    check neighbour distance for clu
-    """
-    # Simu_vec = []
-    # Analaytic_result = []
-    # avg_vec = [5, 10, 20, 100]
-    # beta_vec = [2.2, 4, 8, 64, 128]
-    # for avg in avg_vec:
-    #     for beta in beta_vec:
-    #         print(avg, beta)
-    #         for i in range(1000):
-    #             p_simu, probability = check_probability_of_a_node_is_common_neighbour_node(10000,avg,beta,0.01)
-    #             Simu_vec.append(p_simu)
-    #             Analaytic_result.append(probability)
-    #         print("simu:",np.mean(Simu_vec))
-    #         print("analytic:", np.mean(Analaytic_result))
-
-    # check_absolute_y()
-
+def check_modelwithdistance():
     avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
-    beta_vec = [4]
+    beta_vec = [128]
     for delta in [0.005,0.01,0.05,0.1,0.15,0.25]:
         ana_vec = []
         simu_vec = []
@@ -365,7 +343,7 @@ if __name__ == '__main__':
         # plt.plot(avg_vec[8:15], power_law(avg_vec[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
         #          color='red')
 
-        plt.plot(avg_vec,ana_vec,label = fr"$\delta:${delta}")
+        plt.plot(avg_vec,ana_vec,label = f"{delta}")
         # plt.plot(avg_vec,simu_vec)
     plt.xscale('log')
     plt.yscale('log')
@@ -375,3 +353,157 @@ if __name__ == '__main__':
     plt.yticks(fontsize=26)
     plt.legend()
     plt.show()
+
+def check_model_withalpha():
+    # # check \alpha:
+    avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    beta_vec = [4]
+    N = 10000
+    R=2
+    for delta in [0.005,0.25]:
+        ana_vec = []
+
+        alpha_vec =[]
+        for avg in avg_vec:
+            for beta in beta_vec:
+                print("ED", avg, beta)
+                ana_res = check_Expected_abs_y_alpha(N, avg, beta, delta)
+                print("ana:",ana_res)
+
+                ana_vec.append(ana_res)
+
+                alpha = (2 * N / avg * R * R) * (math.pi / (math.sin(2 * math.pi / beta) * beta))
+                alpha = math.sqrt(alpha)
+                alpha_vec.append(alpha)
+
+        # print(ana_vec)
+        # params, covariance = curve_fit(power_law, avg_vec[8:15], ana_vec[8:15])
+        # # 获取拟合的参数
+        # a_fit, k_fit = params
+        # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        # plt.plot(avg_vec[8:15], power_law(avg_vec[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+        #          color='red')
+
+        plt.plot(alpha_vec,ana_vec,label = f"{delta}")
+        # plt.plot(avg_vec,simu_vec)
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel('E[D]', fontsize=26)
+    plt.ylabel('Average deviation of common neighbour model', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.legend()
+    plt.show()
+
+
+def check_modelwithN():
+    beta = 4
+    delta_vec = [0.005,0.26]
+    for delta in delta_vec:
+        for N in [1000]:
+            log_spaced_points = np.logspace(np.log10(5), np.log10(N - 1), num=20)
+            # Round the points to the nearest integer
+            rounded_points_499 = np.round(log_spaced_points).astype(int)
+            # Remove duplicates to ensure unique values
+            avg_vec = sorted(set(rounded_points_499))
+            min = avg_vec[-2]
+            log_spaced_points = np.logspace(np.log10(min), np.log10(N - 1), num=50)
+            # Round the points to the nearest integer
+            rounded_points_499 = avg_vec+list(np.round(log_spaced_points).astype(int))
+            # Remove duplicates to ensure unique values
+            avg_vec= sorted(set(rounded_points_499))
+
+
+            ana_vec = []
+            simu_vec = []
+            for avg in avg_vec:
+                print("ED", avg, beta)
+                ana_res,simu_res = check_Expected_abs_y(N, avg, beta, delta,simutime=0)
+                print("ana:",ana_res)
+                print("sim:",simu_res)
+                ana_vec.append(ana_res)
+                simu_vec.append(simu_res)
+            # print(ana_vec)
+
+            if delta == 0.26:
+                params, covariance = curve_fit(power_law, avg_vec[-50:], ana_vec[-50:])
+                # 获取拟合的参数
+                a_fit, k_fit = params
+                print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+                plt.plot(avg_vec[-50:], power_law(avg_vec[-50:], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+                         color='red')
+            else:
+                params, covariance = curve_fit(power_law, avg_vec[-65:], ana_vec[-65:])
+                # 获取拟合的参数
+                a_fit, k_fit = params
+                plt.plot(avg_vec[-65:], power_law(avg_vec[-65:], *params), linewidth=5,
+                         label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+                         color='yellow')
+
+            plt.plot(avg_vec,ana_vec,label = f"{N},{delta_vec}")
+            # plt.plot(avg_vec,simu_vec)
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel('E[D]', fontsize=26)
+    plt.ylabel('Average deviation of common neighbour model', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.legend()
+    plt.show()
+
+
+
+
+if __name__ == '__main__':
+
+    """
+    check neighbour distance 
+    """
+    # neighbour_distance_with_beta_one_graph()
+    # N = 10000
+    # for k in range(2,10):
+    #     print(math.sqrt(k/(math.pi*N)))
+    """
+    check neighbour distance for clu
+    """
+    # EDindex = sys.argv[1]
+    # betaindex = sys.argv[2]
+    # # betaindex = 0
+    # neighbour_distance_with_ED_one_graph_clu(int(EDindex),int(betaindex))
+
+    """
+    check how analytic result changes with neighbour distance
+    """
+    # Simu_vec = []
+    # Analaytic_result = []
+    # avg_vec = [5, 10, 20, 100]
+    # beta_vec = [2.2, 4, 8, 64, 128]
+    # for avg in avg_vec:
+    #     for beta in beta_vec:
+    #         print(avg, beta)
+    #         for i in range(1000):
+    #             p_simu, probability = check_probability_of_a_node_is_common_neighbour_node(10000,avg,beta,0.01)
+    #             Simu_vec.append(p_simu)
+    #             Analaytic_result.append(probability)
+    #         print("simu:",np.mean(Simu_vec))
+    #         print("analytic:", np.mean(Analaytic_result))
+    #
+    # check_absolute_y()
+
+
+
+    """
+    check alpha
+    """
+    # check_model_withalpha()
+
+    """
+    check alpha
+    """
+    # check_model_withalpha()
+
+    """"
+    check model with N
+    """
+
+    check_modelwithN()
