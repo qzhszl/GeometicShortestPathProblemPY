@@ -400,7 +400,7 @@ def check_modelwithN():
     beta = 4
     delta_vec = [0.005,0.26]
     for delta in delta_vec:
-        for N in [100]:
+        for N in [1000]:
             log_spaced_points = np.logspace(np.log10(5), np.log10(N - 1), num=20)
             # Round the points to the nearest integer
             rounded_points_499 = np.round(log_spaced_points).astype(int)
