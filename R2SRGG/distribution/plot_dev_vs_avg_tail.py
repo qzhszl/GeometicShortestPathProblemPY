@@ -110,11 +110,11 @@ def plot_dev_vs_avg_tail(beta):
 
         # curve fit no shelter
         x_curve = x[8:15]
-        a_fit = 0.01
+        # a_fit = 0.01
         params = a_fit,k_fit
         y_curve = power_law(x[8:15], *params)
-        plt.plot(x_curve, y_curve, linewidth=5,
-                 label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+        plt.plot(x_curve, y_curve, linewidth=8,
+                 label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$',
                  color=colors[0])
 
         # params, covariance = curve_fit(power_law, x[10:13], y[10:13])
@@ -123,18 +123,22 @@ def plot_dev_vs_avg_tail(beta):
         #          label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
         #          color='green')
 
-    analyticy01 = [0.0408034319117630, 0.0494268009073655,
-                   0.0601867525680230, 0.0710647201399454, 0.0826468337716141, 0.0951878331783714, 0.110052892139220,
-                   0.129841960064955, 0.155820990403079, 0.184934349828600, 0.211071618297930, 0.229651984548116,
-                   0.240562299611654, 0.246042131559725, 0.248443310742824]
+    # analyticy01 = [0.0408034319117630, 0.0494268009073655,
+    #                0.0601867525680230, 0.0710647201399454, 0.0826468337716141, 0.0951878331783714, 0.110052892139220,
+    #                0.129841960064955, 0.155820990403079, 0.184934349828600, 0.211071618297930, 0.229651984548116,
+    #                0.240562299611654, 0.246042131559725, 0.248443310742824]
+
+    analyticy01 = [0.011210490144748496, 0.014362834005337652, 0.01836412087082358, 0.022948784225781036, 0.02873677429889581, 0.03580781814761691, 0.04411338516186235, 0.05362436843859807, 0.06415204818089597, 0.07537040591851239, 0.08723985015799253, 0.10043013621960226, 0.11689120257351479, 0.13907942793358205, 0.1668336102129492]
+
+
     kvecanalyticy01 = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
 
     plt.plot(kvecanalyticy01, analyticy01,linestyle="--",marker='v',markersize=16, linewidth=5, label=f'analytic results from common neighbour model',
              color=colors[4])
     params, covariance = curve_fit(power_law, kvecanalyticy01[4:11], analyticy01[4:11])
     # 获取拟合的参数
-    a_fit, k_fit = params
-    print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+    # a_fit, k_fit = params
+    # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
     # plt.plot(kvecanalyticy01[4:11], power_law(kvecanalyticy01[4:11], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
     #          color=colors[1])
 
@@ -151,7 +155,7 @@ def plot_dev_vs_avg_tail(beta):
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('E[D]', fontsize=26)
-    plt.ylabel('Deviation', fontsize=26)
+    plt.ylabel('Average deviation', fontsize=26)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     # plt.title('1000 simulations, N=10000',fontsize=26)
@@ -159,7 +163,7 @@ def plot_dev_vs_avg_tail(beta):
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
     picname = filefolder_name+"tailLocalOptimum_dev_vs_avg_beta{beta}.pdf".format(beta=beta)
-    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -335,7 +339,7 @@ def plot_dev_vs_avg_tail_fixnode(beta,Geodistance_index):
 
     picname = filefolder_name+"tailLocalOptimum_dev_vs_avg_beta{beta}_distance{dis}.pdf".format(beta=beta,
         dis=geodesic_distance_AB)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -375,14 +379,14 @@ if __name__ == '__main__':
     # for beta in [4]:
     #     for Geodistance_index in [2]:
     #         load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index)
-    plot_dev_vs_avg_tail_fixnode(4,1)
+    # plot_dev_vs_avg_tail_fixnode(4,1)
 
     """
     # FUNCTION 2 FOR all node pair
     """
     # for beta in [4]:
     #     load_10000nodenetwork_results_tail(beta)
-    # plot_dev_vs_avg_tail(4)
+    plot_dev_vs_avg_tail(4)
 
     """
     # FUNCTION 3 FOR link geometric distance

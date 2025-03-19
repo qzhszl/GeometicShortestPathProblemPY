@@ -351,12 +351,12 @@ if __name__ == '__main__':
     for avg in avg_vec:
         for beta in beta_vec:
             print("ED", avg, beta)
-            ana_res,simu_res = check_Expected_abs_y(10000, avg, beta, 0.25,simutime=1)
+            ana_res,simu_res = check_Expected_abs_y(10000, avg, beta, 0.26,simutime=1)
             print("ana:",ana_res)
             print("sim:",simu_res)
             ana_vec.append(ana_res)
             simu_vec.append(simu_res)
-
+    print(ana_vec)
     params, covariance = curve_fit(power_law, avg_vec[8:15], ana_vec[8:15])
     # 获取拟合的参数
     a_fit, k_fit = params
