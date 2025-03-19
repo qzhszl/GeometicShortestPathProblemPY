@@ -345,31 +345,33 @@ if __name__ == '__main__':
     # check_absolute_y()
 
     avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
-    beta_vec = [4]
-    ana_vec =[]
-    simu_vec =[]
-    for avg in avg_vec:
-        for beta in beta_vec:
-            print("ED", avg, beta)
-            ana_res,simu_res = check_Expected_abs_y(10000, avg, beta, 0.26,simutime=1)
-            print("ana:",ana_res)
-            print("sim:",simu_res)
-            ana_vec.append(ana_res)
-            simu_vec.append(simu_res)
-    print(ana_vec)
-    params, covariance = curve_fit(power_law, avg_vec[8:15], ana_vec[8:15])
-    # 获取拟合的参数
-    a_fit, k_fit = params
-    print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-    plt.plot(avg_vec[8:15], power_law(avg_vec[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
-             color='red')
+    beta_vec = [128]
+    for delta in [0.005,0.01,0.05,0.1,0.15,0.25]:
+        ana_vec = []
+        simu_vec = []
+        for avg in avg_vec:
+            for beta in beta_vec:
+                print("ED", avg, beta)
+                ana_res,simu_res = check_Expected_abs_y(10000, avg, beta, delta,simutime=0)
+                print("ana:",ana_res)
+                print("sim:",simu_res)
+                ana_vec.append(ana_res)
+                simu_vec.append(simu_res)
+        # print(ana_vec)
+        # params, covariance = curve_fit(power_law, avg_vec[8:15], ana_vec[8:15])
+        # # 获取拟合的参数
+        # a_fit, k_fit = params
+        # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        # plt.plot(avg_vec[8:15], power_law(avg_vec[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+        #          color='red')
 
-    plt.plot(avg_vec,ana_vec)
-    plt.plot(avg_vec,simu_vec)
+        plt.plot(avg_vec,ana_vec,label = f"{delta}")
+        # plt.plot(avg_vec,simu_vec)
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('E[D]', fontsize=26)
     plt.ylabel('Average deviation of common neighbour model', fontsize=26)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
+    plt.legend()
     plt.show()
