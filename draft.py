@@ -1,75 +1,68 @@
-deg_seq= [5, 5, 3, 2, 2, 2, 1]
-deg_seq.sort(reverse=True)
+def plotsave_smooth_heatmap(
+        df,
+        filesavename,
+        x_range=(0, 1),
+        y_range=(0, 1),
+        upscale=200,
+        sigma=3,
+        cmap_name='jet',
+        lighten_edges=True,
+        ylabel = r"Expected degree $E[D]$",
+        xlabel = r"Noise amplitude $\alpha$",
+        colorbar_label='Precison',
+):
+    """
+    输入一个二维矩阵 data，绘制平滑热力图。
 
-# find the index and values of nonzeros elements in degree sequence
-deg_seq_nonzero_dict = {i: deg_seq[i] for i in range(len(deg_seq)) if deg_seq[i] != 0}
-deg_seq_nonzero_dict_key  = list(deg_seq_nonzero_dict.keys())
-deg_seq_nonzero_dict_value = list(deg_seq_nonzero_dict.values())
+    参数：
+        data: 2D numpy array
+        x_range, y_range: tuple，定义坐标轴范围
+        upscale: int，插值分辨率
+        sigma: 高斯滤波平滑程度
+        cmap_name: 颜色映射名称
+        lighten_edges: 是否将 cmap 两端调浅
+        title, xlabel, ylabel, colorbar_label: 图标题和标签
+    """
 
-# Debug output to see initial conditions
-print(f"Initial deg_seq_nonzero_dict_key: {deg_seq_nonzero_dict_key}")
-print(f"Initial deg_seq_nonzero_dict_value: {deg_seq_nonzero_dict_value}")
+    # Step 1: 提取数据和坐标
+    data = df.values
+    x = df.columns.values.astype(float)
+    y = df.index.values.astype(float)
 
-# find the mts tree sequence
-for ki in range(len(deg_seq_nonzero_dict_key)-2, 0, -1 ):
-    mts = [0]*len(deg_seq)
-    sum_dict_value_ki = sum(deg_seq_nonzero_dict_value[:ki])
-    print(f"\033[32m the picked node {ki+1} has degree \033[31m {deg_seq_nonzero_dict_value[ki]} \033[0m; the sum degrees of of {ki} nodes is {sum_dict_value_ki} \033[0m")
-    for ni in range(len(deg_seq_nonzero_dict_key)-1,ki-1,-1):
-        # print(f"the value of n is {ni+1}")
-        value_ki=ni+ki-sum_dict_value_ki
-        print(f"nodes numbers are {ni+1}; the value of node {ki+1} is {value_ki}")
-        # break when the mts exists
-        if 0 < value_ki <= deg_seq_nonzero_dict_value[ki]:
-            for kki in range(ki):
-                mts[kki] = deg_seq_nonzero_dict_value[kki]
-            mts[ki] = value_ki
-            for kki in range(ki+1, ni+1):
-                mts[kki]=1
-            print(f"the max tree subsequence is {mts}")
-            # update the remaning degree sequence
-            deg_seq = [deg_seq[i] - mts[i] for i in range(len(deg_seq))]
-            print(f"the remaining sequence is {deg_seq}")
-            deg_seq_nonzero_dict = {i: deg_seq[i] for i in range(len(deg_seq)) if deg_seq[i] != 0}
-            deg_seq_nonzero_dict_key  = list(deg_seq_nonzero_dict.keys())
-            deg_seq_nonzero_dict_value = list(deg_seq_nonzero_dict.values())
-            # Debug output after update
-            print(f"the remaining sequence dict is {deg_seq_nonzero_dict}")
-            print(f"the remaining sequence length is {len(deg_seq_nonzero_dict_key)}")
-            print(f"Updated deg_seq_nonzero_dict_key: {deg_seq_nonzero_dict_key}")
-            print(f"Updated deg_seq_nonzero_dict_value: {deg_seq_nonzero_dict_value}")
-            break
+    # Step 2: 构建插值函数
+    interp_func = RegularGridInterpolator((y, x), data, method='linear')
 
-    while a<=1:
-        for ki in range(len(deg_seq_nonzero_dict_key) - 2, 0, -1):
-            mts = [0] * len(deg_seq)
-            sum_dict_value_ki = sum(deg_seq_nonzero_dict_value[:ki])
-            print(
-                f"\033[32m the picked node {ki + 1} has degree \033[31m {deg_seq_nonzero_dict_value[ki]} \033[0m; the sum degrees of of {ki} nodes is {sum_dict_value_ki} \033[0m")
-            for ni in range(len(deg_seq_nonzero_dict_key) - 1, ki - 1, -1):
-                # print(f"the value of n is {ni+1}")
-                value_ki = ni + ki - sum_dict_value_ki
-                print(f"nodes numbers are {ni + 1}; the value of node {ki + 1} is {value_ki}")
-                # break when the mts exists
-                if 0 < value_ki <= deg_seq_nonzero_dict_value[ki]:
-                    for kki in range(ki):
-                        mts[kki] = deg_seq_nonzero_dict_value[kki]
-                    mts[ki] = value_ki
-                    for kki in range(ki + 1, ni + 1):
-                        mts[kki] = 1
-                    print(f"the max tree subsequence is {mts}")
-                    # update the remaning degree sequence
-                    deg_seq = [deg_seq[i] - mts[i] for i in range(len(deg_seq))]
-                    print(f"the remaining sequence is {deg_seq}")
-                    deg_seq_nonzero_dict = {i: deg_seq[i] for i in range(len(deg_seq)) if deg_seq[i] != 0}
-                    deg_seq_nonzero_dict_key = list(deg_seq_nonzero_dict.keys())
-                    deg_seq_nonzero_dict_value = list(deg_seq_nonzero_dict.values())
-                    # Debug output after update
-                    print(f"the remaining sequence dict is {deg_seq_nonzero_dict}")
-                    print(f"the remaining sequence length is {len(deg_seq_nonzero_dict_key)}")
-                    print(f"Updated deg_seq_nonzero_dict_key: {deg_seq_nonzero_dict_key}")
-                    print(f"Updated deg_seq_nonzero_dict_value: {deg_seq_nonzero_dict_value}")
-                    break
+    # Step 3: 构建新网格
+    xnew = np.linspace(x.min(), x.max(), upscale)
+    ynew = np.linspace(y.min(), y.max(), upscale)
+    xgrid, ygrid = np.meshgrid(xnew, ynew)
+    coords = np.stack([ygrid, xgrid], axis=-1)
+    data_interp = interp_func(coords)
 
+    # Step 4: 高斯滤波
+    data_smooth = gaussian_filter(data_interp, sigma=sigma)
 
+    # Step 5: 自定义 colormap（柔化两端）
+    base_cmap = cm.get_cmap(cmap_name)
+    colors_map = base_cmap(np.linspace(0, 1, 256))
+    if lighten_edges:
+        colors_map[0] = [0.8, 0.9, 1, 1]  # 浅蓝
+        colors_map[-1] = [1, 0.8, 0.8, 1]  # 浅红
+    custom_cmap = colors.ListedColormap(colors_map)
 
+    # Step 6: 绘图
+    plt.figure(figsize=(8, 6))
+    im = plt.imshow(
+        data_smooth,
+        cmap=custom_cmap,
+        origin='lower',
+        extent=[x.min(), x.max(), y.min(), y.max()],
+        aspect='auto'
+    )
+    cbar = plt.colorbar(im, label=colorbar_label)
+
+    plt.xlabel(xlabel if xlabel else df.columns.name or 'X')
+    plt.ylabel(ylabel if ylabel else df.index.name or 'Y')
+    plt.title(title)
+    plt.tight_layout()
+    plt.show()

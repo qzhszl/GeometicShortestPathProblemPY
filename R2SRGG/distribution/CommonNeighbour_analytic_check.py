@@ -357,19 +357,24 @@ def check_modelwithdistance():
 
 def check_model_withalpha():
     # # check \alpha:
-    avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+
     beta_vec = [4]
     N = 10000
+    log_spaced_points = np.logspace(np.log10(5), np.log10(N-1), num=60)
+    # Round the points to the nearest integer
+    rounded_points_499 = np.round(log_spaced_points).astype(int)
+    # Remove duplicates to ensure unique values
+    avg_vec = sorted(set(rounded_points_499))
     R=2
-    for delta in [0.005,0.25]:
+    for delta in [0.005,0.26]:
         ana_vec = []
 
         alpha_vec =[]
         for avg in avg_vec:
             for beta in beta_vec:
-                print("ED", avg, beta)
+                # print("ED", avg, beta)
                 ana_res = check_Expected_abs_y_alpha(N, avg, beta, delta)
-                print("ana:",ana_res)
+                # print("ana:",ana_res)
 
                 ana_vec.append(ana_res)
 
@@ -378,12 +383,12 @@ def check_model_withalpha():
                 alpha_vec.append(alpha)
 
         # print(ana_vec)
-        # params, covariance = curve_fit(power_law, avg_vec[8:15], ana_vec[8:15])
-        # # 获取拟合的参数
-        # a_fit, k_fit = params
-        # print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-        # plt.plot(avg_vec[8:15], power_law(avg_vec[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
-        #          color='red')
+        params, covariance = curve_fit(power_law, alpha_vec[-5: ], ana_vec[-5: ])
+        # 获取拟合的参数
+        a_fit, k_fit = params
+        print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        plt.plot(alpha_vec[-5: ], power_law(alpha_vec[-5: ], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+                 color='red')
 
         plt.plot(alpha_vec,ana_vec,label = f"{delta}")
         # plt.plot(avg_vec,simu_vec)
@@ -397,61 +402,164 @@ def check_model_withalpha():
     plt.show()
 
 
-def check_modelwithN():
+def check_modelwithdelta():
     beta = 128
-    delta_vec = [0.001,0.005,0.01,0.05,0.1,0.15,0.2,0.25]
+    # delta_vec = [0.001,0.005,0.01,0.05,0.1,0.15,0.2,0.25]
+    delta_vec = np.arange(0, 1.001, 0.005)
+    delta_vec[0] = 0.001
+    k_with_delta =[]
+
+    fig, axes = plt.subplots(1, 2, figsize=(16, 8))
     for delta in delta_vec:
         print("delta:",delta)
         for N in [10000]:
-            log_spaced_points = np.logspace(np.log10(5), np.log10(10*N), num=20)
+            log_spaced_points = np.logspace(np.log10(5), np.log10(N-1), num=60)
             # Round the points to the nearest integer
             rounded_points_499 = np.round(log_spaced_points).astype(int)
             # Remove duplicates to ensure unique values
             avg_vec = sorted(set(rounded_points_499))
-            min = avg_vec[-2]
-            log_spaced_points = np.logspace(np.log10(min), np.log10(N - 1), num=50)
-            # Round the points to the nearest integer
-            rounded_points_499 = avg_vec+list(np.round(log_spaced_points).astype(int))
-            # Remove duplicates to ensure unique values
-            avg_vec= sorted(set(rounded_points_499))
+            # min = avg_vec[-2]
+            # log_spaced_points = np.logspace(np.log10(min), np.log10(N - 1), num=50)
+            # # Round the points to the nearest integer
+            # rounded_points_499 = avg_vec+list(np.round(log_spaced_points).astype(int))
+            # # Remove duplicates to ensure unique values
+            # avg_vec= sorted(set(rounded_points_499))
 
-
+            # compute the analytic results
             ana_vec = []
             simu_vec = []
             for avg in avg_vec:
-
                 ana_res,simu_res = check_Expected_abs_y(N, avg, beta, delta,simutime=0)
-
                 ana_vec.append(ana_res)
                 simu_vec.append(simu_res)
-            # print(ana_vec)
+            # if delta>0.025:
+            params, covariance = curve_fit(power_law, avg_vec[-20:-2], ana_vec[-20:-2])
 
-            if delta in delta_vec:
-                params, covariance = curve_fit(power_law, avg_vec[-50:], ana_vec[-50:])
-                # 获取拟合的参数
-                a_fit, k_fit = params
-                print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-                plt.plot(avg_vec[-50:], power_law(avg_vec[-50:], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
-                         color='red')
-            else:
-                params, covariance = curve_fit(power_law, avg_vec[-65:], ana_vec[-65:])
-                # 获取拟合的参数
-                a_fit, k_fit = params
-                print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-                plt.plot(avg_vec[-65:], power_law(avg_vec[-65:], *params), linewidth=5,
-                         label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
-                         color='yellow')
+            # params, covariance = curve_fit(power_law, avg_vec[-10:-2], ana_vec[-10:-2]) # beta = 128
+            # else:
+            #     params, covariance = curve_fit(power_law, avg_vec[-10:-2], ana_vec[-10:-2])
+            # 获取拟合的参数
+            a_fit, k_fit = params
+            k_with_delta.append(k_fit)
+            print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+            if delta in [0.001, 0.25]:
+                # axes[0].plot(avg_vec[-10:-2], power_law(avg_vec[-10:-2], *params), linewidth=1, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$'
+                #          )  # beta = 128
 
-            plt.plot(avg_vec,ana_vec,label = f"{N},{delta}")
+                axes[0].plot(avg_vec[-20:-2], power_law(avg_vec[-20:-2], *params), linewidth=5,
+                             label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$'
+                             )  # beta = 4
+
+            # if delta in delta_vec:
+            #     params, covariance = curve_fit(power_law, avg_vec[-50:], ana_vec[-50:])
+            #     # 获取拟合的参数
+            #     a_fit, k_fit = params
+            #     print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+            #     plt.plot(avg_vec[-50:], power_law(avg_vec[-50:], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+            #              color='red')
+            # else:
+            #     params, covariance = curve_fit(power_law, avg_vec[-65:], ana_vec[-65:])
+            #     # 获取拟合的参数
+            #     a_fit, k_fit = params
+            #     print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+            #     plt.plot(avg_vec[-65:], power_law(avg_vec[-65:], *params), linewidth=5,
+            #              label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+            #              color='yellow')
+            if delta in [0.001,0.005,0.01,0.03,0.05,0.01,0.15,0.2,0.25]:
+                axes[0].plot(avg_vec,ana_vec,'-o',label = f"{N},{delta}")
             # plt.plot(avg_vec,simu_vec)
+    axes[0].set_xscale('log')
+    axes[0].set_yscale('log')
+    axes[0].set_xlabel('E[D]', fontsize=26)
+    axes[0].set_ylabel('Average deviation of common neighbour model', fontsize=14)
+    axes[0].legend()
+
+    axes[1].plot(delta_vec[:len(k_with_delta)], k_with_delta, '-o', color='red', label=r"$\tau$ vs $\delta$")
+    axes[1].set_xlabel(r"$\delta$", fontsize=14)
+    axes[1].set_ylabel(r"$\tau$", fontsize=14)
+    # axes[1].set_xscale('log')
+    # axes[1].set_yscale('log')
+    axes[1].legend()
+
+    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\commonneighbour\\tauvsdelta{beta}.pdf".format(beta = beta)
+    # plt.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+
+
+def check_modelwithN():
+    beta_vec = [4]
+    delta = 0.26
+    label_v = ["$N = 10^2$","$N = 10^3$","$N = 10^4$","$N = 10^5$","$N = 10^6$","$N = 10^7$","$N = 10^{10}$"]
+    count = 0
+    plt.figure(figsize=(12,8))
+    for N in [100,1000,10000,100000,1000000,10000000,100000000000]:
+        ana_vec = []
+        simu_vec = []
+
+        log_spaced_points = np.logspace(np.log10(5), np.log10(N*100), num=80)
+        # Round the points to the nearest integer
+        rounded_points_499 = np.round(log_spaced_points).astype(int)
+        # Remove duplicates to ensure unique values
+        avg_vec = sorted(set(rounded_points_499))
+
+        for avg in avg_vec:
+            for beta in beta_vec:
+                # print("ED", avg, beta)
+                ana_res, simu_res = check_Expected_abs_y(N, avg, beta, delta, simutime=0)
+                # print("ana:",ana_res)
+                # print("sim:",simu_res)
+                ana_vec.append(ana_res)
+                simu_vec.append(simu_res)
+        print("delta:", delta)
+
+        params, covariance = curve_fit(power_law, avg_vec[6:30], ana_vec[6:30])
+        # params, covariance = curve_fit(power_law, avg_vec[-3:], ana_vec[-3:15])
+        # 获取拟合的参数
+        a_fit, k_fit = params
+        print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        # if N==10000:
+        #     plt.plot(avg_vec[6:30], power_law(avg_vec[6:30], *params), linewidth=8, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$',
+        #              color='red')
+
+        # if N == 100000000000:
+        #     params, covariance = curve_fit(power_law, avg_vec[56:65], ana_vec[56:65])
+        #     # params, covariance = curve_fit(power_law, avg_vec[-3:], ana_vec[-3:15])
+        #     # 获取拟合的参数
+        #     a_fit, k_fit = params
+        #     print(f"拟合结果: a = {a_fit}, k = {k_fit}")
+        #     plt.plot(avg_vec[56:65], power_law(avg_vec[56:65], *params), linewidth=8,
+        #              label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$',
+        #              color='grey')
+
+
+        params, covariance = curve_fit(power_law, avg_vec[-5:], ana_vec[-5:])
+        # 获取拟合的参数
+        a_fit, k_fit = params
+        print(f"拟合结果2: a = {a_fit}, k = {k_fit}")
+
+
+        # if N==10000:
+        #     plt.plot(avg_vec[-4:], power_law(avg_vec[-4:], *params), linewidth=8, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$',
+        #              color='blue')
+        # elif N==100000000000:
+        #     plt.plot(avg_vec[-4:], power_law(avg_vec[-4:], *params), linewidth=8,
+        #              label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$',
+        #              color='green')
+        plt.plot(avg_vec, ana_vec,"-o", label=label_v[count])
+        count+=1
+        # plt.plot(avg_vec,simu_vec)
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('E[D]', fontsize=26)
-    plt.ylabel('Average deviation of common neighbour model', fontsize=26)
+    plt.ylabel('Average deviation of common neighbour model', fontsize=22)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     plt.legend()
+
+    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\commonneighbour\\highEDtauvsNbeta{beta}.pdf".format(beta = beta)
+    plt.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
+
 
 
 
@@ -505,7 +613,15 @@ if __name__ == '__main__':
     # check_model_withalpha()
 
     """"
+    check model with DELTA
+    """
+
+    # check_modelwithdelta()
+
+    """"
     check model with N
     """
 
-    check_modelwithN()
+    # check_modelwithN()
+
+    check_model_withalpha()

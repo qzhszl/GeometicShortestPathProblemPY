@@ -353,10 +353,10 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
     plt.yticks(fontsize=22)
     plt.tick_params(axis='both', which="both", length=6, width=1)
     # Display the plot
-    # plt.show()
+    plt.show()
     figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
         EDn=ED, betan=beta)
-    plt.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
     plt.close()
     print(exemptionlist)
 
@@ -585,13 +585,13 @@ if __name__ == '__main__':
 
 
     # # STEP 2 plot the recall
-    for Edindex in range(5):
-        for betaindex in range(7):
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=0)
-
-    for Edindex in [1]:
-        for betaindex in [1]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
+    # for Edindex in range(5):
+    #     for betaindex in range(7):
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=0)
+    #
+    # for Edindex in [1]:
+    #     for betaindex in [1]:
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
 
     """
     Plot figure for netsci
@@ -619,4 +619,4 @@ if __name__ == '__main__':
     """
     Plot the heatmap for the precision and recall
     """
-    # plot_heatmap_precision(4)
+    plot_heatmap_precision(4)

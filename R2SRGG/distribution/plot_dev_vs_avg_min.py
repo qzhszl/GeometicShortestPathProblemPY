@@ -16,6 +16,8 @@ import networkx as nx
 from R2SRGG.R2SRGG import loadSRGGandaddnode, distR2
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import find_k_connected_node_pairs
+import pandas as pd
+
 
 
 def check_meandistancebetweentwonodes():
@@ -242,6 +244,9 @@ def relative_deviation_vsdiffk_diffhop():
     #           [0.4940, 0.1840, 0.5560],
     #           [0.4660, 0.6740, 0.1880]]
 
+    ave_dev_dict = {}
+    std_dev_dict = {}
+
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     # kvec = [6.0, 10, 16, 27, 44, 72, 118]
     # kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
@@ -254,7 +259,7 @@ def relative_deviation_vsdiffk_diffhop():
     beta = 4
     exemptionlist = []
     N = 10000
-    fixed_hop_vec = [4.0, 8.0, 12.0, 16.0, 20.0]
+    fixed_hop_vec = [3.0,4.0,5.0,6.0, 7.0, 8.0,9.0,10.0,11.0, 12.0, 16.0,20.0]
     fig, ax = plt.subplots(figsize=(12, 8))
     colorindex = 0
     for fixed_hop in fixed_hop_vec:
@@ -276,24 +281,39 @@ def relative_deviation_vsdiffk_diffhop():
                     ave_relative_deviation_vec.append(np.mean(relative_dev_vec_foroneparacombine))
                     std_relative_deviation_vec.append(np.std(relative_dev_vec_foroneparacombine))
                 except:
-                    pass
+                    ave_relative_deviation_vec.append(np.nan)
+                    std_relative_deviation_vec.append(np.nan)
 
         fixed_hop = int(fixed_hop)
+        ave_dev_dict[fixed_hop] = ave_relative_deviation_vec
+        std_dev_dict[fixed_hop] = std_relative_deviation_vec
+
 
         plt.errorbar(kvec[0:len(ave_relative_deviation_vec)-1], ave_relative_deviation_vec[0:len(ave_relative_deviation_vec)-1], std_relative_deviation_vec[0:len(ave_relative_deviation_vec)-1],
-                     label=f'hopcount: {fixed_hop}', color=colors[colorindex], linestyle="--", linewidth=3, elinewidth=1,
+                     label=f'hopcount: {fixed_hop}', linestyle="--", linewidth=3, elinewidth=1,
                      capsize=5, marker='o', markersize=16)
-        colorindex = colorindex +1
+
+
+        colorindex += +1
+    ave_df = pd.DataFrame(ave_dev_dict, index=kvec)
+    std_df = pd.DataFrame(std_dev_dict, index=kvec)
+    ave_df.index.name = None
+    std_df.index.name = None
+    ave_df.index = ave_df.index.astype(int)
+    std_df.index = std_df.index.astype(int)
+    print(std_df)
+    ave_df.to_csv(filefolder_name + f"RelativeDeviation_Average_beta{beta}.csv",index = True,encoding='utf-8')
+    std_df.to_csv(filefolder_name + f"RelativeDeviation_Std_beta{beta}.csv",index = True,encoding='utf-8')
 
     plt.xscale('log')
     plt.xlabel('E[D]', fontsize=32)
     plt.ylabel('Relative deviation', fontsize=32)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
-    plt.legend(fontsize=26, loc="best")
+    plt.legend(fontsize=26, loc="best",ncol=2)
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
-    picname = filefolder_name + "LocalMinimum_relative_dev_vs_avg_beta{beta}.pdf".format(beta=beta)
+    picname = filefolder_name + "LocalMinimum_relative_dev_vs_avg_beta{beta}2.pdf".format(beta=beta)
     plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
@@ -307,8 +327,9 @@ def filter_data_from_hop_geo_dev_givendistance(N, ED, beta,geodesic_distance_AB)
     :return: a dict: key is hopcount, value is list for relative deviation = ave deviation of the shortest paths nodes for a node pair / geodesic of the node pair
     """
     exemptionlist = []
-    filefolder_name = "E:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\"
-    filefolder_name2 = "E:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\tail\\"
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\"
+    filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\tail\\"
+
 
     hopcount_for_a_para_comb = np.array([])
     geodistance_for_a_para_comb = np.array([])
@@ -398,8 +419,8 @@ def relative_deviation_vsdiffk_diffhop_givendistance():
     kvec = [6, 8, 10, 16, 27, 44, 72, 118]
     # kvec = [10, 16, 27, 44, 72, 118]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
-    filefolder_name = "E:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\"
-    filefolder_name2 = "E:\\data\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\tail\\"
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\"
+    filefolder_name2 = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\GivenGeodistance\\1000realization\\tail\\"
 
     beta = 4
     Geodistance = 0.5
@@ -460,11 +481,77 @@ def relative_deviation_vsdiffk_diffhop_givendistance():
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
     picname = filefolder_name + "LocalMinimum_relative_dev_vs_avg_beta{beta}_givendistance.pdf".format(beta=beta)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
 
+
+def plot_dev_vs_hop(ED):
+    """
+    Not relative dev
+    :param ED:
+    :return:
+    """
+    # N = 10000
+    # beta = 4
+    # betavec = [2.1, 4, 8, 16, 32, 64, 128]
+    exemptionlist = []
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
+    hopcount_for_a_para_comb = np.array([])
+    ave_deviation_for_a_para_comb = np.array([])
+
+    for N in [10000]:
+        for beta in [4]:
+            for ExternalSimutime in range(100):
+                try:
+                    deviation_vec_name = filefolder_name + "ave_deviation_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
+                    ave_deviation_for_a_para_comb = np.hstack(
+                        (ave_deviation_for_a_para_comb, ave_deviation_for_a_para_comb_10times))
+
+                    hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
+                    hopcount_for_a_para_comb = np.hstack(
+                        (hopcount_for_a_para_comb, hopcount_for_a_para_comb_10times))
+
+                except FileNotFoundError:
+                    exemptionlist.append((N, ED, beta, ExternalSimutime))
+
+    hopcount_for_a_para_comb = hopcount_for_a_para_comb[hopcount_for_a_para_comb > 1]
+    counter = Counter(hopcount_for_a_para_comb)
+    print(counter)
+    hop_relativedev_dict = {}
+    for key in np.unique(hopcount_for_a_para_comb):
+        hop_relativedev_dict[key] = ave_deviation_for_a_para_comb[hopcount_for_a_para_comb == key].tolist()
+
+    x = []
+    y = []
+    error_v = []
+    for key, vlist in hop_relativedev_dict.items():
+        x.append(key)
+        y.append(np.mean(vlist))
+        error_v.append(np.std(vlist))
+
+    plt.errorbar(x[:-2], y[:-2], yerr=error_v[:-2], linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
+                 markersize=16)
+    # plt.xscale('log')
+    # plt.yscale('log')
+    xticks = [5,10,15,20]
+    plt.xlabel('h', fontsize=26)
+    plt.ylabel('Average deviation of shortest path', fontsize=20)
+    plt.xticks(xticks, fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.title(fr'N={N},ED={ED},$\beta$={beta}', fontsize=26)
+    # plt.legend(fontsize=20, loc="lower right")
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    picname = filefolder_name + "dev_vs_h_N{N}avg{ed}_beta{beta}.pdf".format(N = N,ed = ED,beta=beta)
+    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+    plt.close()
 
 
 
@@ -484,11 +571,15 @@ if __name__ == '__main__':
     """
     # filter_data_from_hop_geo_dev(10000,5.0,4)
     # relative_deviation_vsdiffk()
-    # relative_deviation_vsdiffk_diffhop()
+    relative_deviation_vsdiffk_diffhop()
 
     """
     draw the picture for given distance 
     """
 
-    relative_deviation_vsdiffk_diffhop_givendistance()
+    # relative_deviation_vsdiffk_diffhop_givendistance()
 
+    """
+    For a fixed <k>, say, <k> = 10, can you plot deviation as a function of hopcount
+    """
+    # plot_dev_vs_hop(10)

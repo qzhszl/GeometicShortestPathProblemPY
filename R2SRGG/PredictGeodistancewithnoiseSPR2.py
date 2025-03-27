@@ -55,7 +55,8 @@ def generate_r2SRGG_mothernetwork(Edindex, betaindex):
     # print("noise_amplitude:", noise_amplitude)
 
     N = 10000
-    ED_list = [2, 3.5, 100, 1000, N - 1]  # Expected degrees
+    # ED_list = [2, 3.5, 100, 1000, N - 1]  # Expected degrees
+    ED_list = [2, 4, 8, 16, 32,64, 128]  # Expected degrees
     ED = ED_list[Edindex]
     print("ED:", ED)
 
@@ -101,6 +102,7 @@ def generate_r2SRGG_withdiffinput_clu(Edindex, betaindex, noise_amplitude):
     # generate 100 SRGG FOR EACH ED, beta and the amplitude of node
     N = 10000
     ED_list = [2, 3.5, 100, 1000, N - 1]  # Expected degrees
+    ED_list = [2, 4, 8, 16, 32, 64, 128]
     ED = ED_list[Edindex]
     print("ED:", ED)
 
@@ -160,6 +162,7 @@ def generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude):
     # generate 100 SRGG FOR EACH ED, beta and the amplitude of node
     N = 10000
     ED_list = [5, 10, 20, 40]  # Expected degrees
+    ED_list = [2, 4, 8, 16, 32, 64, 128]
     ED = ED_list[Edindex]
     print("ED:", ED)
 
@@ -425,6 +428,7 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2(Edindex, betai
     # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
 
 
+
 def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, noiseindex, ExternalSimutime):
     """
     :param Edindex: average degree
@@ -434,12 +438,13 @@ def predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, b
     ED = 5 and 20 while beta = 4 and 100
     """
     N = 10000
-    ED_list = [2, 3.5, 5, 10, 100, 1000, N - 1]  # Expected degrees
+    # ED_list = [2, 3.5, 5, 10, 100, 1000, N - 1]  # Expected degrees
+    ED_list = [2, 4, 8, 16, 32, 64, 128]
     ED = ED_list[Edindex]
     print("ED:", ED)
 
     beta_list = [2.1, 4, 8, 16, 32, 64, 128]
-    beta_list = [2.1, 4, 8, 32, 128]
+    beta_list = [8]
     beta = beta_list[betaindex]
     print("beta:", beta)
 
@@ -888,15 +893,14 @@ def check_data_wehavenow():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # STEP 1 generate a lot of SRGG and SRGG with noise
-    # for Edindex in range(5):
-    #     for betaindex in range(5):
+    # for Edindex in [5,6]:
+    #     for betaindex in [2]:
     #         generate_r2SRGG_mothernetwork(Edindex, betaindex)
-    # for Edindex in range(4):
-    #     for betaindex in range(7):
-    #         for noise_amplitude in [1]:
-    #         # for noise_amplitude in [0, 0.001,0.01,0.1]:
-    #             generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude)
-
+    for Edindex in [5]:
+        for betaindex in [2]:
+            for noise_amplitude in [1]:
+            # for noise_amplitude in [0, 0.001,0.01,0.1,1]:
+                generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude)
     # STEP 1.2 generate a lot of SRGG and SRGG with noise for cluster
     # ED = sys.argv[1]
     # beta = sys.argv[2]
@@ -931,11 +935,11 @@ if __name__ == '__main__':
     """
     # # STEP 2.2 run simu on cluster
     """
-    ED = sys.argv[1]
-    beta = sys.argv[2]
-    noise = sys.argv[3]
-    ExternalSimutime = sys.argv[4]
-    predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(int(ED), int(beta), int(noise), int(ExternalSimutime))
+    # ED = sys.argv[1]
+    # beta = sys.argv[2]
+    # noise = sys.argv[3]
+    # ExternalSimutime = sys.argv[4]
+    # predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(int(ED), int(beta), int(noise), int(ExternalSimutime))
 
     # STEP 2.3
     # check_data_wehavenow()
@@ -960,5 +964,7 @@ if __name__ == '__main__':
     #         print(Precison_Geodis_5_times)
     #     except FileNotFoundError:
     #         pass
+
+
 
 
