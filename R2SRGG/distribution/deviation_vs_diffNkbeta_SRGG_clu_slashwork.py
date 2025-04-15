@@ -1071,7 +1071,7 @@ if __name__ == '__main__':
     # ED = sys.argv[1]
     # beta_index = sys.argv[2]
     # ExternalSimutime = sys.argv[3]
-    # distance_inSRGG_clu(7, int(ED), int(beta_index), int(ExternalSimutime))
+    distance_inSRGG_clu(7, int(ED), int(beta_index), int(ExternalSimutime))
 
     """
     Step3 run simulations with different beta and input AVG on cluster for one shortest path case
