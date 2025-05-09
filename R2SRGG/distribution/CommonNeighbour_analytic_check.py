@@ -322,9 +322,12 @@ def check_Expected_abs_y_alpha(N,avg,beta,delta):
 
 
 def check_modelwithdistance():
-    avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999,16479, 27081, 44767, 73534, 121205, 199999, 316226, 499999]
+    # avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105,
+    #            9999,
+    #            16479, 21121, 27081, 34822, 44767, 57363]  # for beta = 128
     beta_vec = [128]
-    for delta in [0.005,0.01,0.05,0.1,0.15,0.25]:
+    for delta in [0.26]:
         ana_vec = []
         simu_vec = []
         for avg in avg_vec:
@@ -346,6 +349,7 @@ def check_modelwithdistance():
 
         plt.plot(avg_vec,ana_vec,label = f"{delta}")
         # plt.plot(avg_vec,simu_vec)
+    print(ana_vec)
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('E[D]', fontsize=26)
@@ -383,11 +387,11 @@ def check_model_withalpha():
                 alpha_vec.append(alpha)
 
         # print(ana_vec)
-        params, covariance = curve_fit(power_law, alpha_vec[-5: ], ana_vec[-5: ])
+        params, covariance = curve_fit(power_law, alpha_vec[: ], ana_vec[: ])
         # 获取拟合的参数
         a_fit, k_fit = params
         print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-        plt.plot(alpha_vec[-5: ], power_law(alpha_vec[-5: ], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+        plt.plot(alpha_vec[: ], power_law(alpha_vec[: ], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
                  color='red')
 
         plt.plot(alpha_vec,ana_vec,label = f"{delta}")
@@ -496,7 +500,7 @@ def check_modelwithN():
         ana_vec = []
         simu_vec = []
 
-        log_spaced_points = np.logspace(np.log10(5), np.log10(N*100), num=80)
+        log_spaced_points = np.logspace(np.log10(5), np.log10(N-1), num=40)
         # Round the points to the nearest integer
         rounded_points_499 = np.round(log_spaced_points).astype(int)
         # Remove duplicates to ensure unique values
@@ -517,9 +521,12 @@ def check_modelwithN():
         # 获取拟合的参数
         a_fit, k_fit = params
         print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-        # if N==10000:
-        #     plt.plot(avg_vec[6:30], power_law(avg_vec[6:30], *params), linewidth=8, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$',
-        #              color='red')
+
+        if N==10000:
+            params = np.array([0.004,0.5])
+            a_fit, k_fit = params
+            plt.plot(avg_vec[0:30], power_law(avg_vec[0:30], *params), linewidth=8, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$',
+                     color='red')
 
         # if N == 100000000000:
         #     params, covariance = curve_fit(power_law, avg_vec[56:65], ana_vec[56:65])
@@ -605,7 +612,7 @@ if __name__ == '__main__':
     """
     check distance
     """
-    # check_modelwithdistance()
+    check_modelwithdistance()
 
     """
     check alpha
@@ -624,4 +631,4 @@ if __name__ == '__main__':
 
     # check_modelwithN()
 
-    check_model_withalpha()
+    # check_model_withalpha()

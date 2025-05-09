@@ -1957,8 +1957,8 @@ if __name__ == '__main__':
     """
     # STEP 4 plot local optimum: deviation versus expected degree
     """
-    # plot_local_optimum_with_realED2(4)
-    plot_local_optimum_with_realED2(8)
+    plot_local_optimum_with_realED2(4)
+    # plot_local_optimum_with_realED2(8)
 
     # STEP 5
     # local21 = [2, 9, 12.05, 8.9272]

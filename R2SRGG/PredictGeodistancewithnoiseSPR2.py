@@ -893,14 +893,14 @@ def check_data_wehavenow():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # STEP 1 generate a lot of SRGG and SRGG with noise
-    # for Edindex in [5,6]:
+    for Edindex in [6]:
+        for betaindex in [1,4]:
+            generate_r2SRGG_mothernetwork(Edindex, betaindex)
+    # for Edindex in [5]:
     #     for betaindex in [2]:
-    #         generate_r2SRGG_mothernetwork(Edindex, betaindex)
-    for Edindex in [5]:
-        for betaindex in [2]:
-            for noise_amplitude in [1]:
-            # for noise_amplitude in [0, 0.001,0.01,0.1,1]:
-                generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude)
+    #         for noise_amplitude in [1]:
+    #         # for noise_amplitude in [0, 0.001,0.01,0.1,1]:
+    #             generate_r2SRGG_withdiffinput(Edindex, betaindex, noise_amplitude)
     # STEP 1.2 generate a lot of SRGG and SRGG with noise for cluster
     # ED = sys.argv[1]
     # beta = sys.argv[2]

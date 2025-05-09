@@ -20,15 +20,15 @@ def load_small_network_results_maxminave(N, ED, beta):
         ran_deviation_vec = []
         for ExternalSimutime in [0]:
             try:
-                clustering_coefficient_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\clustering_coefficient_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                clustering_coefficient = np.loadtxt(clustering_coefficient_name)
-                print(np.mean(clustering_coefficient))
-
-                real_ave_degree_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                real_ave_degree = np.loadtxt(real_ave_degree_name)
-                print(np.mean(real_ave_degree))
+                # clustering_coefficient_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\clustering_coefficient_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                # clustering_coefficient = np.loadtxt(clustering_coefficient_name)
+                # print(np.mean(clustering_coefficient))
+                #
+                # real_ave_degree_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                # real_ave_degree = np.loadtxt(real_ave_degree_name)
+                # print(np.mean(real_ave_degree))
 
                 deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -176,35 +176,56 @@ def load_large_network_results_maxminave(N, ED, beta):
         ran_deviation_vec = []
         for ExternalSimutime in [0]:
             try:
-                clustering_coefficient_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\clustering_coefficient_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                clustering_coefficient = np.loadtxt(clustering_coefficient_name)
-                print(np.mean(clustering_coefficient))
+                if N ==1000:
+                    deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\1000000simus\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
+                    ave_deviation_vec.extend(ave_deviation_for_a_para_comb_10times)
 
-                real_ave_degree_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                real_ave_degree = np.loadtxt(real_ave_degree_name)
-                print(np.mean(real_ave_degree))
+                    max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\1000000simus\\max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    max_deviation_for_a_para_comb_10times = np.loadtxt(max_deviation_name)
+                    max_deviation_vec.extend(max_deviation_for_a_para_comb_10times)
 
-                deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
-                ave_deviation_vec.extend(ave_deviation_for_a_para_comb_10times)
+                    min_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\1000000simus\\min_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    min_deviation_for_a_para_comb_10times = np.loadtxt(min_deviation_name)
+                    min_deviation_vec.extend(min_deviation_for_a_para_comb_10times)
 
-                max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                max_deviation_for_a_para_comb_10times = np.loadtxt(max_deviation_name)
-                max_deviation_vec.extend(max_deviation_for_a_para_comb_10times)
+                    ave_baseline_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\1000000simus\\ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    ave_baseline_deviation_for_a_para_comb_10times = np.loadtxt(ave_baseline_deviation_name)
+                    ran_deviation_vec.extend(ave_baseline_deviation_for_a_para_comb_10times)
+                else:
+                    # clustering_coefficient_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\clustering_coefficient_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                    #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    # clustering_coefficient = np.loadtxt(clustering_coefficient_name)
+                    # print(np.mean(clustering_coefficient))
+                    #
+                    # real_ave_degree_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                    #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    # real_ave_degree = np.loadtxt(real_ave_degree_name)
+                    # print(np.mean(real_ave_degree))
 
-                min_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\min_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                min_deviation_for_a_para_comb_10times = np.loadtxt(min_deviation_name)
-                min_deviation_vec.extend(min_deviation_for_a_para_comb_10times)
+                    deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
+                    ave_deviation_vec.extend(ave_deviation_for_a_para_comb_10times)
 
-                ave_baseline_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                ave_baseline_deviation_for_a_para_comb_10times = np.loadtxt(ave_baseline_deviation_name)
-                ran_deviation_vec.extend(ave_baseline_deviation_for_a_para_comb_10times)
+                    max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    max_deviation_for_a_para_comb_10times = np.loadtxt(max_deviation_name)
+                    max_deviation_vec.extend(max_deviation_for_a_para_comb_10times)
+
+                    min_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\min_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    min_deviation_for_a_para_comb_10times = np.loadtxt(min_deviation_name)
+                    min_deviation_vec.extend(min_deviation_for_a_para_comb_10times)
+
+                    ave_baseline_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    ave_baseline_deviation_for_a_para_comb_10times = np.loadtxt(ave_baseline_deviation_name)
+                    ran_deviation_vec.extend(ave_baseline_deviation_for_a_para_comb_10times)
             except FileNotFoundError:
                 exemptionlist.append((N, ED, beta, ExternalSimutime))
                 print(exemptionlist)
@@ -335,8 +356,11 @@ def plot_distribution(N, ED, beta):
     # # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     # beta = 8
     if N < 200:
-        ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_resort_data_smallN_maxminave(
-            N, ED, beta)
+        # try:
+        #     ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_resort_data_smallN_maxminave(
+        #     N, ED, beta)
+        # except:
+            ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_small_network_results_maxminave(N, ED, beta)
     elif N < 10000:
         ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_large_network_results_maxminave(
             N, ED, beta)
@@ -353,14 +377,12 @@ def plot_distribution(N, ED, beta):
     data3 = min_deviation_vec
     data4 = ran_deviation_vec
 
-    # fig, ax = plt.subplots(figsize=(6, 4.5))
-    fig, ax = plt.subplots(figsize=(8, 4.5))
+    fig, ax = plt.subplots(figsize=(6, 4.5))
+    # fig, ax = plt.subplots(figsize=(8, 4.5))
 
     datasets = [data1,data2,data3,data4]
-    colors = [[0, 0.4470, 0.7410],
-              [0.8500, 0.3250, 0.0980],
-              [0.9290, 0.6940, 0.1250],
-              [0.4940, 0.1840, 0.5560]]
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     labels = ["Ave","Max","Min","Ran"]
     for data, color, label in zip(datasets, colors, labels):
         hvalue, bin_vec = np.histogram(data, bins=60, density=True)
@@ -375,20 +397,21 @@ def plot_distribution(N, ED, beta):
     # plt.xscale('log')
     # plt.yscale('log')
     plt.xlim([0,1])
+    # plt.ylim([0, 50])
     # plt.yticks([0,5,10,15,20,25])
     # plt.yticks([0, 10, 20, 30, 40, 50])
-
+    # plt.yscale('log')
     plt.xlabel(r'x',fontsize = 32)
     plt.ylabel(r'$f_{d(q,\gamma(i,j))}(x)$',fontsize = 32)
     plt.xticks(fontsize=28)
     plt.yticks(fontsize=28)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=28,handlelength=1, handletextpad=0.5, frameon=False)
+    # plt.legend(fontsize=28,handlelength=1, handletextpad=0.5, frameon=False)
     plt.tick_params(axis='both', which="both",length=6, width=1)
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionN{Nn}ED{EDn}Beta{betan}.pdf".format(Nn = N, EDn = ED, betan=beta)
     plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
-    # plt.close()
+    plt.close()
 
 
 def plot_distribution_10000node(N, ED, beta):
@@ -468,14 +491,14 @@ def plot_distribution_10000node(N, ED, beta):
     plt.legend(fontsize=26, handlelength=1, handletextpad=0.5, frameon=False,loc='right',bbox_to_anchor=(1.04, 0.54))
     plt.tick_params(axis='both', which="both",length=6, width=1)
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionN{Nn}ED{EDn}Beta{betan}logy.pdf".format(Nn = N, EDn = ED, betan=beta)
-    plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     # plt.close()
 
 
 def plot_distribution_diffN(ED, beta):
     """
-    Plot the average deviation of the shortest path for different network size N
+    ?
     :return:
     """
     Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
@@ -558,8 +581,9 @@ def plot_distribution_diffN(ED, beta):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
-    # plot_distribution(100,5,4)
-    plot_distribution_10000node(10000, 5.0, 4)
+    plot_distribution(1000,5,4)
+    # plot_distribution_10000node(10000, 5.0, 4)
+
     # plot_distribution_diffN(ED=10, beta=8)
 
 

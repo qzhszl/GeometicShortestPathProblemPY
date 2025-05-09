@@ -53,7 +53,7 @@ def plot_hop_distribution(N, ED, beta):
     # 清空图像，以免影响下一个图
     # plt.close()
 
-def plot_hop_distribution_for_diff_ED(N,beta):
+def plot_geolength_distribution_for_diff_ED(N, beta):
     ED_vec = [5.0,10,92,1389]
     # kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
     legend_label = [5,10,r"$10^2$",r"$10^3$"]
@@ -65,16 +65,16 @@ def plot_hop_distribution_for_diff_ED(N,beta):
         SP_hopcount = []
         for ExternalSimutime in range(100):
             try:
-                SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                SP_hopcount_foronesimu = np.loadtxt(SPhopcount_name, dtype=int)
+                SP_hopcount_foronesimu = np.loadtxt(SPhopcount_name, dtype=float)
                 SP_hopcount.extend(SP_hopcount_foronesimu)
             except:
                 excempt_vec.append((ED,ExternalSimutime))
 
 
-        bins = np.arange(min(SP_hopcount) - 0.5, max(SP_hopcount) + 1.5, 1)  # 间隔为1的bin，确保每个柱中心对齐刻度线
-        plt.hist(SP_hopcount, bins=bins, alpha=0.7, color=colors[count], edgecolor=colors[count], density=True, label=f"ED:{legend_label[count]}")  # 绘制直方图
+        # bins = np.arange(min(SP_hopcount) - 0.5, max(SP_hopcount) + 1.5, 1)  # 间隔为1的bin，确保每个柱中心对齐刻度线
+        plt.hist(SP_hopcount, bins=30,alpha=0.7, color=colors[count], edgecolor=colors[count], density=True, label=f"ED:{legend_label[count]}")  # 绘制直方图
         unique_values, counts = np.unique(SP_hopcount, return_counts=True)
 
         # 打印结果
@@ -101,9 +101,9 @@ def plot_hop_distribution_for_diff_ED(N,beta):
         va='bottom'  # 垂直对齐方式
     )
     plt.legend(fontsize=26, loc="best")
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\hop_distribution_diffED{Nn}Beta{betan}2.pdf".format(
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\geolength_distribution_diffED{Nn}Beta{betan}.pdf".format(
         Nn=N, betan=beta)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     # 清空图像，以免影响下一个图
     plt.close()
@@ -122,16 +122,16 @@ def plot_hop_distribution_for_diff_ED_onehop(N,beta):
         SP_hopcount = []
         for ExternalSimutime in range(5):
             try:
-                SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\OneSP\\hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\OneSP\\length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                SP_hopcount_foronesimu = np.loadtxt(SPhopcount_name, dtype=int)
+                SP_hopcount_foronesimu = np.loadtxt(SPhopcount_name, dtype=float)
                 SP_hopcount.extend(SP_hopcount_foronesimu)
             except:
                 excempt_vec.append((ED,ExternalSimutime))
 
 
-        bins = np.arange(min(SP_hopcount) - 0.5, max(SP_hopcount) + 1.5, 1)  # 间隔为1的bin，确保每个柱中心对齐刻度线
-        plt.hist(SP_hopcount, bins=bins, alpha=0.7, color=colors[count], edgecolor=colors[count], density=True, label=f"ED:{legend_label[count]}")  # 绘制直方图
+        # bins = np.arange(min(SP_hopcount) - 0.5, max(SP_hopcount) + 1.5, 1)  # 间隔为1的bin，确保每个柱中心对齐刻度线
+        plt.hist(SP_hopcount, bins=60, alpha=0.7, color=colors[count], edgecolor=colors[count], density=True, label=f"ED:{legend_label[count]}")  # 绘制直方图
         unique_values, counts = np.unique(SP_hopcount, return_counts=True)
 
         # 打印结果
@@ -160,78 +160,73 @@ def plot_hop_distribution_for_diff_ED_onehop(N,beta):
     plt.legend(fontsize=26, loc="best")
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\OneSP\\hop_distribution_diffED{Nn}Beta{betan}2.pdf".format(
         Nn=N, betan=beta)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     # 清空图像，以免影响下一个图
     plt.close()
 
 
 
-def how_hop_distribution_change_with_diffED():
-    """
-    1. dev change with ED
-    2. hop change with ED
-    :return:
-    """
-    kvec = [11, 12, 14, 16, 18, 20, 21, 23, 24, 27, 28, 30, 32, 33, 34, 35, 39, 42, 44, 47, 50, 56, 68, 71, 73, 74, 79,
-            82, 85, 91, 95]
-    # kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
-    N = 10000
-    beta = 128
-    ave_deviation_vec = []
-    std_deviation_vec = []
-
-    for ED in kvec:
-        ave_deviation_for_a_para_comb = []
-        for ExternalSimutime in range(5):
-            try:
-                deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\OneSP\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
-                ave_deviation_for_a_para_comb.extend(ave_deviation_for_a_para_comb_10times)
-            except FileNotFoundError:
-                print(ED)
-        ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
-        std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
-
-        SP_hopcount = []
-        for ExternalSimutime in range(5):
-            try:
-                SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\OneSP\\hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                SP_hopcount_foronesimu = np.loadtxt(SPhopcount_name, dtype=int)
-                SP_hopcount.extend(SP_hopcount_foronesimu)
-            except:
-                pass
-        # try:
-        #     plt.figure()
-        #     plt.title(f"{ED}")
-        #     bins = np.arange(min(SP_hopcount) - 0.5, max(SP_hopcount) + 1.5, 1)  # 间隔为1的bin，确保每个柱中心对齐刻度线
-        #     plt.hist(SP_hopcount, bins=bins, alpha=0.7, density=True)  # 绘制直方图
-        #     unique_values, counts = np.unique(SP_hopcount, return_counts=True)
-        #     plt.show()
-        #     plt.close()
-        # except:
-        #     pass
-
-    plt.figure()
-    x = kvec
-    y = ave_deviation_vec
-    error = std_deviation_vec
-    plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
-                 label="128")
-    plt.xscale("log")
-    plt.yscale("log")
-    plt.show()
+# def how_hop_distribution_change_with_diffED():
+#     """
+#     1. dev change with ED
+#     2. hop change with ED
+#     :return:
+#     """
+#     kvec = [11, 12, 14, 16, 18, 20, 21, 23, 24, 27, 28, 30, 32, 33, 34, 35, 39, 42, 44, 47, 50, 56, 68, 71, 73, 74, 79,
+#             82, 85, 91, 95]
+#     # kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+#     N = 10000
+#     beta = 128
+#     ave_deviation_vec = []
+#     std_deviation_vec = []
+#
+#     for ED in kvec:
+#         ave_deviation_for_a_para_comb = []
+#         for ExternalSimutime in range(5):
+#             try:
+#                 deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\OneSP\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+#                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+#                 ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
+#                 ave_deviation_for_a_para_comb.extend(ave_deviation_for_a_para_comb_10times)
+#             except FileNotFoundError:
+#                 print(ED)
+#         ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+#         std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+#
+#         SP_hopcount = []
+#         for ExternalSimutime in range(5):
+#             try:
+#                 SPhopcount_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\OneSP\\hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+#                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+#                 SP_hopcount_foronesimu = np.loadtxt(SPhopcount_name, dtype=int)
+#                 SP_hopcount.extend(SP_hopcount_foronesimu)
+#             except:
+#                 pass
+#         # try:
+#         #     plt.figure()
+#         #     plt.title(f"{ED}")
+#         #     bins = np.arange(min(SP_hopcount) - 0.5, max(SP_hopcount) + 1.5, 1)  # 间隔为1的bin，确保每个柱中心对齐刻度线
+#         #     plt.hist(SP_hopcount, bins=bins, alpha=0.7, density=True)  # 绘制直方图
+#         #     unique_values, counts = np.unique(SP_hopcount, return_counts=True)
+#         #     plt.show()
+#         #     plt.close()
+#         # except:
+#         #     pass
+#
+#     plt.figure()
+#     x = kvec
+#     y = ave_deviation_vec
+#     error = std_deviation_vec
+#     plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+#                  label="128")
+#     plt.xscale("log")
+#     plt.yscale("log")
+#     plt.show()
 
 
 
 if __name__ == '__main__':
-    # plot_distribution(50)
-    # plot_hop_distribution(10000, 5, 4)
 
-    # plot_hop_distribution_for_diff_ED(10000, 4)
-
-    # how_hop_distribution_change_with_diffED()
-
-    plot_hop_distribution_for_diff_ED_onehop(10000, 4)
+    # plot_geolength_distribution_for_diff_ED(10000, 4)
+    plot_hop_distribution_for_diff_ED_onehop(10000,4)
