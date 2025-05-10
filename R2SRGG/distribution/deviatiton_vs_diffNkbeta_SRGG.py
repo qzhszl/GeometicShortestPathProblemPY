@@ -41,22 +41,24 @@ def generate_r2SRGG():
         rg.ran1()
 
     # Nvec = [200, 500, 1000, 10000]
-    Nvec = [100000]
+    Nvec = [1000]
     # kvec = np.arange(2, 6.1, 0.2)
-    kvec = [2, 4, 6, 11, 20, 34, 61, 108, 190, 336, 595, 1051, 1857, 3282, 5800, 10250, 18116, 32016, 56582,
-            99999]  # for N = 10^5
+    # kvec = [16479, 21121, 27081, 34822, 44767, 57363, 73534, 121205, 199999]
+
+    kvec = [1425, 2033, 2900, 4139, 5909, 8430, 12039, 17177, 24510, 34968,49887, 71168]
+
+    # kvec = [121205]
     # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    # betavec = [2.2, 4, 8, 16, 32, 64, 128]
 
     # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
     # betavec = [4]
-    kvec = [2]  # for N = 10^5
+    # kvec = [2]  # for N = 10^5
     # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [2.2]
+    betavec = [4]
 
     for N in Nvec:
         for ED in kvec:
-            ED =  round(ED,1)
             for beta in betavec:
                 G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
                 real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
@@ -748,16 +750,16 @@ if __name__ == '__main__':
     run simulations for small networks(N = 100)
     step1
     """
-    rg = RandomGenerator(-12)
-    # kvec = [10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 100]
-
-    kvec = [2, 3, 4, 5, 6, 9, 11, 15, 20, 27, 37, 49, 65, 87, 117, 156, 209, 279, 373, 499]
-    N = 500
-    betavec = [2.2, 4, 8, 16, 32, 64, 128]
-    for ED in kvec:
-        for beta in betavec:
-            print(ED,beta)
-            distance_insmallSRGG_local(N, ED, beta, rg)
+    # rg = RandomGenerator(-12)
+    # # kvec = [10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 100]
+    #
+    # kvec = [2, 3, 4, 5, 6, 9, 11, 15, 20, 27, 37, 49, 65, 87, 117, 156, 209, 279, 373, 499]
+    # N = 500
+    # betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    # for ED in kvec:
+    #     for beta in betavec:
+    #         print(ED,beta)
+    #         distance_insmallSRGG_local(N, ED, beta, rg)
 
     # ED = 9
     # beta = 4
@@ -931,3 +933,5 @@ if __name__ == '__main__':
     # G, Coorx, Coory = R2SRGG(10000, 10, 4, rg)
     # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
     # print("real ED:", real_avg)
+
+    generate_r2SRGG()
