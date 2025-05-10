@@ -13,6 +13,8 @@ import math
 
 """
 plot the figure of how the deviation changes with different beta, when the expected degree is fixed.
+used figure
+plot_local_optimum_with_beta(10) Figure 4(a)
 """
 
 
@@ -452,17 +454,25 @@ def plot_local_optimum_with_beta(ED):
     # plt.xscale('log')
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
-    plt.xlabel(r'Temperature parameter $\beta$', fontsize=26)
-    plt.ylabel('Average Deviation', fontsize=26)
+    plt.xlabel(r'Temperature parameter, $\beta$', fontsize=26)
+    plt.ylabel(r'Average deviation, $<d>$', fontsize=26)
     plt.xscale('log')
     # plt.yscale('log')
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     plt.legend(fontsize=26, loc=(0.6, 0.5))
     plt.tick_params(axis='both', which="both", length=6, width=1)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsbetaED{EDn}logy2.pdf".format(
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsbetaED{EDn}logy2.pdf".format(
+    #     EDn=ED)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsbetaED{EDn}logy2.svg".format(
         EDn=ED)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
     # plt.title('Errorbar Curves with Minimum Points after Peak')
     plt.show()
 

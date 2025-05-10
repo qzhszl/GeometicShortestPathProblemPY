@@ -51,10 +51,9 @@ def load_10000nodenetwork_results_tail(beta):
 
 def plot_dev_vs_avg_tail(beta):
     """
-    the x-axis is the expected degree, the y-axis is the average deviation, different line is different c_G
-    inset is the min(average deviation) vs c_G
-    the x-axis is real (approximate) degree
-    when use this function, use before
+    the x-axis is the expected degree, the y-axis is the average deviation,
+    when use this function, use load_10000nodenetwork_results_tail(beta) before
+    the analytic results are loaded from CommonNeighbour_analytic_check.py
     :return:
     """
     N = 10000
@@ -163,9 +162,119 @@ def plot_dev_vs_avg_tail(beta):
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
     picname = filefolder_name+"tailLocalOptimum_dev_vs_avg_beta{beta}.pdf".format(beta=beta)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+    plt.close()
+
+
+def plot_dev_vs_avg_tail_vshopcountchange(beta):
+    """
+    the x-axis is the expected degree, the y-axis is the average deviation,
+    when use this function, use load_10000nodenetwork_results_tail(beta) before
+    the analytic results analyticy01 are loaded from CommonNeighbour_analytic_check.py
+    the hopcount results are loaded from plot_hopcount_vsED.py   plot_hopcount_vs_ED(10000,4)
+    :return:
+    """
+    N = 10000
+    ave_deviation_dict = {}
+    std_deviation_dict = {}
+
+    kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+
+    hop_ave = [11.57, 8.125, 6.1675, 4.9025, 4.01, 3.42, 2.9825, 2.665, 2.4375, 2.1775, 1.9884615384615385, 1.8875,
+               1.82, 1.7275, 1.61]
+
+    hop_std = [3.566384724058805, 2.3124391883896105, 1.6399523621129972, 1.2541904759644764, 0.9486305919587454,
+               0.7606576102294647, 0.6420231693638477, 0.5410868691809106, 0.5577577879330776, 0.48061809162785374,
+               0.3560757515310505, 0.32379584617471546, 0.38418745424597095, 0.44524571867677737, 0.4877499359302879]
+
+    # kvecsupp_geo01 = [10, 16, 27, 44, 49, 56, 64, 72, 81, 92, 104, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    # kvecsupp_geo05 = [10, 16, 27, 44, 49, 56, 64, 72, 81, 92, 104, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    # kvec = kvecsupp
+    betavec = [beta]
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
+
+    count = 0
+    for beta in betavec:
+        ave_deviation_Name = filefolder_name + "ave_deviation_N{Nn}_beta{betan}.txt".format(
+            Nn=N, betan=beta)
+        ave_deviation_vec = np.loadtxt(ave_deviation_Name)
+        std_deviation_Name = filefolder_name + "std_deviation_N{Nn}_beta{betan}.txt".format(Nn=N,
+                                                                                            betan=beta)
+        std_deviation_vec = np.loadtxt(std_deviation_Name)
+
+        ave_deviation_dict[count] = ave_deviation_vec
+        std_deviation_dict[count] = std_deviation_vec
+        count = count + 1
+
+    legend = [r"devation of shortest path"]
+    fig, ax1 = plt.subplots(figsize=(12, 8))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    for count in range(len(betavec)):
+        beta = betavec[count]
+        x = kvec
+        y = ave_deviation_dict[count]
+        print(y)
+        error = std_deviation_dict[count]
+        print(error)
+        ax1.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
+                     markersize=16, label=legend[count], color=colors[3])
+        params, covariance = curve_fit(power_law, x[8:15], y[8:15])
+        # 获取拟合的参数
+        a_fit, k_fit = params
+        x_curve = x[8:15]
+        # a_fit = 0.01
+        params = a_fit,k_fit
+        y_curve = power_law(x[8:15], *params)
+        ax1.plot(x_curve, y_curve, linewidth=8,
+                 label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$',
+                 color=colors[0])
+
+    analyticy01 = [0.011210490144748496, 0.014362834005337652, 0.01836412087082358, 0.022948784225781036, 0.02873677429889581, 0.03580781814761691, 0.04411338516186235, 0.05362436843859807, 0.06415204818089597, 0.07537040591851239, 0.08723985015799253, 0.10043013621960226, 0.11689120257351479, 0.13907942793358205, 0.1668336102129492]
+
+    kvecanalyticy01 = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+
+    ax1.plot(kvecanalyticy01, analyticy01,linestyle="--",marker='v',markersize=16, linewidth=5, label=f'common neighbour model',
+             color=colors[4])
+
+    text = r"$N = 10^4,\beta = 4$"
+    ax1.text(
+        0.7, 0.88,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+        text,
+        transform=ax1.transAxes,  # 使用轴坐标
+        fontsize=26,  # 字体大小
+        ha='center',  # 水平居中对齐
+        va='bottom'  # 垂直对齐方式
+    )
+
+    ax1.set_xscale('log')
+    ax1.set_yscale('log')
+    ax1.set_xlabel('Expected degree, $E[D]$', fontsize=28)
+    ax1.set_ylabel(r'Average deviation, $\langle d \rangle$', fontsize=28,color = colors[3])
+    ax1.tick_params(axis='both', which="both", length=6, width=1)
+    ax1.tick_params(axis='y', labelcolor=colors[3],labelsize=26)
+    ax1.tick_params(axis='x', labelsize=26)
+    # plt.title('1000 simulations, N=10000',fontsize=26)
+
+    ax2 = ax1.twinx()
+    ax2.set_ylabel(r'Average hopcount, $\langle h \rangle$', color=colors[1], fontsize=28)
+    ax2.errorbar(kvec, hop_ave, yerr=hop_std, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
+                     markersize=16, label="hopcount", color=colors[1])
+    ax2.tick_params(axis='y', labelcolor=colors[1],labelsize=26)
+
+    # plt.legend(fontsize=20, loc="lower right")
+    plt.xlim([8,12000])
+
+    lines1, labels1 = ax1.get_legend_handles_labels()
+    lines2, labels2 = ax2.get_legend_handles_labels()
+    ax1.legend(lines2 + lines1, labels2 + labels1, loc='upper left', fontsize=20)
+
+    picname = filefolder_name+"tailLocalOptimum_dev_vs_avg_beta{beta}_withhop.pdf".format(beta=beta)
     plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
+
 
 def load_10000nodenetwork_results_tail_fixnode(beta,Geodistance_index):
     # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
@@ -216,7 +325,7 @@ def plot_dev_vs_avg_tail_fixnode(beta,Geodistance_index):
     the x-axis is the expected degree, the y-axis is the average deviation, different line is different c_G
     inset is the min(average deviation) vs c_G
     the x-axis is real (approximate) degree
-    when use this function, use before
+    when use this function, use load_10000nodenetwork_results_tail(beta) before
     :return:
     """
     N = 10000
@@ -386,9 +495,16 @@ if __name__ == '__main__':
     """
     # for beta in [4]:
     #     load_10000nodenetwork_results_tail(beta)
-    plot_dev_vs_avg_tail(4)
+    # plot_dev_vs_avg_tail(4)
 
     """
     # FUNCTION 3 FOR link geometric distance
     """
     # plot_avg_linkdistance_vs_ED()
+
+    """
+    # FUNCTION 4 FOR all node pair
+    """
+    # for beta in [4]:
+    #     load_10000nodenetwork_results_tail(beta)
+    plot_dev_vs_avg_tail_vshopcountchange(4)

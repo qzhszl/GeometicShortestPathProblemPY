@@ -322,37 +322,15 @@ def check_Expected_abs_y_alpha(N,avg,beta,delta):
 
 
 def check_modelwithdistance():
-    N = 10000
-    log_spaced_points = np.logspace(np.log10(500), np.log10(N - 1), num=30)
-    # Round the points to the nearest integer
-    rounded_points_499 = np.round(log_spaced_points).astype(int)
-    # Remove duplicates to ensure unique values
-    avg_vec = sorted(set(rounded_points_499))
-
-    plt.figure()
-    delta = 0.26
-    result = []
-    for avg in avg_vec:
-        r = math.sqrt(avg / ((N - 1) * math.pi))
-        result.append(E_y(r, delta))
-    plt.plot(avg_vec, result)
-    params, covariance = curve_fit(power_law, avg_vec[-5:], result[-5:])
-    # 获取拟合的参数
-    a_fit, k_fit = params
-    print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-    plt.plot(avg_vec[-5:], power_law(avg_vec[-5:], *params), linewidth=10,
-             label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
-             color='red')
-
-
-
-    beta_vec = [1000]
-    for delta in [0.001,0.26]:
+    avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999,16479, 27081, 44767, 73534, 121205, 199999, 316226, 499999]
+    # avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105,
+    #            9999,
+    #            16479, 21121, 27081, 34822, 44767, 57363]  # for beta = 128
+    beta_vec = [128]
+    for delta in [0.26]:
         ana_vec = []
         simu_vec = []
         for avg in avg_vec:
-            effective_radius = math.sqrt(avg / ((N - 1) * math.pi))
-            print([avg,effective_radius])
             for beta in beta_vec:
                 # print("ED", avg, beta)
                 ana_res,simu_res = check_Expected_abs_y(10000, avg, beta, delta,simutime=0)
@@ -361,16 +339,17 @@ def check_modelwithdistance():
                 ana_vec.append(ana_res)
                 simu_vec.append(simu_res)
         print("delta:",delta)
-        # params, covariance = curve_fit(power_law, avg_vec[8:15], ana_vec[8:15])
-        params, covariance = curve_fit(power_law, avg_vec[-5:], ana_vec[-5:])
+        params, covariance = curve_fit(power_law, avg_vec[8:15], ana_vec[8:15])
+        # params, covariance = curve_fit(power_law, avg_vec[-3:], ana_vec[-3:15])
         # 获取拟合的参数
         a_fit, k_fit = params
         print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-        plt.plot(avg_vec[-5:], power_law(avg_vec[-5:], *params), linewidth=10, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
-                 color='red')
+        # plt.plot(avg_vec[8:15], power_law(avg_vec[8:15], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+        #          color='red')
 
-        plt.plot(avg_vec,ana_vec,"-o",label = f"{delta}")
+        plt.plot(avg_vec,ana_vec,label = f"{delta}")
         # plt.plot(avg_vec,simu_vec)
+    print(ana_vec)
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel('E[D]', fontsize=26)
@@ -408,11 +387,11 @@ def check_model_withalpha():
                 alpha_vec.append(alpha)
 
         # print(ana_vec)
-        params, covariance = curve_fit(power_law, alpha_vec[-5: ], ana_vec[-5: ])
+        params, covariance = curve_fit(power_law, alpha_vec[: ], ana_vec[: ])
         # 获取拟合的参数
         a_fit, k_fit = params
         print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-        plt.plot(alpha_vec[-5: ], power_law(alpha_vec[-5: ], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
+        plt.plot(alpha_vec[: ], power_law(alpha_vec[: ], *params), linewidth=5, label=f'fit curve: $y={a_fit:.6f}x^{{{k_fit:.4f}}}$',
                  color='red')
 
         plt.plot(alpha_vec,ana_vec,label = f"{delta}")
@@ -521,7 +500,7 @@ def check_modelwithN():
         ana_vec = []
         simu_vec = []
 
-        log_spaced_points = np.logspace(np.log10(5), np.log10(N*100), num=80)
+        log_spaced_points = np.logspace(np.log10(5), np.log10(N-1), num=40)
         # Round the points to the nearest integer
         rounded_points_499 = np.round(log_spaced_points).astype(int)
         # Remove duplicates to ensure unique values
@@ -542,9 +521,12 @@ def check_modelwithN():
         # 获取拟合的参数
         a_fit, k_fit = params
         print(f"拟合结果: a = {a_fit}, k = {k_fit}")
-        # if N==10000:
-        #     plt.plot(avg_vec[6:30], power_law(avg_vec[6:30], *params), linewidth=8, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$',
-        #              color='red')
+
+        if N==10000:
+            params = np.array([0.004,0.5])
+            a_fit, k_fit = params
+            plt.plot(avg_vec[0:30], power_law(avg_vec[0:30], *params), linewidth=8, label=f'fit curve: $y={a_fit:.4f}x^{{{k_fit:.2f}}}$',
+                     color='red')
 
         # if N == 100000000000:
         #     params, covariance = curve_fit(power_law, avg_vec[56:65], ana_vec[56:65])
@@ -582,49 +564,8 @@ def check_modelwithN():
     plt.legend()
 
     figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\commonneighbour\\highEDtauvsNbeta{beta}.pdf".format(beta = beta)
-    # plt.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
-
-
-def E_y(r, delta):
-    """
-    RGG MODEL for common neighbour
-    计算一个在由圆弧 y = sqrt(r^2 - (x - delta)^2)、y=0、x=0 到 x=1/2
-    围成区域内均匀分布的点，其纵坐标 y 的期望值。
-
-    参数:
-    r : float
-        半圆的半径，要求 r > delta 且 r > 0.5 - delta
-    delta : float
-        圆心的 x 坐标偏移量，要求在合法范围内
-
-    返回:
-    float
-        期望值 E[y]
-    """
-    # 合法性判断，避免 arcsin 越界和 sqrt 负值
-    if delta >= r or (0.5 - delta) >= r:
-        return np.nan  # 超出定义域
-
-    try:
-        # 分子：根据推导结果
-        numerator = (r**2) / 4 + (delta / 4) - (1 / 24) - (delta**2) / 2
-
-        # 分母：积分结果，面积表达式
-        term1 = (0.5 - delta) * np.sqrt(r**2 - (0.5 - delta)**2)
-        term2 = delta * np.sqrt(r**2 - delta**2)
-        term3 = r**2 * (
-            np.arcsin((0.5 - delta) / r) +
-            np.arcsin(delta / r)
-        )
-        denominator = 0.5 * (term1 + term2 + term3)
-
-        return numerator / denominator
-
-    except:
-        return np.nan  # 捕捉到数学错误时返回 NaN
-
-
 
 
 
@@ -691,19 +632,3 @@ if __name__ == '__main__':
     # check_modelwithN()
 
     # check_model_withalpha()
-
-    """
-    check model of RGG common neighbour
-    """
-
-    # 示例：计算 r=0.465, delta=0.25 时的期望值
-    # delta = 0.26
-    # r_vec = np.linspace(0.45,0.52,100)
-    # result = []
-    # for r in r_vec:
-    #     result.append(E_y(r, delta))
-    # plt.figure()
-    # plt.plot(r_vec, result)
-    # plt.xscale('log')
-    # plt.yscale('log')
-    # plt.show()

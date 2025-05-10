@@ -122,7 +122,7 @@ def plot_dev_vs_avg_peak(beta):
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
     picname = filefolder_name+"peakLocalOptimum_dev_vs_avg_beta{beta}.pdf".format(beta=beta)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -137,7 +137,6 @@ def load_LCC_second_LCC_data(beta):
     input_avg_vec = [round(a, 1) for a in kvec]
     N = 10000
     filefolder_name_lcc = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
-
     LCC_vec = []
     LCC_std_vec = []
     second_LCC_vec = []
@@ -186,6 +185,8 @@ def find_giant_component(beta):
 def scattor_peakvs_GLCC():
     peak_avg = [4, 3.4, 5.0, 5.0, 5.8, 5.4, 6, 6.4, 3.2, 3.1, 2.6, 2.7, 2.9, 2.9, 3.7, 3.8, 4.6, 4.8, 4.2]
     SLCC_avg = [3.8, 3.2, 5.0, 4.8, 6, 5.6, 6, 6.0, 3.1, 2.9, 2.6, 2.7, 2.8, 2.7, 3.7, 3.9, 4.4, 4.8, 4.4]
+
+    print(np.corrcoef(peak_avg,SLCC_avg))
     # peak_avg = [4, 3.4, 5.0, 5.0, 5.8, 5.4, 6, 6.4, 3.2, 3.1, 2.6, 2.7, 2.9, 2.9]
     # SLCC_avg = [3.8, 3.2, 5.0, 4.8, 6, 5.6, 6, 6.0, 3.1, 2.9, 2.6, 2.7, 2.8, 2.7]
     fig, ax = plt.subplots(figsize=(9, 6))
@@ -226,17 +227,98 @@ def scattor_peakvs_GLCC():
     plt.tick_params(axis='both', which="both", length=6, width=1)
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
     picname = filefolder_name + "scattor_slcc_vs_peak.pdf"
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.show()
+
+
+
+def plot_an_lcc_slcc_examplefor50nodes():
+    """
+    function for loading data for analysis first peak about Lcc AND second Lcc
+    :param beta:
+    :return:
+    """
+    kvec = np.arange(1, 6.1, 0.2)
+    kvec = [round(a, 1) for a in kvec]
+    N = 50
+    input_avg_vec = kvec + [9, 11, 15, 20, 27, 37, 49]
+    filefolder_name_lcc = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\"
+    LCC_vec = []
+    second_LCC_vec = []
+    for ED in input_avg_vec:
+        if ED>16:
+            LCC_vec.append(50)
+            second_LCC_vec.append(0)
+        else:
+            LCC_oneED = []
+            second_LCC_oneED = []
+
+            LCC_onesimu = []
+            second_LCC_onesimu = []
+            LCCname = filefolder_name_lcc + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}.txt".format(
+                Nn=N, EDn=ED, betan=4)
+            try:
+                with open(LCCname, "r") as file:
+                    for line in file:
+                        if line.startswith("#"):
+                            continue
+                        else:
+                            data = line.strip().split("\t")
+                            LCC_onesimu.append(int(data[0]))
+                            second_LCC_onesimu.append(int(data[1]))
+                LCC_oneED = LCC_oneED + LCC_onesimu
+                second_LCC_oneED = second_LCC_oneED + second_LCC_onesimu
+            except:
+                print("Not data", ED)
+            LCC_vec.append(np.mean(LCC_oneED))
+            second_LCC_vec.append(np.mean(second_LCC_oneED))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+
+    fig,ax = plt.subplots(figsize = (6,4.5))
+    plt.plot(input_avg_vec, LCC_vec,linewidth=5,color=colors[0],label = "$LCC$")
+    plt.plot(input_avg_vec, second_LCC_vec,linewidth=5,color=colors[2],label = "$SLCC$")
+    max_index = second_LCC_vec.index(max(second_LCC_vec))
+    # 根据索引找到对应的 x
+    result_x = input_avg_vec[max_index]
+    print("GLCC", result_x)
+    plt.text(0.5, 0.35, r'$N = 50, \beta = 4$',
+             transform=ax.transAxes,
+             fontsize=20,
+             bbox=dict(facecolor='white', alpha=0.5))
+    plt.xlabel(r'Expected degree, $E[D]$', fontsize=28)
+    plt.ylabel(r'Size of component', fontsize=28)
+    plt.xticks(fontsize=30)
+    plt.yticks(fontsize=30)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    plt.legend(fontsize=26, loc=(0.45, 0.5))
+    picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\LCCvsSLCC_N{N}_beta{4}.pdf"
+
     plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+
     plt.show()
 
 
 
 if __name__ == '__main__':
     # load_10000nodenetwork_results_peak(64)
+
     # betavec = [3,3.1,3.2,3.3,3.4,3.5,3.6,3.7]
+    # betavec = [4]
     # for beta in betavec:
     #     load_10000nodenetwork_results_peak(beta)
     #     plot_dev_vs_avg_peak(beta)
     #     find_giant_component(beta)
-    scattor_peakvs_GLCC()
+
+    """
+    plot LCC and SLCC
+    """
+    # find_giant_component(3.9)
+
+    """
+    # plot the scattor plot
+    """
+    # scattor_peakvs_GLCC()
+
+    plot_an_lcc_slcc_examplefor50nodes()
 

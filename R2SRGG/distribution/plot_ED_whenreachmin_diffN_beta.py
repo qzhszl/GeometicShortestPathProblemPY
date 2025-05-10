@@ -10,7 +10,7 @@ import networkx as nx
 from scipy.optimize import curve_fit
 
 from R2SRGG.R2SRGG import loadSRGGandaddnode
-from collections import defaultdict
+from collections import defaultdict, Counter
 import math
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
@@ -322,6 +322,7 @@ def plot_local_optimum_function2():
     plt.show()
 
 
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # # STEP 1 plot the local optimum with diffN
@@ -383,4 +384,68 @@ if __name__ == '__main__':
     #     local_optimum = plot_dev_vs_ED_onepara(kvec,beta,N)
     #     print(local_optimum)
 
-    plot_local_optimum_function2()
+    """
+    use this one to see where is the minimum
+    """
+    # plot_local_optimum_function2()
+
+
+    """
+    quick plot one minimum
+    """
+    kvec = [11, 12, 14, 16, 18, 20, 21, 23, 24, 27, 28, 30, 32, 33, 34, 35, 39, 42, 44, 47, 50, 56, 68, 71, 73, 74, 79,
+            82, 85, 91, 95]
+    # kvec = [2, 4, 6, 11, 12, 14, 16, 18, 20, 21, 23, 24, 27, 28, 30, 32, 33, 34, 35, 39, 42, 44, 47, 50, 56, 61, 68, 71,
+    #         73, 74, 79, 82, 85, 91, 95, 107, 120, 193, 316, 518, 848, 1389]  # for ONE SP
+
+    # kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+    N = 10000
+    beta = 128
+    y =[]
+    error =[]
+    for ED in kvec:
+        hopcount_for_a_para_comb = np.array([])
+        geodistance_for_a_para_comb = np.array([])
+        ave_deviation_for_a_para_comb = np.array([])
+        exemptionlist =[]
+        filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\OneSP\\"  # for ONE SP
+
+        ExternalSimutimeNum = 5
+        for ExternalSimutime in range(ExternalSimutimeNum):
+            try:
+                # load data for hopcount for all node pairs
+                hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
+                hopcount_for_a_para_comb = np.hstack(
+                    (hopcount_for_a_para_comb, hopcount_for_a_para_comb_10times))
+
+                # load data for geo distance for all node pairs
+                geodistance_vec_name = filefolder_name + "length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                geodistance_for_a_para_comb_10times = np.loadtxt(geodistance_vec_name)
+                geodistance_for_a_para_comb = np.hstack(
+                    (geodistance_for_a_para_comb, geodistance_for_a_para_comb_10times))
+                # load data for ave_deviation for all node pairs
+                deviation_vec_name = filefolder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
+
+                ave_deviation_for_a_para_comb = np.hstack(
+                    (ave_deviation_for_a_para_comb, ave_deviation_for_a_para_comb_10times))
+            except FileNotFoundError:
+                exemptionlist.append((N, ED, beta, ExternalSimutime))
+
+        hopcount_for_a_para_comb = hopcount_for_a_para_comb[hopcount_for_a_para_comb > 1]
+        counter = Counter(hopcount_for_a_para_comb)
+        print(counter)
+        relative_dev = ave_deviation_for_a_para_comb / geodistance_for_a_para_comb
+        y.append(np.mean(relative_dev))
+        error.append(np.std(relative_dev))
+    plt.figure()
+    x = kvec
+    plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                 label="128")
+    plt.xscale("log")
+    plt.yscale("log")
+    plt.show()
