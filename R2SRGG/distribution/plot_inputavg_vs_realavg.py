@@ -100,8 +100,8 @@ def plot_inputavg_vs_realavg(beta):
         plt.xscale('log')
         plt.yscale('log')
         plt.plot(x,real_avg_vec,linewidth=5,color=colors[0])
-        plt.xlabel(r'Expected degree, $E[K]$', fontsize=26)
-        plt.ylabel(r"Average degree, $\langle k \rangle$", fontsize=26)
+        plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+        plt.ylabel(r"Average degree, $\langle D \rangle$", fontsize=26)
         plt.xticks(fontsize=28)
         plt.yticks(fontsize=28)
 

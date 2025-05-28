@@ -326,8 +326,8 @@ def check_modelwithdistance():
     # avg_vec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105,
     #            9999,
     #            16479, 21121, 27081, 34822, 44767, 57363]  # for beta = 128
-    beta_vec = [128]
-    for delta in [0.26]:
+    beta_vec = [4]
+    for delta in [0.25]:
         ana_vec = []
         simu_vec = []
         for avg in avg_vec:

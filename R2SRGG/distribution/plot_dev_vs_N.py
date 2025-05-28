@@ -77,7 +77,7 @@ def plot_local_optimum_with_N(ED, beta):
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
     plt.xlabel(r'$N$', fontsize=28)
-    plt.ylabel(r'$<d>$', fontsize=28)
+    plt.ylabel(r'$\langle d \rangle$', fontsize=28)
     plt.xscale('log')
     # plt.yscale('log')
     plt.xticks(fontsize=30)
@@ -86,9 +86,14 @@ def plot_local_optimum_with_N(ED, beta):
     # plt.legend(fontsize=26, loc=(0.6, 0.5))
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsNlogx.png".format(
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsNlogx.svg".format(
         EDn=ED)
-    plt.savefig(picname, format='png', bbox_inches='tight', dpi=600, transparent = True)
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
 
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsNlogx.pdf".format(
     #     EDn=ED)
