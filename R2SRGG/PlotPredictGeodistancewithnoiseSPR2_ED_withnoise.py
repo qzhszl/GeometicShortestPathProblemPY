@@ -663,14 +663,14 @@ def check_simple_case():
     :return:
     """
     N = 10000
-    ED_list = [2]  # Expected degrees
-    beta = 8
+    ED_list = [32]  # Expected degrees
+    beta = 128
     print("beta:", beta)
 
     # noise_amplitude_list = [0, 0.001, 0.01, 0.1, 1]
     # noise_amplitude_list = [0.0005, 0.005, 0.05, 0.5]
     # noise_amplitude_list = [0, 0.0005,0.001, 0.005,0.01,0.05, 0.1, 0.5,1]
-    noise_amplitude_list = [0.01]
+    noise_amplitude_list = [0.1]
 
     exemptionlist = []
     RGG_matrix = np.zeros((len(ED_list), len(noise_amplitude_list)))
@@ -749,12 +749,12 @@ if __name__ == '__main__':
     """
     Plot the heatmap for the precision and recall smoothly 
     """
-    # for beta in [2]:
-    #     # process_data(beta)
-    #     plot_heatmap_precision_smooth_fromprocessed_data(beta)
-    # #     # plot_heatmap_precision_smooth(beta)
+    for beta in [4]:
+        # process_data(beta)
+        plot_heatmap_precision_smooth_fromprocessed_data(beta)
+        # plot_heatmap_precision_smooth(beta)
     #
     # check_which_square_is_bigger()
 
-    check_simple_case()
+    # check_simple_case()
 
