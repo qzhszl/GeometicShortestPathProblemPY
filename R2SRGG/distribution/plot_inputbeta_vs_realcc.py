@@ -36,7 +36,7 @@ def plot_CC_vs_beta(ED):
     # print(real_cc_vec)
 
     fig, ax = plt.subplots(figsize=(6, 4.5))
-    text = r"$N = 10^4$" "\n" r"$E[K] = 5$"
+    text = r"$N = 10^4$" "\n" r"$E[D] = 5$"
     plt.text(
         0.6, 0.35,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
         text,

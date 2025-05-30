@@ -350,12 +350,16 @@ def process_data(betaindex):
     :return:
     """
     N = 10000
-    ED_list = [2, 4, 8, 16, 32, 64, 128]  # Expected degrees
+    ED_list = [2, 4, 8, 16, 32, 64, 128,256,512]  # Expected degrees
+    ED_list = [2]  # Expected degrees
     betalist = [2.1, 4, 8, 32, 128]
     beta = betalist[betaindex]
     print("beta:", beta)
 
-    noise_amplitude_list = [0, 0.001, 0.01, 0.1, 1]
+    # noise_amplitude_list = [0, 0.001, 0.01, 0.1, 1]
+    # noise_amplitude_list = [0.0005, 0.005, 0.05, 0.5]
+    # noise_amplitude_list = [0, 0.0005,0.001, 0.005,0.01,0.05, 0.1, 0.5,1]
+    noise_amplitude_list = [0.005]
 
     exemptionlist =[]
     RGG_matrix = np.zeros((len(ED_list), len(noise_amplitude_list)))
@@ -418,12 +422,13 @@ def process_data(betaindex):
 
 def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
     N = 10000
-    ED_list = [2, 4, 8, 16, 32, 64, 128]  # Expected degrees
+    ED_list = [2, 4, 8, 16, 32, 64, 128,256,512]  # Expected degrees
     betalist = [2.1, 4, 8, 32, 128]
     beta = betalist[betaindex]
     print("beta:", beta)
 
-    noise_amplitude_list = [0, 0.001, 0.01, 0.1, 1]
+    # noise_amplitude_list = [0, 0.001, 0.01, 0.1, 1]
+    noise_amplitude_list = [0, 0.0005, 0.001, 0.005, 0.01, 0.05, 0.1, 0.5, 1]
 
     exemptionlist = []
     RGG_matrix = np.zeros((len(ED_list), len(noise_amplitude_list)))
@@ -453,8 +458,15 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
             SRGG_matrix[EDindex][noiseindex] = np.mean(PrecisonSRGG_specificnoise)
             Geo_matrix[EDindex][noiseindex] = np.mean(PrecisonGeodis_specificnoise)
 
-    y_labels = [r"$2^1$", r"$2^2$", r"$2^3$",r"$2^{4}$", r"$2^{5}$",r"$2^{6}$", r"$2^{7}$"]  # 横坐标
-    x_labels = [r"0", r"$10^{-3}$", r"$10^{-2}$", r"$10^{-1}$", r"$10^{0}$"]  # 纵坐标
+    y_labels = [r"$2^1$", r"$2^2$", r"$2^3$",r"$2^{4}$", r"$2^{5}$",r"$2^{6}$", r"$2^{7}$", r"$2^{8}$", r"$2^{9}$"]
+    x_labels = [r"0", r"$10^{-3}$", r"$10^{-2}$", r"$10^{-1}$", r"$10^{0}$"]
+    x_labels = [""] * 9
+    x_labels[0] = r"0"
+    x_labels[2] = r"$10^{-3}$"
+    x_labels[4] = r"$10^{-2}$"
+    x_labels[6] = r"$10^{-1}$"
+    x_labels[8] = r"$10^{0}$"
+    # x_labels = [r"0",r"$10^{-3}$" ,r"$5 \times 10^{-3}$", r"$10^{-2}$",r"$5 \times 10^{-2}$", r"$10^{-1}$",r"$5 \times 10^{-1}$", r"$10^{0}$"]
 
     plt.figure()
     df1 = pd.DataFrame(RGG_matrix,
@@ -468,7 +480,7 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
                cmap='jet',
                interpolation='bicubic',
                origin='lower',
-               extent=[1, 5, 1, 7],
+               extent=[1, 9, 1, 9],
                aspect='auto',
                )
     cbar = plt.colorbar(im, label="Precision")
@@ -479,8 +491,14 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
     plt.xticks(ticks=np.arange(len(x_labels))+ 1,labels=x_labels,fontsize=20)  # x 轴刻度字体大小
     plt.yticks(ticks=np.arange(len(y_labels))+ 1,labels=y_labels,fontsize=20)  # y 轴刻度字体大小
     RGG_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionRGGbeta{beta}.pdf".format(beta = beta)
+    # plt.savefig(
+    #     RGG_heatmap_name,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
     plt.savefig(RGG_heatmap_name,
-        format='pdf', bbox_inches='tight', dpi=600)
+                format='pdf', bbox_inches='tight', dpi=600)
     plt.show()
     plt.close()
 
@@ -498,7 +516,7 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
                     cmap='jet',
                     interpolation='bicubic',
                     origin='lower',
-                    extent=[1, 5, 1, 7],
+                    extent=[1, 9, 1, 9],
                     aspect='auto',
                     )
     cbar = plt.colorbar(im, label="Precision")
@@ -512,6 +530,12 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
         beta=beta)
     plt.savefig(SRGG_heatmap_name,
                 format='pdf', bbox_inches='tight', dpi=600)
+    # plt.savefig(
+    #     SRGG_heatmap_name,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
     plt.show()
     plt.close()
 
@@ -531,7 +555,7 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
                     cmap='jet',
                     interpolation='bicubic',
                     origin='lower',
-                    extent=[1, 5, 1, 7],
+                    extent=[1, 9, 1, 9],
                     aspect='auto',
                     )
     cbar = plt.colorbar(im, label="Precision")
@@ -541,43 +565,42 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
     plt.xlabel(r"Noise amplitude $\alpha$", fontsize=25)
     plt.xticks(ticks=np.arange(len(x_labels)) + 1, labels=x_labels, fontsize=20)  # x 轴刻度字体大小
     plt.yticks(ticks=np.arange(len(y_labels)) + 1, labels=y_labels, fontsize=20)  # y 轴刻度字体大小
-    Geo_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionGeobeta{beta}.pdf".format(
+    Geo_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionGeobeta{beta}.svg".format(
         beta=beta)
-    plt.savefig(Geo_heatmap_name,
-                format='pdf', bbox_inches='tight', dpi=600)
+    plt.savefig(
+        Geo_heatmap_name,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
     plt.show()
 
+    a1 = df3 - df2
+    a2 = df3 - df1
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', None):
+        print(a1)
+        print(a2)
 
 
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-
-    # # # # STEP 1 plot the figure
-    """
-    Plot the heatmap for the precision and recall
-    """
-    # plot_heatmap_precision(2)
-    # for beta in [4]:
-        # process_data(beta)
-        # plot_heatmap_precision_smooth_fromprocessed_data(beta)
-        # plot_heatmap_precision_smooth(beta)
-
+def check_which_square_is_bigger():
     # """
     # Plot above
     # """
-    beta = 128
+    beta = 8
     np.random.seed(0)
-    df1 = pd.read_csv(f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionRGGbeta{beta}.csv",index_col=0)
-    df2 = pd.read_csv(f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionSRGGbeta{beta}.csv",index_col=0)
-    df3 = pd.read_csv(f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionGeobeta{beta}.csv",index_col=0)
+    df1 = pd.read_csv(
+        f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionRGGbeta{beta}.csv",
+        index_col=0)
+    df2 = pd.read_csv(
+        f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionSRGGbeta{beta}.csv",
+        index_col=0)
+    df3 = pd.read_csv(
+        f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionGeobeta{beta}.csv",
+        index_col=0)
 
-    y_labels = [r"$2^1$", r"$2^2$", r"$2^3$", r"$2^{4}$", r"$2^{5}$", r"$2^{6}$", r"$2^{7}$"]  # 横坐标
-    x_labels = [r"0", r"$10^{-3}$", r"$10^{-2}$", r"$10^{-1}$", r"$10^{0}$"]  # 纵坐标
+    y_labels = [r"$2^1$", r"$2^2$", r"$2^3$", r"$2^{4}$", r"$2^{5}$", r"$2^{6}$", r"$2^{7}$", r"$2^{8}$", r"$2^{9}$"]  # 横坐标
+    x_labels = [r"0",'', r"$10^{-3}$",'', r"$10^{-2}$",'', r"$10^{-1}$",'', r"$10^{0}$"]  # 纵坐标
 
-    print(df3-df2)
-    print(df3 - df1)
     # Step 1: 判断 df3 >= df1 和 df3 >= df2（允许小误差）
     # 容差判断
     tol = 1e-5
@@ -600,14 +623,14 @@ if __name__ == '__main__':
                    cmap='jet',
                    interpolation='bicubic',
                    origin='lower',
-                   extent=[1, 5, 1, 7],
+                   extent=[1, 9, 1, 9],
                    aspect='auto')
     plt.colorbar(im, ax=ax, label='df3 (log scale)')
 
     # 原图像 shape
     nrows, ncols = df3.shape
-    x_extent = np.linspace(1, 5, ncols)
-    y_extent = np.linspace(1, 7, nrows)
+    x_extent = np.linspace(1, 9, ncols)
+    y_extent = np.linspace(1, 9, nrows)
 
     # 将 contour 坐标（行列）映射到 extent 坐标系
     for contour in contours:
@@ -615,13 +638,123 @@ if __name__ == '__main__':
         contour -= 1
 
         # contour[:, 0] 是行 → y； contour[:, 1] 是列 → x
-        x_coords = np.interp(contour[:, 1], np.arange(ncols), np.linspace(1, 5, ncols))
-        y_coords = np.interp(contour[:, 0], np.arange(nrows), np.linspace(1, 7, nrows))
+        x_coords = np.interp(contour[:, 1], np.arange(ncols), np.linspace(1, 9, ncols))
+        y_coords = np.interp(contour[:, 0], np.arange(nrows), np.linspace(1, 9, nrows))
 
         ax.plot(x_coords, y_coords, color='white', linewidth=2.5)
+
+    a1 = df3 - df2
+    a2 = df3 - df1
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', None):
+        print(a1)
+        print(a2)
+
 
     plt.title("Closed Contour: df3 ≥ df1 and df2")
     plt.tight_layout()
     plt.xticks(ticks=np.arange(len(x_labels)) + 1, labels=x_labels, fontsize=20)  # x 轴刻度字体大小
     plt.yticks(ticks=np.arange(len(y_labels)) + 1, labels=y_labels, fontsize=20)  # y 轴刻度字体大小
     plt.show()
+
+
+def check_simple_case():
+    """
+    this .m focus on data for one square
+    :return:
+    """
+    N = 10000
+    ED_list = [32]  # Expected degrees
+    beta = 128
+    print("beta:", beta)
+
+    # noise_amplitude_list = [0, 0.001, 0.01, 0.1, 1]
+    # noise_amplitude_list = [0.0005, 0.005, 0.05, 0.5]
+    # noise_amplitude_list = [0, 0.0005,0.001, 0.005,0.01,0.05, 0.1, 0.5,1]
+    noise_amplitude_list = [0.1]
+
+    exemptionlist = []
+    RGG_matrix = np.zeros((len(ED_list), len(noise_amplitude_list)))
+    SRGG_matrix = np.zeros((len(ED_list), len(noise_amplitude_list)))
+    Geo_matrix = np.zeros((len(ED_list), len(noise_amplitude_list)))
+    inputfolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\test\\"
+    for EDindex in range(len(ED_list)):
+        ED = ED_list[EDindex]
+        print("ED:", ED)
+        for noiseindex in range(len(noise_amplitude_list)):
+            noise_amplitude = noise_amplitude_list[noiseindex]
+            print(noise_amplitude)
+            precision_list = []
+            PrecisonRGG_specificnoise = []
+            for ExternalSimutime in range(20):
+                try:
+                    precision_RGG_Name = inputfolder_name+"PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                    Precison_RGG_5_times = np.loadtxt(precision_RGG_Name)
+                    PrecisonRGG_specificnoise.extend(Precison_RGG_5_times)
+                except FileNotFoundError:
+                    exemptionlist.append((ED, beta, noise_amplitude, ExternalSimutime))
+            # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+            # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+            # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+            RGG_matrix[EDindex][noiseindex] = np.mean(PrecisonRGG_specificnoise)
+            print("RGG",np.mean(PrecisonRGG_specificnoise))
+
+            PrecisonSRGG_specificnoise = []
+            for ExternalSimutime in range(20):
+                try:
+                    precision_SRGG_Name = inputfolder_name+"PrecisionSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                    Precison_SRGG_5_times = np.loadtxt(precision_SRGG_Name)
+                    PrecisonSRGG_specificnoise.extend(Precison_SRGG_5_times)
+                except FileNotFoundError:
+                    pass
+            # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+            # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+            # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+            SRGG_matrix[EDindex][noiseindex] = np.mean(PrecisonSRGG_specificnoise)
+            print("SRGG", np.mean(PrecisonSRGG_specificnoise))
+            PrecisonGeodis_specificnoise = []
+            for ExternalSimutime in range(20):
+                try:
+                    precision_Geodis_Name = inputfolder_name+"PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+                    Precison_Geodis_5_times = np.loadtxt(precision_Geodis_Name)
+                    PrecisonGeodis_specificnoise.extend(Precison_Geodis_5_times)
+                except FileNotFoundError:
+                    pass
+
+            Geo_matrix[EDindex][noiseindex] = np.mean(PrecisonGeodis_specificnoise)
+            print("GEO", np.mean(PrecisonGeodis_specificnoise))
+            with open(
+                    f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\test\\Precisionall_ED{ED}_beta{beta}_noise{noise_amplitude}.txt",
+                    "w") as f:
+                for a, b, c in zip(PrecisonRGG_specificnoise, PrecisonSRGG_specificnoise, PrecisonGeodis_specificnoise):
+                    f.write(f"{a}\t{b}\t{c}\n")
+    print(exemptionlist)
+
+
+
+
+
+
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+
+    # # # # STEP 1 plot the figure
+    """
+    Plot the heatmap for the precision and recall
+    """
+    # plot_heatmap_precision(2)
+
+    """
+    Plot the heatmap for the precision and recall smoothly 
+    """
+    for beta in [4]:
+        # process_data(beta)
+        plot_heatmap_precision_smooth_fromprocessed_data(beta)
+        # plot_heatmap_precision_smooth(beta)
+    #
+    # check_which_square_is_bigger()
+
+    # check_simple_case()
+

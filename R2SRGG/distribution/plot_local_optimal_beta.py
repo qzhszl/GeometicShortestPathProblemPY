@@ -455,7 +455,7 @@ def plot_local_optimum_with_beta(ED):
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
     plt.xlabel(r'Temperature parameter, $\beta$', fontsize=26)
-    plt.ylabel(r'Average deviation, $<d>$', fontsize=26)
+    plt.ylabel(r'Average deviation, $\langle d \rangle$', fontsize=26)
     plt.xscale('log')
     # plt.yscale('log')
     plt.xticks(fontsize=26)

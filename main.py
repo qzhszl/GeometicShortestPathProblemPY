@@ -109,7 +109,7 @@ def all_shortest_path_node(G, nodei, nodej):
     for path in shortest_paths:
         PNodeList.update(path)
         count += 1
-        if count > 10000000:
+        if count > 1000000:
             PNodeList = find_sp_node2(G, nodei, nodej)
             break
     # print("count",count)
@@ -223,16 +223,36 @@ def find_sp_node(G, nodei, nodej):
     SP_list = [item for item in SP_list if item not in [nodei, nodej]]
     return SP_list
 
+# def find_sp_node2(G, nodei, nodej):
+#     SP_list_set = set()
+#     distance = nx.shortest_path_length(G, nodei, nodej)
+#     for nodek in G.nodes:
+#         try:
+#             if nx.shortest_path_length(G, nodei, nodek) + nx.shortest_path_length(G, nodej, nodek) == distance:
+#                 SP_list_set.add(nodek)
+#         except:
+#             pass
+#     return SP_list_set
+
 def find_sp_node2(G, nodei, nodej):
     SP_list_set = set()
-    distance = nx.shortest_path_length(G, nodei, nodej)
+    try:
+        distance = nx.shortest_path_length(G, nodei, nodej)
+    except nx.NetworkXNoPath:
+        return SP_list_set  # 无路径时直接返回空集合
+
+    # 预先计算所有节点到 nodei 和 nodej 的最短路径长度
+    lengths_from_nodei = nx.single_source_shortest_path_length(G, nodei)
+    lengths_from_nodej = nx.single_source_shortest_path_length(G, nodej)
+
     for nodek in G.nodes:
-        try:
-            if nx.shortest_path_length(G, nodei, nodek) + nx.shortest_path_length(G, nodej, nodek) == distance:
-                SP_list_set.add(nodek)
-        except:
-            pass
+        d1 = lengths_from_nodei.get(nodek)
+        d2 = lengths_from_nodej.get(nodek)
+        if d1 is not None and d2 is not None and d1 + d2 == distance:
+            SP_list_set.add(nodek)
+
     return SP_list_set
+
 
 
 # Press the green button in the gutter to run the script.

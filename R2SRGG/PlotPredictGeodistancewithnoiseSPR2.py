@@ -151,12 +151,13 @@ def plot_predict_geodistance_Vs_reconstructionSRGG_withnoise_SP_R2_Netsci(Edinde
     Geo_precision_list_all_std = []
     exemptionlist = []
 
+    datafolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\"
     for noise_amplitude in [0, 0.001,0.01,0.1, 1]:
         PrecisonRGG_specificnoise = []
         for ExternalSimutime in range(20):
             try:
-                precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2=noise_amplitude)
+                precision_RGG_Name = datafolder_name+"PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
                 Precison_RGG_5_times = np.loadtxt(precision_RGG_Name)
                 PrecisonRGG_specificnoise.extend(Precison_RGG_5_times)
             except FileNotFoundError:
@@ -170,8 +171,8 @@ def plot_predict_geodistance_Vs_reconstructionSRGG_withnoise_SP_R2_Netsci(Edinde
         PrecisonSRGG_specificnoise = []
         for ExternalSimutime in range(20):
             try:
-                precision_SRGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\PrecisionSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2=noise_amplitude)
+                precision_SRGG_Name = datafolder_name+"PrecisionSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
                 Precison_SRGG_5_times = np.loadtxt(precision_SRGG_Name)
                 PrecisonSRGG_specificnoise.extend(Precison_SRGG_5_times)
             except FileNotFoundError:
@@ -186,8 +187,8 @@ def plot_predict_geodistance_Vs_reconstructionSRGG_withnoise_SP_R2_Netsci(Edinde
         PrecisonGeodis_specificnoise = []
         for ExternalSimutime in range(20):
             try:
-                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise{no2}\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2=noise_amplitude)
+                precision_Geodis_Name = datafolder_name+"PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
                 Precison_Geodis_5_times = np.loadtxt(precision_Geodis_Name)
                 PrecisonGeodis_specificnoise.extend(Precison_Geodis_5_times)
             except FileNotFoundError:
@@ -244,7 +245,7 @@ def plot_predict_geodistance_Vs_reconstructionSRGG_withnoise_SP_R2_Netsci(Edinde
     plt.tick_params(axis='both', which="both", length=6, width=1)
     # Display the plot
     plt.show()
-    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.png".format(
+    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\NetsciPrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.png".format(
                 EDn=ED, betan=beta)
 
     fig.savefig(figname, format='png', bbox_inches='tight', dpi=600,transparent=True)
@@ -596,9 +597,9 @@ if __name__ == '__main__':
     """
     Plot figure for netsci
     """
-    # for Edindex in [0]:
-    #     for betaindex in [2]:
-    #         plot_predict_geodistance_Vs_reconstructionSRGG_withnoise_SP_R2_Netsci(Edindex, betaindex, legendpara=1)
+    for Edindex in [0]:
+        for betaindex in [2]:
+            plot_predict_geodistance_Vs_reconstructionSRGG_withnoise_SP_R2_Netsci(Edindex, betaindex, legendpara=1)
     # x = [1, 2, 3, 4]
     # y1 = [1, 4, 9, 16]
     # y2 = [1, 3, 6, 10]
@@ -619,4 +620,4 @@ if __name__ == '__main__':
     """
     Plot the heatmap for the precision and recall
     """
-    plot_heatmap_precision(4)
+    # plot_heatmap_precision(4)
