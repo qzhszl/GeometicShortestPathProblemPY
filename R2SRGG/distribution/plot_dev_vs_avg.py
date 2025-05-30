@@ -487,13 +487,13 @@ def plot_local_optimum_foronenetwork(N,beta):
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
     #     betan=beta)
     # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
-    picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\dev_vs_avg_N{N}_beta{beta}.svg"
-    plt.savefig(
-        picname,
-        format="svg",
-        bbox_inches='tight',  # 紧凑边界
-        transparent=True  # 背景透明，适合插图叠加
-    )
+    # picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\dev_vs_avg_N{N}_beta{beta}.svg"
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
     # plt.title('Errorbar Curves with Minimum Points after Peak')
     plt.show()
     plt.close()
@@ -504,7 +504,7 @@ if __name__ == '__main__':
     """
     # STEP 1 plot local optimum: deviation versus expected degree
     """
-    plot_local_optimum()
+    # plot_local_optimum()
 
     """
     # STEP 1.5 plot local optimum: deviation versus expected degree: same function as step 1 but different beta
@@ -514,7 +514,7 @@ if __name__ == '__main__':
     """
     # STEP 2 plot local optimum: deviation versus expected degree for one N
     """
-    # plot_local_optimum_foronenetwork(10000, 4)
+    plot_local_optimum_foronenetwork(10000, 8)
 
 
 

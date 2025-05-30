@@ -41,7 +41,7 @@ def generate_r2SRGG():
         rg.ran1()
 
     # Nvec = [200, 500, 1000, 10000]
-    Nvec = [1000]
+    Nvec = [10000]
     # kvec = np.arange(2, 6.1, 0.2)
     kvec = [2, 4, 6, 11, 20, 34, 61, 108, 190, 336, 595, 1051, 1857, 3282, 5800, 10250, 18116, 32016, 56582,
             99999]  # for N = 10^5
@@ -51,11 +51,11 @@ def generate_r2SRGG():
     # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
     # betavec = [4]
     kvec = [1465694]  # for N = 10^4
-    # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
 
-    kvec = [1425, 2033, 2900, 4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168]  # this is for N = 1000
+    # kvec = [1425, 2033, 2900, 4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168]  # this is for N = 1000, beta 4
 
-    betavec = [4]
+    kvec = [6105, 9999,16479, 27081, 44767, 73534, 121205, 199999, 316226,499999]
+    betavec = [8]
 
     for N in Nvec:
         for ED in kvec:
@@ -778,7 +778,7 @@ def generate_proper_network_withgivendistances(N, input_ED_index,beta_index,Geod
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # generate_r2SRGG()
+    generate_r2SRGG()
     """
     run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
     step1
@@ -792,14 +792,14 @@ if __name__ == '__main__':
     run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
     step1
     """
-    # kvec = [4,16,64]
-    kvec = [5]
-    # kvec = [1425, 2033, 2900, 4139, 5909, 8430, 12039, 17177, 24510, 34968,49887, 71168]
-    betavec = [4]
-    for N_index in [7]:
-        for ED_index in range(len(kvec)):
-            for beta_index in range(1):
-                distance_inSRGG(N_index, ED_index, beta_index, 0)
+    # # kvec = [4,16,64]
+    # kvec = [5]
+    # # kvec = [1425, 2033, 2900, 4139, 5909, 8430, 12039, 17177, 24510, 34968,49887, 71168]
+    # betavec = [4]
+    # for N_index in [7]:
+    #     for ED_index in range(len(kvec)):
+    #         for beta_index in range(1):
+    #             distance_inSRGG(N_index, ED_index, beta_index, 0)
 
 
 
