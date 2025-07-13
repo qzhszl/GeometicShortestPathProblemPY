@@ -285,6 +285,7 @@ def load_real_ave_degree(N, beta):
 
 
 def plot_local_optimum():
+    # Figure 3(b)
     # the x-axis is the input average degree
     Nvec = [10, 100, 1000, 10000]
     # Nvec = [1000]
@@ -369,7 +370,7 @@ def plot_local_optimum():
     plt.yscale('log')
     plt.xscale('log')
     plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
-    plt.ylabel(r'Average deviation, $\langle d \rangle$', fontsize=26)
+    plt.ylabel(r'Average distance, $\langle d \rangle$', fontsize=26)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
@@ -488,6 +489,7 @@ def plot_local_optimum_forappendix(beta):
 
 
 def plot_local_optimum_foronenetwork(N, beta):
+    # Figure 3(b) 2
     # plot the dev vs avg of one network para(beta, N)
     # the x-axis is the input average degree
     real_ave_degree_dict = {}
@@ -592,7 +594,7 @@ if __name__ == '__main__':
     """
     # STEP 1 plot local optimum: deviation versus real ave degree
     """
-    # plot_local_optimum()
+    plot_local_optimum()
 
     """
     # STEP 1.5 plot local optimum: deviation versus real ave degree: same function as step 1 but different beta
@@ -602,4 +604,4 @@ if __name__ == '__main__':
     """
     # STEP 2 plot local optimum: deviation versus real ave degree for one N
     """
-    plot_local_optimum_foronenetwork(10000, 4)
+    # plot_local_optimum_foronenetwork(10000, 4)

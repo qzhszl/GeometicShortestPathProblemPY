@@ -421,6 +421,7 @@ def process_data(betaindex):
 
 
 def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
+    # Figure 6 Heatmap
     N = 10000
     ED_list = [2, 4, 8, 16, 32, 64, 128,256,512]  # Expected degrees
     betalist = [2.1, 4, 8, 32, 128]
@@ -486,19 +487,23 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
     cbar = plt.colorbar(im, label="Precision")
     cbar.ax.tick_params(labelsize=20)
     cbar.ax.set_ylabel("Precision", fontsize=20)
-    plt.ylabel(r"Expected degree $E[D]$",fontsize = 25)
+    plt.ylabel(r"Expected degree $\mathbb{E}[D]$",fontsize = 25)
     plt.xlabel(r"Noise amplitude $\alpha$", fontsize = 25)
     plt.xticks(ticks=np.arange(len(x_labels))+ 1,labels=x_labels,fontsize=20)  # x 轴刻度字体大小
     plt.yticks(ticks=np.arange(len(y_labels))+ 1,labels=y_labels,fontsize=20)  # y 轴刻度字体大小
-    RGG_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionRGGbeta{beta}.pdf".format(beta = beta)
-    # plt.savefig(
-    #     RGG_heatmap_name,
-    #     format="svg",
-    #     bbox_inches='tight',  # 紧凑边界
-    #     transparent=True  # 背景透明，适合插图叠加
-    # )
-    plt.savefig(RGG_heatmap_name,
-                format='pdf', bbox_inches='tight', dpi=600)
+    # RGG_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionRGGbeta{beta}.pdf".format(beta = beta)
+    # plt.savefig(RGG_heatmap_name,
+    #             format='pdf', bbox_inches='tight', dpi=600)
+
+    RGG_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionRGGbeta{beta}.svg".format(
+        beta=beta)
+    plt.savefig(
+        RGG_heatmap_name,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+
     plt.show()
     plt.close()
 
@@ -522,20 +527,22 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
     cbar = plt.colorbar(im, label="Precision")
     cbar.ax.tick_params(labelsize=20)
     cbar.ax.set_ylabel("Precision", fontsize=20)
-    plt.ylabel(r"Expected degree $E[D]$", fontsize=25)
+    plt.ylabel(r"Expected degree $\mathbb{E}[D]$", fontsize=25)
     plt.xlabel(r"Noise amplitude $\alpha$", fontsize=25)
     plt.xticks(ticks=np.arange(len(x_labels)) + 1, labels=x_labels, fontsize=20)  # x 轴刻度字体大小
     plt.yticks(ticks=np.arange(len(y_labels)) + 1, labels=y_labels, fontsize=20)  # y 轴刻度字体大小
-    SRGG_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionSRGGbeta{beta}.pdf".format(
+    # SRGG_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionSRGGbeta{beta}.pdf".format(
+    #     beta=beta)
+    # plt.savefig(SRGG_heatmap_name,
+    #             format='pdf', bbox_inches='tight', dpi=600)
+    SRGG_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionSRGGbeta{beta}.svg".format(
         beta=beta)
-    plt.savefig(SRGG_heatmap_name,
-                format='pdf', bbox_inches='tight', dpi=600)
-    # plt.savefig(
-    #     SRGG_heatmap_name,
-    #     format="svg",
-    #     bbox_inches='tight',  # 紧凑边界
-    #     transparent=True  # 背景透明，适合插图叠加
-    # )
+    plt.savefig(
+        SRGG_heatmap_name,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
     plt.show()
     plt.close()
 
@@ -561,7 +568,7 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
     cbar = plt.colorbar(im, label="Precision")
     cbar.ax.tick_params(labelsize=20)
     cbar.ax.set_ylabel("Precision", fontsize=20)
-    plt.ylabel(r"Expected degree $E[D]$", fontsize=25)
+    plt.ylabel(r"Expected degree $\mathbb{E}[D]$", fontsize=25)
     plt.xlabel(r"Noise amplitude $\alpha$", fontsize=25)
     plt.xticks(ticks=np.arange(len(x_labels)) + 1, labels=x_labels, fontsize=20)  # x 轴刻度字体大小
     plt.yticks(ticks=np.arange(len(y_labels)) + 1, labels=y_labels, fontsize=20)  # y 轴刻度字体大小
@@ -582,11 +589,81 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
         print(a2)
 
 
-def check_which_square_is_bigger():
-    # """
-    # Plot above
-    # """
-    beta = 8
+def plot_skeleton(beta):
+    # Figure 6
+    """
+    Plot the skeletion where the geo distance beforms better
+    """
+    np.random.seed(0)
+    df1 = pd.read_csv(
+        f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionRGGbeta{beta}.csv",
+        index_col=0)
+    df2 = pd.read_csv(
+        f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionSRGGbeta{beta}.csv",
+        index_col=0)
+    df3 = pd.read_csv(
+        f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionGeobeta{beta}.csv",
+        index_col=0)
+
+    y_labels = [r"$2^1$", r"$2^2$", r"$2^3$", r"$2^{4}$", r"$2^{5}$", r"$2^{6}$", r"$2^{7}$", r"$2^{8}$", r"$2^{9}$"]  # 横坐标
+    x_labels = [r"0",'', r"$10^{-3}$",'', r"$10^{-2}$",'', r"$10^{-1}$",'', r"$10^{0}$"]  # 纵坐标
+
+    # Step 1: 判断 df3 >= df1 和 df3 >= df2（允许小误差）
+    # 容差判断
+    tol = 1e-5
+    mask = ((df3 > df1) | np.isclose(df3, df1, atol=tol)) & \
+           ((df3 > df2) | np.isclose(df3, df2, atol=tol))
+
+    # 转为 float 数组，用于 find_contours
+    binary_mask = mask.astype(float)
+    fig, ax = plt.subplots()
+    im = ax.imshow(binary_mask,
+                   norm=LogNorm(vmin=1e-6, vmax=0.5),
+                   cmap='jet',
+                   interpolation='bilinear',
+                   origin='lower',
+                   extent=[1, 9, 1, 9],
+                   aspect='auto',
+                   )
+    cbar = plt.colorbar(im, label="Precision")
+    cbar.ax.tick_params(labelsize=20)
+    cbar.ax.set_ylabel("Precision", fontsize=20)
+    plt.ylabel(r"Expected degree $\mathbb{E}[D]$", fontsize=25)
+    plt.xlabel(r"Noise amplitude $\alpha$", fontsize=25)
+    plt.xticks(ticks=np.arange(len(x_labels)) + 1, labels=x_labels, fontsize=20)  # x 轴刻度字体大小
+    plt.yticks(ticks=np.arange(len(y_labels)) + 1, labels=y_labels, fontsize=20)  # y 轴刻度字体大小
+    Geo_heatmap_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionGeobeta{beta}Skeletion.svg".format(
+        beta=beta)
+    plt.savefig(
+        Geo_heatmap_name,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    plt.show()
+
+
+
+    # a1 = df3 - df2
+    # a2 = df3 - df1
+    # with pd.option_context('display.max_rows', None, 'display.max_columns', None, 'display.width', None):
+    #     print(a1)
+    #     print(a2)
+
+
+    # plt.title("Closed Contour: df3 ≥ df1 and df2")
+    # plt.tight_layout()
+    # plt.xticks(ticks=np.arange(len(x_labels)) + 1, labels=x_labels, fontsize=20)  # x 轴刻度字体大小
+    # plt.yticks(ticks=np.arange(len(y_labels)) + 1, labels=y_labels, fontsize=20)  # y 轴刻度字体大小
+    # plt.show()
+
+
+
+def check_which_square_is_bigger(beta):
+    # Figure 6
+    """
+    Plot the skeletion where the geo distance beforms better
+    """
     np.random.seed(0)
     df1 = pd.read_csv(
         f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\EDbase2\\SmoothHeatmapPrecisionRGGbeta{beta}.csv",
@@ -749,12 +826,28 @@ if __name__ == '__main__':
     """
     Plot the heatmap for the precision and recall smoothly 
     """
-    for beta in [4]:
-        # process_data(beta)
-        plot_heatmap_precision_smooth_fromprocessed_data(beta)
-        # plot_heatmap_precision_smooth(beta)
-    #
-    # check_which_square_is_bigger()
+    # for beta in [2]:
+    #     # process_data(beta)
+    #     plot_heatmap_precision_smooth_fromprocessed_data(beta)
+    #     # plot_heatmap_precision_smooth(beta)
 
-    # check_simple_case()
+    """
+    Plot the heatmap for the precision and recall smoothly from the final data
+    Figure 6
+    """
+    # check_simple_case()   # check one square
+
+    # for beta in [2]:
+    #     # process_data(beta)
+    #     plot_heatmap_precision_smooth_fromprocessed_data(beta)
+
+    """
+    Plot the heatmap for the skeleton Figure 6
+    """
+    # check_which_square_is_bigger(4)
+    plot_skeleton(128)
+
+
+
+
 

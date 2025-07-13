@@ -15,6 +15,7 @@ from SphericalSoftRandomGeomtricGraph import RandomGenerator
 
 
 def generate_and_plot_SRGG(N, avg, beta):
+    # Figure 10 Appendix onset of GCC
     rg = RandomGenerator(-12)
     rseed = random.randint(0, 100)
     for i in range(rseed):
@@ -66,6 +67,11 @@ def generate_and_plot_SRGG(N, avg, beta):
 
     # 绘制图
     fig, ax = plt.subplots(figsize=(6, 4.5))
+    # plt.text(0.2, 1.2, r'$\mathbb{E}[D] = 2, \mathbb{E}[D] = 5, \mathbb{E}[D] = 10$',
+    #          transform=ax.transAxes,
+    #          fontsize=22,
+    #          bbox=dict(facecolor='white', alpha=0.5))
+
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
 
     nx.draw_networkx_edges(G, pos, edge_color='#C89FBF', width=3)
@@ -81,8 +87,14 @@ def generate_and_plot_SRGG(N, avg, beta):
     plt.axis('equal')  # 保持横纵比例一致，图形不会变形
     plt.axis('off')  # 关闭坐标轴
     plt.tight_layout()
-    picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\SRGG_N{N}_ED{avg}_avg{real_avg}.pdf"
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\SRGG_N{N}_ED{avg}_avg{real_avg}.pdf"
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\SRGG_N{N}_ED{avg}_avg{real_avg}.svg"
+
+    # picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\SRGG_legend.svg"
+
+    plt.savefig(picname, format='svg', bbox_inches='tight', transparent = True)
+
     plt.show()
 
 def generate_plot_model_graph():
@@ -100,6 +112,6 @@ def generate_plot_model_graph():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    generate_and_plot_SRGG(50,50,4)
+    generate_and_plot_SRGG(50,10,4)
     # generate_plot_model_graph()
 

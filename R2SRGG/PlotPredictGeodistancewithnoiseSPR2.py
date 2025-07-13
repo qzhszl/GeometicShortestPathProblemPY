@@ -23,9 +23,11 @@ matplotlib.use('TkAgg',force=True)
 from matplotlib import pyplot as plt
 import pandas as pd
 import seaborn as sns
+from matplotlib.ticker import FormatStrFormatter
 
 
 def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex,legendpara):
+    # Figure 5
     # plot PRECISION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ED_list = [2,5, 10, 100, 1000]  # Expected degrees
     ED = ED_list[Edindex]
@@ -110,7 +112,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
     # Plotting the bars
     bar1 = ax.bar(x - width, y1, width, label='RGG',yerr=(y_error_lower,RGG_precision_list_all_std), capsize=5, color=colors[3])
     bar2 = ax.bar(x, y2, width, label='SRGG', yerr=(y_error_lower,SRGG_precision_list_all_std), capsize=5, color=colors[0])
-    bar3 = ax.bar(x + width, y3, width, label='Deviation', yerr=(y_error_lower,Geo_precision_list_all_std), capsize=5, color=colors[2])
+    bar3 = ax.bar(x + width, y3, width, label='Geo', yerr=(y_error_lower,Geo_precision_list_all_std), capsize=5, color=colors[2])
 
     # Adding labels and title
     # ax.set_ylim(0,1.1)
@@ -124,15 +126,49 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
     if legendpara ==1:
         ax.legend(fontsize=22)
     ax.tick_params(direction='out')
+
     plt.xticks(fontsize=22)
-    plt.yticks(fontsize=22)
+
+    ytick_dict = {
+        (5, 4): [0, 0.1, 0.2],
+        (5, 8): [0, 0.1, 0.2, 0.3, 0.4],
+        (5, 128): [0, 0.2, 0.4, 0.6, 0.8, 1.0],
+        (2, 8): [0, 0.2, 0.4, 0.6, 0.8],
+        (10, 8): [0, 0.1, 0.2, 0.3, 0.4],
+        (100, 8): [0, 0.1, 0.2, 0.3, 0.4],
+    }
+    ytick_vec = ytick_dict[(ED, beta)]
+    plt.yticks(ytick_vec, fontsize=22)
+
+    fignum_dict = {
+        (5, 4): "a",
+        (5, 8): "b",
+        (5, 128): "c",
+        (2, 8): "d",
+        (10, 8): "e",
+        (100, 8): "f",
+    }
+    fignum = fignum_dict[(ED, beta)]
+    ax.text(-0.23, 1.13, fr'({fignum}) $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
+            fontsize=25, verticalalignment='top', horizontalalignment='left')
+
+
     plt.tick_params(axis='both', which="both", length=6, width=1)
     # Display the plot
     # plt.show()
-    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
+    # figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
+    #             EDn=ED, betan=beta)
+    #
+    # fig.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
+    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.svg".format(
                 EDn=ED, betan=beta)
+    plt.savefig(
+        figname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
 
-    fig.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
     plt.close()
     print(exemptionlist)
 
@@ -248,12 +284,13 @@ def plot_predict_geodistance_Vs_reconstructionSRGG_withnoise_SP_R2_Netsci(Edinde
     figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\NetsciPrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.png".format(
                 EDn=ED, betan=beta)
 
-    fig.savefig(figname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    # fig.savefig(figname, format='png', bbox_inches='tight', dpi=600,transparent=True)
     plt.close()
     print(exemptionlist)
 
 
 def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara):
+    # Figure 5 recall
     # plot recall!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ED_list = [2,5, 10, 100, 1000]  # Expected degrees
     ED = ED_list[Edindex]
@@ -337,7 +374,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
     # Plotting the bars
     bar1 = ax.bar(x - width, y1, width, label='RGG', yerr=(y_error_lower, RGG_precision_list_all_std), capsize=5,color=colors[3])
     bar2 = ax.bar(x, y2, width, label='SRGG', yerr=(y_error_lower, SRGG_precision_list_all_std), capsize=5,color=colors[0])
-    bar3 = ax.bar(x + width, y3, width, label='Deviation', yerr=(y_error_lower, Geo_precision_list_all_std), capsize=5,color=colors[2])
+    bar3 = ax.bar(x + width, y3, width, label='Geo', yerr=(y_error_lower, Geo_precision_list_all_std), capsize=5,color=colors[2])
 
     # Adding labels and title
     ax.set_xlabel(r'Noise amplitude, $\alpha$',fontsize = 25)
@@ -351,13 +388,46 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
         ax.legend(fontsize=22)
     ax.tick_params(direction='out')
     plt.xticks(fontsize=22)
-    plt.yticks(fontsize=22)
+    ytick_dict = {
+        (5, 4): [0,0.1,0.2],
+        (5, 8): [0,0.1,0.2,0.3,0.4],
+        (5, 128): [0,0.2,0.4,0.6,0.8,1.0],
+        (2, 8): [0,0.2,0.4,0.6,0.8],
+        (10, 8):[0,0.1,0.2,0.3,0.4,0.5],
+        (100, 8): [0,0.1,0.2,0.3,0.4,0.5,0.6],
+    }
+    ytick_vec = ytick_dict[(ED, beta)]
+
+    plt.yticks(ytick_vec,fontsize=22)
     plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    fignum_dict = {
+        (5,4): "a",
+        (5,8): "b",
+        (5,128): "c",
+        (2, 8): "d",
+        (10, 8): "e",
+        (100, 8): "f",
+    }
+    fignum = fignum_dict[(ED,beta)]
+    ax.text(-0.23, 1.13, fr'({fignum}) $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
+            fontsize=25, verticalalignment='top', horizontalalignment='left')
+    # ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
     # Display the plot
-    plt.show()
-    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
-        EDn=ED, betan=beta)
+
+    # figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
+    #     EDn=ED, betan=beta)
     # plt.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
+    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}N.svg".format(
+        EDn=ED, betan=beta)
+
+    plt.savefig(
+        figname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.show()
     plt.close()
     print(exemptionlist)
 
@@ -580,6 +650,8 @@ if __name__ == '__main__':
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex,legendpara=0)
     #
     #
+    for Edindex,betaindex in [(1,1),(1,6),(0,2),(2,2),(3,2)]:
+        plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=0)
     # for Edindex in [1]:
     #     for betaindex in [2]:
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=1)
@@ -589,7 +661,17 @@ if __name__ == '__main__':
     # for Edindex in range(5):
     #     for betaindex in range(7):
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=0)
-    #
+    # ED_list = [2, 5, 10, 100, 1000]  # Expected degrees
+    # beta_list = [2.1, 4, 8, 16, 32, 64, 128]
+
+    # for Edindex,betaindex in [(1,2),(1,6),(0,2),(2,2),(3,2)]:
+    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex, legendpara=0)
+
+    # for Edindex in [1]:
+    #     for betaindex in [1]:
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
+
+
     # for Edindex in [1]:
     #     for betaindex in [1]:
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
@@ -597,9 +679,9 @@ if __name__ == '__main__':
     """
     Plot figure for netsci
     """
-    for Edindex in [0]:
-        for betaindex in [2]:
-            plot_predict_geodistance_Vs_reconstructionSRGG_withnoise_SP_R2_Netsci(Edindex, betaindex, legendpara=1)
+    # for Edindex in [0]:
+    #     for betaindex in [2]:
+    #         plot_predict_geodistance_Vs_reconstructionSRGG_withnoise_SP_R2_Netsci(Edindex, betaindex, legendpara=1)
     # x = [1, 2, 3, 4]
     # y1 = [1, 4, 9, 16]
     # y2 = [1, 3, 6, 10]

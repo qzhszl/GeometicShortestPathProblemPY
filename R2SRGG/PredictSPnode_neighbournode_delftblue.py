@@ -224,7 +224,7 @@ def predict_neighbournode_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, noiseinde
     4 combination of ED and beta
     ED = 5 and 20 while beta = 4 and 100
     """
-    N = 10000
+    N = 1000
     # ED_list = [2, 3.5, 5, 10, 100, 1000, N - 1]  # Expected degrees
     ED_list = [2, 4, 8, 16, 32, 64, 128,256,512,1024]
     ED = ED_list[Edindex]
@@ -237,45 +237,23 @@ def predict_neighbournode_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, noiseinde
     noise_amplitude = noise_amplitude_list[noiseindex]
     print(fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude}",flush=True)
 
-    Precision_Geodis_nodepair = []
-    Recall_Geodis_nodepair = []
-    Precision_RGG_nodepair = []  # save the precision_RGG for each node pair, we selected 100 node pair in total
-    Recall_RGG_nodepair = []  # we selected 100 node pair in total
-    Precision_SRGG_nodepair = []
-    Recall_SRGG_nodepair = []
-
-    SPnum_nodepair = []  # save the Number of nearly shortest path for each node pair
-    geodistance_between_nodepair = []  # save the geodeisc length between each node pair
 
     random.seed(ED*beta)
     rg = RandomGenerator(-12)
     for i in range(random.randint(0, 100)):
         rg.ran1()
 
-
-    FileOriNetworkName = "/home/zqiu1/network/NetworkOriginalED{EDn}Beta{betan}Noise0.txt".format(
-        EDn=ED, betan=beta)
-    G = loadSRGGandaddnode(N, FileOriNetworkName)
+    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    print("real ED:", real_avg, flush=True)
+    if noise_amplitude>0:
+        Coorx = add_uniform_random_noise_to_coordinates_R2(Coorx, noise_amplitude)
+        Coory = add_uniform_random_noise_to_coordinates_R2(Coory, noise_amplitude)
 
     # load coordinates with noise
-    Coorx = []
-    Coory = []
-    FileOriNetworkCoorName = "/home/zqiu1/network/CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt".format(
-        EDn=ED, betan=beta, no=noise_amplitude)
-    with open(FileOriNetworkCoorName, "r") as file:
-        for line in file:
-            if line.startswith("#"):
-                continue
-            data = line.strip().split("\t")  # 使用制表符分割
-            Coorx.append(float(data[0]))
-            Coory.append(float(data[1]))
 
 
-    real_avg = 2*nx.number_of_edges(G)/nx.number_of_nodes(G)
-    print("real ED:", real_avg, flush=True)
-    realradius = degree_vs_radius(N, real_avg)
-
-    nodepair_num = 1000
+    nodepair_num = 100
 
     # Random select nodepair_num nodes in the largest connected component
     unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
@@ -299,7 +277,6 @@ def predict_neighbournode_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, noiseinde
 
             # tic = time.time()
 
-            combined_neighbors = set()
             SP_list = []
             R2distance_list = []
 
@@ -330,17 +307,19 @@ def predict_neighbournode_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, noiseinde
                     if d1 is not None and d2 is not None and d1 + d2 == distance:
                         SP_list.append(nodek)
 
-            result = {
-                "node_pair": [nodei,nodej],
-                "combined_neighbors": combined_neighbors,
-                "SP_list": SP_list,
-                "R2distance_list": R2distance_list
-            }
+                result = {
+                    "node_pair": [nodei,nodej],
+                    "combined_neighbors": combined_neighbors,
+                    "SP_list": SP_list,
+                    "R2distance_list": R2distance_list
+                }
             results.append(result)
         except nx.NetworkXNoPath:
             continue
 
-    with open("/home/zqiu1/data/neighbour_prediction_results.json", "w") as f:
+    # with open("/home/zqiu1/data/neighbour_prediction_results.json", "w") as f:
+    #     json.dump(results, f, indent=2)
+    with open("neighbour_prediction_results.json", "w") as f:
         json.dump(results, f, indent=2)
 
     # with open("results.json", "r") as f:
@@ -414,9 +393,13 @@ if __name__ == '__main__':
     # predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2(1, 3, 0, 0)
 
     # # STEP 2.2
-    ED = sys.argv[1]
-    beta = sys.argv[2]
-    noise = sys.argv[3]
+    # ED = sys.argv[1]
+    # beta = sys.argv[2]
+    # noise = sys.argv[3]
+    ED =0
+    beta =0
+    noise = 0
+
     predict_neighbournode_SRGG_withnoise_SP_R2_clu(int(ED), int(beta), int(noise))
 
     # STEP 2.3
