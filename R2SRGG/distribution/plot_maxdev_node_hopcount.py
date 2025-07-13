@@ -13,7 +13,8 @@ import math
 from matplotlib.ticker import FormatStrFormatter
 
 
-def plot_maxdev_node_hocount(N, ED, beta):
+def plot_maxdev_node_hocount(N, ED, beta,hop_value):
+    # Figure 10 Appendix for the distribution of max position
     SP_hopcount = []
     max_dev_node_hopcount = []
 
@@ -66,7 +67,7 @@ def plot_maxdev_node_hocount(N, ED, beta):
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     # for key, values in data_dic.items():
 
-    for key in [25]:
+    for key in [hop_value]:
         values = data_dic[key]
         print(key)
         fig, ax = plt.subplots(figsize=(6, 4.5))
@@ -75,7 +76,21 @@ def plot_maxdev_node_hocount(N, ED, beta):
         bins = np.arange(min(values) - 0.5, max(values) + 1.5, 1)  # 间隔为1的bin，确保每个柱中心对齐刻度线
         print([int(i) for i in values])
         plt.hist(values, bins=bins,alpha=0.7, color=colors[3], edgecolor=colors[3],density=True)  # 绘制直方图
-        plt.xticks(np.arange(min(values), max(values) + 1, 1))
+        # plt.xticks(np.arange(min(values), max(values) + 1, 1))
+
+        xticks_dict = {13:[1, 5, 9, 13],12:[1, 4, 7, 10],4:[1,2,3]}
+        xticks_thisversion = xticks_dict[key]
+        plt.xticks(xticks_thisversion)
+
+        yticks_dict = {13: [0, 0.03, 0.06, 0.09, 0.12, 0.15], 12: [0, 0.03,0.06, 0.09,0.12,0.15, 0.18], 4: [0, 0.20,0.40,0.60,0.80]}
+        yticks_thisversion = yticks_dict[key]
+        plt.yticks(yticks_thisversion)
+
+        ylim_dict = {13: [0, 0.18], 12: [0, 0.18],
+                       4: [0, 0.8]}
+        ylim_thisversion = ylim_dict[key]
+        plt.ylim(ylim_thisversion)
+
         # plt.xlim([0, 1])
         # plt.xticks([1, 5, 9, 13, 17,21,25]) # for N=10000, ED5 BETA4 HOP=25
         # plt.xticks([1, 5, 9, 13]) # for N=1000, ED5 BETA4 HOP=13
@@ -90,30 +105,53 @@ def plot_maxdev_node_hocount(N, ED, beta):
 
         # plt.yticks([0, 0.03, 0.06, 0.09, 0.12, 0.15])  # h = 13
         # plt.ylim([0, 0.18])
+        fignum_dict = {
+            (100, 5, 4,13): "a",
+            (1000, 5, 4,13): "b",
+            (10000, 5, 4,13): "c",
+            (1000, 5, 2.2,12): "d",
+            (1000, 5, 4,12): "e",
+            (1000, 5, 128,12): "f",
+            (1000, 4, 4, 4): "g",
+            (1000, 16, 4, 4): "h",
+            (1000, 64, 4, 4): "i",
+        }
+        fignum = fignum_dict[(N, ED, beta,hop_value)]
+
+        Nlabel_dict = {100: "10^2", 1000: "10^3", 10000: "10^4"}
+        Nlabel = Nlabel_dict[N]
+
+        ax.text(-0.33, 1.18, fr'({fignum}) $N = {Nlabel}$, $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
+                fontsize=28, verticalalignment='top', horizontalalignment='left')
 
         text = rf"$h = {key}$"
         plt.text(
             0.85, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
             text,
             transform=ax.transAxes,  # 使用轴坐标
-            fontsize=30,  # 字体大小
+            fontsize=28,  # 字体大小
             ha='center',  # 水平居中对齐
             va='bottom'  # 垂直对齐方式
         )
 
-        plt.xlabel(r'x', fontsize=35)
-        plt.ylabel(r'$f_{h_{iq}}(x)$', fontsize=35)
+        plt.xlabel(r'x', fontsize=28)
+        plt.ylabel(r'$f_{h_{iq}}(x)$', fontsize=28)
         plt.xticks(fontsize=28)
         plt.yticks(fontsize=28)
-        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.png".format(
-            Nn=N, EDn=ED, betan=beta,key = key)
+        ax.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+        # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.png".format(
+        #     Nn=N, EDn=ED, betan=beta,key = key)
         # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600)
-        plt.show()
+
+        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.svg".format(
+            Nn=N, EDn=ED, betan=beta, key=key)
+        plt.savefig(picname, format='svg', bbox_inches='tight', transparent = True)
+        # plt.show()
         # 清空图像，以免影响下一个图
         plt.close()
 
 
-def plot_mindev_node_hocount(N, ED, beta):
+def plot_mindev_node_hocount(N, ED, beta,hop_value):
     # The data is collected through deviatition_vs_diffNkbeta_SRGG.py
     SP_hopcount = []
     max_dev_node_hopcount = []
@@ -167,7 +205,7 @@ def plot_mindev_node_hocount(N, ED, beta):
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     # for key, values in data_dic.items():
 
-    for key in [25]:
+    for key in [hop_value]:
         values = data_dic[key]
         print(key)
         fig, ax = plt.subplots(figsize=(6, 4.5))
@@ -177,7 +215,24 @@ def plot_mindev_node_hocount(N, ED, beta):
         print(bins)
         print([int(i) for i in values])
         plt.hist(values, bins=bins,alpha=0.7, color=colors[3], edgecolor=colors[3],density=True)  # 绘制直方图
-        plt.xticks(np.arange(min(values), max(values) + 1, 1))
+        # plt.xticks(np.arange(min(values), max(values) + 1, 1))
+
+        xticks_dict = {13: [1, 5, 9, 13], 12: [1, 4, 7, 10], 4: [1, 2, 3]}
+        xticks_thisversion = xticks_dict[key]
+        plt.xticks(xticks_thisversion)
+
+        # yticks_dict = {13: [0, 0.03, 0.06, 0.09, 0.12, 0.15], 12: [0, 0.03, 0.06, 0.09, 0.12, 0.15, 0.18],
+        #                4: [0, 0.20, 0.40, 0.60, 0.80]}
+        # yticks_thisversion = yticks_dict[key]
+        # plt.yticks(yticks_thisversion)
+
+        ylim_dict = {13: [0, 0.32], 12: [0, 0.32],
+                     4: [0, 0.42]}
+        ylim_thisversion = ylim_dict[key]
+        plt.ylim(ylim_thisversion)
+
+
+
         # plt.xlim([0, 1])
         # plt.xticks([1, 5, 9, 13, 17,21,25]) # for N=10000, ED5 BETA4 HOP=25
         # plt.xticks([1, 5, 9, 13]) # for N=1000, ED5 BETA4 HOP=13
@@ -187,7 +242,28 @@ def plot_mindev_node_hocount(N, ED, beta):
 
         # plt.yticks([0, 0.03,0.06, 0.09,0.12,0.15, 0.18])
         # plt.yticks([0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30])
-        plt.ylim([0,0.32])
+        # plt.ylim([0,0.32])
+
+        fignum_dict = {
+            (100, 5, 4, 13): "a",
+            (1000, 5, 4, 13): "b",
+            (10000, 5, 4, 13): "c",
+            (1000, 5, 2.2, 12): "d",
+            (1000, 5, 4, 12): "e",
+            (1000, 5, 128, 12): "f",
+            (1000, 4, 4, 4): "g",
+            (1000, 16, 4, 4): "h",
+            (1000, 64, 4, 4): "i",
+        }
+        fignum = fignum_dict[(N, ED, beta, hop_value)]
+
+        Nlabel_dict = {100: "10^2", 1000: "10^3", 10000: "10^4"}
+        Nlabel = Nlabel_dict[N]
+
+        ax.text(-0.33, 1.18, fr'({fignum}) $N = {Nlabel}$, $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$',
+                transform=ax.transAxes,
+                fontsize=28, verticalalignment='top', horizontalalignment='left')
+
 
         text = rf"$h = {key}$"
         plt.text(
@@ -203,9 +279,13 @@ def plot_mindev_node_hocount(N, ED, beta):
         plt.ylabel(r'$f_{h_{iq}}(x)$', fontsize=35)
         plt.xticks(fontsize=28)
         plt.yticks(fontsize=28)
-        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\mindev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.png".format(
-            Nn=N, EDn=ED, betan=beta,key = key)
-        plt.savefig(picname, format='png', bbox_inches='tight', dpi=600)
+        # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\mindev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.png".format(
+        #     Nn=N, EDn=ED, betan=beta,key = key)
+        # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600)
+        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\mindev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.svg".format(
+            Nn=N, EDn=ED, betan=beta, key=key)
+        plt.savefig(picname, format='svg', bbox_inches='tight', transparent = True)
+
         plt.show()
         # 清空图像，以免影响下一个图
         plt.close()
@@ -324,6 +404,8 @@ def plot_maxdev_node_hocount_for_twohop(N, ED, beta):
 
 
 def plot_maxmindev_node_hocount_together(N, ED, beta):
+    # figure 2(c)
+
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
 
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(4, 4))
@@ -335,7 +417,7 @@ def plot_maxmindev_node_hocount_together(N, ED, beta):
 
     ax1.hist(values, bins=bins, alpha=0.7, color=colors[3], edgecolor=colors[3], density=True)  # 绘制直方图
     ax1.set_xticks(np.arange(min(values), max(values) + 1, 1))
-    ax1.set_yticks([0, 0.05, 0.10])
+    ax1.set_yticks([0, 0.1])
     ax1.set_xticks([1, 5, 9, 13, 17,21,25])
     ax1.tick_params(axis='x', labelsize=20)  # x 轴刻度字体大小
     ax1.tick_params(axis='y', labelsize=20)  # y 轴刻度字体大小
@@ -501,13 +583,13 @@ def plot_maxmindev_node_hocount_together(N, ED, beta):
     ax2.hist(values, bins=bins, alpha=0.7, color=colors[3], edgecolor=colors[3], density=True)  # 绘制直方图
     ax2.set_xticks(np.arange(min(values), max(values) + 1, 1))
     ax2.set_xticks([1, 5, 9, 13, 17,21,25])
-    ax2.set_yticks([0,0.10,0.20])
-    ax2.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+    ax2.set_yticks([0,0.1,0.2])
+    ax2.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
     ax2.tick_params(axis="both", labelsize=20)  # x 轴刻度字体大小
     ax2.set_ylabel(r'$f_X(\text{x})$', fontsize=24)
     ax2.set_xlabel(r'x', fontsize=24)
     # ax2.text(0.2, max(values) * 0.9, r'$h_{ij} = 25$', fontsize=20)
-    ax2.text(0.35, 0.2, r'$N = 10^4$'+"\n" +r"$E[D] = 5$"+ "\n"+ r'$\beta = 4$',
+    ax2.text(0.35, 0.2, r'$N = 10^4$'+"\n" +r"$\mathbb{E}[D] = 5$"+ "\n"+ r'$\beta = 4$',
              transform=ax2.transAxes,
              fontsize=20,
              bbox=None)
@@ -537,10 +619,34 @@ if __name__ == '__main__':
     # plot_maxdev_node_hocount(10000, 5, 4)
     # radius = math.sqrt(5/((10000-1)*math.pi))
     # print(0.52/radius)
+    for (N,ED,beta,hop_value) in [
+        (100, 5, 4, 13),
+        (1000, 5, 4, 13),
+        (10000, 5, 4, 13),
+        (1000, 5, 2.2, 12),
+        (1000, 5, 4, 12),
+        (1000, 5, 128, 12),
+        (1000, 4, 4, 4),
+        (1000, 16, 4, 4),
+        (1000, 64, 4, 4)]:
+        plot_maxdev_node_hocount(N, ED, beta, hop_value)
 
-    # plot_maxdev_node_hocount(10000, 5, 4)
+    for (N, ED, beta, hop_value) in [
+        (100, 5, 4, 13),
+        (1000, 5, 4, 13),
+        (10000, 5, 4, 13),
+        (1000, 5, 2.2, 12),
+        (1000, 5, 4, 12),
+        (1000, 5, 128, 12),
+        (1000, 4, 4, 4),
+        (1000, 16, 4, 4),
+        (1000, 64, 4, 4)]:
+        plot_mindev_node_hocount(N, ED, beta, hop_value)
+
+
+    # plot_maxdev_node_hocount(10000, 5, 4,13)
     # plot_maxdev_node_hocount_for_twohop(10000, 5, 4)
 
     # plot_mindev_node_hocount(10000, 5, 4)
 
-    plot_maxmindev_node_hocount_together(10000, 5, 4)
+    # plot_maxmindev_node_hocount_together(10000, 5, 4)

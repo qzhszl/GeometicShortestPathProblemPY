@@ -133,19 +133,6 @@ def load_10000nodenetwork_results(beta):
     #                        2783.4186,
     #                        3911.416]
 
-    # for beta = 8
-    kvec = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534,
-            121205, 199999, 316226, 499999]
-    real_ave_degree_vec = [1.7024, 2.1224, 2.2988, 2.6058, 2.941, 3.3956, 4.6198, 7.6544, 12.1272, 20.414358564143587,
-                           32.9682,
-                           53.2058, 85.6794, 137.1644, 218.4686, 345.3296, 541.029, 836.6424, 1278.4108, 1902.8332,
-                           2783.4186,
-                           3911.416, 5253, 6700, 8029, 8990, 9552, 9820]
-    kvec = [6105, 9999, 16479, 27081, 44767, 73534,
-            121205, 199999, 316226]
-    real_ave_degree_vec = [3189.2608, 4591.8122, 6326.808, 8066.9882, 9344.1624, 9860.3746, 9978.1308, 9996.094,
-                           9998.5504]
-
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
     # print(beta)
     exemptionlist = []
@@ -298,6 +285,7 @@ def load_real_ave_degree(N, beta):
 
 
 def plot_local_optimum():
+    # Figure 3(b)
     # the x-axis is the input average degree
     Nvec = [10, 100, 1000, 10000]
     # Nvec = [1000]
@@ -382,7 +370,7 @@ def plot_local_optimum():
     plt.yscale('log')
     plt.xscale('log')
     plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
-    plt.ylabel(r'Average deviation, $\langle d \rangle$', fontsize=26)
+    plt.ylabel(r'Average distance, $\langle d \rangle$', fontsize=26)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
@@ -501,6 +489,7 @@ def plot_local_optimum_forappendix(beta):
 
 
 def plot_local_optimum_foronenetwork(N, beta):
+    # Figure 3(b) 2
     # plot the dev vs avg of one network para(beta, N)
     # the x-axis is the input average degree
     real_ave_degree_dict = {}
@@ -605,7 +594,7 @@ if __name__ == '__main__':
     """
     # STEP 1 plot local optimum: deviation versus real ave degree
     """
-    # plot_local_optimum()
+    plot_local_optimum()
 
     """
     # STEP 1.5 plot local optimum: deviation versus real ave degree: same function as step 1 but different beta
@@ -615,4 +604,4 @@ if __name__ == '__main__':
     """
     # STEP 2 plot local optimum: deviation versus real ave degree for one N
     """
-    plot_local_optimum_foronenetwork(10000, 8)
+    # plot_local_optimum_foronenetwork(10000, 4)

@@ -63,6 +63,7 @@ def load_10000nodenetwork_results(beta):
 
 
 def plot_inputavg_vs_realavg(beta):
+    # Figure 1 (b)
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', "#A2C7A4", "#9DB0C2", "#E3B6A4"]
     if beta == 4:
 
@@ -100,14 +101,22 @@ def plot_inputavg_vs_realavg(beta):
         plt.xscale('log')
         plt.yscale('log')
         plt.plot(x,real_avg_vec,linewidth=5,color=colors[0])
-        plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+        plt.xlabel(r'Expected degree, $\mathbb{E}[D]$', fontsize=26)
         plt.ylabel(r"Average degree, $\langle D \rangle$", fontsize=26)
         plt.xticks(fontsize=28)
         plt.yticks(fontsize=28)
 
-        picname = filefolder+ "avgvsEkN{Nn}Beta{betan}2.pdf".format(
+        # picname = filefolder+ "avgvsEkN{Nn}Beta{betan}2.pdf".format(
+        #     Nn=10000, betan=beta)
+        # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+        picname = filefolder + "avgvsEkN{Nn}Beta{betan}2.svg".format(
             Nn=10000, betan=beta)
-        plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+        plt.savefig(
+            picname,
+            format="svg",
+            bbox_inches='tight',  # 紧凑边界
+            transparent=True  # 背景透明，适合插图叠加
+        )
 
         plt.show()
         plt.close()

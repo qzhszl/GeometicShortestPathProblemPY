@@ -64,7 +64,7 @@ def plot_local_optimum_with_N(ED, beta):
         error.append(std_deviation_dict[N])
     plt.errorbar(Nvec, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16, color=colors[4])
 
-    text = r"$E[D] = 10$, $\beta = 8$"
+    text = r"$\mathbb{E}[D] = 10$, $\beta = 8$"
     plt.text(
         0.5, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
         text,

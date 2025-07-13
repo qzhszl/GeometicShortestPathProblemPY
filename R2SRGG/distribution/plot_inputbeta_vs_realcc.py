@@ -16,6 +16,7 @@ from R2SRGG.R2SRGG import loadSRGGandaddnode
 
 
 def plot_CC_vs_beta(ED):
+    # Figure 1(a)
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', "#A2C7A4", "#9DB0C2", "#E3B6A4"]
 
     filefolder = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\"
@@ -36,7 +37,7 @@ def plot_CC_vs_beta(ED):
     # print(real_cc_vec)
 
     fig, ax = plt.subplots(figsize=(6, 4.5))
-    text = r"$N = 10^4$" "\n" r"$E[D] = 5$"
+    text = r"$N = 10^4$" "\n" r"$\mathbb{E}[D] = 5$"
     plt.text(
         0.6, 0.35,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
         text,
@@ -53,10 +54,17 @@ def plot_CC_vs_beta(ED):
     plt.xticks(fontsize=28)
     plt.yticks(fontsize=28)
 
-    picname = filefolder+ "ccvsbetaN{Nn}ED{ED}.pdf".format(
+    # picname = filefolder+ "ccvsbetaN{Nn}ED{ED}.pdf".format(
+    #     Nn=10000, ED=ED)
+    picname = filefolder + "ccvsbetaN{Nn}ED{ED}.svg".format(
         Nn=10000, ED=ED)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
-
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
     plt.show()
     plt.close()
 

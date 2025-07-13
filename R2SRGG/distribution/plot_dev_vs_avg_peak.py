@@ -238,6 +238,7 @@ def plot_an_lcc_slcc_examplefor50nodes():
     :param beta:
     :return:
     """
+    # Figure 10 appendix onset
     kvec = np.arange(1, 6.1, 0.2)
     kvec = [round(a, 1) for a in kvec]
     N = 50
@@ -275,26 +276,33 @@ def plot_an_lcc_slcc_examplefor50nodes():
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
 
-    fig,ax = plt.subplots(figsize = (6,4.5))
+    fig,ax = plt.subplots(figsize = (6,3))
     plt.plot(input_avg_vec, LCC_vec,linewidth=5,color=colors[0],label = "$LCC$")
     plt.plot(input_avg_vec, second_LCC_vec,linewidth=5,color=colors[2],label = "$SLCC$")
     max_index = second_LCC_vec.index(max(second_LCC_vec))
     # 根据索引找到对应的 x
     result_x = input_avg_vec[max_index]
     print("GLCC", result_x)
-    plt.text(0.5, 0.35, r'$N = 50, \beta = 4$',
+    plt.text(0.45, 0.2, r'$N = 50, \beta = 4$',
              transform=ax.transAxes,
-             fontsize=20,
+             fontsize=22,
              bbox=dict(facecolor='white', alpha=0.5))
-    plt.xlabel(r'Expected degree, $E[D]$', fontsize=28)
-    plt.ylabel(r'Size of component', fontsize=28)
-    plt.xticks(fontsize=30)
-    plt.yticks(fontsize=30)
+    plt.xlabel(r'Expected degree, $\mathbb{E}[D]$', fontsize=22)
+    plt.ylabel(r'Component size', fontsize=22)
+    plt.xticks(fontsize=22)
+    plt.yticks(fontsize=22)
     plt.tick_params(axis='both', which="both", length=6, width=1)
-    plt.legend(fontsize=26, loc=(0.45, 0.5))
-    picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\LCCvsSLCC_N{N}_beta{4}.pdf"
+    plt.legend(fontsize=22, loc=(0.45, 0.4))
+    # picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\LCCvsSLCC_N{N}_beta{4}.pdf"
 
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\LCCvsSLCC_N{N}_beta{4}.svg"
+
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
 
     plt.show()
 
