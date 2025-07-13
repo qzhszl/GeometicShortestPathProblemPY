@@ -54,7 +54,7 @@ def generate_r2SRGG():
 
     # kvec = [1425, 2033, 2900, 4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168]  # this is for N = 1000, beta 4
 
-    kvec = [6105, 9999,16479, 27081, 44767, 73534, 121205, 199999, 316226,499999]
+    kvec = [27081, 44767, 73534, 121205, 199999, 316226,499999]
     betavec = [8]
 
     for N in Nvec:
@@ -778,7 +778,7 @@ def generate_proper_network_withgivendistances(N, input_ED_index,beta_index,Geod
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    generate_r2SRGG()
+    # generate_r2SRGG()
     """
     run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
     step1
@@ -1003,10 +1003,18 @@ if __name__ == '__main__':
     """
     test a network
     """
-    # rg = RandomGenerator(-12)
-    # rseed = random.randint(0, 100)
-    # for i in range(rseed):
-    #     rg.ran1()
-    # G, Coorx, Coory = R2SRGG(10000, 10, 4, rg)
-    # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    # print("real ED:", real_avg)
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
+    G, Coorx, Coory = R2SRGG(10000, 10, 4, rg)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    print("real ED:", real_avg)
+
+
+    components = list(nx.connected_components(G))
+    largest_component = max(components, key=len)
+    LCC_number = len(largest_component)
+    print("LCC", LCC_number)
+
+
