@@ -14,6 +14,7 @@ Use the same parameter combinations as before.
 Vary noise magnitude A, see what happens to predictions.
 It is for Euclidean soft random geometric graph
 """
+import csv
 import math
 
 import numpy as np
@@ -24,6 +25,81 @@ from matplotlib import pyplot as plt
 import pandas as pd
 import seaborn as sns
 from matplotlib.ticker import FormatStrFormatter
+
+def datatest(Edindex, betaindex,legendpara):
+    # Figure 5 test
+    # plot PRECISION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ED_list = [2, 5, 10, 100, 1000]  # Expected degrees
+    ED = ED_list[Edindex]
+    beta_list = [2.1, 4, 8, 16, 32, 64, 128]
+    beta = beta_list[betaindex]
+    RGG_precision_list_all_ave = []
+    SRGG_precision_list_all_ave = []
+    Geo_precision_list_all_ave = []
+    RGG_precision_list_all_std = []
+    SRGG_precision_list_all_std = []
+    Geo_precision_list_all_std = []
+    exemptionlist = []
+
+    for noise_amplitude in [1]:
+        PrecisonRGG_specificnoise = []
+        for ExternalSimutime in range(20):
+            try:
+                precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2=noise_amplitude)
+                Precison_RGG_5_times = np.loadtxt(precision_RGG_Name)
+                PrecisonRGG_specificnoise.extend(Precison_RGG_5_times)
+            except FileNotFoundError:
+                exemptionlist.append((ED,beta,noise_amplitude,ExternalSimutime))
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        RGG_precision_list_all_ave.append(np.mean(PrecisonRGG_specificnoise))
+        RGG_precision_list_all_std.append(np.std(PrecisonRGG_specificnoise))
+    # print("lenpre", len(PrecisonRGG_specificnoise))
+        PrecisonSRGG_specificnoise = []
+        for ExternalSimutime in range(20):
+            try:
+                precision_SRGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2=noise_amplitude)
+                Precison_SRGG_5_times = np.loadtxt(precision_SRGG_Name)
+                PrecisonSRGG_specificnoise.extend(Precison_SRGG_5_times)
+            except FileNotFoundError:
+                pass
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        SRGG_precision_list_all_ave.append(np.mean(PrecisonSRGG_specificnoise))
+        SRGG_precision_list_all_std.append(np.std(PrecisonSRGG_specificnoise))
+        # print("lenpre", len(PrecisonRGG_specificnoise))
+
+        PrecisonGeodis_specificnoise = []
+        for ExternalSimutime in range(20):
+            try:
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2=noise_amplitude)
+                Precison_Geodis_5_times = np.loadtxt(precision_Geodis_Name)
+                PrecisonGeodis_specificnoise.extend(Precison_Geodis_5_times)
+            except FileNotFoundError:
+                pass
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        Geo_precision_list_all_ave.append(np.mean(PrecisonGeodis_specificnoise))
+        Geo_precision_list_all_std.append(np.std(PrecisonGeodis_specificnoise))
+        # print("lenpre", len(PrecisonRGG_specificnoise))
+
+        rows = zip(PrecisonRGG_specificnoise, PrecisonSRGG_specificnoise, PrecisonGeodis_specificnoise)
+
+        # 写入 CSV 文件
+        with open("precision_results.csv", "w", newline='') as f:
+            writer = csv.writer(f)
+            # 写入表头
+            writer.writerow(["PrecisonRGG_specificnoise", "PrecisonSRGG_specificnoise", "PrecisonGeodis_specificnoise"])
+            # 写入数据行
+            writer.writerows(rows)
+
+
 
 
 def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex,legendpara):
@@ -115,30 +191,32 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
     bar3 = ax.bar(x + width, y3, width, label='Geo', yerr=(y_error_lower,Geo_precision_list_all_std), capsize=5, color=colors[2])
 
     # Adding labels and title
-    # ax.set_ylim(0,1.1)
+    # ax.set_ylim(0,1)
     ax.set_xlabel(r'Noise amplitude, $\alpha$', fontsize = 25)
     ax.set_ylabel('Precision',fontsize = 25)
+    ax.set_yscale("log")
     # title_name = "beta:{beta_n}, E[D]:{ed_n}".format(ed_n=ED, beta_n = beta)
     # ax.set_title(title_name)
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels)
 
     if legendpara ==1:
-        ax.legend(fontsize=22)
+        ax.legend(fontsize=22,loc = (0.57, 0.55))
     ax.tick_params(direction='out')
 
     plt.xticks(fontsize=22)
+    plt.yticks(fontsize=22)
 
-    ytick_dict = {
-        (5, 4): [0, 0.1, 0.2],
-        (5, 8): [0, 0.1, 0.2, 0.3, 0.4],
-        (5, 128): [0, 0.2, 0.4, 0.6, 0.8, 1.0],
-        (2, 8): [0, 0.2, 0.4, 0.6, 0.8],
-        (10, 8): [0, 0.1, 0.2, 0.3, 0.4],
-        (100, 8): [0, 0.1, 0.2, 0.3, 0.4],
-    }
-    ytick_vec = ytick_dict[(ED, beta)]
-    plt.yticks(ytick_vec, fontsize=22)
+    # ytick_dict = {
+    #     (5, 4): [0, 0.1, 0.2],
+    #     (5, 8): [0, 0.1, 0.2, 0.3, 0.4],
+    #     (5, 128): [0, 0.2, 0.4, 0.6, 0.8, 1.0],
+    #     (2, 8): [0, 0.2, 0.4, 0.6, 0.8],
+    #     (10, 8): [0, 0.1, 0.2, 0.3, 0.4],
+    #     (100, 8): [0, 0.1, 0.2, 0.3, 0.4],
+    # }
+    # ytick_vec = ytick_dict[(ED, beta)]
+    # plt.yticks(ytick_vec, fontsize=22)
 
     fignum_dict = {
         (5, 4): "a",
@@ -168,7 +246,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
         bbox_inches='tight',  # 紧凑边界
         transparent=True  # 背景透明，适合插图叠加
     )
-
+    plt.show()
     plt.close()
     print(exemptionlist)
 
@@ -348,7 +426,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
         # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
         # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
         # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
-        Geo_precision_list_all_ave.append(np.mean(PrecisonRGG_specificnoise))
+        Geo_precision_list_all_ave.append(np.mean(PrecisonGeodis_specificnoise))
         Geo_precision_list_all_std.append(np.std(PrecisonGeodis_specificnoise))
         # print("lenpre", len(PrecisonRGG_specificnoise))
 
@@ -384,21 +462,23 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
     # ax.set_title(title_name)
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels)
+    ax.set_yscale("log")
     if legendpara == 1:
-        ax.legend(fontsize=22)
+        ax.legend(fontsize=22,loc = (0.57,0.55))
     ax.tick_params(direction='out')
     plt.xticks(fontsize=22)
-    ytick_dict = {
-        (5, 4): [0,0.1,0.2],
-        (5, 8): [0,0.1,0.2,0.3,0.4],
-        (5, 128): [0,0.2,0.4,0.6,0.8,1.0],
-        (2, 8): [0,0.2,0.4,0.6,0.8],
-        (10, 8):[0,0.1,0.2,0.3,0.4,0.5],
-        (100, 8): [0,0.1,0.2,0.3,0.4,0.5,0.6],
-    }
-    ytick_vec = ytick_dict[(ED, beta)]
 
-    plt.yticks(ytick_vec,fontsize=22)
+    # ytick_dict = {
+    #     (5, 4): [0,0.1,0.2],
+    #     (5, 8): [0,0.1,0.2,0.3,0.4],
+    #     (5, 128): [0,0.2,0.4,0.6,0.8,1.0],
+    #     (2, 8): [0,0.2,0.4,0.6,0.8],
+    #     (10, 8):[0,0.1,0.2,0.3,0.4,0.5],
+    #     (100, 8): [0,0.1,0.2,0.3,0.4,0.5,0.6],
+    # }
+    # ytick_vec = ytick_dict[(ED, beta)]
+    #
+    # plt.yticks(ytick_vec,fontsize=22)
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
     fignum_dict = {
@@ -427,7 +507,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
         bbox_inches='tight',  # 紧凑边界
         transparent=True  # 背景透明，适合插图叠加
     )
-    # plt.show()
+    plt.show()
     plt.close()
     print(exemptionlist)
 
@@ -641,8 +721,12 @@ def plot_heatmap_precision(noiseindex):
 
 
 
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    datatest(2, 2, 0)
+
 
     # # # # STEP 1 plot the figure
     # for Edindex in range(5):
@@ -650,12 +734,13 @@ if __name__ == '__main__':
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex,legendpara=0)
     #
     #
-    for Edindex,betaindex in [(1,1),(1,6),(0,2),(2,2),(3,2)]:
-        plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=0)
-    # for Edindex in [1]:
+    # for Edindex,betaindex in [(1,1),(1,6),(1,2),(2,2),(3,2)]:
+    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=0)
+    # for Edindex in [0]:
     #     for betaindex in [2]:
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=1)
-
+    # for Edindex,betaindex in [(3,2)]:
+    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=0)
 
     # # STEP 2 plot the recall
     # for Edindex in range(5):
@@ -664,17 +749,17 @@ if __name__ == '__main__':
     # ED_list = [2, 5, 10, 100, 1000]  # Expected degrees
     # beta_list = [2.1, 4, 8, 16, 32, 64, 128]
 
-    # for Edindex,betaindex in [(1,2),(1,6),(0,2),(2,2),(3,2)]:
+    # for Edindex,betaindex in [(1,2),(1,6),(1,1),(2,2),(3,2)]:
     #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex, legendpara=0)
 
-    # for Edindex in [1]:
-    #     for betaindex in [1]:
-    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
+    for Edindex in [0]:
+        for betaindex in [2]:
+            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
 
 
-    # for Edindex in [1]:
-    #     for betaindex in [1]:
-    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
+    # for Edindex in [2]:
+    #     for betaindex in [2]:
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=0)
 
     """
     Plot figure for netsci
@@ -703,3 +788,4 @@ if __name__ == '__main__':
     Plot the heatmap for the precision and recall
     """
     # plot_heatmap_precision(4)
+
