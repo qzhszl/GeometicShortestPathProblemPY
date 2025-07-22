@@ -466,7 +466,9 @@ def distance_inlargeSRGG(N,ED,beta,rg, ExternalSimutime):
     # Randomly choose 100 connectede node pairs
     nodepair_num = 100000
     unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\"
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\1000000simus\\"
+
+    # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\"
     # filename_selecetednodepair = filefolder_name+"selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
     #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     # np.savetxt(filename_selecetednodepair, unique_pairs, fmt="%i")
@@ -586,13 +588,14 @@ def distance_inlargeSRGG(N,ED,beta,rg, ExternalSimutime):
 
 
 def distance_inSRGG(network_size_index, average_degree_index, beta_index, ExternalSimutime):
-    Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
+    # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
+    Nvec = [22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
     # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7, 10, 12]
     # kvec = [1425, 2033, 2900, 4139, 5909, 8430, 12039, 17177, 24510, 34968,49887, 71168]
-    kvec = [5]
-    betavec = [4]
+    kvec = [10]
+    betavec = [128]
 
 
     random.seed(ExternalSimutime)
@@ -778,16 +781,16 @@ def generate_proper_network_withgivendistances(N, input_ED_index,beta_index,Geod
 
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    generate_r2SRGG()
+    # generate_r2SRGG()
     """
     run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
     step1
     """
-    # network_size_index = 2
-    # average_degree_index = 7
-    # beta_index = 1
-    # external_simu_time = 0
-    # distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
+    network_size_index = 7
+    average_degree_index = 0
+    beta_index = 0
+    external_simu_time = 0
+    distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
     """
     run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
     step1
