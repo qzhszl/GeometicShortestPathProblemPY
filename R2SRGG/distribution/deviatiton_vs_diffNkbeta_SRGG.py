@@ -41,30 +41,36 @@ def generate_r2SRGG():
         rg.ran1()
 
     # Nvec = [200, 500, 1000, 10000]
-    Nvec = [10000]
-    # kvec = np.arange(2, 6.1, 0.2)
-    kvec = [2, 4, 6, 11, 20, 34, 61, 108, 190, 336, 595, 1051, 1857, 3282, 5800, 10250, 18116, 32016, 56582,
-            99999]  # for N = 10^5
-    # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    # Nvec = [100]
+    # # kvec = np.arange(2, 6.1, 0.2)
+    # kvec = [2, 4, 6, 11, 20, 34, 61, 108, 190, 336, 595, 1051, 1857, 3282, 5800, 10250, 18116, 32016, 56582,
+    #         99999]  # for N = 10^5
+    # # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
+    # betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    #
+    # # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
+    # # betavec = [4]
+    # kvec = [1465694]  # for N = 10^4
+    #
+    # # kvec = [1425, 2033, 2900, 4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168]  # this is for N = 1000, beta 4
+    #
+    # kvec = [27081, 44767, 73534, 121205, 199999, 316226,499999]
+    #
+    # kvec = [2, 3, 5, 8, 13, 21, 33, 52, 82, 131, 208, 331, 526, 835, 1999, 3500] # N=100
 
-    # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
-    # betavec = [4]
-    kvec = [1465694]  # for N = 10^4
-
-    # kvec = [1425, 2033, 2900, 4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168]  # this is for N = 1000, beta 4
-
-    kvec = [6105, 9999,16479, 27081, 44767, 73534, 121205, 199999, 316226,499999]
-    betavec = [8]
-
+    Nvec = [22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    kvec = [10]
+    betavec = [128]
+    real_avg_vec = []
     for N in Nvec:
         for ED in kvec:
-            ED =  round(ED,1)
+            ED = round(ED,1)
             for beta in betavec:
                 G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
                 real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
                 print("input para:", (N,ED,beta))
                 print("real ED:", real_avg)
+                real_avg_vec.append(real_avg)
                 # print("clu:", nx.average_clustering(G))
                 # components = list(nx.connected_components(G))
                 # largest_component = max(components, key=len)
@@ -79,7 +85,7 @@ def generate_r2SRGG():
                 with open(FileNetworkCoorName, "w") as file:
                     for data1, data2 in zip(Coorx, Coory):
                         file.write(f"{data1}\t{data2}\n")
-
+    print(real_avg_vec)
 
 def distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime):
     """
@@ -672,6 +678,51 @@ def shortest_path_length_hopcount_fornetwork(N,beta):
                 EDn=ED, betan=beta)
             np.savetxt(spnodenum_Name, nodenum_for_one_graph)
 
+def generate_proper_network_diffN(N, input_ED, beta_index):
+    betavec = [4]
+    beta = betavec[beta_index]
+    # cc = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6]
+    # C_G = cc[beta_index]
+
+    ED_bound = input_ED*0.05
+
+    min_ED = 1
+    max_ED = N-1
+    count = 0
+    rg = RandomGenerator(-12)
+    G, Coorx, Coory = R2SRGG(N, input_ED, beta, rg)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    ED= input_ED
+    while abs(input_ED-real_avg)>ED_bound and count < 20:
+        count = count + 1
+        if input_ED-real_avg>0:
+            min_ED = ED
+            ED = min_ED+0.5*(max_ED-min_ED)
+        else:
+            max_ED = ED
+            ED = min_ED + 0.5 * (max_ED - min_ED)
+        G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+        real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+
+    print("input para:", (N, input_ED, beta))
+    print("real ED:", real_avg)
+    print("clu:", nx.average_clustering(G))
+    components = list(nx.connected_components(G))
+    largest_component = max(components, key=len)
+    print("LCC", len(largest_component))
+    if count < 20:
+        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_N{Nn}ED{EDn}beta{betan}.txt".format(
+            Nn=N, EDn=input_ED, betan=beta)
+        nx.write_edgelist(G, FileNetworkName)
+
+        FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\cleanwithEDCC\\network_coordinates_N{Nn}ED{EDn}beta{betan}.txt".format(
+            Nn=N, EDn=input_ED, betan=beta)
+        with open(FileNetworkCoorName, "w") as file:
+            for data1, data2 in zip(Coorx, Coory):
+                file.write(f"{data1}\t{data2}\n")
+    return ED
+
+
 
 def generate_proper_network(N, input_ED, beta_index):
     # for 10000 node
@@ -907,6 +958,14 @@ if __name__ == '__main__':
     # step 2:
     # generate_proper_network_withgivendistances(100, 0, 0, 0)
 
+    """
+    generate proper ED network for diffN
+    """
+    # Nvec = [22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    # for N in Nvec:
+    #     generate_proper_network_diffN(N,10,0)
+
+
 
     """
     generate proper cc and ED network
@@ -1013,3 +1072,11 @@ if __name__ == '__main__':
     # G, Coorx, Coory = R2SRGG(10000, 10, 4, rg)
     # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
     # print("real ED:", real_avg)
+    #
+    #
+    # components = list(nx.connected_components(G))
+    # largest_component = max(components, key=len)
+    # LCC_number = len(largest_component)
+    # print("LCC", LCC_number)
+
+

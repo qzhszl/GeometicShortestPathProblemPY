@@ -105,6 +105,7 @@ def load_10000nodenetwork_results(beta):
                            2783.4186,
                            3911.416]
 
+
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
     # print(beta)
     exemptionlist =[]
@@ -514,7 +515,7 @@ if __name__ == '__main__':
     """
     # STEP 2 plot local optimum: deviation versus expected degree for one N
     """
-    plot_local_optimum_foronenetwork(10000, 8)
+    plot_local_optimum_foronenetwork(10000, 4)
 
 
 

@@ -59,7 +59,8 @@ def load_10000nodenetwork_results(beta):
     return ave_deviation_vec, std_deviation_vec, exemptionlist
 
 
-
+def power_law(x, a, b):
+    return a * x**b
 
 
 def plot_inputavg_vs_realavg(beta):
@@ -101,6 +102,108 @@ def plot_inputavg_vs_realavg(beta):
         plt.xscale('log')
         plt.yscale('log')
         plt.plot(x,real_avg_vec,linewidth=5,color=colors[0])
+
+        popt, pcov = curve_fit(power_law, x[:15], real_avg_vec[:15])
+        a, b = popt
+        x_fit = np.linspace(min(x), 9999, 500)
+        y_fit = power_law(x_fit, *popt)
+
+        plt.loglog(x_fit, y_fit, 'r-', linewidth=3, label=f'Fit: y = {a:.3f} * x^{b:.3f}')
+
+        plt.legend()
+
+        plt.xlabel(r'Expected degree, $\mathbb{E}[D]$', fontsize=26)
+        plt.ylabel(r"Average degree, $\langle D \rangle$", fontsize=26)
+        plt.xticks(fontsize=28)
+        plt.yticks(fontsize=28)
+
+        # picname = filefolder+ "avgvsEkN{Nn}Beta{betan}2.pdf".format(
+        #     Nn=10000, betan=beta)
+        # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+        picname = filefolder + "avgvsEkN{Nn}Beta{betan}2.svg".format(
+            Nn=10000, betan=beta)
+        plt.savefig(
+            picname,
+            format="svg",
+            bbox_inches='tight',  # 紧凑边界
+            transparent=True  # 背景透明，适合插图叠加
+        )
+
+        plt.show()
+        plt.close()
+    elif beta==128:
+        filefolder = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\"
+        x = [2.2, 2.8, 3, 3.4, 3.8, 4.4, 6, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999,
+             16479, 21121, 27081, 34822, 44767, 57363]
+        real_avg_vec = [1.686, 2.1618, 2.3386, 2.681, 2.9718, 3.4246, 4.6802, 7.7456, 12.339, 20.6666, 33.5638, 54.4372,
+                        88.4134, 142.3818, 229.1506, 366.9368, 583.313, 920.0406, 1433.1184, 2194.9722,
+                        3295,4793.8644, 6698, 7708, 8670, 9453, 9863, 9980]
+        # if loaded network needed
+        # real_avg_vec =[]
+        # N = 10000
+        # x = [2.2, 2.8, 3, 3.4, 3.8, 4.4, 6, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727]
+        # for ED in x:
+        #     print("ED:", ED)
+        #     filename = filefolder+f"network_N10000ED{ED}Beta{beta}.txt"
+        #     G = loadSRGGandaddnode(N, filename)
+        #     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+        #     print("real ED:", real_avg)
+        #     real_avg_vec.append(real_avg)
+        # print(real_avg_vec)
+
+        plt.plot(x, real_avg_vec)
+        plt.xscale('log')
+        plt.yscale('log')
+        plt.xlabel(r'Expected degree, $E[k]$', fontsize=35)
+        plt.ylabel(r"Average degree, $\langle k \rangle$", fontsize=35)
+        plt.xticks(fontsize=28)
+        plt.yticks(fontsize=28)
+        plt.show()
+
+
+def plot_inputavg_vs_realavg_100node(beta):
+    # Figure 1 (b)
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', "#A2C7A4", "#9DB0C2", "#E3B6A4"]
+    if beta == 4:
+        filefolder = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\"
+        x = [2, 3, 5, 8, 13, 21, 33, 52, 82, 131, 208, 331, 526, 835, 1999, 3500]
+        # x = [2.2, 2.8, 3, 3.4, 3.8, 4.4, 6, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999]
+        real_avg_vec = [1.24, 1.72, 3.34, 4.84, 7.6, 11.96, 16.88, 25.96, 33.66, 46.5, 56.26, 72.14, 82.7, 91.92, 97.32, 98.48]
+
+
+        # real_avg_vec =[]
+        # N = 10000
+        # for ED in x:
+        #     print("ED:", ED)
+        #     filename = filefolder+f"network_N10000ED{ED}Beta{beta}.txt"
+        #     G = loadSRGGandaddnode(N, filename)
+        #     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+        #     print("real ED:", real_avg)
+        #     real_avg_vec.append(real_avg)
+        # print(real_avg_vec)
+        fig, ax = plt.subplots(figsize=(6, 4.5))
+        text = r"$N = 10^2$" "\n" r"$\beta = 4$"
+        plt.text(
+            0.1, 0.65,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+            text,
+            transform=ax.transAxes,  # 使用轴坐标
+            fontsize=28,  # 字体大小
+            ha='left',  # 水平居中对齐
+            va='bottom'  # 垂直对齐方式
+        )
+        plt.xscale('log')
+        plt.yscale('log')
+        plt.plot(x,real_avg_vec,linewidth=5,color=colors[0])
+
+        popt, pcov = curve_fit(power_law, x[:8], real_avg_vec[:8])
+        a, b = popt
+        x_fit = np.linspace(min(x), 99, 500)
+        y_fit = power_law(x_fit, *popt)
+
+        plt.loglog(x_fit, y_fit, 'r-', linewidth=3, label=f'Fit: y = {a:.3f} * x^{b:.3f}')
+
+        plt.legend()
+
         plt.xlabel(r'Expected degree, $\mathbb{E}[D]$', fontsize=26)
         plt.ylabel(r"Average degree, $\langle D \rangle$", fontsize=26)
         plt.xticks(fontsize=28)
@@ -440,7 +543,11 @@ def plot_dev_vs_input_avg(beta):
 if __name__ == '__main__':
     # load_10000nodenetwork_results(4)
     # plot_inputavg_vs_realavg_several_beta()
-    plot_inputavg_vs_realavg(4)
+    # FIGURE 1!!!!!!!!!!!!!
+    # plot_inputavg_vs_realavg(4)
+
+    plot_inputavg_vs_realavg_100node(4)
+
     # plot_dev_vs_read_vag(4)
 
     # plot_dev_vs_input_avg(4)
