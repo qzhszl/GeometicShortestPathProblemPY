@@ -430,7 +430,7 @@ def load_ave_dev(N, kvec, beta, filefoldername):
 
 def plot_dev_vs_ED_diffN_and_compute_the_min_meandev():
     Nvec = [46, 100, 215, 464, 1000, 2154, 4642, 10000]
-    Nvec = [46, 100, 215, 464, 1000, 2154, 4642]
+    # Nvec = [46, 100, 215, 464, 1000, 2154, 4642]
     beta = 128
     kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120,155]
     real_ave_degree_dict = {}

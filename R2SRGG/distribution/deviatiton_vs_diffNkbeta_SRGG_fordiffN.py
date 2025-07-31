@@ -750,7 +750,8 @@ def distance_inSRGG_oneSP(network_size_index, average_degree_index, beta_index, 
     # betavec = [8]
     # kvec = [10]
 
-    Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    # Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    Nvec = [4642, 10000]
     # Nvec = [4642, 10000]
     betavec = [128]
     kvec = [8, 13, 17, 22, 28, 36, 46, 58, 74, 94, 100]
@@ -872,7 +873,7 @@ if __name__ == '__main__':
     betavec = [128]
     kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120]
     kvec = [10,120]
-    for N_index in range(len(Nvec)):
+    for N_index in range(2):
         for ED_index in range(3):
             for beta_index in range(1):
                 distance_inSRGG_oneSP(N_index, ED_index, beta_index, 0)
