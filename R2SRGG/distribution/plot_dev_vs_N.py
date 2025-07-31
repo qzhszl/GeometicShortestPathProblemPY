@@ -406,6 +406,131 @@ def plot_dev_with_N_loglog_realavg(ED, beta):
     plt.show()
 
 
+def load_ave_dev(N, kvec, beta, filefoldername):
+    exemptionlist = []
+    for N in [N]:
+        ave_deviation_vec = []
+        std_deviation_vec = []
+        real_ave_degree_vec = []
+        for beta in [beta]:
+            for ED in kvec:
+                for ExternalSimutime in [0]:
+                    try:
+                        ave_deviation_name = filefoldername+ "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        ave_deviation_for_a_para_comb = np.loadtxt(ave_deviation_name)
+                        ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                        std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+                    except FileNotFoundError:
+                        exemptionlist.append((N, ED, beta, ExternalSimutime))
+    print(exemptionlist)
+    return kvec, real_ave_degree_vec, ave_deviation_vec, std_deviation_vec
+    # return kvec, ave_deviation_vec, std_deviation_vec
+
+
+def plot_dev_vs_ED_diffN_and_compute_the_min_meandev():
+    Nvec = [46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    Nvec = [46, 100, 215, 464, 1000, 2154, 4642]
+    beta = 128
+    kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120,155]
+    real_ave_degree_dict = {}
+    ave_deviation_dict = {}
+    std_deviation_dict = {}
+    kvec_dict = {}
+
+    for N in Nvec:
+        if N < 400:
+            filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\smallnetwork\\"
+            kvec, real_ave_degree_vec, ave_deviation_vec, std_deviation_vec = load_ave_dev(N, kvec, beta, filefolder_name)
+            # real_ave_degree_dict[N] = real_ave_degree_vec
+            ave_deviation_dict[N] = ave_deviation_vec
+            std_deviation_dict[N] = std_deviation_vec
+            kvec_dict[N] = kvec
+        else:
+            filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\"
+            kvec, real_ave_degree_vec, ave_deviation_vec, std_deviation_vec = load_ave_dev(N, kvec, beta, filefolder_name)
+            # real_ave_degree_dict[N] = real_ave_degree_vec
+            kvec_dict[N] = kvec
+            ave_deviation_dict[N] = ave_deviation_vec
+            std_deviation_dict[N] = std_deviation_vec
+    # plt.plot(kvec,ave_deviation_vec,"o-")
+    # plt.xscale('log')
+    # plt.show()
+    lengend = [r"$N=10$", r"$N=10^2$", r"$N=10^3$", r"$N=10^4$"]
+    fig, ax = plt.subplots(figsize=(9, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # colorvec2 = ['#9FA9C9', '#D36A6A']
+    cuttail = [5, 34, 23, 22]
+    # peakcut = [9,5,5,5,5]
+
+    min_ave_list = []
+
+    for N_index in range(len(Nvec)):
+        N = Nvec[N_index]
+        x = kvec
+        y = ave_deviation_dict[N]
+        min_ave_list.append(y[5])
+        error = std_deviation_dict[N]
+        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                     label=N)
+
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
+    # plt.ylim(0, 0.30)
+    # plt.yticks([0, 0.1, 0.2, 0.3])
+
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    plt.ylabel(r'Average deviation, $<d>$', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=26, loc=(0.5, 0.5))
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\dev_vs_avg.svg"
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+    plt.plot(Nvec,min_ave_list)
+
+    N_values = np.arange(10, max(Nvec))
+    R_values = []
+    # 初始猜测值（重要）
+    R0 = 0.1
+    # 遍历每个 N，数值解方程
+    for N in N_values:
+        R_solution, = fsolve(equation, R0, args=(N))
+        R_values.append(R_solution)
+        R0 = R_solution  # 用上一个解作为下一个初始猜测，提高稳定性
+    plt.plot(N_values, R_values, linewidth = 5,color='green', label='R vs N')
+
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'N', fontsize=26)
+    plt.ylabel(r'min $<d>$', fontsize=26)
+    plt.legend()
+    plt.show()
+    plt.close()
+
+
+
+
+
+
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -416,4 +541,6 @@ if __name__ == '__main__':
 
     # plot_local_optimum_with_N_loglog(10, 8)
 
-    plot_dev_with_N_loglog_realavg(10, 128)
+    # plot_dev_with_N_loglog_realavg(10, 128)
+
+    plot_dev_vs_ED_diffN_and_compute_the_min_meandev()

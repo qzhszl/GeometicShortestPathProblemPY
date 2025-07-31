@@ -1181,7 +1181,22 @@ def generate_proper_network_withgivendistances(N, input_ED_index,beta_index,Geod
 
 
 if __name__ == '__main__':
+    """
+    run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
+    step1
+    """
     # generate_r2SRGG()
+
+    """
+    run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
+    step1
+    """
+    # rg = RandomGenerator(-12)
+    # rseed = random.randint(0, 100)
+    # for i in range(rseed):
+    #     rg.ran1()
+    # distance_inlargeSRGG(1000, 5, 4, rg, 0)
+
     """
     run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
     step1
@@ -1192,7 +1207,7 @@ if __name__ == '__main__':
     # external_simu_time = 0
     # distance_inSRGG(network_size_index, average_degree_index, beta_index, external_simu_time)
     """
-    run simulations for large networks(N = 1000, N>10000 will be put on the cluster)
+    run simulations for large networks(N = 1000, N>10000 will be put on the cluster) multiple networks
     step1
     """
     # # kvec = [4,16,64]
@@ -1204,13 +1219,6 @@ if __name__ == '__main__':
     #         for beta_index in range(1):
     #             distance_inSRGG(N_index, ED_index, beta_index, 0)
 
-
-
-    # rg = RandomGenerator(-12)
-    # rseed = random.randint(0, 100)
-    # for i in range(rseed):
-    #     rg.ran1()
-    # distance_inlargeSRGG(1000, 5, 4, rg, 0)
 
     """
     run simulations for small networks(N = 100)
@@ -1432,7 +1440,7 @@ if __name__ == '__main__':
     """
     run simulation for diffN with real avg
     """
-    for N_index in range(9):
-        distance_inSRGG_realavg(N_index,0,0,0)
+    # for N_index in range(9):
+    #     distance_inSRGG_realavg(N_index,0,0,0)
 
 
