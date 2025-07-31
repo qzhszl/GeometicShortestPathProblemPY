@@ -11,6 +11,9 @@ from collections import Counter
 import math
 
 from scipy.optimize import curve_fit
+from scipy.integrate import quad
+from math import pi, sqrt, sin, atan
+
 
 from R2SRGG.R2SRGG import loadSRGGandaddnode
 
@@ -539,6 +542,76 @@ def plot_dev_vs_input_avg(beta):
         plt.show()
 
 
+def compute_expected_degree(N, E_D, beta):
+    """
+    计算 SRGG 中的期望度数 <k>
+
+    参数：
+        N (int): 节点数量
+        E_D (float): 期望度数（用于计算 alpha）
+        beta (float): β 参数
+
+    返回：
+        float: 计算得到的 <k>
+    """
+    R = 2  # 给定常数 R=2
+
+    # 计算 alpha
+    alpha = (2 * N / E_D * R * R) * (math.pi / (math.sin(2 * math.pi / beta) * beta))
+    alpha = math.sqrt(alpha)
+
+    # alpha = sqrt((2 * N / (E_D * R * R)) * (pi / (sin(2 * pi / beta) * beta)))
+
+    # 几何距离的 PDF 函数
+    def f_x(x):
+        if 0 <= x < 1:
+            return 2 * x * (x ** 2 - 4 * x + pi)
+        elif 1 <= x <= sqrt(2):
+            return 2 * x * (4 * sqrt(x ** 2 - 1) - (x ** 2 + 2 - pi) - 4 * atan(sqrt(x ** 2 - 1)))
+        else:
+            return 0
+
+    # 连接概率函数 p(x)
+    def p_x(x):
+        return 1 / (1 + (alpha * x) ** beta)
+
+    # 被积函数 integrand = p(x) * f(x)
+    def integrand(x):
+        return p_x(x) * f_x(x)
+
+    # 数值积分计算平均度数 <k>
+    integral_result, _ = quad(integrand, 0, sqrt(2))
+    k_avg = (N - 1) * integral_result
+
+    return k_avg
+
+def test_analytic_result():
+    x = [2.2, 2.8, 3, 3.4, 3.8, 4.4, 6, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999,
+         16479, 27081, 44767, 73534, 121205, 199999, 331131, 539052, 888611, 1465694]
+    a_realavg_vec = []
+    for ED in x:
+        a_realavg_vec.append(compute_expected_degree(10000, ED, 4))
+    real_avg_vec = [1.7024, 2.1224, 2.2988, 2.6058, 2.941, 3.3956, 4.6198, 7.6544, 12.1272, 20.414358564143587,
+                    32.9682,
+                    53.2058, 85.6794, 137.1644, 218.4686, 345.3296, 541.029, 836.6424, 1278.4108, 1902.8332,
+                    2783.4186,
+                    3911.416, 5253, 6700, 8029, 8990, 9552, 9820, 9931, 9973, 9989, 9996]
+
+    popt, pcov = curve_fit(power_law, x[:15], real_avg_vec[:15])
+    a, b = popt
+    x_fit = np.linspace(min(x), 9999, 500)
+    y_fit = power_law(x_fit, *popt)
+    plt.loglog(x_fit, y_fit, 'r-', linewidth=3, label=f'Fit: y = {a:.3f} * x^{b:.3f}')
+
+    plt.plot(x,real_avg_vec,'o-',label = "avg,simu")
+    plt.plot(x,a_realavg_vec,"s--",label = "avg,analytic")
+    plt.legend()
+    plt.xscale("log")
+    plt.yscale("log")
+    plt.show()
+
+    print(a_realavg_vec)
+
 
 if __name__ == '__main__':
     # load_10000nodenetwork_results(4)
@@ -546,7 +619,9 @@ if __name__ == '__main__':
     # FIGURE 1!!!!!!!!!!!!!
     # plot_inputavg_vs_realavg(4)
 
-    plot_inputavg_vs_realavg_100node(4)
+    test_analytic_result()
+
+    # plot_inputavg_vs_realavg_100node(4)
 
     # plot_dev_vs_read_vag(4)
 

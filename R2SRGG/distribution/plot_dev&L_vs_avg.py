@@ -78,7 +78,7 @@ def load_large_network_results(N, beta, kvec):
 def plot_devandL_withED():
     # the x-axis is the input average degree
     N = 10000
-    beta = 128
+    beta = 8
     if N == 1000:
         kvec = [2, 3, 4, 5, 8, 12, 20, 31, 49, 77, 120, 188, 296, 468, 739, 1166, 1836, 2842]
     else:
@@ -161,6 +161,21 @@ def plot_devandL_withED():
     y_fit = 10 ** intercept * x_fit ** slope
     plt.plot(x_fit, y_fit, 'r--', linewidth=2,
              label=fr'Fit: $\langle d \rangle = {10 ** intercept:.2f} \cdot \langle L \rangle^{{{slope:.2f}}}$')
+
+    # fitcurve
+    curvefitpoint2 = 6
+    logx = np.log10(ave_L_vec[:curvefitpoint2])
+    logy = np.log10(ave_deviation_vec[:curvefitpoint2])
+
+    # 线性拟合 log-log 数据
+    slope, intercept, r_value, p_value, std_err = linregress(logx, logy)
+
+    x_fit = np.linspace(min(ave_L_vec[:curvefitpoint2]), max(ave_L_vec[:curvefitpoint2]), 200)
+    y_fit = 10 ** intercept * x_fit ** slope
+    plt.plot(x_fit, y_fit, 'r--', linewidth=2,
+             label=fr'Fit: $\langle d \rangle = {10 ** intercept:.2f} \cdot \langle L \rangle^{{{slope:.2f}}}$')
+
+
 
     scatter = plt.scatter(
         ave_L_vec,  # x-axis: L
@@ -285,8 +300,8 @@ def bin_and_compute_stats(length_geodesic_vec, data_vec, num_bins=100):
 
 def plot_devandL_with_geodistance():
     N = 10000
-    beta = 8
-    ED = 29999
+    beta = 128
+    ED = 121
     ExternalSimutime = 0
     folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
 
@@ -371,9 +386,9 @@ if __name__ == '__main__':
     """
     # STEP 1 plot local optimum: deviation versus expected degree
     """
-    # plot_devandL_withED()
+    plot_devandL_withED()
 
     """
     # STEP 2 test Giles
     """
-    plot_devandL_with_geodistance()
+    # plot_devandL_with_geodistance()
