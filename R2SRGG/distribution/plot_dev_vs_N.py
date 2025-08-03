@@ -430,9 +430,10 @@ def load_ave_dev(N, kvec, beta, filefoldername):
 
 def plot_dev_vs_ED_diffN_and_compute_the_min_meandev():
     Nvec = [46, 100, 215, 464, 1000, 2154, 4642, 10000]
-    Nvec = [46, 100, 215, 464, 1000, 2154, 4642]
-    beta = 128
-    kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120,155]
+    # Nvec = [46, 100, 215, 464, 1000, 2154]
+    beta = 1024
+    # kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120,155]
+    kvec = [8, 10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120]
     real_ave_degree_dict = {}
     ave_deviation_dict = {}
     std_deviation_dict = {}
@@ -466,12 +467,15 @@ def plot_dev_vs_ED_diffN_and_compute_the_min_meandev():
 
     min_ave_list = []
 
+    same_k_list = []
+
     for N_index in range(len(Nvec)):
         N = Nvec[N_index]
         x = kvec
         y = ave_deviation_dict[N]
-        min_ave_list.append(y[5])
+        min_ave_list.append(min(y))
         error = std_deviation_dict[N]
+        same_k_list.append(y[1])
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
                      label=N)
 
@@ -504,7 +508,28 @@ def plot_dev_vs_ED_diffN_and_compute_the_min_meandev():
     plt.close()
 
     fig, ax = plt.subplots(figsize=(9, 6))
-    plt.plot(Nvec,min_ave_list)
+    plt.plot(Nvec,min_ave_list,"o--", label=r'min avg $<d>$')
+
+    popt2, pcov2 = curve_fit(power_law, Nvec, min_ave_list)
+    a2, alpha2 = popt2
+    # 拟合曲线
+    N_fit2 = np.linspace(min(Nvec), max(Nvec), 20)
+    y_fit2 = power_law(N_fit2, a2, alpha2)
+    plt.plot(N_fit2, y_fit2, '-', linewidth=2,
+             label=fr'Fit: $y = {a2:.2f} \cdot N^{{{alpha2:.2f}}}$')
+
+
+
+    plt.plot(Nvec, same_k_list, "s-", label=r'E[D] = 10')
+
+    popt2, pcov2 = curve_fit(power_law, Nvec, same_k_list)
+    a2, alpha2 = popt2
+    # 拟合曲线
+    N_fit2 = np.linspace(min(Nvec), max(Nvec), 20)
+    y_fit2 = power_law(N_fit2, a2, alpha2)
+    plt.plot(N_fit2, y_fit2, '-', linewidth=2,
+             label=fr'Fit: $y = {a2:.2f} \cdot N^{{{alpha2:.2f}}}$')
+
 
     N_values = np.arange(10, max(Nvec))
     R_values = []
@@ -515,12 +540,12 @@ def plot_dev_vs_ED_diffN_and_compute_the_min_meandev():
         R_solution, = fsolve(equation, R0, args=(N))
         R_values.append(R_solution)
         R0 = R_solution  # 用上一个解作为下一个初始猜测，提高稳定性
-    plt.plot(N_values, R_values, linewidth = 5,color='green', label='R vs N')
+    plt.plot(N_values, R_values, linewidth = 5,color='green', label=r'$\frac{1}{4R^2}(1 - pi * R^2)^N = 1$')
 
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel(r'N', fontsize=26)
-    plt.ylabel(r'min $<d>$', fontsize=26)
+    plt.ylabel(r'$<d>$', fontsize=26)
     plt.legend()
     plt.show()
     plt.close()
