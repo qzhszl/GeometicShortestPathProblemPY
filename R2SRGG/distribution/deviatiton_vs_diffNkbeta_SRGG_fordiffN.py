@@ -98,7 +98,7 @@ def distance_insmallSRGG(N, ED, beta, rg, ExternalSimutime):
     SP_hopcount = []
     max_dev_node_hopcount = []
     SPnodenum_vec =[]
-    simu_times = 100
+    simu_times = 300
     for simu_index in range(simu_times):
         G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
         try:
@@ -287,7 +287,7 @@ def distance_inlargeSRGG(N,ED,beta,rg, ExternalSimutime):
     print("LCC", LCC_number)
 
     # Randomly choose 100 connectede node pairs
-    nodepair_num = 1000
+    nodepair_num = 10000
     unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
     filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -399,9 +399,11 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
     # betavec = [8]
     # kvec = [10]
 
-    Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
-    betavec = [128]
-    kvec = [8, 13, 17, 22, 28, 36, 46, 58, 74, 94, 100]
+    # Nvec = [46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    Nvec = [464, 1000, 2154, 4642, 10000]
+    betavec = [1024]
+    kvec = [8, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155]
+
 
 
     random.seed(ExternalSimutime)
@@ -855,25 +857,24 @@ if __name__ == '__main__':
     step1
     """
 
-    # Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
-    # Nvec = [100, 215, 464, 1000, 2154, 4642, 10000]
-    # betavec = [128]
-    # kvec = [8,13, 17, 22, 28, 36, 46, 58, 74, 94, 100]
-    #
-    # for N_index in range(len(Nvec)-1):
-    #     for ED_index in range(len(kvec)):
-    #         for beta_index in range(1):
-    #             distance_inSRGG(N_index, ED_index, beta_index, 0)
+    Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    Nvec = [464, 1000, 2154, 4642, 10000]
+    betavec = [1024]
+    kvec = [8,13, 17, 22, 28, 36, 46, 58, 74, 94, 120,155]
+    for N_index in range(len(Nvec)):
+        for ED_index in range(len(kvec)):
+            for beta_index in range(1):
+                distance_inSRGG(N_index, ED_index, beta_index, 0)
 
     """
     run simulations for multiple networks
     step2
     """
-    Nvec = [46, 100, 215, 464, 1000, 2154, 4642, 10000]
-    betavec = [128]
-    kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120]
-    kvec = [10,120]
-    for N_index in range(2):
-        for ED_index in range(3):
-            for beta_index in range(1):
-                distance_inSRGG_oneSP(N_index, ED_index, beta_index, 0)
+    # Nvec = [46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    # betavec = [128]
+    # kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120]
+    # kvec = [10,120]
+    # for N_index in range(2):
+    #     for ED_index in range(3):
+    #         for beta_index in range(1):
+    #             distance_inSRGG_oneSP(N_index, ED_index, beta_index, 0)
