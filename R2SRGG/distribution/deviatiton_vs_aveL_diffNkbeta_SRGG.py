@@ -783,7 +783,10 @@ def distance_insmallSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime):
     length_edge_vec = []
 
     folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
-    simu_times = 100
+    if N == 100:
+        simu_times = 10
+    else:
+        simu_times = 100
     for simu_index in range(simu_times):
         G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
         try:
@@ -1203,19 +1206,52 @@ def compute_deviation():
     # tasks = [(32, 8, 0.1, 0), (64, 4, 1, 1), (64, 4, 1, 2), (64, 4, 1, 3), (64, 4, 1, 4), (64, 4, 1, 5), (64, 4, 1, 6),
     #          (64, 4, 1, 7), (64, 4, 1, 8), (64, 4, 1, 9)]
 
-
-    # Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
-    Nvec = [100, 215, 464, 1000, 2154, 4642, 10000]
+    # simu1: diff N
+    Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
     beta_vec = [8]
-    # kvec = [2,3,5,8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155, 266, 457, 787, 1356, 2337, 4028, 6943, 11972, 20647,29999]
     input_ED_vec = [10]
     for N in Nvec:
         for inputED in input_ED_vec:
-            for beta in beta_vec:  # 因为 beta_list 是 [4,8, 128]
+            for beta in beta_vec:
                 tasks.append((N,inputED, beta,0))
+    with mp.Pool(processes=1) as pool:
+        pool.starmap(distance_inSRGG_oneSP, tasks)
+
+    # simu2: diff beta
+    Nvec = [100, 1000, 10000]
+    beta_vec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
+    input_ED_vec = [10]
+    for N in Nvec:
+        for inputED in input_ED_vec:
+            for beta in beta_vec:
+                tasks.append((N, inputED, beta, 0))
 
     with mp.Pool(processes=1) as pool:
         pool.starmap(distance_inSRGG_oneSP, tasks)
+
+    # simu3: diff ED
+    Nvec = [10, 100, 1000, 10000]
+    beta_vec = [4]
+    kvec_dict = {
+        100: [2, 3, 4, 5, 6, 8, 10, 12, 14, 17, 22, 27, 33, 40, 49, 60, 73, 89, 113, 149, 198, 260, 340, 446, 584,
+              762, 993, 1292, 1690, 2276, 3142, 4339],
+        1000: [2, 3, 4, 5, 6, 7, 8, 11, 15, 20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999, 1425, 2033, 2900,
+               4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168],
+        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+    for N in Nvec:
+        if N ==10:
+            input_ED_vec = list(range(2, 10)) + [10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 99]  # FOR N =10
+        else:
+            input_ED_vec = kvec_dict[N]
+        for inputED in input_ED_vec:
+            for beta in beta_vec:
+                tasks.append((N, inputED, beta, 0))
+
+    with mp.Pool(processes=2) as pool:
+        pool.starmap(distance_inSRGG_oneSP, tasks)
+
 
 
     # Press the green button in the gutter to run the script.
