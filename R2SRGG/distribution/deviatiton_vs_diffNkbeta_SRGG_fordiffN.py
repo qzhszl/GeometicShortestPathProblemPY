@@ -482,6 +482,7 @@ def distance_inlargeSRGG_oneSP(N,ED,beta,rg, ExternalSimutime):
                 file.write(f"{data1}\t{data2}\n")
 
 
+
     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
     print("real ED:", real_avg)
 
