@@ -134,38 +134,38 @@ def plot_hopcount_vs_ED_test(N, beta_vec):
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     count = 0
     fig, ax = plt.subplots(figsize=(6, 4.5))
-    for beta in beta_vec:
-        SP_hopcount_ave = []
-        SP_hopcount_std = []
-        real_ave_degree_vec = []
-        for ED in kvec:
-            print(ED)
-            hopcount_for_a_para_comb = np.array([])
-
-            for ExternalSimutime in range(1):
-                try:
-                    hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                    hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
-                    hopcount_for_a_para_comb = np.hstack(
-                        (hopcount_for_a_para_comb, hopcount_for_a_para_comb_10times))
-                    FileNetworkName = filefolder_name +"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-                        Nn=N, EDn=ED, betan=beta)
-                    G = loadSRGGandaddnode(N, FileNetworkName)
-                    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-                    # print("real ED:", real_avg)
-                    real_ave_degree_vec.append(real_avg)
-                except:
-                    print("datalost:",(ED,beta,ExternalSimutime))
-
-            SP_hopcount_ave.append(np.mean(hopcount_for_a_para_comb))
-            SP_hopcount_std.append(np.std(hopcount_for_a_para_comb))
-
-            print(real_ave_degree_vec)
-            print(SP_hopcount_ave)
-            print(SP_hopcount_std)
-
-        plt.errorbar(real_ave_degree_vec,SP_hopcount_ave,SP_hopcount_std,linestyle="-", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=6, label = rf"N={N},$\beta$ = {beta}")
+    # for beta in beta_vec:
+    #     SP_hopcount_ave = []
+    #     SP_hopcount_std = []
+    #     real_ave_degree_vec = []
+    #     for ED in kvec:
+    #         print(ED)
+    #         hopcount_for_a_para_comb = np.array([])
+    #
+    #         for ExternalSimutime in range(1):
+    #             try:
+    #                 hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+    #                     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    #                 hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
+    #                 hopcount_for_a_para_comb = np.hstack(
+    #                     (hopcount_for_a_para_comb, hopcount_for_a_para_comb_10times))
+    #                 FileNetworkName = filefolder_name +"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #                     Nn=N, EDn=ED, betan=beta)
+    #                 G = loadSRGGandaddnode(N, FileNetworkName)
+    #                 real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    #                 # print("real ED:", real_avg)
+    #                 real_ave_degree_vec.append(real_avg)
+    #             except:
+    #                 print("datalost:",(ED,beta,ExternalSimutime))
+    #
+    #         SP_hopcount_ave.append(np.mean(hopcount_for_a_para_comb))
+    #         SP_hopcount_std.append(np.std(hopcount_for_a_para_comb))
+    #
+    #         print(real_ave_degree_vec)
+    #         print(SP_hopcount_ave)
+    #         print(SP_hopcount_std)
+    #
+    #     plt.errorbar(real_ave_degree_vec,SP_hopcount_ave,SP_hopcount_std,linestyle="-", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=6, label = rf"N={N},$\beta$ = {beta}")
 
     data_dict = {2.05:([0.3842, 0.5602, 0.9056, 1.4132, 1.7166, 2.1752, 2.767, 3.5134, 4.3432, 5.4588, 6.794, 8.3146, 10.328, 12.7314,
      15.7576, 19.724, 31.4082, 49.8322, 78.8138, 123.7288, 192.536, 296.478, 450.5532, 675.6858, 996.0806],
@@ -201,28 +201,30 @@ def plot_hopcount_vs_ED_test(N, beta_vec):
      np.float64(0.368083468794783), np.float64(0.4300278944440697), np.float64(0.47787193891250823),
      np.float64(0.4993235424051224)]),
      1024: (
-     [1.5554, 2.3392, 3.8926, 6.192, 7.743, 10.0388, 13.0968, 16.9344, 21.4386, 27.531, 35.0834, 44.058,
-      55.9208, 70.7122, 89.8856, 115.2898, 194.227, 325.963, 544.0998, 900.1238, 1467.1444, 2343.9226],
-     [np.float64(2.281541857700798), np.float64(4.5090832892986645), np.float64(45.1786), np.float64(
-         59.942), np.float64(47.1371), np.float64(38.6387), np.float64(32.3199), np.float64(
-         27.2802), np.float64(23.6262), np.float64(20.3878), np.float64(17.7595), np.float64(
-         15.6246), np.float64(13.6995), np.float64(12.0753), np.float64(10.6417), np.float64(
-         9.342), np.float64(7.1553), np.float64(5.5226), np.float64(4.3037), np.float64(3.3825), np.float64(
-         2.6889), np.float64(2.156)],
-     [np.float64(1.6684760224508528), np.float64(3.77469872533102), np.float64(
-         33.783142275993214), np.float64(27.54113715880301), np.float64(21.77658613258745), np.float64(
-         17.914160943510584), np.float64(15.070380353196132), np.float64(12.680500304010092), np.float64(
-         10.980959591948238), np.float64(9.479483696910924), np.float64(8.22567077811895), np.float64(
-         7.216139885007773), np.float64(6.304553889848195), np.float64(5.5304457243517), np.float64(
-         4.8535678742549795), np.float64(4.238211415208071), np.float64(3.2008720546126175), np.float64(
-         2.4204729372583365), np.float64(1.840452745929653), np.float64(1.4043481583994761), np.float64(
-         1.0865158949596643), np.float64(0.8372956467102883)]
+         [1.5554, 2.3392, 3.8926, 6.192, 7.743, 10.0388, 13.0968, 16.9344, 21.4386, 27.531, 35.0834, 44.058, 55.9208,
+          70.7122, 89.8856, 115.2898, 194.227, 325.963, 544.0998, 900.1238, 1467.1444, 2343.9226, 3645.9348, 5444.3032,
+          7617.0924],
+         [np.float64(2.281541857700798), np.float64(4.5090832892986645), np.float64(45.1786), np.float64(
+             59.942), np.float64(47.1371), np.float64(38.6387), np.float64(32.3199), np.float64(27.2802), np.float64(
+             23.6262), np.float64(20.3878), np.float64(17.7595), np.float64(15.6246), np.float64(13.6995), np.float64(
+             12.0753), np.float64(10.6417), np.float64(9.342), np.float64(7.1553), np.float64(5.5226), np.float64(
+             4.3037), np.float64(3.3825), np.float64(2.6889), np.float64(2.156), np.float64(1.7654), np.float64(
+             1.4631), np.float64(1.2414)],
+         [np.float64(1.6684760224508528), np.float64(3.77469872533102), np.float64(33.783142275993214), np.float64(
+             27.54113715880301), np.float64(21.77658613258745), np.float64(17.914160943510584), np.float64(
+             15.070380353196132), np.float64(12.680500304010092), np.float64(10.980959591948238), np.float64(
+             9.479483696910924), np.float64(8.22567077811895), np.float64(7.216139885007773), np.float64(
+             6.304553889848195), np.float64(5.5304457243517), np.float64(4.8535678742549795), np.float64(
+             4.238211415208071), np.float64(3.2008720546126175), np.float64(2.4204729372583365), np.float64(
+             1.840452745929653), np.float64(1.4043481583994761), np.float64(1.0865158949596643), np.float64(
+             0.8372956467102883), np.float64(0.6655545357068796), np.float64(0.5171444575744769), np.float64(
+             0.42793228436284175)]
      )}
     for beta, val in data_dict.items():
         plt.errorbar(data_dict[beta][0], data_dict[beta][1], data_dict[beta][2], linestyle="-", linewidth=3, elinewidth=1,
                      capsize=5, marker='o', markersize=6, label=rf"N={N},$\beta$ = {beta}")
 
-    popt2, pcov2 = curve_fit(power_law, data_dict[1024][0][6:], data_dict[1024][1][6:])
+    popt2, pcov2 = curve_fit(power_law, data_dict[1024][0][10:], data_dict[1024][1][10:])
     a2, alpha2 = popt2
     # 拟合曲线
     N_fit2 = np.linspace(2,10000 , 50)
