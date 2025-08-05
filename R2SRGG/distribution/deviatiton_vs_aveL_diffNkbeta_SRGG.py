@@ -1005,7 +1005,7 @@ def distance_inlargeSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime):
 
     real_avg_name = folder_name + "real_avg_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-    np.savetxt(real_avg_name, real_avg)
+    np.savetxt(real_avg_name, [real_avg])
 
     # Randomly choose 100 connectede node pairs
     nodepair_num = 10000
@@ -1184,7 +1184,7 @@ def distance_inSRGG_oneSP(network_size, input_expected_degree, beta, ExternalSim
 
     # for large network, we only generate one network and randomly selected 1,000 node pair.
     # for small network, we generate 100 networks and selected all the node pair in the LCC
-    if N > 400:
+    if N > 200:
         distance_inlargeSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime)
     else:
         # Random select nodepair_num nodes in the largest connected component
@@ -1204,7 +1204,8 @@ def compute_deviation():
     #          (64, 4, 1, 7), (64, 4, 1, 8), (64, 4, 1, 9)]
 
 
-    Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    # Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    Nvec = [100, 215, 464, 1000, 2154, 4642, 10000]
     beta_vec = [8]
     # kvec = [2,3,5,8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155, 266, 457, 787, 1356, 2337, 4028, 6943, 11972, 20647,29999]
     input_ED_vec = [10]
@@ -1213,7 +1214,7 @@ def compute_deviation():
             for beta in beta_vec:  # 因为 beta_list 是 [4,8, 128]
                 tasks.append((N,inputED, beta,0))
 
-    with mp.Pool(processes=4) as pool:
+    with mp.Pool(processes=1) as pool:
         pool.starmap(distance_inSRGG_oneSP, tasks)
 
 
