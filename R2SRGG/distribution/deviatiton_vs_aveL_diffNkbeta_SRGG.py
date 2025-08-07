@@ -963,36 +963,36 @@ def distance_inlargeSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime):
 
     folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
 
-    try:
-        FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-            Nn=N, EDn=ED, betan=beta)
-        G = loadSRGGandaddnode(N, FileNetworkName)
-        # load coordinates with noise
-        Coorx = []
-        Coory = []
+    # try:
+    #     FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     G = loadSRGGandaddnode(N, FileNetworkName)
+    #     # load coordinates with noise
+    #     Coorx = []
+    #     Coory = []
+    #
+    #     FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     with open(FileNetworkCoorName, "r") as file:
+    #         for line in file:
+    #             if line.startswith("#"):
+    #                 continue
+    #             data = line.strip().split("\t")  # 使用制表符分割
+    #             Coorx.append(float(data[0]))
+    #             Coory.append(float(data[1]))
+    # except:
+    #     G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    #     FileNetworkName = folder_name+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     nx.write_edgelist(G, FileNetworkName)
+    #     FileNetworkCoorName = folder_name+"network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     with open(FileNetworkCoorName, "w") as file:
+    #         for data1, data2 in zip(Coorx, Coory):
+    #             file.write(f"{data1}\t{data2}\n")
 
-        FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
-            Nn=N, EDn=ED, betan=beta)
-        with open(FileNetworkCoorName, "r") as file:
-            for line in file:
-                if line.startswith("#"):
-                    continue
-                data = line.strip().split("\t")  # 使用制表符分割
-                Coorx.append(float(data[0]))
-                Coory.append(float(data[1]))
-    except:
-        G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
-        FileNetworkName = folder_name+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-            Nn=N, EDn=ED, betan=beta)
-        nx.write_edgelist(G, FileNetworkName)
-        FileNetworkCoorName = folder_name+"network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
-            Nn=N, EDn=ED, betan=beta)
-        with open(FileNetworkCoorName, "w") as file:
-            for data1, data2 in zip(Coorx, Coory):
-                file.write(f"{data1}\t{data2}\n")
 
-
-    # G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
     # #     # if ExternalSimutime == 0:
     # FileNetworkName = folder_name+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
     #     Nn=N, EDn=ED, betan=beta)
@@ -1181,7 +1181,7 @@ def distance_inSRGG_oneSP(network_size, input_expected_degree, beta, ExternalSim
     print("input para:", (N, ED, beta),flush=True)
 
     rg = RandomGenerator(-12)
-    rseed = random.randint(0, 100)
+    rseed = random.randint(0, 1000)
     for i in range(rseed):
         rg.ran1()
 
@@ -1195,40 +1195,33 @@ def distance_inSRGG_oneSP(network_size, input_expected_degree, beta, ExternalSim
 
 def compute_deviation():
     tasks = []
-    # tasks = [(8, 128, 0.0005,0), (8, 128, 0.005,0), (16, 128, 0.005,0), (16, 128, 0.5,0), (32, 128, 0.005,0), (32, 128, 0.5,0),
-    #          (64, 128, 0.0005,0), (64, 128, 0.005,0), (64, 128, 0.05,0), (64, 128, 0.5,0), (128, 128, 0.0005,0),
-    #          (128, 128, 0.005,0), (128, 128, 0.05,0), (128, 128, 0.5,0)]
-
-    # for simutime in range(10):
-    #     tasks.append((32, 128, 0.1, simutime))
-    # for simutime in range(10):
-    #     tasks.append((32, 8, 1, simutime))
-    # tasks = [(32, 8, 0.1, 0), (64, 4, 1, 1), (64, 4, 1, 2), (64, 4, 1, 3), (64, 4, 1, 4), (64, 4, 1, 5), (64, 4, 1, 6),
-    #          (64, 4, 1, 7), (64, 4, 1, 8), (64, 4, 1, 9)]
+    tasks = [(999,10,8,0)]
+    with mp.Pool(processes=1) as pool:
+        pool.starmap(distance_inSRGG_oneSP, tasks)
 
     # simu1: diff N
     # Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
-    Nvec = [100, 215, 464, 1000, 2154, 4642, 10000]
-    beta_vec = [8]
-    input_ED_vec = [10]
-    for N in Nvec:
-        for inputED in input_ED_vec:
-            for beta in beta_vec:
-                tasks.append((N,inputED, beta,0))
-    with mp.Pool(processes=4) as pool:
-        pool.starmap(distance_inSRGG_oneSP, tasks)
-
-    # simu2: diff beta
-    Nvec = [100, 1000, 10000]
-    beta_vec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
-    input_ED_vec = [10]
-    for N in Nvec:
-        for inputED in input_ED_vec:
-            for beta in beta_vec:
-                tasks.append((N, inputED, beta, 0))
-
-    with mp.Pool(processes=4) as pool:
-        pool.starmap(distance_inSRGG_oneSP, tasks)
+    # Nvec = [100, 215, 464, 1000, 2154, 4642, 10000]
+    # beta_vec = [8]
+    # input_ED_vec = [10]
+    # for N in Nvec:
+    #     for inputED in input_ED_vec:
+    #         for beta in beta_vec:
+    #             tasks.append((N,inputED, beta,0))
+    # with mp.Pool(processes=4) as pool:
+    #     pool.starmap(distance_inSRGG_oneSP, tasks)
+    #
+    # # simu2: diff beta
+    # Nvec = [100, 1000, 10000]
+    # beta_vec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
+    # input_ED_vec = [10]
+    # for N in Nvec:
+    #     for inputED in input_ED_vec:
+    #         for beta in beta_vec:
+    #             tasks.append((N, inputED, beta, 0))
+    #
+    # with mp.Pool(processes=4) as pool:
+    #     pool.starmap(distance_inSRGG_oneSP, tasks)
 
     # # simu3: diff ED
     # Nvec = [10, 100, 1000, 10000]

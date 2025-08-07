@@ -82,6 +82,17 @@ def load_L(N, ED, beta, ExternalSimutime, folder_name):
     return ave_L, std_L, L
 
 
+def load_dev(N, ED, beta, ExternalSimutime, folder_name):
+    deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
+    ave_L = np.mean(ave_deviation_for_a_para_comb)
+    std_L = np.std(ave_deviation_for_a_para_comb)
+
+    return ave_L, std_L, ave_deviation_for_a_para_comb
+
+
+
 def load_resort_data(N, beta):
     kvec = list(range(2, 10)) + [10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 99]  # FOR N =10
     exemptionlist = []
@@ -96,11 +107,11 @@ def load_resort_data(N, beta):
                 for ExternalSimutime in [0]:
                     if N < 200:
                         try:
-                            real_ave_degree_name = folder_name+"real_ave_degree_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                            real_ave_degree_name = folder_name+"real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                                 Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                             real_ave_degree = np.loadtxt(real_ave_degree_name)
                             real_ave_degree_vec = real_ave_degree_vec + list(real_ave_degree)
-                            nodepairs_for_eachgraph_vec_name = folder_name+"nodepairs_for_eachgraph_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                            nodepairs_for_eachgraph_vec_name = folder_name+"nodepairs_for_eachgraph_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                                 Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                             node_pairs_vec = np.loadtxt(nodepairs_for_eachgraph_vec_name, dtype=int)
 
@@ -166,10 +177,17 @@ def load_large_network_results_dev_vs_avg(N, beta, kvec):
                         # G = loadSRGGandaddnode(N, FileNetworkName)
                         # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
                         # # print("real ED:", real_avg)
-                        real_avg_name = folder_name + "real_avg_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
-                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                        real_avg = np.loadtxt(real_avg_name)
-                        real_ave_degree_vec.append(real_avg)
+                        if N>200:
+                            real_avg_name = folder_name + "real_avg_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            real_avg = np.loadtxt(real_avg_name)
+                            real_ave_degree_vec.append(real_avg)
+                        else:
+                            real_ave_degree_name = folder_name + "real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            real_avg = np.loadtxt(real_ave_degree_name)
+                            real_ave_degree_vec.append(np.mean(real_avg))
+
 
                         deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -204,10 +222,11 @@ def load_large_network_results_dev_vs_avg(N, beta, kvec):
 
 
 def plot_L_with_avg_for_one_network():
+    # Figure 4b
     # the x-axis is the input average degree
     N = 10000
     beta = 4
-    kvec = [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105,
+    kvec = [2.2,  3.0, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105,
             9999, 16479, 27081, 44767, 73534, 121205, 199999]
     # kvec = [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105,
     #         9999,
@@ -246,6 +265,7 @@ def plot_L_with_avg_for_one_network():
     # plt.yticks([0, 0.1, 0.2, 0.3])
     plt.yscale('log')
     plt.xscale('log')
+    plt.ylim([0.07,3])
     plt.xlabel(r'$\langle D \rangle$', fontsize=28)
     plt.ylabel(r'$\langle L \rangle$', fontsize=28)
     plt.xticks(fontsize=30)
@@ -270,19 +290,22 @@ def plot_L_with_avg_for_one_network():
 
 
 def plot_L_with_avg():
-    # Figure 3(b)
+    # Figure 4(b)
     # the x-axis is the input average degree
-    Nvec = [10, 100, 1000, 10000]
-    # Nvec = [1000]
+    Nvec = [100, 1000, 10000]
+    # Nvec = [100]
     real_ave_degree_dict = {}
     ave_L = {}
     std_L = {}
+    # [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+    #  3727, 6105,
+    #  9999, 16479, 27081, 44767, 73534, 121205, 199999]
     kvec_dict = {
         100: [2, 3, 4, 5, 6, 8, 10, 12, 14, 17, 22, 27, 33, 40, 49, 60, 73, 89, 113, 149, 198, 260, 340, 446, 584,
               762, 993, 1292, 1690, 2276, 3142, 4339],
         1000: [2, 3, 4, 5, 6, 7, 8, 11, 15, 20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999, 1425, 2033, 2900,
                4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168],
-        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+        10000: [2.2,  3.0, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
                 3727, 6105,
                 9999, 16479, 27081, 44767, 73534, 121205, 199999]}
 
@@ -313,6 +336,7 @@ def plot_L_with_avg():
     fig, ax = plt.subplots(figsize=(9, 6))
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    colors = ["#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     # colorvec2 = ['#9FA9C9', '#D36A6A']
     for N_index in range(len(Nvec)):
         N = Nvec[N_index]
@@ -337,12 +361,12 @@ def plot_L_with_avg():
 
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
-    # plt.ylim(0, 0.30)
+    plt.ylim(0.02, 2)
     # plt.yticks([0, 0.1, 0.2, 0.3])
     plt.yscale('log')
     plt.xscale('log')
     plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
-    plt.ylabel(r'Average distance, $\langle L \rangle$', fontsize=26)
+    plt.ylabel(r'Average stretch, $\langle L \rangle$', fontsize=26)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
@@ -351,7 +375,7 @@ def plot_L_with_avg():
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
     #     betan=beta)
     # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\L_vs_realavg.svg"
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\L_vs_realavg.svg"
     plt.savefig(
         picname,
         format="svg",
@@ -365,7 +389,7 @@ def plot_L_with_avg():
 
 def plot_L_vs_N():
     # Figure 4 a(1)
-    Nvec = [22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    Nvec = [22, 46, 100, 215, 464, 999, 2154, 4642, 10000]
     ED = 10
     beta = 8
     ave_L_dict = {}
@@ -373,7 +397,7 @@ def plot_L_vs_N():
     ExternalSimutime = 0
     folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
     for N in Nvec:
-        ave_L, std_L = load_L(N, ED, beta, ExternalSimutime, folder_name)
+        ave_L, std_L,_ = load_L(N, ED, beta, ExternalSimutime, folder_name)
         ave_L_dict[N] = ave_L
         std_L_dict[N] = std_L
 
@@ -392,6 +416,7 @@ def plot_L_vs_N():
         error.append(std_L_dict[N])
     plt.errorbar(Nvec, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
                  color=colors[4])
+    print(y)
 
     text = r"$\mathbb{E}[D] = 10$, $\beta = 8$"
     plt.text(
@@ -407,9 +432,9 @@ def plot_L_vs_N():
     plt.xlabel(r'$N$', fontsize=28)
     plt.ylabel(r'$\langle L \rangle$', fontsize=28)
     plt.xscale('log')
-    plt.yscale('log')
+    # plt.yscale('log')
     plt.xticks(fontsize=30)
-    yticks = np.arange(0, 0.21, 0.1)
+    yticks = [0.4,0.6,0.8,1.0]
     plt.yticks(yticks, fontsize=30)
     # plt.legend(fontsize=26, loc=(0.6, 0.5))
     plt.tick_params(axis='both', which="both", length=6, width=1)
@@ -431,15 +456,20 @@ def plot_L_vs_N():
 
 
 def plot_L_vs_beta(ED):
+    # Figure 4
     # the x-axis is the real average degree
     # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
     # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 7, 8, 10, 12, 16, 32, 64, 128]
     # betavec = [2.1, 2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 4, 5, 6, 8, 16, 32, 64, 128]
     betavec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
+
+    # betavec  = [3.0, 3.2, 3.4, 3.6,3.8, 3.9, 4.0,4.1,4.2,4.3, 4.4,4.5, 4.6, 4.8, 5.0, 5.2]
     print(len(betavec))
     ExternalSimutime = 0
-    Nvec = [10, 100, 1000, 10000]
+    Nvec = [100, 1000, 10000]
+    # Nvec = [999,9999]
+
     folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
 
     clustering_coefficient_dict = {}
@@ -452,10 +482,19 @@ def plot_L_vs_beta(ED):
     for N in Nvec:
         ave_vec = []
         std_vec = []
-        for beta in betavec:
-            L_ave, L_std, _ = load_L(N, ED, beta, ExternalSimutime, folder_name)
-            ave_vec.append(L_ave)
-            std_vec.append(L_std)
+        N1 = N
+        if N>10:
+            # if N>100:
+            #     betavec = [2.2, 3.0, 4.2, 5.9, 8.3, 11.7, 16.5, 23.2, 32.7, 46.1, 64.9, 91.5, 128.9, 181.7, 256]
+            for beta in betavec:
+                # if beta==4.2 and N>100:
+                #     N = N1 - 1
+                # else:
+                #     N = N1
+                L_ave, L_std, _ = load_L(N, ED, beta, ExternalSimutime, folder_name)
+                # L_ave, L_std, _ = load_dev(N, ED, beta, ExternalSimutime, folder_name)
+                ave_vec.append(L_ave)
+                std_vec.append(L_std)
         ave_deviation_dict[N] = ave_vec
         std_deviation_dict[N] = std_vec
 
@@ -465,13 +504,13 @@ def plot_L_vs_beta(ED):
     #           [0.9290, 0.6940, 0.1250],
     #           [0.4940, 0.1840, 0.5560],
     #           [0.4660, 0.6740, 0.1880]]
-    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
-    lengend = [r"$N=10$", r"$N=10^2$", r"$N=10^3$", r"$N=10^4$"]
+    colors = ["#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    lengend = [r"$N=10^2$", r"$N=10^3$", r"$N=10^4$"]
 
-    for N_index in range(4):
+    for N_index in range(len(Nvec)):
         N = Nvec[N_index]
         y = ave_deviation_dict[N]
-        print(len(y))
+        print(y)
         error = std_deviation_dict[N]
         if N <= ED:
             plt.errorbar([], y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o',
@@ -494,12 +533,12 @@ def plot_L_vs_beta(ED):
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
     plt.xlabel(r'Temperature parameter, $\beta$', fontsize=26)
-    plt.ylabel(r'Average distance, $\langle L \rangle$', fontsize=26)
+    plt.ylabel(r'Average stretch, $\langle L \rangle$', fontsize=26)
     plt.xscale('log')
     # plt.yscale('log')
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
-    plt.legend(fontsize=26, loc=(0.6, 0.5))
+    plt.legend(fontsize=26, loc=(0.6, 0.6))
     plt.tick_params(axis='both', which="both", length=6, width=1)
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\DeviationVsbetaED{EDn}logy2.pdf".format(
     #     EDn=ED)
@@ -518,10 +557,11 @@ def plot_L_vs_beta(ED):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    # Figure 4
     """
     # STEP 1  L versus real average degree
     """
-    plot_L_with_avg()
+    # plot_L_with_avg()
 
     """
     # STEP 1.5  L versus real average degree for one network
@@ -536,4 +576,6 @@ if __name__ == '__main__':
     """
     # STEP 3 plot L vs beta
     """
-    # plot_L_vs_beta(10)
+    plot_L_vs_beta(10)
+
+
