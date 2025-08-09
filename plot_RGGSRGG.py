@@ -172,8 +172,10 @@ def generate_and_plot_SRGG_2(N, avg, beta):
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
 
-    nx.draw_networkx_edges(G, pos, edge_color='#C89FBF', width=2)
+    nx.draw_networkx_edges(G, pos, edge_color='#7A7DB1', width=2)
     nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='#6FB494', width=5)
+    nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='black', width=2, style='dashed',)
+
 
     # node_colors = ['#62ABC7' if n in diameter_path else '#7A7DB1' for n in G.nodes]
     # node_sizes = [40 if n in diameter_path else 30 for n in G.nodes]
@@ -181,25 +183,25 @@ def generate_and_plot_SRGG_2(N, avg, beta):
     # 绘制空心节点
     nx.draw_networkx_nodes(G, pos,
                            node_size=30,
-                           node_color='#7A7DB1',  # 空心节点
-                           edgecolors='#7A7DB1',  # 圆圈颜色
-                           linewidths=6)
+                           node_color='#D08082',  # 空心节点
+                           edgecolors="black",  # 圆圈颜色
+                           linewidths=1)
 
-    nx.draw_networkx_nodes(G, pos, nodelist=diameter_path, node_size=50, node_color='#6FB494',edgecolors='#6FB494')
+    nx.draw_networkx_nodes(G, pos, nodelist=diameter_path, node_size=50, node_color='#6FB494',edgecolors="black")
     # nx.draw_networkx_labels(G, pos)
     # text = r"$\mathbb{E}[D] = 3.5$"
-    text = r"$N = 150\\$, $\beta = 4$,\n $\mathbb{E}[D] = 12$"
-    text = r"$N = 150$" +"\n"+ r"$\beta = 4$" + "\n" + r"$\mathbb{E}[D] = 12$"
-    ax.text(
-        0.5, 1,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
-        text,
-        transform=ax.transAxes,  # 使用轴坐标
-        fontsize=26,  # 字体大小
-        ha='left',  # 水平居中对齐
-        va='bottom'  # 垂直对齐方式
-    )
+    # text = r"$N = 150\\$, $\beta = 8$,\n $\mathbb{E}[D] = 12$"
+    # text = r"$N = 150$" +"\n"+ r"$\beta = 8$" + "\n" + r"$\mathbb{E}[D] = 12$"
+    # ax.text(
+    #     0.5, 1,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+    #     text,
+    #     transform=ax.transAxes,  # 使用轴坐标
+    #     fontsize=26,  # 字体大小
+    #     ha='left',  # 水平居中对齐
+    #     va='bottom'  # 垂直对齐方式
+    # )
 
-    plt.axis('equal')  # 保持横纵比例一致，图形不会变形
+    # plt.axis('equal')  # 保持横纵比例一致，图形不会变形
     plt.axis('off')  # 关闭坐标轴
     plt.tight_layout()
     # picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\SRGG_N{N}_ED{avg}_avg{real_avg}.pdf"
