@@ -416,7 +416,7 @@ def load_ave_dev(N, kvec, beta, filefoldername):
             for ED in kvec:
                 for ExternalSimutime in [0]:
                     try:
-                        ave_deviation_name = filefoldername+ "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        ave_deviation_name = filefoldername+ "max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                         ave_deviation_for_a_para_comb = np.loadtxt(ave_deviation_name)
                         ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
@@ -508,7 +508,7 @@ def plot_dev_vs_ED_diffN_and_compute_the_min_meandev():
     plt.close()
 
     fig, ax = plt.subplots(figsize=(9, 6))
-    plt.plot(Nvec,min_ave_list,"o--", label=r'min avg $<d>$')
+    plt.plot(Nvec,min_ave_list,"o--", label=r'local minimum of average deviation $<d>$')
 
     popt2, pcov2 = curve_fit(power_law, Nvec, min_ave_list)
     a2, alpha2 = popt2
@@ -520,7 +520,8 @@ def plot_dev_vs_ED_diffN_and_compute_the_min_meandev():
 
 
 
-    plt.plot(Nvec, same_k_list, "s-", label=r'E[D] = 10')
+    plt.plot(Nvec, same_k_list, "s-", label=r'average deviation $<d>$ when E[D] = 10')
+    print(same_k_list)
 
     popt2, pcov2 = curve_fit(power_law, Nvec, same_k_list)
     a2, alpha2 = popt2
@@ -540,7 +541,19 @@ def plot_dev_vs_ED_diffN_and_compute_the_min_meandev():
         R_solution, = fsolve(equation, R0, args=(N))
         R_values.append(R_solution)
         R0 = R_solution  # 用上一个解作为下一个初始猜测，提高稳定性
-    plt.plot(N_values, R_values, linewidth = 5,color='green', label=r'$\frac{1}{4R^2}(1 - pi * R^2)^N = 1$')
+    plt.plot(N_values, R_values, linewidth = 5, label=r'$\frac{1}{4R^2}(1 - pi * R^2)^N = 1$')
+
+    y = [np.float64(0.02239038090453999), np.float64(0.011195927135359487), np.float64(0.005701927591197476),
+     np.float64(0.00330979238179012), np.float64(0.001401238406148333), np.float64(0.0006377411890832632),
+     np.float64(0.00029571431478738445), np.float64(0.000155917276102747)]
+
+    plt.plot(Nvec, y, "^-", label=r'min distance from node to random line')
+
+    y2 = [np.float64(0.05665113851182812), np.float64(0.0344894779472734), np.float64(0.02102352879923221),
+     np.float64(0.01255061221667929), np.float64(0.007352634182665045), np.float64(0.004399610295107591),
+     np.float64(0.0026259753003719287), np.float64(0.0015634967677718398)]
+
+    plt.plot(Nvec, y2, ">-", label=r'average minimum deviation d')
 
     plt.xscale('log')
     plt.yscale('log')

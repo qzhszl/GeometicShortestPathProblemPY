@@ -100,7 +100,7 @@ def generate_and_plot_SRGG(N, avg, beta):
 
 
 def generate_and_plot_SRGG_2(N, avg, beta):
-    # Figure 1
+    # Figure 2
     rg = RandomGenerator(-12)
     rseed = random.randint(0, 100)
     for i in range(rseed):
