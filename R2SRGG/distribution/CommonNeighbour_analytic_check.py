@@ -568,6 +568,48 @@ def check_modelwithN():
     plt.show()
 
 
+def integrand(xi, yi, xj, yj, xk, yk):
+    rx = xj - xi
+    ry = yj - yi
+    sx = xk - xi
+    sy = yk - yi
+    numer = abs(rx * sy - ry * sx)
+    denom = np.hypot(rx, ry)  # sqrt(rx^2 + ry^2)
+
+    # 避免除以0或极小数引发数值不稳 —— 截断处理
+    tol = 1e-12
+    if denom < tol:
+        return 0.0
+    return numer / denom
+
+def compute_max_tailvalue():
+    """
+    compute the distance from a random node to random line
+    :return:
+    """
+    ranges = [
+        [0.0, 1.0],  # xi
+        [0.0, 1.0],  # yi
+        [0.0, 1.0],  # xj
+        [0.0, 1.0],  # yj
+        [0.0, 1.0],  # xk
+        [0.0, 1.0],  # yk
+    ]
+
+    # 可选：自适应积分参数（可以调整 epsabs / epsrel）
+    opts = {
+        'epsabs': 1e-3,  # 绝对误差容忍
+        'epsrel': 1e-3  # 相对误差容忍
+    }
+
+
+    # t0 = time.time()
+    # 注意：nquad 的函数签名是 func(*args) ，ranges 顺序按 func 参数顺序
+    result, abs_err = integrate.nquad(integrand, ranges, opts=[opts] * 6)
+    # t1 = time.time()
+
+    print("六重积分结果（确定性自适应 nquad）：")
+    print("  integral =", result)
 
 
 
@@ -612,7 +654,7 @@ if __name__ == '__main__':
     """
     check distance
     """
-    check_modelwithdistance()
+    # check_modelwithdistance()
 
     """
     check alpha
@@ -632,3 +674,10 @@ if __name__ == '__main__':
     # check_modelwithN()
 
     # check_model_withalpha()
+
+
+
+    """
+    compute_max_tailvalue()
+    """
+    compute_max_tailvalue()
