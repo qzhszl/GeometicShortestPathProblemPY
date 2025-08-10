@@ -4,6 +4,8 @@
 @Author: Zhihao Qiu
 @Date: 05-8-2025
 """
+import random
+
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -577,5 +579,6 @@ if __name__ == '__main__':
     # STEP 3 plot L vs beta
     """
     # plot_L_vs_beta(10)
+
 
 
