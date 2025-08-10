@@ -266,10 +266,10 @@ def plot_L_with_avg_for_one_network():
     plt.yscale('log')
     plt.xscale('log')
     plt.ylim([0.07,3])
-    plt.xlabel(r'$\langle D \rangle$', fontsize=28)
-    plt.ylabel(r'$\langle L \rangle$', fontsize=28)
-    plt.xticks(fontsize=30)
-    plt.yticks(fontsize=30)
+    plt.xlabel(r'$\langle D \rangle$', fontsize=32)
+    plt.ylabel(r'$\langle L \rangle$', fontsize=32)
+    plt.xticks(fontsize=32)
+    plt.yticks(fontsize=32)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
     # plt.legend(fontsize=26, loc=(0.5, 0.1))
     plt.tick_params(axis='both', which="both", length=6, width=1)
@@ -566,7 +566,7 @@ if __name__ == '__main__':
     """
     # STEP 1.5  L versus real average degree for one network
     """
-    # plot_L_with_avg_for_one_network()
+    plot_L_with_avg_for_one_network()
 
     """
     # STEP 2 plot L vs N
@@ -576,6 +576,6 @@ if __name__ == '__main__':
     """
     # STEP 3 plot L vs beta
     """
-    plot_L_vs_beta(10)
+    # plot_L_vs_beta(10)
 
 
