@@ -173,8 +173,10 @@ def plot_predict_geo_sidevscenter(Edindex, betaindex, legendpara):
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels)
     ax.set_yticks([0,0.1])
-    ax.text(0.1, 0.55, r'$N = 10^4$' + "\n" + r'$\beta = 4$' + "\n" + r"$\mathbb{E}[D] = 5$",transform=ax.transAxes,
-             fontsize=34)
+    # ax.text(0.1, 0.55, r'$N = 10^4$' + "\n" + r'$\beta = 4$' + "\n" + r"$\mathbb{E}[D] = 5$",transform=ax.transAxes,
+    #          fontsize=34)
+    ax.text(0.1, 0.55, r'$N = 10^4$' + "\n" + r"$\mathbb{E}[D] = 5$" + "\n" + r'$\beta = 4$', transform=ax.transAxes,
+            fontsize=34)
     ax.tick_params(axis='x', pad=15)
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
