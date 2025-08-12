@@ -125,7 +125,7 @@ def generate_and_plot_SRGG_2(N, avg, beta):
 
 
     # G, xx, yy = R2SRGG(N, avg, beta, rg, SaveNetworkPath=None)
-    #
+
     # FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
     #                 Nn=N, EDn=avg, betan=beta)
     # nx.write_edgelist(G, FileNetworkName)
@@ -145,8 +145,8 @@ def generate_and_plot_SRGG_2(N, avg, beta):
 
     pos = {i: (xx[i], yy[i]) for i in range(N)}
 
-    nodes = 69
-    nodet = 73
+    nodes = 129
+    nodet = 99
     diameter_path = nx.shortest_path(G,nodes,nodet)
 
     # lengths = dict(nx.all_pairs_shortest_path_length(G))
@@ -164,17 +164,18 @@ def generate_and_plot_SRGG_2(N, avg, beta):
 
 
     # 绘制图
-    fig, ax = plt.subplots(figsize=(6, 4.5))
+    fig, ax = plt.subplots(figsize=(3, 1))
     # plt.text(0.2, 1.2, r'$\mathbb{E}[D] = 2, \mathbb{E}[D] = 5, \mathbb{E}[D] = 10$',
     #          transform=ax.transAxes,
     #          fontsize=22,
     #          bbox=dict(facecolor='white', alpha=0.5))
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
-
+    # nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=800, font_size=12)
+    # plt.show()
     nx.draw_networkx_edges(G, pos, edge_color='#7A7DB1', width=2)
     nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='#6FB494', width=5)
-    nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='black', width=2, style='dashed',)
+    # nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='black', width=2, style='dashed',)
 
 
     # node_colors = ['#62ABC7' if n in diameter_path else '#7A7DB1' for n in G.nodes]
@@ -232,7 +233,7 @@ def generate_plot_model_graph():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # generate_and_plot_SRGG(200,10,4)
-    generate_and_plot_SRGG_2(150, 12, 8)
+    generate_and_plot_SRGG_2(200, 8, 8)
 
     # generate_plot_model_graph()
 

@@ -269,7 +269,7 @@ def plot_L_with_avg_for_one_network():
     plt.xscale('log')
     plt.ylim([0.07,3])
     plt.xlabel(r'$\langle D \rangle$', fontsize=32)
-    plt.ylabel(r'$\langle L \rangle$', fontsize=32)
+    plt.ylabel(r'$\langle S \rangle$', fontsize=32)
     plt.xticks(fontsize=32)
     plt.yticks(fontsize=32)
     # plt.title('Errorbar Curves with Minimum Points after Peak')

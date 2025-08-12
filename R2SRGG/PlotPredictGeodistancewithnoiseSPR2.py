@@ -251,6 +251,183 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
     print(exemptionlist)
 
 
+def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex,legendpara):
+    # Figure 5
+    # plot PRECISION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ED_list = [2,5, 10, 100, 1000]  # Expected degrees
+    ED = ED_list[Edindex]
+    beta_list = [2.1, 4, 8, 16, 32, 64, 128]
+    beta = beta_list[betaindex]
+    RGG_precision_list_all_ave = []
+    SRGG_precision_list_all_ave = []
+    Geo_precision_list_all_ave = []
+    Random_precision_list_all_ave = []
+    Random_precision_list_all_std = []
+    RGG_precision_list_all_std = []
+    SRGG_precision_list_all_std = []
+    Geo_precision_list_all_std = []
+    exemptionlist = []
+
+    for noise_amplitude in [0, 0.001,0.01,0.1, 1]:
+        PrecisonRGG_specificnoise = []
+        for ExternalSimutime in range(20):
+            try:
+                precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2=noise_amplitude)
+                Precison_RGG_5_times = np.loadtxt(precision_RGG_Name)
+                PrecisonRGG_specificnoise.extend(Precison_RGG_5_times)
+            except FileNotFoundError:
+                exemptionlist.append((ED,beta,noise_amplitude,ExternalSimutime))
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        RGG_precision_list_all_ave.append(np.mean(PrecisonRGG_specificnoise))
+        RGG_precision_list_all_std.append(np.std(PrecisonRGG_specificnoise))
+    # print("lenpre", len(PrecisonRGG_specificnoise))
+        PrecisonSRGG_specificnoise = []
+        for ExternalSimutime in range(20):
+            try:
+                precision_SRGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2=noise_amplitude)
+                Precison_SRGG_5_times = np.loadtxt(precision_SRGG_Name)
+                PrecisonSRGG_specificnoise.extend(Precison_SRGG_5_times)
+            except FileNotFoundError:
+                pass
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        SRGG_precision_list_all_ave.append(np.mean(PrecisonSRGG_specificnoise))
+        SRGG_precision_list_all_std.append(np.std(PrecisonSRGG_specificnoise))
+        # print("lenpre", len(PrecisonRGG_specificnoise))
+
+        PrecisonGeodis_specificnoise = []
+        for ExternalSimutime in range(20):
+            try:
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2=noise_amplitude)
+                Precison_Geodis_5_times = np.loadtxt(precision_Geodis_Name)
+                PrecisonGeodis_specificnoise.extend(Precison_Geodis_5_times)
+            except FileNotFoundError:
+                pass
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        Geo_precision_list_all_ave.append(np.mean(PrecisonGeodis_specificnoise))
+        Geo_precision_list_all_std.append(np.std(PrecisonGeodis_specificnoise))
+        # print("lenpre", len(PrecisonRGG_specificnoise))
+
+        PrecisonRandom_specificnoise = []
+        for ExternalSimutime in range(1):
+            try:
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
+                PrecisonRandom_specificnoise = np.loadtxt(precision_Geodis_Name)
+            except FileNotFoundError:
+                pass
+
+        Random_precision_list_all_ave.append(np.mean(PrecisonRandom_specificnoise))
+        Random_precision_list_all_std.append(np.std(PrecisonRandom_specificnoise))
+
+
+    fig, ax = plt.subplots(figsize=(6, 4.5))
+    # Data
+    y1 = RGG_precision_list_all_ave
+    y2 = SRGG_precision_list_all_ave
+    y3 = Geo_precision_list_all_ave
+    y4 = Random_precision_list_all_ave
+    y_error_lower = [p*0 for p in y1]
+    print(y4)
+    # X axis labels
+    # x_labels = ['0', '0.001', '0.01']
+    x_labels = ['0', r'$10^{-3}$', r'$10^{-2}$', r'$10^{-1}$', r'$10^{0}$']
+
+    # X axis positions for each bar group
+    x = np.arange(len(x_labels))
+
+    # Width of each bar
+    width = 0.15
+
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # Plotting the bars
+    bar1 = ax.bar(x - 1.5*width, y1, width, label='RGG+net',yerr=(y_error_lower,RGG_precision_list_all_std), capsize=5, color=colors[3])
+    bar2 = ax.bar(x-0.5*width, y2, width, label='SRGG+net', yerr=(y_error_lower,SRGG_precision_list_all_std), capsize=5, color=colors[0])
+    bar3 = ax.bar(x + 0.5*width, y3, width, label='Geo-based', yerr=(y_error_lower,Geo_precision_list_all_std), capsize=5, color=colors[2])
+    bar4 = ax.bar(x + 1.5*width, y4, width, label='Random', yerr=(y_error_lower, Random_precision_list_all_std), capsize=5,
+                  color=colors[1])
+
+    # Adding labels and title
+    # ax.set_ylim(0.0005,2)
+    ax.set_xlabel(r'Noise amplitude, $\alpha$', fontsize = 25)
+    ax.set_ylabel('Precision',fontsize = 25)
+    ax.set_yscale("log")
+    # title_name = "beta:{beta_n}, E[D]:{ed_n}".format(ed_n=ED, beta_n = beta)
+    # ax.set_title(title_name)
+    ax.set_xticks(x)
+    ax.set_xticklabels(x_labels)
+
+    if legendpara ==1:
+        leg = ax.legend(fontsize=18, handlelength=1,loc = (0.53, 0.52))
+        for text in leg.get_texts():
+            if text.get_text() == 'Geo-based':  # 按名称匹配
+                text.set_fontweight('bold')  # 加粗
+                # text.set_color('red')  # （可选）改颜色
+                # text.set_fontsize(14)  # （可选）改字体大小
+    ax.tick_params(direction='out')
+
+
+
+
+    plt.xticks(fontsize=22)
+    plt.yticks(fontsize=22)
+
+    # ytick_dict = {
+    #     (5, 4): [0, 0.1, 0.2],
+    #     (5, 8): [0, 0.1, 0.2, 0.3, 0.4],
+    #     (5, 128): [0, 0.2, 0.4, 0.6, 0.8, 1.0],
+    #     (2, 8): [0, 0.2, 0.4, 0.6, 0.8],
+    #     (10, 8): [0, 0.1, 0.2, 0.3, 0.4],
+    #     (100, 8): [0, 0.1, 0.2, 0.3, 0.4],
+    # }
+    # ytick_vec = ytick_dict[(ED, beta)]
+    # plt.yticks(ytick_vec, fontsize=22)
+
+    fignum_dict = {
+        (5, 4): "a",
+        (5, 8): "b",
+        (5, 128): "c",
+        (2, 8): "d",
+        (10, 8): "e",
+        (100, 8): "f",
+    }
+    fignum = fignum_dict[(ED, beta)]
+    ax.text(-0.23, 1.13, fr'({fignum}) $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
+            fontsize=25, verticalalignment='top', horizontalalignment='left')
+
+
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # Display the plot
+    # plt.show()
+    # figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
+    #             EDn=ED, betan=beta)
+    #
+    # fig.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
+    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N_withrandom.svg".format(
+                EDn=ED, betan=beta)
+    plt.savefig(
+        figname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    plt.show()
+    plt.close()
+    print(exemptionlist)
+
+
+
+
 def plot_predict_geodistance_Vs_reconstructionSRGG_withnoise_SP_R2_Netsci(Edindex, betaindex,legendpara):
     # plot PRECISION
     ED_list = [5, 10, 20, 40]  # Expected degrees
@@ -512,6 +689,179 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
     print(exemptionlist)
 
 
+
+def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara):
+    # Figure 5 recall
+    # plot recall!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    ED_list = [2,5, 10, 100, 1000]  # Expected degrees
+    ED = ED_list[Edindex]
+    beta_list = [2.1, 4, 8, 16, 32, 64, 128]
+    beta = beta_list[betaindex]
+    RGG_precision_list_all_ave = []
+    SRGG_precision_list_all_ave = []
+    Geo_precision_list_all_ave = []
+    Random_precision_list_all_ave = []
+    Random_precision_list_all_std = []
+    RGG_precision_list_all_std = []
+    SRGG_precision_list_all_std = []
+    Geo_precision_list_all_std = []
+    exemptionlist = []
+
+    for noise_amplitude in [0, 0.001, 0.01, 0.1, 1]:
+        PrecisonRGG_specificnoise = []
+        for ExternalSimutime in range(20):
+            try:
+                precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
+                Precison_RGG_5_times = np.loadtxt(precision_RGG_Name)
+                PrecisonRGG_specificnoise.extend(Precison_RGG_5_times)
+            except:
+                exemptionlist.append((ED, beta, noise_amplitude, ExternalSimutime))
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        RGG_precision_list_all_ave.append(np.mean(PrecisonRGG_specificnoise))
+        RGG_precision_list_all_std.append(np.std(PrecisonRGG_specificnoise))
+        # print("lenpre", len(PrecisonRGG_specificnoise))
+        PrecisonSRGG_specificnoise = []
+        for ExternalSimutime in range(20):
+            try:
+                precision_SRGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
+                Precison_SRGG_5_times = np.loadtxt(precision_SRGG_Name)
+                PrecisonSRGG_specificnoise.extend(Precison_SRGG_5_times)
+            except:
+                pass
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        SRGG_precision_list_all_ave.append(np.mean(PrecisonSRGG_specificnoise))
+        SRGG_precision_list_all_std.append(np.std(PrecisonSRGG_specificnoise))
+        # print("lenpre", len(PrecisonRGG_specificnoise))
+
+        PrecisonGeodis_specificnoise = []
+        for ExternalSimutime in range(20):
+            try:
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
+                Precison_Geodis_5_times = np.loadtxt(precision_Geodis_Name)
+                PrecisonGeodis_specificnoise.extend(Precison_Geodis_5_times)
+            except:
+                pass
+        # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
+        # PrecisonRGG_specificnoise = list(filter(lambda x: not (math.isnan(x) if isinstance(x, float) else False), PrecisonRGG_specificnoise))
+        # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
+        Geo_precision_list_all_ave.append(np.mean(PrecisonGeodis_specificnoise))
+        Geo_precision_list_all_std.append(np.std(PrecisonGeodis_specificnoise))
+        # print("lenpre", len(PrecisonRGG_specificnoise))
+
+        PrecisonRandom_specificnoise = []
+        for ExternalSimutime in range(1):
+            try:
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
+                PrecisonRandom_specificnoise = np.loadtxt(precision_Geodis_Name)
+            except FileNotFoundError:
+                pass
+
+        Random_precision_list_all_ave.append(np.mean(PrecisonRandom_specificnoise))
+        Random_precision_list_all_std.append(np.std(PrecisonRandom_specificnoise))
+
+    fig, ax = plt.subplots(figsize=(6, 4.5))
+
+    # ax.set_ylim(0,1.1)
+    # Data
+    y1 = RGG_precision_list_all_ave
+    y2 = SRGG_precision_list_all_ave
+    y3 = Geo_precision_list_all_ave
+    y4 = Random_precision_list_all_ave
+    y_error_lower = [p * 0 for p in y1]
+    # X axis labels
+    x_labels = ['0', r'$10^{-3}$', r'$10^{-2}$', r'$10^{-1}$', r'$10^{0}$']
+
+    # X axis positions for each bar group
+    x = np.arange(len(x_labels))
+
+    # Width of each bar
+    width = 0.15
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
+    # Plotting the bars
+    bar1 = ax.bar(x - 1.5*width, y1, width, label='RGG+net',yerr=(y_error_lower,RGG_precision_list_all_std), capsize=5, color=colors[3])
+    bar2 = ax.bar(x-0.5*width, y2, width, label='SRGG+net', yerr=(y_error_lower,SRGG_precision_list_all_std), capsize=5, color=colors[0])
+    bar3 = ax.bar(x + 0.5*width, y3, width, label='Geo-based', yerr=(y_error_lower,Geo_precision_list_all_std), capsize=5, color=colors[2])
+    bar4 = ax.bar(x + 1.5*width, y4, width, label='Random', yerr=(y_error_lower, Random_precision_list_all_std), capsize=5,
+                  color=colors[1])
+
+    # Adding labels and title
+    ax.set_xlabel(r'Noise amplitude, $\alpha$',fontsize = 25)
+    ax.set_ylabel('Recall',fontsize = 25)
+
+    # title_name = "beta:{beta_n}, E[D]:{ed_n}".format(ed_n=ED, beta_n = beta)
+    # ax.set_title(title_name)
+    ax.set_xticks(x)
+    ax.set_xticklabels(x_labels)
+    ax.set_yscale("log")
+    # if legendpara == 1:
+    #     ax.legend(fontsize=18, handlelength=1.5, loc=(0.53, 0.52))
+
+    if legendpara ==1:
+        leg = ax.legend(fontsize=18, handlelength=1,loc = (0.53, 0.52))
+        for text in leg.get_texts():
+            if text.get_text() == 'Geo-based':  # 按名称匹配
+                text.set_fontweight('bold')  # 加粗
+                # text.set_color('red')  # （可选）改颜色
+                # text.set_fontsize(14)  # （可选）改字体大小
+
+    ax.tick_params(direction='out')
+    plt.xticks(fontsize=22)
+    plt.yticks(fontsize=22)
+
+    # ytick_dict = {
+    #     (5, 4): [0,0.1,0.2],
+    #     (5, 8): [0,0.1,0.2,0.3,0.4],
+    #     (5, 128): [0,0.2,0.4,0.6,0.8,1.0],
+    #     (2, 8): [0,0.2,0.4,0.6,0.8],
+    #     (10, 8):[0,0.1,0.2,0.3,0.4,0.5],
+    #     (100, 8): [0,0.1,0.2,0.3,0.4,0.5,0.6],
+    # }
+    # ytick_vec = ytick_dict[(ED, beta)]
+    #
+    # plt.yticks(ytick_vec,fontsize=22)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    fignum_dict = {
+        (5,4): "a",
+        (5,8): "b",
+        (5,128): "c",
+        (2, 8): "d",
+        (10, 8): "e",
+        (100, 8): "f",
+    }
+    fignum = fignum_dict[(ED,beta)]
+    ax.text(-0.23, 1.13, fr'({fignum}) $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
+            fontsize=25, verticalalignment='top', horizontalalignment='left')
+    # ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+    # Display the plot
+
+    # figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
+    #     EDn=ED, betan=beta)
+    # plt.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
+    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}Nwithrandom.svg".format(
+        EDn=ED, betan=beta)
+
+    plt.savefig(
+        figname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    plt.show()
+    plt.close()
+    print(exemptionlist)
+
+
 def check_data_wehavenow():
     ED_list = [5, 10, 20, 40]  # Expected degrees
 
@@ -725,10 +1075,12 @@ def plot_heatmap_precision(noiseindex):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    datatest(2, 2, 0)
+    # datatest(2, 2, 0)
 
-
-    # # # # STEP 1 plot the figure
+    """
+    STEP 1 plot Figure 5 precison: bar figure
+    """
+    # # # # STEP 1 plot the figure 5 precison
     # for Edindex in range(5):
     #     for betaindex in range(7):
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex,legendpara=0)
@@ -739,10 +1091,40 @@ if __name__ == '__main__':
     # for Edindex in [0]:
     #     for betaindex in [2]:
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=1)
+
     # for Edindex,betaindex in [(3,2)]:
     #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edindex, betaindex, legendpara=0)
 
-    # # STEP 2 plot the recall
+
+    """
+    STEP 1.5 plot Figure 5 precison: bar figure with expected by chance
+    """
+    # for Edindex,betaindex in [(1,1),(2,2)]:
+    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=0)
+    # for ED, beta in [(5,4),(10,8)]:
+    #     for ExternalSimutime in range(1):
+    #         try:
+    #             precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\test\\PrecisionRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    #                 EDn=ED, betan=beta, no=1, ST=0)
+    #             PrecisonRandom_specificnoise = np.loadtxt(precision_Geodis_Name)
+    #         except FileNotFoundError:
+    #             pass
+    #
+    #     print(np.mean(PrecisonRandom_specificnoise))
+
+
+
+    # for Edindex,betaindex in [(1,1),(1,6),(1,2),(2,2),(3,2)]:
+    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=0)
+    # for Edindex in [0]:
+    #     for betaindex in [2]:
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=1)
+
+
+
+    """
+    STEP 2 Plot Figure recall : bar figure
+    """
     # for Edindex in range(5):
     #     for betaindex in range(7):
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=0)
@@ -752,14 +1134,25 @@ if __name__ == '__main__':
     # for Edindex,betaindex in [(1,2),(1,6),(1,1),(2,2),(3,2)]:
     #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex, legendpara=0)
 
-    for Edindex in [0]:
-        for betaindex in [2]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
+    # for Edindex in [0]:
+    #     for betaindex in [2]:
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=1)
 
 
     # for Edindex in [2]:
     #     for betaindex in [2]:
     #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edindex, betaindex,legendpara=0)
+
+
+    """
+    STEP 2 Plot Figure recall : bar figure
+    """
+    for Edindex,betaindex in [(1,2),(1,6),(1,1),(2,2),(3,2)]:
+        plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex, legendpara=0)
+
+    for Edindex in [0]:
+        for betaindex in [2]:
+            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara=1)
 
     """
     Plot figure for netsci
@@ -785,7 +1178,7 @@ if __name__ == '__main__':
     # plt.show()
 
     """
-    Plot the heatmap for the precision and recall
+    Plot the heatmap for the precision and recall only for test usage
     """
     # plot_heatmap_precision(4)
 

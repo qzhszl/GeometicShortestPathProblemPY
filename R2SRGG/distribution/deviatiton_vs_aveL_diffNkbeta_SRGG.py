@@ -23,7 +23,7 @@ import shutil
 import multiprocessing as mp
 
 
-from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode
+from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withlinkweight
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs, hopcount_node
 
@@ -1193,7 +1193,7 @@ def distance_inSRGG_oneSP(network_size, input_expected_degree, beta, ExternalSim
         # Random select nodepair_num nodes in the largest connected component
         distance_insmallSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime)
 
-def compute_deviation():
+def compute_L():
     tasks = []
     tasks = [(999,10,8,0)]
     with mp.Pool(processes=1) as pool:
@@ -1248,31 +1248,228 @@ def compute_deviation():
 
 
 
+def compute_edgelength_h_oneSP_largenetwork(N, ED, beta, rg, ExternalSimutime):
+    """
+    :param N:
+    :param ED:
+    :param beta:
+    :param rg:
+    :param ExternalSimutime:
+    :return:
+    for each node pair, we record the ave,max,min of distance from the shortest path to the geodesic,
+    length of the geo distances.
+    The generated network, the selected node pair and all the deviation of both shortest path and baseline nodes will be recorded.
+    """
+
+    deviation_vec = []  # deviation of all shortest path nodes for all node pairs
+    baseline_deviation_vec = []  # deviation of all shortest path nodes for all node pairs
+    # For each node pair:
+    ave_deviation = []
+    max_deviation = []
+    min_deviation = []
+    ave_edge_length = []
+    ave_baseline_deviation =[]
+    length_geodesic = []
+    ave_length_edge_vec = []
+    std_length_edge_vec = []
+    hopcount_vec = []
+    max_dev_node_hopcount = []
+    corresponding_sp_max_dev_node_hopcount = []
+    SPnodenum_vec =[]
+    LCC_vec =[]
+    second_vec = []
+    delta_vec = []  # delta is the Euclidean geometric distance between two nodes i,k, where i,k is the neighbours of j
+
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
+    # folder_name = "/home/qzh/data/"
+    # folder_name1 = "/home/qzh/network/"
+
+
+    # try:
+    #     FileNetworkName = folder_name1+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     G = loadSRGGandaddnode(N, FileNetworkName)
+    #     # load coordinates with noise
+    #     Coorx = []
+    #     Coory = []
+    #
+    #     FileNetworkCoorName = folder_name1+"network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     with open(FileNetworkCoorName, "r") as file:
+    #         for line in file:
+    #             if line.startswith("#"):
+    #                 continue
+    #             data = line.strip().split("\t")  # 使用制表符分割
+    #             Coorx.append(float(data[0]))
+    #             Coory.append(float(data[1]))
+    # except:
+    #     G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    #     FileNetworkName = folder_name+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     nx.write_edgelist(G, FileNetworkName)
+    #     FileNetworkCoorName = folder_name+"network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     with open(FileNetworkCoorName, "w") as file:
+    #         for data1, data2 in zip(Coorx, Coory):
+    #             file.write(f"{data1}\t{data2}\n")
+
+
+    G,linkweight_vec, Coorx, Coory = R2SRGG_withlinkweight(N, ED, beta, rg)
+    ave_length_edge_vec.append(np.mean(linkweight_vec))
+    std_length_edge_vec.append(np.std(linkweight_vec))
+    ave_length_edge_Name = folder_name + "ave_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(ave_length_edge_Name, ave_length_edge_vec)
+
+    std_length_edge_Name = folder_name + "std_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(std_length_edge_Name, std_length_edge_vec)
+
+
+
+    # #     # if ExternalSimutime == 0:
+    FileNetworkName = folder_name+"network_N{Nn}ED{EDn}Beta{betan}_withlinkweight.txt".format(
+        Nn=N, EDn=ED, betan=beta)
+    nx.write_edgelist(G, FileNetworkName)
+    FileNetworkCoorName = folder_name+"network_coordinates_N{Nn}ED{EDn}Beta{betan}_withlinkweight.txt".format(
+        Nn=N, EDn=ED, betan=beta)
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(Coorx, Coory):
+            file.write(f"{data1}\t{data2}\n")
+
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    print("real ED:", real_avg)
+
+    real_avg_name = folder_name + "real_avg_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(real_avg_name, [real_avg])
+
+    # Randomly choose 100 connectede node pairs
+    nodepair_num = 20000
+    unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
+
+
+    count = 0
+    for node_pair in unique_pairs:
+        count = count + 1
+        # print(f"{count}node_pair:{node_pair}")
+        nodei = node_pair[0]
+        nodej = node_pair[1]
+        # Find the shortest path nodes
+        try:
+            hopcount_vec.append(nx.shortest_path_length(G, nodei, nodej))
+        except:
+            pass
+
+
+    hopcount_Name = folder_name+"hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(hopcount_Name, hopcount_vec,fmt="%i")
+
+
+
+
+
+
+
+
+def compute_edgelength_h_oneSP(network_size, input_expected_degree, beta, ExternalSimutime):
+    """
+    Only one shortest path is chosen to test how the deviation changes with different network parameters
+    :param network_size_index:
+    :param average_degree_index:
+    :param beta_index:
+    :param ExternalSimutime:
+    :return:
+    """
+
+    # random.seed(ExternalSimutime)
+    N = network_size
+    # if N ==1000:
+    #     kvec = [2, 3, 4, 5, 8, 12, 20, 31, 49, 77, 120, 188, 296, 468, 739, 1166, 1836, 2842] # for N = 1000
+    # else:
+    #     kvec = [2, 3, 4, 6, 11, 20, 37, 67, 121, 218, 392, 705, 1267, 2275, 4086, 7336, 13169, 23644,29999]  # for N = 1000
+    ED = input_expected_degree
+    beta = beta
+    print("input para:", (N, ED, beta),flush=True)
+
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 1000)
+    for i in range(rseed):
+        rg.ran1()
+
+    # for large network, we only generate one network and randomly selected 1,000 node pair.
+    # for small network, we generate 100 networks and selected all the node pair in the LCC
+    if N > 200:
+        compute_edgelength_h_oneSP_largenetwork(N, ED, beta, rg, ExternalSimutime)
+    else:
+        # Random select nodepair_num nodes in the largest connected component
+        # distance_insmallSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime)
+        pass
+
+
+
+
+def compute_edgelength_h():
+    tasks = []
+    Nvec = [10000]
+    beta_vec = [2.02,4,8,128,1024]
+    kvec_dict = {
+        100: [2, 3, 4, 5, 6, 8, 10, 12, 14, 17, 22, 27, 33, 40, 49, 60, 73, 89, 113, 149, 198, 260, 340, 446, 584,
+              762, 993, 1292, 1690, 2276, 3142, 4339],
+        1000: [2, 3, 4, 5, 6, 7, 8, 11, 15, 20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999, 1425, 2033, 2900,
+               4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168],
+        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+    for N in Nvec:
+        if N ==10:
+            input_ED_vec = list(range(2, 10)) + [10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 99]  # FOR N =10
+        else:
+            input_ED_vec = kvec_dict[N]
+        for inputED in input_ED_vec:
+            for beta in beta_vec:
+                tasks.append((N, inputED, beta, 0))
+    print(tasks)
+    with mp.Pool(processes=1) as pool:
+        pool.starmap(compute_edgelength_h_oneSP, tasks)
+
+
     # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     """
     Step1 run simulations with different beta and input AVG for one sp case
     """
-    compute_deviation()
+    # compute_L()
 
+    """
+    Step2 compute <d_l> and h with different beta and input AVG for one sp case
+    """
+    compute_edgelength_h()
 
     """
     SMALL NETWROK CHECK
     """
     # G = nx.Graph()  # 无向图；用 nx.DiGraph() 表示有向图
     #
-    # # 添加带权边（权重可选）
+    # 添加带权边（权重可选）
     # G.add_weighted_edges_from([
     #     ('A', 'B', 1),
     #     ('B', 'C', 2),
     #     ('A', 'C', 5),
     #     ('C', 'D', 1),
-    #     ('B', 'D', 4)
+    #     ('B', 'D', 4),
+    #     ('E', 'F', 4)
     # ])
     #
     # # 求从 A 到 D 的最短路径（按权重）
-    # shortest_path = nx.shortest_path(G, source='A', target='D', weight='weight')
-    #
+    # # shortest_path = nx.shortest_path(G, source='A', target='E', weight='weight')
+    # try:
+    #     n = nx.shortest_path_length(G, source='A', target='C')
+    # except:
+    #     pass
+    # print(n)
+
     # # 提取路径中的所有边
     # shortest_path_edges = list(zip(shortest_path[:-1], shortest_path[1:]))
     # for (nodei, nodej) in shortest_path_edges:

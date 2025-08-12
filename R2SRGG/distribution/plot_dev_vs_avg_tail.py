@@ -172,6 +172,8 @@ def plot_dev_vs_avg_tail(beta):
 
 
 def plot_dev_vs_avg_tail_vshopcountchange(beta):
+    # Figure 4 (c)
+
     """
     the x-axis is the expected degree, the y-axis is the average deviation,
     when use this function, use load_10000nodenetwork_results_tail(beta) before
@@ -211,7 +213,7 @@ def plot_dev_vs_avg_tail_vshopcountchange(beta):
         std_deviation_dict[count] = std_deviation_vec
         count = count + 1
 
-    legend = [r"devation of shortest path"]
+    legend = [r"distance to geodesic"]
     fig, ax1 = plt.subplots(figsize=(12, 8))
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
@@ -262,43 +264,53 @@ def plot_dev_vs_avg_tail_vshopcountchange(beta):
     #                    73534, 121205, 199999, 316226, 499999] # analytic results for ED>N-1
 
     ax1.plot(kvecanalyticy01, analyticy01[0:len(kvecanalyticy01)], linestyle="--", marker='v', markersize=16, linewidth=5,
-             label=f'common neighbour model',
+             label=f'common neighbor',
              color=colors[4])
 
     text = r"$N = 10^4,\beta = 4$"
     ax1.text(
-        0.76, 0.88,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+        0.82, 0.4,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
         text,
         transform=ax1.transAxes,  # 使用轴坐标
-        fontsize=26,  # 字体大小
+        fontsize=36,  # 字体大小
         ha='center',  # 水平居中对齐
         va='bottom'  # 垂直对齐方式
     )
 
     ax1.set_xscale('log')
     ax1.set_yscale('log')
-    ax1.set_xlabel('Expected degree, $E[D]$', fontsize=28)
-    ax1.set_ylabel(r'Average deviation, $\langle d \rangle$', fontsize=28, color=colors[3])
+    ax1.set_xlabel(r'Expected degree, $\mathbb{E}[D]$', fontsize=36)
+    ax1.set_ylabel(r'Average distance, $\langle d \rangle$', fontsize=36, color=colors[3])
     ax1.tick_params(axis='both', which="both", length=6, width=1)
-    ax1.tick_params(axis='y', labelcolor=colors[3], labelsize=26)
-    ax1.tick_params(axis='x', labelsize=26)
+    ax1.tick_params(axis='y', labelcolor=colors[3], labelsize=36)
+    ax1.tick_params(axis='x', labelsize=36)
     # plt.title('1000 simulations, N=10000',fontsize=26)
 
     ax2 = ax1.twinx()
-    ax2.set_ylabel(r'Average hopcount, $\langle h \rangle$', color=colors[1], fontsize=28)
+    ax2.set_ylabel(r'Average hopcount, $\langle h \rangle$', color=colors[1], fontsize=36)
     ax2.errorbar(kvec, hop_ave, yerr=hop_std, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='s',
                  markersize=16, label="hopcount", color=colors[1])
-    ax2.tick_params(axis='y', labelcolor=colors[1], labelsize=26)
-
+    ax2.set_yticks([2,4,6,8,10,12,14])
+    ax2.tick_params(axis='y', labelcolor=colors[1], labelsize=34)
     # plt.legend(fontsize=20, loc="lower right")
     plt.xlim([8, 12000])
 
     lines1, labels1 = ax1.get_legend_handles_labels()
     lines2, labels2 = ax2.get_legend_handles_labels()
-    ax1.legend(lines2 + lines1, labels2 + labels1, loc='upper left', fontsize=24)
+    ax1.legend(lines2 + lines1, labels2 + labels1,loc='upper left',bbox_to_anchor=(0, 1.03), fontsize=30)
 
-    picname = filefolder_name + "tailLocalOptimum_dev_vs_ED_beta{beta}_withhop.pdf".format(beta=beta)
-    plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    # picname = filefolder_name + "tailLocalOptimum_dev_vs_ED_beta{beta}_withhop.pdf".format(beta=beta)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+
+    picname = filefolder_name + "tailLocalOptimum_dev_vs_ED_beta{beta}_withhop.svg".format(beta=beta)
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+
     plt.show()
     plt.close()
 
@@ -586,6 +598,6 @@ if __name__ == '__main__':
     """
     # for beta in [4]:
     #     load_10000nodenetwork_results_tail(beta)
-    # plot_dev_vs_avg_tail_vshopcountchange(4)
+    plot_dev_vs_avg_tail_vshopcountchange(4)
 
-    plot_hopcountchange(4)
+    # plot_hopcountchange(4)

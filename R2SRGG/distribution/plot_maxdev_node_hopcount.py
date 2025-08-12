@@ -404,7 +404,7 @@ def plot_maxdev_node_hocount_for_twohop(N, ED, beta):
 
 
 def plot_maxmindev_node_hocount_together(N, ED, beta):
-    # figure 2(c)
+    # figure 7(b)
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
 
@@ -615,7 +615,7 @@ def plot_maxmindev_node_hocount_together(N, ED, beta):
 
 
 def plot_maxmindev_node_hocount_together_version2(N, ED, beta):
-    # figure 2(c) version 2
+    # figure 7(b) version 2
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
 

@@ -575,10 +575,10 @@ if __name__ == '__main__':
     """
     Plot deviation versus different N
     """
-    # plot_local_optimum_with_N(10, 8)
+    plot_local_optimum_with_N(10, 8)
 
     # plot_local_optimum_with_N_loglog(10, 8)
 
     # plot_dev_with_N_loglog_realavg(10, 128)
 
-    plot_dev_vs_ED_diffN_and_compute_the_min_meandev()
+    # plot_dev_vs_ED_diffN_and_compute_the_min_meandev()
