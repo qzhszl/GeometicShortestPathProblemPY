@@ -125,7 +125,7 @@ def generate_and_plot_SRGG_2(N, avg, beta):
 
 
     # G, xx, yy = R2SRGG(N, avg, beta, rg, SaveNetworkPath=None)
-
+    #
     # FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
     #                 Nn=N, EDn=avg, betan=beta)
     # nx.write_edgelist(G, FileNetworkName)
@@ -145,8 +145,8 @@ def generate_and_plot_SRGG_2(N, avg, beta):
 
     pos = {i: (xx[i], yy[i]) for i in range(N)}
 
-    nodes = 129
-    nodet = 99
+    nodes = 195
+    nodet = 16
     diameter_path = nx.shortest_path(G,nodes,nodet)
 
     # lengths = dict(nx.all_pairs_shortest_path_length(G))
@@ -164,16 +164,16 @@ def generate_and_plot_SRGG_2(N, avg, beta):
 
 
     # 绘制图
-    fig, ax = plt.subplots(figsize=(3, 1))
+    fig, ax = plt.subplots(figsize=(3, 3))
     # plt.text(0.2, 1.2, r'$\mathbb{E}[D] = 2, \mathbb{E}[D] = 5, \mathbb{E}[D] = 10$',
     #          transform=ax.transAxes,
     #          fontsize=22,
     #          bbox=dict(facecolor='white', alpha=0.5))
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
-    # nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=800, font_size=12)
+    # nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=10, font_size=12)
     # plt.show()
-    nx.draw_networkx_edges(G, pos, edge_color='#7A7DB1', width=2)
+    nx.draw_networkx_edges(G, pos, edge_color='#7A7DB1', width=2,alpha=0.5)
     nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='#6FB494', width=5)
     # nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='black', width=2, style='dashed',)
 
@@ -186,7 +186,8 @@ def generate_and_plot_SRGG_2(N, avg, beta):
                            node_size=30,
                            node_color='#D08082',  # 空心节点
                            edgecolors="black",  # 圆圈颜色
-                           linewidths=1)
+                           linewidths=1,
+                           alpha=0.7)
 
     nx.draw_networkx_nodes(G, pos, nodelist=diameter_path, node_size=50, node_color='#6FB494',edgecolors="black")
     # nx.draw_networkx_labels(G, pos)
