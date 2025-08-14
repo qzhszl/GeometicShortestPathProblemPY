@@ -281,36 +281,36 @@ def distance_inlargeSRGG(N,ED,beta,rg, ExternalSimutime):
     # ave_clu = nx.average_clustering(G)
     # print("clu:", ave_clu)
 
-    components = list(nx.connected_components(G))
-    largest_component = max(components, key=len)
-    LCC_number = len(largest_component)
-    print("LCC", LCC_number)
+    # components = list(nx.connected_components(G))
+    # largest_component = max(components, key=len)
+    # LCC_number = len(largest_component)
+    # print("LCC", LCC_number)
 
     # Randomly choose 100 connectede node pairs
     nodepair_num = 10000
     unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
-    filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-    np.savetxt(filename_selecetednodepair, unique_pairs, fmt="%i")
+    # filename_selecetednodepair = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+    #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    # np.savetxt(filename_selecetednodepair, unique_pairs, fmt="%i")
 
-    connected_components = sorted(nx.connected_components(G), key=len, reverse=True)
-    if len(connected_components) > 1:
-        largest_largest_component = connected_components[0]
-        largest_largest_size = len(largest_largest_component)
-        LCC_vec.append(largest_largest_size)
-        # 获取第二大连通分量的节点集合和大小
-        second_largest_component = connected_components[1]
-        second_largest_size = len(second_largest_component)
-        second_vec.append(second_largest_size)
-    if ExternalSimutime == 0:
-        filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\"
-        LCCname = filefolder_name + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}.txt".format(
-            Nn=N, EDn=ED, betan=beta)
-        with open(LCCname, "w") as file:
-            file.write("# LCC\tSECLCC\n")  # 使用制表符分隔列
-            # 写入数据
-            for name, age in zip(LCC_vec, second_vec):
-                file.write(f"{name}\t{age}\n")
+    # connected_components = sorted(nx.connected_components(G), key=len, reverse=True)
+    # if len(connected_components) > 1:
+    #     largest_largest_component = connected_components[0]
+    #     largest_largest_size = len(largest_largest_component)
+    #     LCC_vec.append(largest_largest_size)
+    #     # 获取第二大连通分量的节点集合和大小
+    #     second_largest_component = connected_components[1]
+    #     second_largest_size = len(second_largest_component)
+    #     second_vec.append(second_largest_size)
+    # if ExternalSimutime == 0:
+    #     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\"
+    #     LCCname = filefolder_name + "LCC_2LCC_N{Nn}ED{EDn}beta{betan}.txt".format(
+    #         Nn=N, EDn=ED, betan=beta)
+    #     with open(LCCname, "w") as file:
+    #         file.write("# LCC\tSECLCC\n")  # 使用制表符分隔列
+    #         # 写入数据
+    #         for name, age in zip(LCC_vec, second_vec):
+    #             file.write(f"{name}\t{age}\n")
     count = 0
     for node_pair in unique_pairs:
         count = count+1
@@ -783,6 +783,59 @@ def distance_inSRGG_oneSP(N, input_ED, beta, ExternalSimutime):
         distance_insmallSRGG_oneSP(N, ED, beta, rg, ExternalSimutime)
 
 
+def check_spnodenum(N, ED, beta):
+    SPnodenum_vec = []
+    hopcount_vec =[]
+
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
+
+    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    print("real ED:", real_avg)
+
+    # Randomly choose 100 connectede node pairs
+    nodepair_num = 10000
+    unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
+    count = 0
+    for node_pair in unique_pairs:
+        count = count + 1
+        print(count)
+        nodei = node_pair[0]
+        nodej = node_pair[1]
+        # Find the shortest path nodes
+        # SPNodelist = all_shortest_path_node(G, nodei, nodej)
+        hopcount_vec.append(nx.shortest_path_length(G, nodei, nodej))
+        # SPnodenum = len(SPNodelist)
+        # SPnodenum_vec.append(SPnodenum)
+    return np.mean(SPnodenum_vec), np.mean(hopcount_vec)
+
+
+def run_spnodenum():
+    Nvec = [100, 215, 464, 1000, 2154, 4642, 10000]
+    # Nvec = [4642, 10000]
+    betavec = [1024]
+    # kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120,155]
+    ave_hop_withN = []
+    ave_npnum_withN = []
+    kvec = [10]
+    # kvec = [2,3,5,8,13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155, 266, 457, 787, 1356, 2337, 4028, 6943, 11972, 20647]
+    for N in Nvec:
+        for ED in kvec:
+            for beta in betavec:
+                ave_npnum, ave_hop = check_spnodenum(N, ED, beta)
+                ave_hop_withN.append(ave_hop)
+                ave_npnum_withN.append(ave_npnum)
+                print(ave_hop_withN)
+                print(ave_npnum_withN)
+    print(ave_hop_withN)
+    print(ave_npnum_withN)
+
+
+
+
 
 
 def generate_proper_network_withgivendistances(N, input_ED_index,beta_index,Geodistance_index):
@@ -862,9 +915,11 @@ if __name__ == '__main__':
     """
 
     # Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
-    # Nvec = [464, 1000, 2154, 4642, 10000]
+    # Nvec = [46, 100, 215, 464, 1000, 2154, 4642, 10000]
     # betavec = [1024]
-    # kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120,155]
+    # # kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120,155]
+    #
+    # kvec = [10]
     # # kvec = [2,3,5,8,13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155, 266, 457, 787, 1356, 2337, 4028, 6943, 11972, 20647]
     # for N_index in range(len(Nvec)):
     #     for ED_index in range(len(kvec)):
@@ -875,11 +930,20 @@ if __name__ == '__main__':
     run simulations for multiple networks one SP
     step2
     """
-    Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
-    beta_vec = [8]
-    # kvec = [2,3,5,8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155, 266, 457, 787, 1356, 2337, 4028, 6943, 11972, 20647,29999]
-    input_ED_vec = [10]
-    for N in Nvec:
-        for ED in input_ED_vec:
-            for beta in beta_vec:
-                distance_inSRGG_oneSP(N, ED, beta, 0)
+    # Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
+    # beta_vec = [8]
+    # # kvec = [2,3,5,8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155, 266, 457, 787, 1356, 2337, 4028, 6943, 11972, 20647,29999]
+    # input_ED_vec = [10]
+    # for N in Nvec:
+    #     for ED in input_ED_vec:
+    #         for beta in beta_vec:
+    #             distance_inSRGG_oneSP(N, ED, beta, 0)
+
+
+
+    """
+    3
+    """
+    run_spnodenum()
+    #[np.float64(5.315555555555555), np.float64(7.4908), np.float64(11.2664), np.float64(16.6107), np.float64(22.773)]
+    # [np.float64(8.235555555555555), np.float64(13.7447), np.float64(20.7283), np.float64(39.0912), np.float64(56.7094)]

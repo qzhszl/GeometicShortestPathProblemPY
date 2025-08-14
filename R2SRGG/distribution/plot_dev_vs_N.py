@@ -416,7 +416,7 @@ def load_ave_dev(N, kvec, beta, filefoldername):
             for ED in kvec:
                 for ExternalSimutime in [0]:
                     try:
-                        ave_deviation_name = filefoldername+ "max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        ave_deviation_name = filefoldername+ "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                         ave_deviation_for_a_para_comb = np.loadtxt(ave_deviation_name)
                         ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
@@ -547,13 +547,24 @@ def plot_dev_vs_ED_diffN_and_compute_the_min_meandev():
      np.float64(0.00330979238179012), np.float64(0.001401238406148333), np.float64(0.0006377411890832632),
      np.float64(0.00029571431478738445), np.float64(0.000155917276102747)]
 
-    plt.plot(Nvec, y, "^-", label=r'min distance from node to random line')
+    # plt.plot(Nvec, y, "^-", label=r'min distance from node to random line')
 
     y2 = [np.float64(0.05665113851182812), np.float64(0.0344894779472734), np.float64(0.02102352879923221),
      np.float64(0.01255061221667929), np.float64(0.007352634182665045), np.float64(0.004399610295107591),
      np.float64(0.0026259753003719287), np.float64(0.0015634967677718398)]
 
-    plt.plot(Nvec, y2, ">-", label=r'average minimum deviation d')
+    y3 = [np.float64(0.0446307766708201), np.float64(0.0328253309616647), np.float64(0.02462495601710711),
+          np.float64(0.02189173848792766), np.float64(0.014683311454325384), np.float64(0.011684586744371776),
+          np.float64(0.008468677511866954)]
+    plt.plot(Nvec[1:], y3, ">-", label=r'average distance from $|P_{ij}|$ closest nodes')
+
+    y4 = [np.float64(0.03087219328107556), np.float64(0.020101961600803974), np.float64(0.01519824630301295),
+          np.float64(0.009452120015151316), np.float64(0.006714051190235999), np.float64(0.00458509767193182),
+          np.float64(0.0030676925094622097)]
+    plt.plot(Nvec[1:], y4, "<-", label=r'average distance from h closest nodes')
+
+    plt.text(15,0.23,"$|P_{ij}|$ depicts the number of all the shortest path nodes",fontsize = 14)
+
 
     plt.xscale('log')
     plt.yscale('log')
@@ -575,10 +586,10 @@ if __name__ == '__main__':
     """
     Plot deviation versus different N
     """
-    plot_local_optimum_with_N(10, 8)
+    # plot_local_optimum_with_N(10, 8)
 
     # plot_local_optimum_with_N_loglog(10, 8)
 
     # plot_dev_with_N_loglog_realavg(10, 128)
 
-    # plot_dev_vs_ED_diffN_and_compute_the_min_meandev()
+    plot_dev_vs_ED_diffN_and_compute_the_min_meandev()
