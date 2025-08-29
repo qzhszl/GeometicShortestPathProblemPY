@@ -18,7 +18,8 @@ from scipy.stats import linregress
 
 
 def load_large_network_results(N, beta, kvec):
-    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
+    # folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
     exemptionlist = []
     for N in [N]:
         ave_deviation_vec = []
@@ -47,15 +48,16 @@ def load_large_network_results(N, beta, kvec):
                             real_avg = np.loadtxt(real_ave_degree_name)
                             real_ave_degree_vec.append(np.mean(real_avg))
 
-                        deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                        ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
-                        ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
-                        std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+                        # deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        # ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
+                        # ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                        # std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
 
-                        edgelength_vec_name = folder_name + "ave_edgelength_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        edgelength_vec_name = folder_name + "ave_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
                             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                         ave_edgelength_for_a_para_comb = np.loadtxt(edgelength_vec_name)
+                        # ave_edgelength_for_a_para_comb = [np.mean(ave_edgelength_for_a_para_comb)]
                         ave_edgelength_vec.append(np.mean(ave_edgelength_for_a_para_comb))
                         std_edgelength_vec.append(np.std(ave_edgelength_for_a_para_comb))
 
@@ -67,7 +69,8 @@ def load_large_network_results(N, beta, kvec):
                         std_hop_vec.append(np.std(hop_vec))
 
                         # L = np.multiply(ave_edgelength_for_a_para_comb, hop_vec)
-                        L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
+                        # L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, ave_hop_vec)]
+                        L = [np.mean(hop_vec)*np.mean(ave_edgelength_for_a_para_comb)]
 
                         ave_L_vec.append(np.mean(L))
                         std_L_vec.append(np.std(L))
@@ -84,21 +87,28 @@ def testanalticL(N,k_vals):
     logN = np.log(N)
     k_vals = np.array(k_vals)
     # 计算 h(k)
-    h_vals = (2 / 3) * np.sqrt(k_vals / (N * pi)) * (logN / np.log(k_vals))
+
+    # h_vals = (2 / 3) * np.sqrt(k_vals / (N * pi)) * (logN / np.log(k_vals))
+    kc = 4.512
+    h_vals = (2 / 3) * np.sqrt(k_vals / (N * pi)) *(1+4/(3*pi)*np.sqrt(k_vals / (N * pi)))* 100 * (k_vals - kc) ** (-0.5)
     return h_vals
 
 def plot_devandL_withED():
     # the x-axis is the input average degree
-    N = 1000
-    beta = 256
+    N = 10000
+    beta = 1024
     kvec_dict = {
         100: [2, 3, 4, 5, 6, 8, 10, 12, 14, 17, 22, 27, 33, 40, 49, 60, 73, 89, 113, 149, 198, 260, 340, 446, 584,
               762, 993, 1292, 1690, 2276, 3142, 4339],
         1000: [2, 3, 4, 5, 6, 7, 8, 11, 15, 20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999, 1425, 2033, 2900,
                4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168],
-        10000: [2.2, 3.0, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
                 3727, 6105,
                 9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+
+    # [2.2, 3.0, 3.8, 4, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2275,
+    #  4086, 7336, 13169, 23644, 29999, ]
+
     kvec = kvec_dict[N]
 
     # real_ave_degree_dict = {}
@@ -113,25 +123,31 @@ def plot_devandL_withED():
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     x = real_ave_degree_vec
-    plt.errorbar(x, ave_deviation_vec, yerr=std_deviation_vec, linestyle="-", linewidth=3, elinewidth=1, capsize=5,
-                 marker='o', markersize=16,
-                 label=r"$\langle d \rangle$", color=colors[0])
+    # plt.errorbar(x, ave_deviation_vec, yerr=std_deviation_vec, linestyle="-", linewidth=3, elinewidth=1, capsize=5,
+    #              marker='o', markersize=16,
+    #              label=r"$\langle d \rangle$", color=colors[0])
     plt.errorbar(x, ave_L_vec, yerr=std_L_vec, linestyle="-", linewidth=3, elinewidth=1, capsize=5,
                  marker='o', markersize=16,
-                 label=r"$\langle L \rangle = \langle d_E \rangle h$", color=colors[1])
+                 label=r"$\langle L \rangle = \langle r \rangle h$", color=colors[1])
     plt.plot(x, ave_edgelength_vec, linestyle="-", linewidth=3,
                  marker='s', markersize=16,
-                 label=r"$\langle d_E \rangle $", color=colors[2])
+                 label=r"$\langle r \rangle $", color=colors[2])
     plt.plot(x, ave_hop_vec, linestyle="-", linewidth=3,
                  marker='^', markersize=16,
                  label=r"$\langle h \rangle $", color=colors[3])
 
-    h_a = testanalticL(N, x)
-    plt.plot(x, h_a, label=r'$h(k) = \frac{2}{3} \sqrt{\frac{k}{N \pi}} \cdot \frac{\log N}{\log k}$')
+
+    kc = 4.512
+    k_vals2 = np.linspace(4.6, 10000, 20000)
+    f4 = 100 * (k_vals2 - kc) ** (-0.5)
+    plt.plot(k_vals2, f4, label=r'$f1 = 100*(\langle k\rangle - %.3f)^{-1/2}$' % kc)
+
+    h_a = testanalticL(N, k_vals2)
+    plt.plot(k_vals2, h_a, label=r'$f2 = \frac{2}{3} \sqrt{\frac{k}{N \pi}}(1+\frac{4}{3\pi}\sqrt{\frac{k}{N \pi}}) \cdot 100*(\langle k\rangle - 4.512)^{-1/2}$')
 
     text = fr"$N = 10^4$, $\beta = {beta}$"
     ax.text(
-        0.5, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+        0.2, 1,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
         text,
         transform=ax.transAxes,  # 使用轴坐标
         fontsize=26,  # 字体大小
@@ -145,12 +161,12 @@ def plot_devandL_withED():
     # plt.yticks([0, 0.1, 0.2, 0.3])
     plt.yscale('log')
     plt.xscale('log')
-    plt.xlabel(r'Expected degree, $\mathbb{E}[D]$', fontsize=26)
-    plt.ylabel(r'Average deviation, $\langle d \rangle$', fontsize=26)
+    plt.xlabel(r'$\langle k \rangle$', fontsize=26)
+    plt.ylabel(r'$\langle d \rangle$', fontsize=26)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=26, loc=(0.6, 0.02))
+    plt.legend(fontsize=24, loc=(0.4, 0.7))
     plt.tick_params(axis='both', which="both", length=6, width=1)
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
     #     betan=beta)

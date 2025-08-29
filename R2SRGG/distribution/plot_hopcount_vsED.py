@@ -283,6 +283,13 @@ def plot_hopcount_vs_realED(N, beta_vec):
     # plt.plot(k_vals, f2, label=r'$f_2(k) = 1 + \frac{n}{k}$', color='green')
     plt.plot(k_vals, f3,"-",linewidth =5 , label=r'$f(k) = \frac{\log n}{\log k}$', color="#5CBF9B")
 
+    # 曲线 4: <h> ~ (<k> - <k>_c)^(-a)
+    kc = 4.512
+    k_vals2 = np.linspace(4.6, 10000, 20000)
+    f4 = 100 * (k_vals2 - kc) ** (-0.5)
+    plt.plot(k_vals2, f4, label=r'$\langle h\rangle = 100*(\langle k\rangle - %.3f)^{-1/2}$' % kc)
+
+
     # kvec = [11, 16, 27, 44, 73, 107, 120, 193, 316, 518, 848, 1389]
     # kvec = [0.886 * i ** (0.957) for i in kvec]
     # x = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389]
@@ -345,18 +352,18 @@ def plot_hopcount_vs_realED(N, beta_vec):
 
     picname =  filefolder_name+ "hopvsEDN{Nn}.svg".format(
         Nn=N)
-    plt.savefig(
-        picname,
-        format="svg",
-        bbox_inches='tight',  # 紧凑边界
-        transparent=True  # 背景透明，适合插图叠加
-    )
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
     plt.show()
     # 清空图像，以免影响下一个图
     plt.close()
 
 
-def plot_hopcount_vs_test(N, beta_vec):
+def plot_hopcount_vs_ED_test(N, beta_vec):
     # Figure 4(c)
     # load and test data
     # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\" # for ONE SP, load data for beta = 2.05 and 1024
@@ -684,7 +691,8 @@ def plot_hopcount_vs_ED_test2(N, beta_vec):
         #              capsize=5, marker='o', markersize=6, label=rf"N={N},$\beta$ = {beta}")
         x_vals = data_dict[beta][0]
         # y_vals = [y * x ** 0.5 for x, y in zip(data_dict[beta][0], data_dict[beta][1])]
-        y_vals = [np.log(y) for y in data_dict[beta][1]]
+        y_vals = data_dict[beta][1]
+        # y_vals = [np.log(y) for y in data_dict[beta][1]]
         plt.plot(x_vals, y_vals, linestyle="-", linewidth=3,
                  marker='o', markersize=6, label=rf"N={N}, $\beta$ = {beta}")
 
@@ -692,7 +700,7 @@ def plot_hopcount_vs_ED_test2(N, beta_vec):
         #             marker='o', markersize=6, label=rf"N={N},$\beta$ = {beta}")
 
     # 拟合曲线
-    popt2, pcov2 = curve_fit(power_law, x_vals[5:10], y_vals[5:10])
+    popt2, pcov2 = curve_fit(power_law, x_vals[10:20], y_vals[10:20])
     a2, alpha2 = popt2
     N_fit2 = np.linspace(2,10000 , 50)
     y_fit2 = power_law(N_fit2, a2, alpha2)
@@ -707,6 +715,13 @@ def plot_hopcount_vs_ED_test2(N, beta_vec):
     f2 = 1 + N / k_vals
     # 曲线 3: log(n) / log(k)
     f3 = np.log(N) / np.log(k_vals)
+
+    # <h> ~ (<k> - <k>_c)^(-a)
+    kc = 4.512
+    k_vals2 = np.linspace(5,10000,10000)
+    f4 = 100*(k_vals - kc)**(-0.5)
+    plt.plot(k_vals2, f4, label=r'$\langle h\rangle = (\langle k\rangle - %.3f)^{-1/2}$' % kc)
+
 
     # plt.plot(k_vals, f1, label=r'$f_1(k) = \frac{\log n}{\log \log n}$', linestyle='--', color='orange')
     # plt.plot(k_vals, f2, label=r'$f_2(k) = 1 + \frac{n}{k}$', color='green')

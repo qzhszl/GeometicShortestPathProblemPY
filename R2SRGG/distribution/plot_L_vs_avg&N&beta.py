@@ -361,6 +361,7 @@ def plot_L_with_avg():
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
                      label=lengend[N_index], color=colors[N_index])
 
+
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
     plt.ylim(0.02, 2)
@@ -563,12 +564,12 @@ if __name__ == '__main__':
     """
     # STEP 1  L versus real average degree
     """
-    # plot_L_with_avg()
+    plot_L_with_avg()
 
     """
     # STEP 1.5  L versus real average degree for one network
     """
-    plot_L_with_avg_for_one_network()
+    # plot_L_with_avg_for_one_network()
 
     """
     # STEP 2 plot L vs N
