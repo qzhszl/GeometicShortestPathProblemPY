@@ -17,9 +17,14 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from scipy.stats import linregress
 
 
-def load_large_network_results(N, beta, kvec):
-    # folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
-    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
+def load_large_network_results(N, beta, kvec, Ltype):
+    if Ltype=="realL":
+        # if L = <d_e>h real stretch
+        folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
+    else:
+        # if L = <d_e><h> ave  link length* hopcount
+        folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
+
     exemptionlist = []
     for N in [N]:
         ave_deviation_vec = []
@@ -47,15 +52,23 @@ def load_large_network_results(N, beta, kvec):
                                 Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                             real_avg = np.loadtxt(real_ave_degree_name)
                             real_ave_degree_vec.append(np.mean(real_avg))
+                        if Ltype == "realL":
+                            #if L = <d_e>h real stretch
+                            deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
+                            ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                            std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
 
-                        # deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                        #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                        # ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
-                        # ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
-                        # std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
 
-                        edgelength_vec_name = folder_name + "ave_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            edgelength_vec_name = folder_name + "ave_edgelength_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        else:
+                            # if L = <d_e><h> ave  link length* hopcount
+                            edgelength_vec_name = folder_name + "ave_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+
+
                         ave_edgelength_for_a_para_comb = np.loadtxt(edgelength_vec_name)
                         # ave_edgelength_for_a_para_comb = [np.mean(ave_edgelength_for_a_para_comb)]
                         ave_edgelength_vec.append(np.mean(ave_edgelength_for_a_para_comb))
@@ -68,9 +81,13 @@ def load_large_network_results(N, beta, kvec):
                         ave_hop_vec.append(np.mean(hop_vec))
                         std_hop_vec.append(np.std(hop_vec))
 
-                        # L = np.multiply(ave_edgelength_for_a_para_comb, hop_vec)
-                        # L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, ave_hop_vec)]
-                        L = [np.mean(hop_vec)*np.mean(ave_edgelength_for_a_para_comb)]
+                        if Ltype == "realL":
+                            #if L = <d_e>h real stretch
+                            L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
+                        else:
+                            # if L = <d_e><h> ave  link length* hopcount
+                            L = [np.mean(hop_vec)*np.mean(ave_edgelength_for_a_para_comb)]
+
 
                         ave_L_vec.append(np.mean(L))
                         std_L_vec.append(np.std(L))
@@ -102,12 +119,31 @@ def plot_devandL_withED():
               762, 993, 1292, 1690, 2276, 3142, 4339],
         1000: [2, 3, 4, 5, 6, 7, 8, 11, 15, 20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999, 1425, 2033, 2900,
                4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168],
-        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
-                3727, 6105,
-                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 4.6, 5.0, 6.0,7.0,8.0,9.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+            3727, 6105,
+            9999, 16479, 27081, 44767, 73534, 121205, 199999]
+    }
 
     # [2.2, 3.0, 3.8, 4, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2275,
     #  4086, 7336, 13169, 23644, 29999, ]
+
+    # [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+    #  3727, 6105,
+    #  9999, 16479, 27081, 44767]
+
+    # [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 4.6, 5.0, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+    #  3727, 6105,
+    #  9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
+
+    # [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+    #  3727, 6105,
+    #  9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
+    # [2.2, 2.8, 3.0, 3.4, 3.8, 4.4,4.6, 5.0, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+    #             3727, 6105,
+    #             9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
 
     kvec = kvec_dict[N]
 
@@ -117,7 +153,7 @@ def plot_devandL_withED():
     # kvec_dict = {}
 
     real_ave_degree_vec, ave_deviation_vec, std_deviation_vec, ave_edgelength_vec, std_edgelength_vec, ave_hop_vec, std_hop_vec, ave_L_vec, std_L_vec = load_large_network_results(
-        N, beta, kvec)
+        N, beta, kvec, "realL")
 
     fig, ax = plt.subplots(figsize=(16, 12))
 
@@ -128,19 +164,19 @@ def plot_devandL_withED():
     #              label=r"$\langle d \rangle$", color=colors[0])
     plt.errorbar(x, ave_L_vec, yerr=std_L_vec, linestyle="-", linewidth=3, elinewidth=1, capsize=5,
                  marker='o', markersize=16,
-                 label=r"$\langle L \rangle = \langle r \rangle h$", color=colors[1])
-    plt.plot(x, ave_edgelength_vec, linestyle="-", linewidth=3,
-                 marker='s', markersize=16,
-                 label=r"$\langle r \rangle $", color=colors[2])
-    plt.plot(x, ave_hop_vec, linestyle="-", linewidth=3,
-                 marker='^', markersize=16,
-                 label=r"$\langle h \rangle $", color=colors[3])
+                 label=r"$\langle L \rangle = \langle r \rangle \langle h \rangle$", color=colors[1])
+    # plt.plot(x, ave_edgelength_vec, linestyle="-", linewidth=3,
+    #              marker='s', markersize=16,
+    #              label=r"$\langle r \rangle $", color=colors[2])
+    # plt.plot(x, ave_hop_vec, linestyle="-", linewidth=3,
+    #              marker='^', markersize=16,
+    #              label=r"$\langle h \rangle $", color=colors[3])
 
 
     kc = 4.512
     k_vals2 = np.linspace(4.6, 10000, 20000)
     f4 = 100 * (k_vals2 - kc) ** (-0.5)
-    plt.plot(k_vals2, f4, label=r'$f1 = 100*(\langle k\rangle - %.3f)^{-1/2}$' % kc)
+    # plt.plot(k_vals2, f4, label=r'$f1 = 100*(\langle k\rangle - %.3f)^{-1/2}$' % kc)
 
     h_a = testanalticL(N, k_vals2)
     plt.plot(k_vals2, h_a, label=r'$f2 = \frac{2}{3} \sqrt{\frac{k}{N \pi}}(1+\frac{4}{3\pi}\sqrt{\frac{k}{N \pi}}) \cdot 100*(\langle k\rangle - 4.512)^{-1/2}$')
@@ -159,7 +195,7 @@ def plot_devandL_withED():
     # ax.spines['top'].set_visible(False)
 
     # plt.yticks([0, 0.1, 0.2, 0.3])
-    plt.yscale('log')
+    # plt.yscale('log')
     plt.xscale('log')
     plt.xlabel(r'$\langle k \rangle$', fontsize=26)
     plt.ylabel(r'$\langle d \rangle$', fontsize=26)

@@ -15,6 +15,12 @@ from R2SRGG.R2SRGG import loadSRGGandaddnode
 def power_law(x, a, b):
     return a * x ** b
 
+def MKdlmodel(avg, N, beta):
+    R = 2.0  # manually tuned value
+    alpha = (2 * N / avg * R * R) * (np.pi / (np.sin(2 * np.pi / beta) * beta))
+    alpha = np.sqrt(alpha)
+    return (np.sin(2 * np.pi / beta) / np.sin(3 * np.pi / beta)) * (1 / alpha)
+
 
 def plot_dl_vs_realED(N, beta_vec):
     # Figure 4(d)
@@ -178,7 +184,20 @@ def plot_dl_vs_realED(N, beta_vec):
     plt.plot(N_fit2, y_fit2, '--', linewidth=5, color="#E6B565",
              label=fr'$f(k) = {a2:.4f} k^{{{alpha2:.1f}}}$')
 
-    plt.legend(fontsize=26, bbox_to_anchor=(0.42, 0.42), markerscale=1, handlelength=1, labelspacing=0.2,
+    # fit Mk MODEL
+    for beta in [2.02, 4, 8, 128]:
+        N_fit2 = np.linspace(1, 15000, 50)
+        y = [MKdlmodel(x, N, beta) for x in N_fit2]
+        print(y)
+        plt.plot(N_fit2,y,'--', linewidth=5,
+             label=fr'MK model, $\beta$ = {beta}')
+
+
+
+    # plt.legend(fontsize=26, bbox_to_anchor=(0.42, 0.42), markerscale=1, handlelength=1, labelspacing=0.2,
+    #            handletextpad=0.3, borderpad=0.1, borderaxespad=0.1)
+
+    plt.legend(fontsize=26, bbox_to_anchor=(0.7, 0.6), markerscale=1, handlelength=1, labelspacing=0.2,
                handletextpad=0.3, borderpad=0.1, borderaxespad=0.1)
 
     # ax.legend(
@@ -216,12 +235,12 @@ def plot_dl_vs_realED(N, beta_vec):
 
     picname = filefolder_name + "edgelengthvsEDN{Nn}.svg".format(
         Nn=N)
-    plt.savefig(
-        picname,
-        format="svg",
-        bbox_inches='tight',  # 紧凑边界
-        transparent=True  # 背景透明，适合插图叠加
-    )
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
     plt.show()
     # 清空图像，以免影响下一个图
     plt.close()
