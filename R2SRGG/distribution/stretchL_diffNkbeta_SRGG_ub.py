@@ -22,14 +22,12 @@ import os
 import shutil
 import multiprocessing as mp
 
-
 from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withlinkweight
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import find_k_connected_node_pairs, find_all_connected_node_pairs, hopcount_node
 
 
-
-def compute_edge_Euclidean_length(nodes,nodet,Coorx,Coory):
+def compute_edge_Euclidean_length(nodes, nodet, Coorx, Coory):
     xSource = Coorx[nodes]
     ySource = Coory[nodes]
     xEnd = Coorx[nodet]
@@ -58,7 +56,6 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
     ave_graphlinklength_vec = []
     # std_length_edge_vec = []
 
-
     # For each node pair:
     ave_deviation = []
     max_deviation = []
@@ -78,7 +75,7 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
 
     simu_times = 1
     for simu_index in range(simu_times):
-        G,linkweight_vec, Coorx, Coory = R2SRGG_withlinkweight(N, ED, beta, rg)
+        G, linkweight_vec, Coorx, Coory = R2SRGG_withlinkweight(N, ED, beta, rg)
         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
 
         print("real ED:", real_avg)
@@ -106,13 +103,13 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
             nodej = node_pair[1]
             # Find the shortest path nodes
             SPNodelist = nx.shortest_path(G, nodei, nodej)
-            SPnodenum = len(SPNodelist)-2
+            SPnodenum = len(SPNodelist) - 2
             # SPnodenum_vec.append(SPnodenum)
 
             # hopcount of the SP
-            SP_hopcount.append(SPnodenum+1)
+            SP_hopcount.append(SPnodenum + 1)
 
-            if SPnodenum+1 > 0:  # for deviation, we restrict ourself for hopcount>2: SPnodenum+1 > 1, but not for the stretch(hop =1 are also included:SPnodenum+1 > 0)
+            if SPnodenum + 1 > 0:  # for deviation, we restrict ourself for hopcount>2: SPnodenum+1 > 1, but not for the stretch(hop =1 are also included:SPnodenum+1 > 0)
                 # compute the length of the edges on the shortest path
                 length_edge_for_anodepair = []
                 shortest_path_edges = list(zip(SPNodelist[:-1], SPNodelist[1:]))
@@ -163,7 +160,7 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
         count_vec.append(count)
 
     # For each node graph:
-    real_ave_degree_name = folder_name+"real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+    real_ave_degree_name = folder_name + "real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     np.savetxt(real_ave_degree_name, real_ave_degree)
 
@@ -193,7 +190,7 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
     #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     # np.savetxt(ave_baseline_deviation_name, ave_baseline_deviation)
 
-    length_geodesic_name = folder_name+"length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+    length_geodesic_name = folder_name + "length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     np.savetxt(length_geodesic_name, length_geodesic)
 
@@ -201,7 +198,7 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
     #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     # np.savetxt(SPnodenum_vec_name, SPnodenum_vec, fmt="%i")
 
-    nodepairs_for_eachgraph_vec_name = folder_name+"nodepairs_for_eachgraph_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+    nodepairs_for_eachgraph_vec_name = folder_name + "nodepairs_for_eachgraph_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     np.savetxt(nodepairs_for_eachgraph_vec_name, count_vec, fmt="%i")
 
@@ -217,15 +214,9 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     np.savetxt(aveedgelength_name, ave_edge_length)
 
-
-
-
-
     # max_dev_node_hopcount_name = folder_name+"max_dev_node_hopcount_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
     #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     # np.savetxt(max_dev_node_hopcount_name, max_dev_node_hopcount, fmt="%i")
-
-
 
 
 def stretch_inlargeSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime):
@@ -248,28 +239,28 @@ def stretch_inlargeSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime):
     max_deviation = []
     min_deviation = []
     ave_edge_length = []
-    ave_baseline_deviation =[]
+    ave_baseline_deviation = []
     length_geodesic = []
     length_edge_vec = []
     hopcount_vec = []
     max_dev_node_hopcount = []
     corresponding_sp_max_dev_node_hopcount = []
-    SPnodenum_vec =[]
-    LCC_vec =[]
+    SPnodenum_vec = []
+    LCC_vec = []
     second_vec = []
     delta_vec = []  # delta is the Euclidean geometric distance between two nodes i,k, where i,k is the neighbours of j
 
     folder_name1 = "/home/qzh/network/"
     folder_name = "/home/qzh/data/"
     try:
-        FileNetworkName = folder_name1+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+        FileNetworkName = folder_name1 + "network_N{Nn}ED{EDn}Beta{betan}.txt".format(
             Nn=N, EDn=ED, betan=beta)
         G = loadSRGGandaddnode(N, FileNetworkName)
         # load coordinates with noise
         Coorx = []
         Coory = []
 
-        FileNetworkCoorName = folder_name1+"network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+        FileNetworkCoorName = folder_name1 + "network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
             Nn=N, EDn=ED, betan=beta)
         with open(FileNetworkCoorName, "r") as file:
             for line in file:
@@ -288,7 +279,6 @@ def stretch_inlargeSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime):
         with open(FileNetworkCoorName, "w") as file:
             for data1, data2 in zip(Coorx, Coory):
                 file.write(f"{data1}\t{data2}\n")
-
 
     # G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
     # #     # if ExternalSimutime == 0:
@@ -343,16 +333,16 @@ def stretch_inlargeSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime):
         # Find the shortest path nodes
         try:
             SPNodelist = nx.shortest_path(G, nodei, nodej)
-            SPnodenum = len(SPNodelist)-2
+            SPnodenum = len(SPNodelist) - 2
             SPnodenum_vec.append(SPnodenum)
-            if SPnodenum>0:
+            if SPnodenum > 0:
                 hopcount_vec.append(nx.shortest_path_length(G, nodei, nodej))
 
                 # compute the length of the edges
                 length_edge_for_anodepair = []
                 shortest_path_edges = list(zip(SPNodelist[:-1], SPNodelist[1:]))
                 for (nodes, nodet) in shortest_path_edges:
-                    d_E = compute_edge_Euclidean_length(nodes,nodet,Coorx,Coory)
+                    d_E = compute_edge_Euclidean_length(nodes, nodet, Coorx, Coory)
                     length_edge_for_anodepair.append(d_E)
                 length_edge_vec = length_edge_vec + length_edge_for_anodepair
                 ave_edge_length.append(np.mean(length_edge_for_anodepair))
@@ -365,13 +355,13 @@ def stretch_inlargeSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime):
                 length_geodesic.append(distR2(xSource, ySource, xEnd, yEnd))
                 # Compute deviation for the shortest path of each node pair
                 deviations_for_a_nodepair = []
-                for SPnode in SPNodelist[1:len(SPNodelist)-1]:
+                for SPnode in SPNodelist[1:len(SPNodelist) - 1]:
                     xMed = Coorx[SPnode]
                     yMed = Coory[SPnode]
                     dist, _ = dist_to_geodesic_R2(xMed, yMed, xSource, ySource, xEnd, yEnd)
                     deviations_for_a_nodepair.append(dist)
 
-                deviation_vec = deviation_vec+deviations_for_a_nodepair
+                deviation_vec = deviation_vec + deviations_for_a_nodepair
 
                 ave_deviation.append(np.mean(deviations_for_a_nodepair))
                 # max_deviation.append(max(deviations_for_a_nodepair))
@@ -410,15 +400,15 @@ def stretch_inlargeSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime):
                 # baseline_deviation_vec = baseline_deviation_vec + baseline_deviations_for_a_nodepair
         except:
             pass
-    deviation_vec_name = folder_name+"deviation_shortest_path_nodes_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    deviation_vec_name = folder_name + "deviation_shortest_path_nodes_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     np.savetxt(deviation_vec_name, deviation_vec)
     # baseline_deviation_vec_name = folder_name+"deviation_baseline_nodes_num_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
     #     Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
     # np.savetxt(baseline_deviation_vec_name, baseline_deviation_vec)
     # For each node pair:
-    ave_deviation_name = folder_name+"ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    ave_deviation_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     np.savetxt(ave_deviation_name, ave_deviation)
     # max_deviation_name = folder_name+"max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
     #     Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -429,16 +419,16 @@ def stretch_inlargeSRGG_oneSP_clu(N, ED, beta, rg, ExternalSimutime):
     # ave_baseline_deviation_name = folder_name+"ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
     #     Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
     # np.savetxt(ave_baseline_deviation_name, ave_baseline_deviation)
-    length_geodesic_name = folder_name+"length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    length_geodesic_name = folder_name + "length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     np.savetxt(length_geodesic_name, length_geodesic)
-    SPnodenum_vec_name = folder_name+"SPnodenum_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
-    np.savetxt(SPnodenum_vec_name, SPnodenum_vec,fmt="%i")
-    hopcount_Name = folder_name+"hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                Nn = N, EDn=ED, betan=beta, ST=ExternalSimutime)
-    np.savetxt(hopcount_Name, hopcount_vec,fmt="%i")
-    delta_Name = folder_name+"delta_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+    SPnodenum_vec_name = folder_name + "SPnodenum_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(SPnodenum_vec_name, SPnodenum_vec, fmt="%i")
+    hopcount_Name = folder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    np.savetxt(hopcount_Name, hopcount_vec, fmt="%i")
+    delta_Name = folder_name + "delta_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     np.savetxt(delta_Name, delta_vec)
 
@@ -476,7 +466,7 @@ def stretch_inSRGG_oneSP(network_size, input_expected_degree, beta, ExternalSimu
     #     kvec = [2, 3, 4, 6, 11, 20, 37, 67, 121, 218, 392, 705, 1267, 2275, 4086, 7336, 13169, 23644,29999]  # for N = 1000
     ED = input_expected_degree
     beta = beta
-    print("input para:", (N, ED, beta),flush=True)
+    print("input para:", (N, ED, beta), flush=True)
 
     rg = RandomGenerator(-12)
     rseed = random.randint(0, 100)
@@ -486,6 +476,7 @@ def stretch_inSRGG_oneSP(network_size, input_expected_degree, beta, ExternalSimu
     # for large network, we only generate one network and randomly selected 1,000 node pair.
     # for small network, we generate 100 networks and selected 1000 node pairs in the LCC
     stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutime)
+
 
 def compute_stretch():
     tasks = []
@@ -556,11 +547,12 @@ def compute_stretch():
     # beta_vec = [1024]
     # #
     # # # analytic_k = {215: range(24,104+1,2), 464: 80, 1000: 104, 2154: 134, 4642: 173, 10000: 224}
-    # k_dict = {215: list(range(24, 104 + 1, 2)), 464: list(range(30,154 + 1, 2)), 1000: list(range(39,229 + 1, 2)), 2154: list(
-    #     range(52,364 + 1, 2)), 4642: list(range(67,272 + 1, 2)), 10000: list(range(118,316 + 1, 2))}
-    # # [91.42622647114122, 118.1037741586913, 152.42893756598227, 196.9043216252372, 254.46419978351528]
-    [80.45031543848104, 91.42622647114122, 103.91743642007826, 118.1037741586913, 134.20550298144724,
-     152.42893756598227, 173.34984983762467, 196.9043216252372, 223.88332992259927, 254.46419978351528]
+    k_dict = {215: list(range(24, 104 + 1, 2)), 464: list(range(30, 154 + 1, 2)), 1000: list(range(39, 229 + 1, 2)),
+              2154: list(
+                  range(52, 364 + 1, 2)), 4642: list(range(67, 272 + 1, 2)), 10000: list(range(118, 316 + 1, 2))}
+
+    # k_dict = {681: list(range(40,164 + 1, 2)), 1468: list(range(50,240 + 1, 2)), 3156: list(range(72,384 + 1, 2)), 6803: list(range(87,
+    #     295+ 1, 2)), 14683: list(range(140,340 + 1, 2))}
 
     # Nvec = [681, 1468, 3156, 6803, 14683]
     # #
@@ -581,17 +573,15 @@ def compute_stretch():
     with mp.Pool(processes=1) as pool:
         pool.starmap(stretch_inSRGG_oneSP, tasks)
 
-
-
     # Press the green button in the gutter to run the script.
+
+
 if __name__ == '__main__':
     """
     Step1 run simulations with different beta and input AVG for one sp case
     """
 
-
     compute_stretch()
-
 
     # """
     # SMALL NETWROK CHECK
@@ -624,5 +614,3 @@ if __name__ == '__main__':
     #
     # print("最短路径:", shortest_path)
     # print("路径上的所有边:", shortest_path_edges)
-
-
