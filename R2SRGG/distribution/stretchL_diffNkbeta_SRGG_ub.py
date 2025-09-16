@@ -71,12 +71,12 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
     ave_edge_length = []
     length_edge_vec = []
 
-    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\localmin_hunter\\"
-    # folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\1hopdiff\\"
+    # folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\localmin_hunter\\"
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\1hopdiff\\"
 
     # folder_name = "/home/qzh/data/"
 
-    simu_times = 2
+    simu_times = 1
     for simu_index in range(simu_times):
         G,linkweight_vec, Coorx, Coory = R2SRGG_withlinkweight(N, ED, beta, rg)
         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
@@ -112,7 +112,7 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
             # hopcount of the SP
             SP_hopcount.append(SPnodenum+1)
 
-            if SPnodenum+1 > 1:  # for deviation, we restrict ourself for hopcount>2: SPnodenum+1 > 1, but not for the stretch(hop =1 are also included:SPnodenum+1 > 0)
+            if SPnodenum+1 > 0:  # for deviation, we restrict ourself for hopcount>2: SPnodenum+1 > 1, but not for the stretch(hop =1 are also included:SPnodenum+1 > 0)
                 # compute the length of the edges on the shortest path
                 length_edge_for_anodepair = []
                 shortest_path_edges = list(zip(SPNodelist[:-1], SPNodelist[1:]))
@@ -527,8 +527,8 @@ def compute_stretch():
     # simu3: diff ED
 
     # # Nvec = [100, 215, 464, 1000, 2154, 4642,10000]
-    Nvec = [215]
-    beta_vec=[1024]
+    # Nvec = [215]
+    # beta_vec=[1024]
     kvec_dict = {
         100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
         215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
@@ -540,15 +540,15 @@ def compute_stretch():
                 2276,
                 3727, 6105,
                 9999, 16479, 27081, 44767, 73534, 121205, 199999]}
-
-    for N in Nvec:
-        if N ==10:
-            input_ED_vec = list(range(2, 10)) + [10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 99]  # FOR N =10
-        else:
-            input_ED_vec = kvec_dict[N]
-        for inputED in input_ED_vec:
-            for beta in beta_vec:
-                tasks.append((N, inputED, beta, 0))
+    #
+    # for N in Nvec:
+    #     if N ==10:
+    #         input_ED_vec = list(range(2, 10)) + [10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 99]  # FOR N =10
+    #     else:
+    #         input_ED_vec = kvec_dict[N]
+    #     for inputED in input_ED_vec:
+    #         for beta in beta_vec:
+    #             tasks.append((N, inputED, beta, 0))
 
     # simu4: diff ED for catching local minumum
     # Nvec = [464, 1000, 2154, 4642,10000]
@@ -559,6 +559,9 @@ def compute_stretch():
     # k_dict = {215: list(range(24, 104 + 1, 2)), 464: list(range(30,154 + 1, 2)), 1000: list(range(39,229 + 1, 2)), 2154: list(
     #     range(52,364 + 1, 2)), 4642: list(range(67,272 + 1, 2)), 10000: list(range(118,316 + 1, 2))}
     # # [91.42622647114122, 118.1037741586913, 152.42893756598227, 196.9043216252372, 254.46419978351528]
+    [80.45031543848104, 91.42622647114122, 103.91743642007826, 118.1037741586913, 134.20550298144724,
+     152.42893756598227, 173.34984983762467, 196.9043216252372, 223.88332992259927, 254.46419978351528]
+
     # Nvec = [681, 1468, 3156, 6803, 14683]
     # #
     # for N in Nvec:
@@ -568,14 +571,14 @@ def compute_stretch():
     #             tasks.append((N, inputED, beta, 0))
 
     # simu4: diff ED for catching 1-hop difference
-    # Nvec = [10000]
-    # for N in Nvec:
-    #     input_ED_vec = kvec_dict[N]
-    #     for inputED in input_ED_vec:
-    #         for beta in [1024]:
-    #             tasks.append((N, inputED, beta, 0))
+    Nvec = [10000]
+    for N in Nvec:
+        input_ED_vec = kvec_dict[N]
+        for inputED in input_ED_vec:
+            for beta in [1024]:
+                tasks.append((N, inputED, beta, 0))
 
-    with mp.Pool(processes=4) as pool:
+    with mp.Pool(processes=1) as pool:
         pool.starmap(stretch_inSRGG_oneSP, tasks)
 
 
