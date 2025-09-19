@@ -133,7 +133,7 @@ def analticdl(N, k_vals):
 def plot_hopcount_L_Lsamu_with_avg_whether_1hopincluded():
     # plot how the hopcount and link length changes with the average degree
     # the x-axis is the input average degree
-    Nvec = [1000]
+    Nvec = [10000]
 
     hop_flag = True
 
@@ -209,14 +209,17 @@ def plot_hopcount_L_Lsamu_with_avg_whether_1hopincluded():
             plt.plot(x, y2, linestyle="--", linewidth=3, marker='o', markersize=16,
                      label="exculde 1-hop", color=colors[N_index + 1])
 
+            # plt.plot(x, [i-j for (i,j) in zip(y2, y1)], linestyle="--", linewidth=3, marker='o', markersize=16,
+            #          label="exclude 1-hop, <h>  - include 1-hop, <h>", color=colors[N_index])
+
         else:
             plt.plot(x, y, linestyle="--", linewidth=3, marker='o', markersize=16,
                      label="inculde 1-hop", color=colors[N_index])
 
-        if hop_flag == True:
-            plt.plot(x, ana_hop, "-", linewidth=5, label=r"$0.52\sqrt{(N-1)\pi}(k-k_c)^{\frac{1}{2}}$")
-        else:
-            plt.plot(x, ana_edgelength, "-", linewidth=5, label=f"analytic link length, N = {N}")
+        # if hop_flag == True:
+        #     plt.plot(x, ana_hop, "-", linewidth=5, label=r"$0.52\sqrt{(N-1)\pi}(k-k_c)^{\frac{1}{2}}$")
+        # else:
+        #     plt.plot(x, ana_edgelength, "-", linewidth=5, label=f"analytic link length, N = {N}")
 
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
@@ -267,7 +270,7 @@ def plot_hopcount_L_Lsamu_with_avg_whether_1hopincluded():
                  label="exculde 1-hop, <h><r>", color=colors[N_index + 3])
 
         ana_L = [analticL(N, k) for k in x]
-        plt.plot(x, ana_L, "-", linewidth=5, label=r"$y = <r><h>$")
+        plt.plot(x, ana_L, "-", linewidth=5, label=r"analytic: $y = <r><h>$")
 
 
     # ax.spines['right'].set_visible(False)
@@ -361,14 +364,19 @@ def load_large_network_results_dev_vs_avg_locmin_1hopdiff(N, beta, kvec, realL,h
                         ave_hop_vec.append(np.mean(hop_vec))
                         std_hop_vec.append(np.std(hop_vec))
 
-                        hop_vec_no1 = hop_vec[hop_vec != 1]
+
+                        mask = hop_vec != 1
+                        hop_vec_no1 = hop_vec[mask]
                         ave_hop_vec_no1.append(np.mean(hop_vec_no1))
                         std_hop_vec_no1.append(np.std(hop_vec_no1))
 
+
+
                         if realL:
+                            ave_edgelength_for_a_para_comb_no1 = ave_edgelength_for_a_para_comb[mask]
                             # if L = <d_e>h real stretch
                             if hopno1:
-                                L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec_no1)]
+                                L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb_no1, hop_vec_no1)]
                             else:
                                 L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
                         else:

@@ -229,6 +229,8 @@ def load_large_network_results_dev_vs_avg(N, beta, kvec, realL):
                         ave_edgelength_vec.append(np.mean(ave_edgelength_for_a_para_comb))
                         std_edgelength_vec.append(np.std(ave_edgelength_for_a_para_comb))
 
+
+
                         hopcount_Name = folder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
                             Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                         hop_vec = np.loadtxt(hopcount_Name, dtype=int)
@@ -822,11 +824,16 @@ def load_large_network_results_dev_vs_avg_locmin_hunter(N, beta, kvec, realL):
                         ave_hop_vec.append(np.mean(hop_vec))
                         std_hop_vec.append(np.std(hop_vec))
 
+                        hop_vec_no1 = hop_vec[hop_vec != 1]
 
                         if realL:
-                            hop_vec_no1 = hop_vec[hop_vec!=1]
+                            if len(ave_edgelength_for_a_para_comb) != len(hop_vec_no1):
+                                ave_edgelength_for_a_para_comb_no1 = ave_edgelength_for_a_para_comb[hop_vec != 1]
                             #if L = <d_e>h real stretch
-                            L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec_no1)]
+                                L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb_no1, hop_vec_no1)]
+                            else:
+                                L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec_no1)]
+
                         else:
                             # if L = <d_e><h> ave  link length* hopcount
                             L = [np.mean(hop_vec)*np.mean(ave_edgelength_for_a_para_comb)]
@@ -847,11 +854,12 @@ def load_large_network_results_dev_vs_avg_locmin_hunter(N, beta, kvec, realL):
 
 def plot_L_with_avg_loc():
     # the x-axis is the input average degree
-    Nvec = [215, 464, 1000, 2154, 4642,10000]
-    Nvec = [215]
+    # Nvec = [215, 464, 1000, 2154, 4642,10000]
+    # Nvec = [10000]
+    Nvec = [464, 681, 1000, 1468,2154,3156, 4642,6803,10000]
+    # Nvec = [10000]
     realL = True
 
-    # Nvec = [215,464,1000]
     real_ave_degree_dict = {}
     ave_L = {}
     std_L = {}
@@ -878,8 +886,9 @@ def plot_L_with_avg_loc():
     #             3727, 6105,
     #             9999, 16479, 27081, 44767, 73534, 121205, 199999]}
     kvec_dict = {215: list(range(24, 104 + 1, 2)), 464: list(range(30, 154 + 1, 2)), 1000: list(range(39, 229 + 1, 2)),
-              2154: list(
-                  range(52, 364 + 1, 2)), 4642: list(range(67, 272 + 1, 2)), 10000: list(range(118, 316 + 1, 2))}
+                 2154: list(range(52, 364 + 1, 2)), 4642: list(range(67, 272 + 1, 2)), 10000: list(range(118, 316 + 1, 2)),
+                 681: list(range(40, 164 + 1, 2)), 1468: list(range(50, 240 + 1, 2)), 3156: list(range(72, 384 + 1, 2)),
+                 6803: list(range(87,295 + 1, 2)), 14683: list(range(140, 340 + 1, 2))}
     # kvec_dict = {215: [2, 3, 5, 9, 14] + list(range(24, 104 + 1, 2)) + [170, 278, 455, 746, 1221, 2000],
     #           464: list(range(30, 154 + 1, 2)), 1000: list(range(39, 229 + 1, 2)), 2154: list(
     #         range(52, 364 + 1, 2)), 4642: list(range(67, 272 + 1, 2)), 10000: list(range(118, 316 + 1, 2))}
@@ -906,24 +915,27 @@ def plot_L_with_avg_loc():
         ave_L[N] = ave_L_vec
         std_L[N] = std_L_vec
 
-        kvec2 = kvec_dict_0[N]
-        real_ave_degree_vec_0, _, _, _, _, _, _, ave_L_vec_0, std_L_vec_0 = load_large_network_results_dev_vs_avg(
-            N, beta, kvec2, realL)
-        real_ave_degree_dict_0[N] = real_ave_degree_vec_0
-        ave_L_0[N] = ave_L_vec_0
-        std_L_0[N] = std_L_vec_0
+        # kvec2 = kvec_dict_0[N]
+        # real_ave_degree_vec_0, _, _, _, _, _, _, ave_L_vec_0, std_L_vec_0 = load_large_network_results_dev_vs_avg(
+        #     N, beta, kvec2, realL)
+        # real_ave_degree_dict_0[N] = real_ave_degree_vec_0
+        # ave_L_0[N] = ave_L_vec_0
+        # std_L_0[N] = std_L_vec_0
 
 
     # plt.plot(kvec,ave_deviation_vec,"o-")
     # plt.xscale('log')
     # plt.show()
-    legend_vec = [r"$N=100$", r"$N=215$", r"$N=464$", r"$N=1000$", r"$N=2154",r"$N=4642",r"$N=10000"]
-    legend_vec = [r"$N=215$", r"$N=464$", r"$N=1000$", r"$N=2154$", r"$N=4642$", r"$N=10000$"]
+    # legend_vec = [r"$N=100$", r"$N=215$", r"$N=464$", r"$N=1000$", r"$N=2154",r"$N=4642",r"$N=10000"]
+    # legend_vec = [r"$N=215$", r"$N=464$", r"$N=1000$", r"$N=2154$", r"$N=4642$", r"$N=10000$"]
     fig, ax = plt.subplots(figsize=(9, 6))
 
-    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
+    # colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
     # colors = ["#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
-    # colors = c
+
+    colors = plt.get_cmap('tab10').colors[:len(Nvec)]
+
+
     # colorvec2 = ['#9FA9C9', '#D36A6A']
     for N_index in range(len(Nvec)):
         N = Nvec[N_index]
@@ -934,20 +946,24 @@ def plot_L_with_avg_loc():
         error = std_L[N]
         print(y)
 
-        x_0 = real_ave_degree_dict_0[N]
-        y_0 = ave_L_0[N]
-        error_0 = std_L_0[N]
+        # this is for the original data to show all the case
+        # x_0 = real_ave_degree_dict_0[N]
+        # y_0 = ave_L_0[N]
+        # error_0 = std_L_0[N]
+        #
+        # x_final = np.concatenate([x,x_0])
+        # y_final = np.concatenate([y,y_0])
+        # error_final = np.concatenate([error, error_0])
+        # sorted_index = np.argsort(x_final)
+        # x_final = x_final[sorted_index]
+        # y_final = y_final[sorted_index]
+        # error_final = error_final[sorted_index]
+        #
+        # plt.errorbar(x_final, y_final, yerr=error_final, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+        #              label=N, color=colors[N_index])
 
-        x_final = np.concatenate([x,x_0])
-        y_final = np.concatenate([y,y_0])
-        error_final = np.concatenate([error, error_0])
-        sorted_index = np.argsort(x_final)
-        x_final = x_final[sorted_index]
-        y_final = y_final[sorted_index]
-        error_final = error_final[sorted_index]
-
-        plt.errorbar(x_final, y_final, yerr=error_final, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
-                     label=legend_vec[N_index], color=colors[N_index])
+        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                     label=N, color=colors[N_index])
 
         x = np.array(x)
         y = np.array(y)
@@ -1009,7 +1025,8 @@ def plot_L_with_avg_loc():
     plt.close()
 
     # figure curve fit:
-    Nvec = [215, 464, 1000, 2154, 4642,10000]
+    # Nvec = [215, 464, 1000, 2154, 4642,10000]
+    Nvec = [464, 681, 1000, 1468, 2154, 3156, 4642, 6803, 10000]
     y_k_star_vec = []
     y_local_minimum = []
     for N in Nvec:
@@ -1022,7 +1039,13 @@ def plot_L_with_avg_loc():
 
     figure()
     plt.plot(Nvec, y_k_star_vec, "-o",markersize=25, linewidth=5, label=r"simulation:$k^*$")
-    plt.plot(Nvec, k_star, "--", markersize=25, markerfacecolor='none', linewidth=5, label=r"$y = k_c^{\frac{2}{3}}\pi \frac{4}{3}^{\frac{2}{3}} N^{\frac{1}{3}} $")
+    plt.plot(Nvec, k_star, "--", markersize=25, markerfacecolor='none', linewidth=5, label=r"$k^* = k_c^{\frac{2}{3}}\pi \frac{4}{3}^{\frac{2}{3}} N^{\frac{1}{3}} $")
+    if realL:
+        plt.plot(Nvec, [0.33*i for i in k_star], "--", markersize=25, markerfacecolor='none', linewidth=5,
+                 label=r"$k^* = 0.33 k_c^{\frac{2}{3}}\pi \frac{4}{3}^{\frac{2}{3}} N^{\frac{1}{3}} $")
+    else:
+        plt.plot(Nvec, [0.6 * i for i in k_star], "--", markersize=25, markerfacecolor='none', linewidth=5,
+                 label=r"$k^* = 0.6 k_c^{\frac{2}{3}}\pi \frac{4}{3}^{\frac{2}{3}} N^{\frac{1}{3}} $")
 
     plt.xlabel(r'Network size, $N$', fontsize=26)
     plt.ylabel(r'Critical Degree, $k^*$', fontsize=26)
@@ -1031,7 +1054,7 @@ def plot_L_with_avg_loc():
     plt.yscale('log')
     plt.xscale('log')
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=26, loc=(0.5, 0.05))
+    plt.legend(fontsize=26, loc=(0.6, 0.05))
     plt.tick_params(axis='both', which="both", length=6, width=1)
     plt.show()
     plt.close()
@@ -1040,6 +1063,28 @@ def plot_L_with_avg_loc():
     plt.plot(Nvec,y_local_minimum, "-o",markersize=25, linewidth=5, label=r"simulation: local minimum $\langle L \rangle$")
     plt.plot(Nvec, y2, "--", markersize=25, markerfacecolor='none', linewidth=5,
              label=r"$y = f_{\langle L \rangle} (k^*) $")
+    if realL:
+        plt.plot(Nvec, [1.5*i for i in y2], "--", markersize=25, markerfacecolor='none', linewidth=5,
+                 label=r"$y = 1.5 f_{\langle L \rangle} (k^*) $")
+
+    else:
+        plt.plot(Nvec, [1.07 * i for i in y2], "--", markersize=25, markerfacecolor='none', linewidth=5,
+                 label=r"$y = 1.07 f_{\langle L \rangle} (k^*) $")
+
+    popt, pcov = curve_fit(power_law, Nvec, y_local_minimum)
+    a_fit, b_fit = popt
+    print("拟合参数: a = %.4f, b = %.4f" % (a_fit, b_fit))
+    plt.plot(Nvec, power_law(Nvec, a_fit, b_fit), label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}", color='red')
+
+    # x = np.array(Nvec)
+    # b_fit = -0.13
+    # plt.plot(x, a_fit * x**b_fit, label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}", color='red')
+
+
+
+    latex_expr = r"$f_{\langle L \rangle} = \frac{2}{3}\sqrt{\frac{k}{N\pi}}\left(1+\frac{4}{3\pi}\sqrt{\frac{k}{N\pi}}\right) 0.52\sqrt{N\pi} (k - k_c)^{-\frac{1}{2}}$"
+    plt.text(1000, 0.65, latex_expr, fontsize=26)
+
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     plt.yscale('log')
@@ -1047,7 +1092,11 @@ def plot_L_with_avg_loc():
     plt.xlabel(r'Network size, $N$', fontsize=26)
     plt.ylabel(r'Local minimum stretech, $\langle L \rangle_{min}$', fontsize=26)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=26, loc=(0.5, 0.05))
+    if realL:
+        plt.legend(fontsize=26, loc=(0.5, 0.1))
+    else:
+        plt.legend(fontsize=26, loc=(0.5, 0.6))
+        # plt.yl/im([min(y2), 0.65])
     plt.tick_params(axis='both', which="both", length=6, width=1)
     plt.show()
     plt.close()

@@ -68,12 +68,12 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
     ave_edge_length = []
     length_edge_vec = []
 
-    # folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\localmin_hunter\\"
-    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\1hopdiff\\"
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\localmin_hunter\\"
+    # folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\1hopdiff\\"
 
     # folder_name = "/home/qzh/data/"
 
-    simu_times = 1
+    simu_times = 100
     for simu_index in range(simu_times):
         G, linkweight_vec, Coorx, Coory = R2SRGG_withlinkweight(N, ED, beta, rg)
         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
@@ -94,7 +94,7 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
         # LCC_num.append(LCC_number)
 
         # pick up all the node pairs in the LCC and save them in the unique_pairs
-        nodepair_num = 10000
+        nodepair_num = 1000
         unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
         count = 0
 
@@ -190,9 +190,9 @@ def stretch_in_multiple_largenetworks_oneSP_clu(N, ED, beta, rg, ExternalSimutim
     #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
     # np.savetxt(ave_baseline_deviation_name, ave_baseline_deviation)
 
-    length_geodesic_name = folder_name + "length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-    np.savetxt(length_geodesic_name, length_geodesic)
+    # length_geodesic_name = folder_name + "length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+    #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    # np.savetxt(length_geodesic_name, length_geodesic)
 
     # SPnodenum_vec_name = folder_name+"SPnodenum_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
     #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -543,10 +543,10 @@ def compute_stretch():
 
     # simu4: diff ED for catching local minumum
     # Nvec = [464, 1000, 2154, 4642,10000]
-    # # Nvec = [215]
-    # beta_vec = [1024]
-    # #
-    # # # analytic_k = {215: range(24,104+1,2), 464: 80, 1000: 104, 2154: 134, 4642: 173, 10000: 224}
+    Nvec = [215]
+    beta_vec = [1024]
+    #
+    # # analytic_k = {215: range(24,104+1,2), 464: 80, 1000: 104, 2154: 134, 4642: 173, 10000: 224}
     k_dict = {215: list(range(24, 104 + 1, 2)), 464: list(range(30, 154 + 1, 2)), 1000: list(range(39, 229 + 1, 2)),
               2154: list(
                   range(52, 364 + 1, 2)), 4642: list(range(67, 272 + 1, 2)), 10000: list(range(118, 316 + 1, 2))}
@@ -555,22 +555,22 @@ def compute_stretch():
     #     295+ 1, 2)), 14683: list(range(140,340 + 1, 2))}
 
     # Nvec = [681, 1468, 3156, 6803, 14683]
-    # #
-    # for N in Nvec:
-    #     input_ED_vec = k_dict[N]
-    #     for inputED in input_ED_vec:
-    #         for beta in beta_vec:
-    #             tasks.append((N, inputED, beta, 0))
-
-    # simu4: diff ED for catching 1-hop difference
-    Nvec = [10000]
+    # Nvec = [681, 1468,3156]
     for N in Nvec:
-        input_ED_vec = kvec_dict[N]
+        input_ED_vec = k_dict[N]
         for inputED in input_ED_vec:
-            for beta in [1024]:
+            for beta in beta_vec:
                 tasks.append((N, inputED, beta, 0))
 
-    with mp.Pool(processes=1) as pool:
+    # simu4: diff ED for catching 1-hop difference
+    # Nvec = [10000]
+    # for N in Nvec:
+    #     input_ED_vec = kvec_dict[N]
+    #     for inputED in input_ED_vec:
+    #         for beta in [1024]:
+    #             tasks.append((N, inputED, beta, 0))
+
+    with mp.Pool(processes=2) as pool:
         pool.starmap(stretch_inSRGG_oneSP, tasks)
 
     # Press the green button in the gutter to run the script.
@@ -581,7 +581,7 @@ if __name__ == '__main__':
     Step1 run simulations with different beta and input AVG for one sp case
     """
 
-    compute_stretch()
+    # compute_stretch()
 
     # """
     # SMALL NETWROK CHECK
@@ -614,3 +614,32 @@ if __name__ == '__main__':
     #
     # print("最短路径:", shortest_path)
     # print("路径上的所有边:", shortest_path_edges)
+
+
+    # k_dict = {681: list(range(40,164 + 1, 2)), 1468: list(range(50,240 + 1, 2)), 3156: list(range(72,384 + 1, 2)), 6803: list(range(87,
+    #         295+ 1, 2)), 14683: list(range(140,340 + 1, 2))}
+    #
+    # for key, item in k_dict.items():
+    #     print(key)
+    #     print(len(item))
+
+    kvec_dict = {
+        100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
+        215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+        464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+        1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+        2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+        4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 7.0, 8.0, 9.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+                2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+
+
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
+    G,coorx,coory = R2SRGG(10000,1000000,2.1,rg)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    print(real_avg)
