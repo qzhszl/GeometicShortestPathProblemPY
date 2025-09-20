@@ -576,6 +576,40 @@ def compute_stretch():
     # Press the green button in the gutter to run the script.
 
 
+def generate_ED_log_unifrom(start_point, end_point, point_number):
+    points = np.logspace(np.log10(start_point), np.log10(end_point), point_number)
+    points_int_vec = [round(i) for i in points]
+    return points_int_vec
+
+
+def compute_proper_ed():
+    kvec_dict_forsmallbeta = {
+        464: generate_ED_log_unifrom(2,1000000,12),
+        681: generate_ED_log_unifrom(2, 1000000, 15),
+        1000: generate_ED_log_unifrom(2,1000000,15),
+        1468: generate_ED_log_unifrom(2, 1000000, 15),
+        2154: generate_ED_log_unifrom(2,1000000,15),
+        3156: generate_ED_log_unifrom(2, 1000000, 15),
+        4642: generate_ED_log_unifrom(2,1000000,15),
+        6803: generate_ED_log_unifrom(2, 1000000, 15),
+        10000: generate_ED_log_unifrom(2,1000000,15)}
+    print(kvec_dict_forsmallbeta)
+
+    # rg = RandomGenerator(-12)
+    # rseed = random.randint(0, 100)
+    # for i in range(rseed):
+    #     rg.ran1()
+    # Nvec = [464,681,1000,1468,2154,3156,4642]
+    # for N in Nvec:
+    #     G,coorx,coory = R2SRGG(N,10000000,2.1,rg)
+    #     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    #     print(real_avg)
+
+
+    # points_int = generate_ED_log_unifrom()
+
+
+
 if __name__ == '__main__':
     """
     Step1 run simulations with different beta and input AVG for one sp case
@@ -623,23 +657,19 @@ if __name__ == '__main__':
     #     print(key)
     #     print(len(item))
 
-    kvec_dict = {
-        100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
-        215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
-        464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
-        1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
-        2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
-        4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
-        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 7.0, 8.0, 9.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
-                2276,
-                3727, 6105,
-                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+    # kvec_dict = {
+    #     100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
+    #     215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+    #     464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+    #     1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+    #     2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+    #     4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+    #     10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 7.0, 8.0, 9.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+    #             2276,
+    #             3727, 6105,
+    #             9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+    #
+
+    compute_proper_ed()
 
 
-    rg = RandomGenerator(-12)
-    rseed = random.randint(0, 100)
-    for i in range(rseed):
-        rg.ran1()
-    G,coorx,coory = R2SRGG(10000,1000000,2.1,rg)
-    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    print(real_avg)
