@@ -1012,8 +1012,14 @@ def plot_L_with_avg_loc():
                          label=N, color=colors[N_index])
 
 
-        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+        # plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+        #              label=N, color=colors[N_index])
+        # plt.errorbar(kvec_dict[N], y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+        #              label=N, color=colors[N_index])
+        plt.errorbar([alpha(x,N, beta) for x in kvec_dict[N]], y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
                      label=N, color=colors[N_index])
+
+
 
         x = np.array(x)
         y = np.array(y)
@@ -1055,7 +1061,10 @@ def plot_L_with_avg_loc():
 
     plt.yscale('log')
     plt.xscale('log')
-    plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
+    # plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
+    plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    plt.xlabel(r'$\alpha$', fontsize=26)
+
     if realL:
         plt.ylabel(r'Average stretch, $\langle L \rangle$', fontsize=26)
     else:
@@ -1197,6 +1206,13 @@ def fit_and_plot_hop_C(x, y):
 
     return C_fit,x_fit,y_fit
 
+def alpha(avg, N, beta):
+    R = 2.0  # manually tuned value
+    alpha = (2 * N / avg * R * R) * (np.pi / (np.sin(2 * np.pi / beta) * beta))
+    alpha = np.sqrt(alpha)
+    return alpha
+
+
 
 def hopcount_fit():
     Nvec = [464, 1000, 2154, 4642, 10000]
@@ -1277,8 +1293,14 @@ def hopcount_fit():
             hop_dict[N] = hop_vec_0
 
 
+        # plt.plot(real_ave_degree_vec_0,hop_vec_0,"-o",markersize = 25,markerfacecolor='none',linewidth=5,label = f"{N}")
+        # plt.plot(kvec2, hop_vec_0, "-o", markersize=25, markerfacecolor='none', linewidth=5,
+        #          label=f"{N}")
+        plt.plot([alpha(x, N, beta) for x in kvec2], hop_vec_0, "-o", markersize=25, markerfacecolor='none', linewidth=5,
+                 label=f"{N}")
 
-        plt.plot(real_ave_degree_vec_0,hop_vec_0,"-o",markersize = 25,markerfacecolor='none',linewidth=5,label = f"{N}")
+
+
         # C_fit,fitx,fity = fit_and_plot_hop_C(real_ave_degree_vec_0, hop_vec_0)
         # plt.plot(fitx, fity, "--", markersize=25, markerfacecolor='none', linewidth=5,
         #          label=f"y = {C_fit:.4f}(x-4.512)")
@@ -1300,7 +1322,9 @@ def hopcount_fit():
     plt.yscale('log')
     plt.xscale('log')
     # plt.xlabel(r'Network size, $N$', fontsize=26)
-    plt.xlabel(r'$k$', fontsize=26)
+    # plt.xlabel(r'$k$', fontsize=26)
+    plt.xlabel(r'Expected degree $E[D]$', fontsize=26)
+    plt.xlabel(r'$\alpha$', fontsize=26)
     plt.ylabel(r' $\langle h \rangle$', fontsize=26)
     plt.legend(fontsize=12, loc=(0.7, 0.2))
     plt.show()
@@ -1413,7 +1437,7 @@ if __name__ == '__main__':
     # STEP 4 <d> and <h> versus real average degree beta = 1024 under differnet N for local minimum
     """
     # if realL = True,L = real stretch ; else , L = <d><h>
-    # plot_L_with_avg_loc()
+    plot_L_with_avg_loc()
     # print(generate_ED_log_unifrom(2, 199999, 12))
 
 
@@ -1429,7 +1453,7 @@ if __name__ == '__main__':
     """
     # STEP 5 <d> and <h> versus real average degree beta = 1024 under differnet N for local minimum
     """
-    hopcount_fit()
+    # hopcount_fit()
     # hopcount_fit_C()
     # analytic_local_min_check()
 
