@@ -201,13 +201,18 @@ def plot_hopcount_L_Lsamu_with_avg_whether_1hopincluded():
         y = edgelength[N]
         y1 = hop[N]
         y2 = hop_no1[N]
-        ana_edgelength = [analticdl(N, k) for k in x]
+
+        ana_edgelength = [(100*(k-4.512)**(-0.5)-k/(N-1))/(1-k/(N-1)) for k in x]
         ana_hop = [analtich(N, k) for k in x]
         if hop_flag == True:
             plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
                      label="inculde 1-hop", color=colors[N_index])
             plt.plot(x, y2, linestyle="--", linewidth=3, marker='o', markersize=16,
                      label="exculde 1-hop", color=colors[N_index + 1])
+
+            plt.plot(x, ana_edgelength, linestyle="-", linewidth=3,
+                     label="Samu new model", color=colors[N_index + 2])
+
 
             # plt.plot(x, [i-j for (i,j) in zip(y2, y1)], linestyle="--", linewidth=3, marker='o', markersize=16,
             #          label="exclude 1-hop, <h>  - include 1-hop, <h>", color=colors[N_index])

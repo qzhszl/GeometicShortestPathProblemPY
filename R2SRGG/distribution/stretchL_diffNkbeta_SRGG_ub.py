@@ -583,27 +583,28 @@ def generate_ED_log_unifrom(start_point, end_point, point_number):
 
 
 def compute_proper_ed():
-    kvec_dict_forsmallbeta = {
-        464: generate_ED_log_unifrom(2,1000000,12),
-        681: generate_ED_log_unifrom(2, 1000000, 15),
-        1000: generate_ED_log_unifrom(2,1000000,15),
-        1468: generate_ED_log_unifrom(2, 1000000, 15),
-        2154: generate_ED_log_unifrom(2,1000000,15),
-        3156: generate_ED_log_unifrom(2, 1000000, 15),
-        4642: generate_ED_log_unifrom(2,1000000,15),
-        6803: generate_ED_log_unifrom(2, 1000000, 15),
-        10000: generate_ED_log_unifrom(2,1000000,15)}
-    print(kvec_dict_forsmallbeta)
+    # kvec_dict_forsmallbeta = {
+    #     464: generate_ED_log_unifrom(2,1000000,12),
+    #     681: generate_ED_log_unifrom(2, 1000000, 15),
+    #     1000: generate_ED_log_unifrom(2,1000000,15),
+    #     1468: generate_ED_log_unifrom(2, 1000000, 15),
+    #     2154: generate_ED_log_unifrom(2,1000000,15),
+    #     3156: generate_ED_log_unifrom(2, 1000000, 15),
+    #     4642: generate_ED_log_unifrom(2,1000000,15),
+    #     6803: generate_ED_log_unifrom(2, 1000000, 15),
+    #     10000: generate_ED_log_unifrom(2,1000000,15)}
+    # print(kvec_dict_forsmallbeta)
 
-    # rg = RandomGenerator(-12)
-    # rseed = random.randint(0, 100)
-    # for i in range(rseed):
-    #     rg.ran1()
-    # Nvec = [464,681,1000,1468,2154,3156,4642]
-    # for N in Nvec:
-    #     G,coorx,coory = R2SRGG(N,10000000,2.1,rg)
-    #     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    #     print(real_avg)
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
+    Nvec = [464,681,1000,1468,2154,3156,4642,6803,10000]
+    # 1000000
+    for N in Nvec:
+        G,coorx,coory = R2SRGG(N,10000,3.1,rg)
+        real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+        print(real_avg)
 
 
     # points_int = generate_ED_log_unifrom()

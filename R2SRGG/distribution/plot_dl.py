@@ -11,6 +11,13 @@ from scipy.optimize import curve_fit
 
 from R2SRGG.R2SRGG import loadSRGGandaddnode
 
+def analticdl(N, k_vals):
+    pi = np.pi
+    # k 的取值范围
+    k_vals = np.array(k_vals)
+    h_vals = (2 / 3) * np.sqrt(k_vals / (N * pi)) *(1+4/(3*pi)*np.sqrt(k_vals / (N * pi)))
+    return h_vals
+
 
 def power_law(x, a, b):
     return a * x ** b
@@ -30,23 +37,36 @@ def plot_dl_vs_realED(N, beta_vec):
 
     # kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155]
     # kvec = [2, 3, 5, 8, 10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155, 266, 457, 787, 1356, 2337, 4028, 6943, 11972, 20647]# for ONE SP, load data for beta = 2.05 and 1024
-    # kvec = [2.2, 3.0, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
-    #         3727, 6105,
-    #         9999, 16479, 27081, 44767, 73534, 121205, 199999]
-
-    kvec = [2.2, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+    kvec0 = [2.2, 3.0, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
             3727, 6105,
-            9999,]
+            9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
+    # kvec = [2.2, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+    #         3727, 6105,
+    #         9999,]
+
+    kvec1 = [2, 6, 16, 46, 132, 375, 1067, 3040, 8657, 24657, 70224, 199999]
+
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    if len(beta_vec)>5:
+        colors = plt.get_cmap('tab10').colors[:len(beta_vec)+2]
+
     count = 0
     fig, ax = plt.subplots(figsize=(8, 8))
-    betalabel = ["$2.1$", "$2^2$", "$2^3$", "$2^6$", "$2^{10}$"]
+    if len(beta_vec) > 5:
+        betalabel = ["$2.1$", "$2.3$","$2.5$","3","$2^2$", "$2^3$", "$2^6$", "$2^{10}$"]
+    else:
+        betalabel = ["$2.1$", "$2.3$", "$2.5$", "3"]
     data_dict = {}
     count = 0
     for beta in beta_vec:
         real_ave_degree_vec = []
         ave_length_edge_vec = []
         std_length_edge_vec = []
+        if beta in [2.3,2.5,3]:
+            kvec = kvec1
+        else:
+            kvec = kvec0
         for ED in kvec:
             print(ED)
             for ExternalSimutime in range(1):
@@ -71,14 +91,37 @@ def plot_dl_vs_realED(N, beta_vec):
             print(std_length_edge_vec)
             data_dict[beta] = (real_ave_degree_vec, ave_length_edge_vec, std_length_edge_vec)
         if beta == 2.02:
-            plt.plot(real_ave_degree_vec[6:], ave_length_edge_vec[6:], linestyle="-",
-                         linewidth=3,
+            plt.plot(real_ave_degree_vec[6:], ave_length_edge_vec[6:], linestyle="--",
+                         linewidth=1,
                         marker='o', markersize=16, color=colors[count],
                          label=rf"$N=10^4$, $\beta$ = {betalabel[count]}")
+            data =np.column_stack((real_ave_degree_vec[6:], ave_length_edge_vec[6:]))
+            filename = f"linklengthvsdegree_N{N}_beta{beta}.txt"
+            np.savetxt(filename, data, header="real average degree\tave_link_length", fmt="%.6f")
+
+            popt2, pcov2 = curve_fit(power_law, real_ave_degree_vec[6:-5], ave_length_edge_vec[6:-5])
+            a2, alpha2 = popt2
+            y_fit = power_law(real_ave_degree_vec[6:], a2, alpha2)
+            plt.plot(real_ave_degree_vec[6:], y_fit, '-', linewidth=2, color=colors[beta_vec.index(beta)],
+                     label=fr'$f(k) = {a2:.4f} k^{{{alpha2:.2f}}}$')
+
         else:
-            plt.plot(real_ave_degree_vec, ave_length_edge_vec, linestyle="-", linewidth=3,
+            plt.plot(real_ave_degree_vec, ave_length_edge_vec, linestyle="--", linewidth=1,
                          marker='o', markersize=16, color=colors[count],
                          label=rf"$N=10^4$, $\beta$ = {betalabel[count]}")
+
+            data = np.column_stack((real_ave_degree_vec, ave_length_edge_vec))
+            filename = f"linklengthvsdegree_N{N}_beta{beta}.txt"
+            np.savetxt(filename, data, header="real average degree\tave_link_length", fmt="%.6f")
+
+
+            if beta in [2.3,2.5,3]:
+                popt2, pcov2 = curve_fit(power_law, real_ave_degree_vec[:-5], ave_length_edge_vec[:-5])
+                a2, alpha2 = popt2
+                x = np.linspace(1, 15000, 50)
+                y_fit = power_law(x, a2, alpha2)
+                plt.plot(x, y_fit, '-', linewidth=2, color=colors[beta_vec.index(beta)],
+                         label=fr'$f(k) = {a2:.4f} k^{{{alpha2:.2f}}}$')
 
 
         # if beta == 2.02:
@@ -177,27 +220,38 @@ def plot_dl_vs_realED(N, beta_vec):
     # popt2, pcov2 = curve_fit(power_law, data_dict[128][0][:-8], data_dict[128][1][:-8])
     # a2, alpha2 = popt2
     # # 拟合曲线
-    N_fit2 = np.linspace(1, 15000, 50)
-    a2 = 0.0034
-    alpha2 = 0.5
-    y_fit2 = power_law(N_fit2, a2, alpha2)
-    plt.plot(N_fit2, y_fit2, '--', linewidth=5, color="#E6B565",
-             label=fr'$f(k) = {a2:.4f} k^{{{alpha2:.1f}}}$')
-
-    # fit Mk MODEL
-    for beta in [2.02, 4, 8, 128]:
-        N_fit2 = np.linspace(1, 15000, 50)
-        y = [MKdlmodel(x, N, beta) for x in N_fit2]
-        print(y)
-        plt.plot(N_fit2,y,'--', linewidth=5,
-             label=fr'MK model, $\beta$ = {beta}')
+    # N_fit2 = np.linspace(1, 15000, 50)
+    # a2 = 0.0034
+    # alpha2 = 0.5
+    # y_fit2 = power_law(N_fit2, a2, alpha2)
+    # plt.plot(N_fit2, y_fit2, '-', linewidth=2, color="#E6B565",
+    #          label=fr'$f(k) = {a2:.4f} k^{{{alpha2:.1f}}}$')
+    #
+    # # fit Samu Model
+    # N_samu = np.linspace(1, 15000, 50)
+    # y_samu = [analticdl(10000,i) for i in N_samu]
+    # plt.plot(N_samu, y_samu, '-', linewidth=2, color=colors[8],
+    #          label=fr'Samu with high order term')
+    #
+    #
+    # # fit Mk MODEL
+    # for beta in [4, 128]:
+    #     N_fit2 = np.linspace(1, 15000, 50)
+    #     y = [MKdlmodel(x, N, beta) for x in N_fit2]
+    #     print(y)
+    #     plt.plot(N_fit2,y,'-', linewidth=2,
+    #          label=fr'MK model, $\beta$ = {beta}',color = colors[beta_vec.index(beta)])
 
 
 
     # plt.legend(fontsize=26, bbox_to_anchor=(0.42, 0.42), markerscale=1, handlelength=1, labelspacing=0.2,
     #            handletextpad=0.3, borderpad=0.1, borderaxespad=0.1)
 
-    plt.legend(fontsize=26, bbox_to_anchor=(0.7, 0.6), markerscale=1, handlelength=1, labelspacing=0.2,
+    if len(beta_vec) > 5:
+        plt.legend(fontsize=16, bbox_to_anchor=(0.7, 0.6), markerscale=1, handlelength=1, labelspacing=0.2,
+                   handletextpad=0.3, borderpad=0.1, borderaxespad=0.1)
+    else:
+        plt.legend(fontsize=26, bbox_to_anchor=(0.7, 0.6), markerscale=1, handlelength=1, labelspacing=0.2,
                handletextpad=0.3, borderpad=0.1, borderaxespad=0.1)
 
     # ax.legend(
@@ -247,4 +301,6 @@ def plot_dl_vs_realED(N, beta_vec):
 
 
 if __name__ == '__main__':
-    plot_dl_vs_realED(10000, [2.02, 4, 8, 128])
+    plot_dl_vs_realED(10000, [2.02,2.3,2.5,3, 4, 8, 128])
+    # plot_dl_vs_realED(10000, [2.02, 2.3, 2.5, 3])
+

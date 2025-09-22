@@ -13,6 +13,7 @@ from fontTools.tfmLib import PASSTHROUGH
 from matplotlib.pyplot import figure
 from scipy.optimize import curve_fit
 
+from stretchL_diffNkbeta_SRGG_ub import generate_ED_log_unifrom
 from R2SRGG.R2SRGG import loadSRGGandaddnode
 from collections import defaultdict
 import math
@@ -268,7 +269,7 @@ def analticL(N, k_vals):
 
     kc = 4.512
     C = 0.52*np.sqrt(N*pi)
-    print(N,C)
+    # print(N,C)
     h_vals = (2 / 3) * np.sqrt(k_vals / (N * pi)) *(1+4/(3*pi)*np.sqrt(k_vals / (N * pi)))* C * (k_vals - kc) ** (-0.5)
     return h_vals
 
@@ -280,7 +281,7 @@ def analtich(N, k_vals):
     # 计算 h(k)
     kc = 4.512
     C = 0.52*np.sqrt(N*pi)
-    print(N,C)
+    # print(N,C)
     h_vals = C * (k_vals - kc) ** (-0.5)
     return h_vals
 
@@ -831,6 +832,7 @@ def load_large_network_results_dev_vs_avg_locmin_hunter(N, beta, kvec, realL):
                                 ave_edgelength_for_a_para_comb_no1 = ave_edgelength_for_a_para_comb[hop_vec != 1]
                             #if L = <d_e>h real stretch
                                 L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb_no1, hop_vec_no1)]
+                                # L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
                             else:
                                 L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec_no1)]
 
@@ -857,8 +859,12 @@ def plot_L_with_avg_loc():
     # Nvec = [215, 464, 1000, 2154, 4642,10000]
     # Nvec = [10000]
     Nvec = [464, 681, 1000, 1468,2154,3156, 4642,6803,10000]
-    Nvec = [215]
-    beta = 1024
+
+
+    # Nvec = [10000]
+    # beta = 1024
+    # beta = 2.1
+    beta = 2.1
     realL = True
 
     real_ave_degree_dict = {}
@@ -894,18 +900,55 @@ def plot_L_with_avg_loc():
         #           464: list(range(30, 154 + 1, 2)), 1000: list(range(39, 229 + 1, 2)), 2154: list(
         #         range(52, 364 + 1, 2)), 4642: list(range(67, 272 + 1, 2)), 10000: list(range(118, 316 + 1, 2))}
 
-    kvec_dict_0 = {
-        100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
-        215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
-        464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
-        1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
-        2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
-        4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
-        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 7.0, 8.0, 9.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
-                2276,
-                3727, 6105,
-                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+        kvec_dict_0 = {
+            100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
+            215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+            464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+            1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+            2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+            4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+            10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 7.0, 8.0, 9.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+                    2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]}
 
+    elif beta == 2.1:
+        kvec_dict = {
+            464: generate_ED_log_unifrom(2, 1000000, 12),
+            681: generate_ED_log_unifrom(2, 1000000, 12),
+            1000: generate_ED_log_unifrom(2, 1000000, 12),
+            1468: generate_ED_log_unifrom(2, 1000000, 12),
+            2154: generate_ED_log_unifrom(2, 1000000, 12),
+            3156: generate_ED_log_unifrom(2, 1000000, 12),
+            4642: generate_ED_log_unifrom(2, 1000000, 12),
+            6803: generate_ED_log_unifrom(2, 1000000, 12),
+            10000: generate_ED_log_unifrom(2, 1000000, 12)}
+        # kvec_tem = generate_ED_log_unifrom(523, 3331, 30) # find local optimum
+        # kvec_tem1 = generate_ED_log_unifrom(236, 523, 30) # find local optimum extra for N<=1000
+        # kvec_tem1_smallN = kvec_tem1[:-1]+kvec_tem
+        # # print(kvec_tem1_smallN)
+        # kvec_dict = {
+        #     464: kvec_tem1_smallN,
+        #     681: kvec_tem1_smallN,
+        #     1000: kvec_tem1_smallN,
+        #     1468: kvec_tem,
+        #     2154: kvec_tem,
+        #     3156: kvec_tem,
+        #     4642: kvec_tem,
+        #     6803: kvec_tem,
+        #     10000: kvec_tem}
+    else:
+        # beta ==3.1
+        kvec_dict = {
+            464: generate_ED_log_unifrom(2, 100000, 12),
+            681: generate_ED_log_unifrom(2, 100000, 12),
+            1000: generate_ED_log_unifrom(2, 100000, 12),
+            1468: generate_ED_log_unifrom(2, 100000, 12),
+            2154: generate_ED_log_unifrom(2, 100000, 12),
+            3156: generate_ED_log_unifrom(2, 100000, 12),
+            4642: generate_ED_log_unifrom(2, 1000000, 12),
+            6803: generate_ED_log_unifrom(2, 1000000, 12),
+            10000: generate_ED_log_unifrom(2, 1000000, 12)}
 
 
     for N in Nvec:
@@ -916,12 +959,13 @@ def plot_L_with_avg_loc():
         ave_L[N] = ave_L_vec
         std_L[N] = std_L_vec
 
-        # kvec2 = kvec_dict_0[N]
-        # real_ave_degree_vec_0, _, _, _, _, _, _, ave_L_vec_0, std_L_vec_0 = load_large_network_results_dev_vs_avg(
-        #     N, beta, kvec2, realL)
-        # real_ave_degree_dict_0[N] = real_ave_degree_vec_0
-        # ave_L_0[N] = ave_L_vec_0
-        # std_L_0[N] = std_L_vec_0
+        if beta==1024:
+            kvec2 = kvec_dict_0[N]
+            real_ave_degree_vec_0, _, _, _, _, _, _, ave_L_vec_0, std_L_vec_0 = load_large_network_results_dev_vs_avg(
+                N, beta, kvec2, realL)
+            real_ave_degree_dict_0[N] = real_ave_degree_vec_0
+            ave_L_0[N] = ave_L_vec_0
+            std_L_0[N] = std_L_vec_0
 
 
     # plt.plot(kvec,ave_deviation_vec,"o-")
@@ -945,23 +989,28 @@ def plot_L_with_avg_loc():
         y = ave_L[N]
         # plt.plot(x,y,label="test")
         error = std_L[N]
+        print(generate_ED_log_unifrom(2, 1000000, 12))
+        print(x)
         print(y)
 
-        # this is for the original data to show all the case
-        # x_0 = real_ave_degree_dict_0[N]
-        # y_0 = ave_L_0[N]
-        # error_0 = std_L_0[N]
-        #
-        # x_final = np.concatenate([x,x_0])
-        # y_final = np.concatenate([y,y_0])
-        # error_final = np.concatenate([error, error_0])
-        # sorted_index = np.argsort(x_final)
-        # x_final = x_final[sorted_index]
-        # y_final = y_final[sorted_index]
-        # error_final = error_final[sorted_index]
-        #
-        # plt.errorbar(x_final, y_final, yerr=error_final, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
-        #              label=N, color=colors[N_index])
+        if beta==1024:
+            # this is for the original data to show all the case for beta=1024. If we only want to see the local minimum,
+            # annotate this "if" out
+            x_0 = real_ave_degree_dict_0[N]
+            y_0 = ave_L_0[N]
+            error_0 = std_L_0[N]
+
+            x_final = np.concatenate([x,x_0])
+            y_final = np.concatenate([y,y_0])
+            error_final = np.concatenate([error, error_0])
+            sorted_index = np.argsort(x_final)
+            x_final = x_final[sorted_index]
+            y_final = y_final[sorted_index]
+            error_final = error_final[sorted_index]
+
+            plt.errorbar(x_final, y_final, yerr=error_final, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                         label=N, color=colors[N_index])
+
 
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
                      label=N, color=colors[N_index])
@@ -983,22 +1032,27 @@ def plot_L_with_avg_loc():
         localmin_dict[N] = y_min
         print(f"N:{N}")
         print(f"最小值点: x = {x_min}, y = {y_min}")
-        plt.scatter(x_min, y_min,
-                    marker='s', s=1000,
-                    facecolors='none', edgecolors='red', linewidths=2,
-                    label='min')
+
+        # plt.scatter(x_min, y_min,
+        #             marker='s', s=1000,
+        #             facecolors='none', edgecolors='red', linewidths=2,
+        #             label='min')
 
 
 
     k_c = 4.512
     k_star = [k_c**(2/3) * np.pi * (4/3)**(2/3) * N**(1/3) for N in Nvec]
     y2 = [analticL(N, k) for (N, k) in zip(Nvec, k_star)]
-    plt.plot(k_star,y2,"-o",markersize = 25,markerfacecolor='none',linewidth=5,label = "analytic local minimum")
-    print(k_star)
+    # plot the analytic results
+    if beta ==1024:
+        plt.plot(k_star,y2,"-o",markersize = 25,markerfacecolor='none',linewidth=5,label = "analytic local minimum")
+        print(k_star)
+
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
     plt.ylim(0.02, 2)
     # plt.yticks([0, 0.1, 0.2, 0.3])
+
     plt.yscale('log')
     plt.xscale('log')
     plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
@@ -1025,7 +1079,8 @@ def plot_L_with_avg_loc():
     plt.show()
     plt.close()
 
-    # figure curve fit:
+
+    # figure curve fit: load data:
     # Nvec = [215, 464, 1000, 2154, 4642,10000]
     Nvec = [464, 681, 1000, 1468, 2154, 3156, 4642, 6803, 10000]
     y_k_star_vec = []
@@ -1038,15 +1093,24 @@ def plot_L_with_avg_loc():
     y2 = [analticL(N, k) for (N, k) in zip(Nvec, k_star)]
     # plt.plot(k_star, y2, "-o", markersize=25, markerfacecolor='none', linewidth=5, label="")
 
+
     figure()
+    # figure for k^* as a function of N
     plt.plot(Nvec, y_k_star_vec, "-o",markersize=25, linewidth=5, label=r"simulation:$k^*$")
-    plt.plot(Nvec, k_star, "--", markersize=25, markerfacecolor='none', linewidth=5, label=r"$k^* = k_c^{\frac{2}{3}}\pi \frac{4}{3}^{\frac{2}{3}} N^{\frac{1}{3}} $")
-    if realL:
-        plt.plot(Nvec, [0.33*i for i in k_star], "--", markersize=25, markerfacecolor='none', linewidth=5,
-                 label=r"$k^* = 0.33 k_c^{\frac{2}{3}}\pi \frac{4}{3}^{\frac{2}{3}} N^{\frac{1}{3}} $")
-    else:
-        plt.plot(Nvec, [0.6 * i for i in k_star], "--", markersize=25, markerfacecolor='none', linewidth=5,
-                 label=r"$k^* = 0.6 k_c^{\frac{2}{3}}\pi \frac{4}{3}^{\frac{2}{3}} N^{\frac{1}{3}} $")
+
+    popt, pcov = curve_fit(power_law, Nvec, y_k_star_vec)
+    a_fit, b_fit = popt
+    print("拟合参数: a = %.4f, b = %.4f" % (a_fit, b_fit))
+    plt.plot(Nvec, power_law(Nvec, a_fit, b_fit), label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}", color='red')
+
+    if beta==1024:
+        plt.plot(Nvec, k_star, "--", markersize=25, markerfacecolor='none', linewidth=5, label=r"$k^* = k_c^{\frac{2}{3}}\pi \frac{4}{3}^{\frac{2}{3}} N^{\frac{1}{3}} $")
+        if realL:
+            plt.plot(Nvec, [0.33*i for i in k_star], "--", markersize=25, markerfacecolor='none', linewidth=5,
+                     label=r"$k^* = 0.33 k_c^{\frac{2}{3}}\pi \frac{4}{3}^{\frac{2}{3}} N^{\frac{1}{3}} $")
+        else:
+            plt.plot(Nvec, [0.6 * i for i in k_star], "--", markersize=25, markerfacecolor='none', linewidth=5,
+                     label=r"$k^* = 0.6 k_c^{\frac{2}{3}}\pi \frac{4}{3}^{\frac{2}{3}} N^{\frac{1}{3}} $")
 
     plt.xlabel(r'Network size, $N$', fontsize=26)
     plt.ylabel(r'Critical Degree, $k^*$', fontsize=26)
@@ -1060,17 +1124,23 @@ def plot_L_with_avg_loc():
     plt.show()
     plt.close()
 
-    figure()
-    plt.plot(Nvec,y_local_minimum, "-o",markersize=25, linewidth=5, label=r"simulation: local minimum $\langle L \rangle$")
-    plt.plot(Nvec, y2, "--", markersize=25, markerfacecolor='none', linewidth=5,
-             label=r"$y = f_{\langle L \rangle} (k^*) $")
-    if realL:
-        plt.plot(Nvec, [1.5*i for i in y2], "--", markersize=25, markerfacecolor='none', linewidth=5,
-                 label=r"$y = 1.5 f_{\langle L \rangle} (k^*) $")
 
-    else:
-        plt.plot(Nvec, [1.07 * i for i in y2], "--", markersize=25, markerfacecolor='none', linewidth=5,
-                 label=r"$y = 1.07 f_{\langle L \rangle} (k^*) $")
+
+    figure()
+    # local minimum as a funtion of N
+    plt.plot(Nvec,y_local_minimum, "-o",markersize=25, linewidth=5, label=r"simulation: local minimum $\langle L \rangle$")
+    print(y_local_minimum)
+
+    if beta ==1024:
+        plt.plot(Nvec, y2, "--", markersize=25, markerfacecolor='none', linewidth=5,
+                 label=r"$y = f_{\langle L \rangle} (k^*) $")
+        if realL:
+            plt.plot(Nvec, [1.5*i for i in y2], "--", markersize=25, markerfacecolor='none', linewidth=5,
+                     label=r"$y = 1.5 f_{\langle L \rangle} (k^*) $")
+
+        else:
+            plt.plot(Nvec, [1.07 * i for i in y2], "--", markersize=25, markerfacecolor='none', linewidth=5,
+                     label=r"$y = 1.07 f_{\langle L \rangle} (k^*) $")
 
     popt, pcov = curve_fit(power_law, Nvec, y_local_minimum)
     a_fit, b_fit = popt
@@ -1082,9 +1152,8 @@ def plot_L_with_avg_loc():
     # plt.plot(x, a_fit * x**b_fit, label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}", color='red')
 
 
-
-    latex_expr = r"$f_{\langle L \rangle} = \frac{2}{3}\sqrt{\frac{k}{N\pi}}\left(1+\frac{4}{3\pi}\sqrt{\frac{k}{N\pi}}\right) 0.52\sqrt{N\pi} (k - k_c)^{-\frac{1}{2}}$"
-    plt.text(1000, 0.65, latex_expr, fontsize=26)
+    # latex_expr = r"$f_{\langle L \rangle} = \frac{2}{3}\sqrt{\frac{k}{N\pi}}\left(1+\frac{4}{3\pi}\sqrt{\frac{k}{N\pi}}\right) 0.52\sqrt{N\pi} (k - k_c)^{-\frac{1}{2}}$"
+    # plt.text(1000, 0.65, latex_expr, fontsize=26)
 
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
@@ -1101,6 +1170,223 @@ def plot_L_with_avg_loc():
     plt.tick_params(axis='both', which="both", length=6, width=1)
     plt.show()
     plt.close()
+
+
+def model_hop_c(x, C):
+    return C * (x - 4.512)**(-0.5)
+
+# 定义拟合函数
+def fit_and_plot_hop_C(x, y):
+    # 用curve_fit拟合参数C
+    x = np.asarray(x, dtype=float)
+    y = np.asarray(y, dtype=float)
+
+    # 去除NaN和Inf
+
+    x = x[5:-3]
+    y = y[5:-3]
+
+
+    popt, pcov = curve_fit(model_hop_c, x, y)
+    C_fit = popt[0]
+
+    print(f"拟合得到的C = {C_fit:.6f}")
+
+    x_fit = np.linspace(min(x), max(x), 200)
+    y_fit = model_hop_c(x_fit, C_fit)
+
+    return C_fit,x_fit,y_fit
+
+
+def hopcount_fit():
+    Nvec = [464, 1000, 2154, 4642, 10000]
+    # Nvec = [215]
+    beta = 1024
+    beta = 2.1
+    realL = True
+
+    real_ave_degree_dict = {}
+    ave_L = {}
+    std_L = {}
+
+    real_ave_degree_dict_0 = {}
+    ave_L_0 = {}
+    std_L_0 = {}
+
+    k_star_dict = {}
+    localmin_dict = {}
+
+    hop_dict ={}
+
+    if beta == 1024:
+        # kvec_dict = {215: list(range(24, 104 + 1, 2)), 464: list(range(30, 154 + 1, 2)),
+        #              1000: list(range(39, 229 + 1, 2)),
+        #              2154: list(range(52, 364 + 1, 2)), 4642: list(range(67, 272 + 1, 2)),
+        #              10000: list(range(118, 316 + 1, 2)),
+        #              681: list(range(40, 164 + 1, 2)), 1468: list(range(50, 240 + 1, 2)),
+        #              3156: list(range(72, 384 + 1, 2)),
+        #              6803: list(range(87, 295 + 1, 2)), 14683: list(range(140, 340 + 1, 2))}
+        # kvec_dict = {215: [2, 3, 5, 9, 14] + list(range(24, 104 + 1, 2)) + [170, 278, 455, 746, 1221, 2000],
+        #           464: list(range(30, 154 + 1, 2)), 1000: list(range(39, 229 + 1, 2)), 2154: list(
+        #         range(52, 364 + 1, 2)), 4642: list(range(67, 272 + 1, 2)), 10000: list(range(118, 316 + 1, 2))}
+
+        kvec_dict_0 = {
+            100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
+            215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+            464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+            1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+            2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+            4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+            10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 7.0, 8.0, 9.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+                    2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+    elif beta == 2.1:
+        kvec_dict = {
+            464: generate_ED_log_unifrom(2, 1000000, 12),
+            681: generate_ED_log_unifrom(2, 1000000, 12),
+            1000: generate_ED_log_unifrom(2, 1000000, 12),
+            1468: generate_ED_log_unifrom(2, 1000000, 12),
+            2154: generate_ED_log_unifrom(2, 1000000, 12),
+            3156: generate_ED_log_unifrom(2, 1000000, 12),
+            4642: generate_ED_log_unifrom(2, 1000000, 12),
+            6803: generate_ED_log_unifrom(2, 1000000, 12),
+            10000: generate_ED_log_unifrom(2, 1000000, 12)}
+    figure()
+    c_vec = []
+    c_vec_get = [np.float64(23.53467376631608), np.float64(33.68320434287138), np.float64(48.457378123702426),
+         np.float64(69.47011764188508), np.float64(100)]
+
+    count = 0
+    for N in Nvec:
+        # kvec = kvec_dict[N]
+        # real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_locmin_hunter(
+        #     N, beta, kvec, realL)
+        # real_ave_degree_dict[N] = real_ave_degree_vec
+        # ave_L[N] = ave_L_vec
+        # std_L[N] = std_L_vec
+        if beta ==1024:
+            kvec2 = kvec_dict_0[N]
+            real_ave_degree_vec_0, _, _, _, _, hop_vec_0, _, ave_L_vec_0, std_L_vec_0 = load_large_network_results_dev_vs_avg(
+                N, beta, kvec2, realL)
+            hop_dict[N] = hop_vec_0
+        else:
+            kvec2 = kvec_dict[N]
+            real_ave_degree_vec_0, _, _, _, _, hop_vec_0, _, ave_L_vec_0, std_L_vec_0 = load_large_network_results_dev_vs_avg_locmin_hunter(
+                N, beta, kvec2, realL)
+            hop_dict[N] = hop_vec_0
+
+
+
+        plt.plot(real_ave_degree_vec_0,hop_vec_0,"-o",markersize = 25,markerfacecolor='none',linewidth=5,label = f"{N}")
+        # C_fit,fitx,fity = fit_and_plot_hop_C(real_ave_degree_vec_0, hop_vec_0)
+        # plt.plot(fitx, fity, "--", markersize=25, markerfacecolor='none', linewidth=5,
+        #          label=f"y = {C_fit:.4f}(x-4.512)")
+        # c_vec.append(C_fit)
+        # y2 = [analtich(N,i) for i in real_ave_degree_vec_0]
+
+        # if beta ==1024:
+        #     c_get = c_vec_get[count]
+        #     plt.plot(real_ave_degree_vec_0,[c_get*(i-4.512)**(-0.5) for i in real_ave_degree_vec_0],label = f"C:{c_get:.2f}")
+        # else:
+        #     y3 = [np.log(N) / np.log(i) for i in real_ave_degree_vec_0]
+        #     plt.plot(real_ave_degree_vec_0, y3, "--", linewidth=5,
+        #              label=f"{N}")
+        count = count+1
+
+    print(c_vec)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.yscale('log')
+    plt.xscale('log')
+    # plt.xlabel(r'Network size, $N$', fontsize=26)
+    plt.xlabel(r'$k$', fontsize=26)
+    plt.ylabel(r' $\langle h \rangle$', fontsize=26)
+    plt.legend(fontsize=12, loc=(0.7, 0.2))
+    plt.show()
+
+
+
+def hopcount_fit_C():
+    # C IS COMPUTED FROM HOPCOUNT_FIT
+    Nvec = [464, 1000, 2154, 4642, 10000]
+    figure()
+    c = [np.float64(23.53467376631608), np.float64(33.68320434287138), np.float64(48.457378123702426),
+         np.float64(69.47011764188508), np.float64(100)]
+
+    plt.plot(Nvec, c,"--o",markersize = 25,linewidth=5)
+
+    popt, pcov = curve_fit(power_law, Nvec, c)
+    a_fit, b_fit = popt
+    print("拟合参数: a = %.4f, b = %.4f" % (a_fit, b_fit))
+    plt.plot(Nvec, power_law(Nvec, a_fit, b_fit), "-", label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}",linewidth=5)
+
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.legend(fontsize=26, loc=(0.5, 0.2))
+    # plt.xlabel(r'Network size, $N$', fontsize=26)
+    plt.xlabel(r'$N$', fontsize=26)
+    plt.ylabel(r'$C$', fontsize=26)
+    plt.show()
+
+
+def analytic_local_min_check():
+    # beta = 1024
+    Nvec = [464, 681, 1000, 1468, 2154, 3156, 4642, 6803, 10000]
+    y_local_minimum = [np.float64(0.591191617025838), np.float64(0.5870473006566197), np.float64(0.5718626910902538),
+     np.float64(0.5719635831757929), np.float64(0.5632705176766406), np.float64(0.5585420800829218),
+     np.float64(0.553173242642201), np.float64(0.5494322574352855), np.float64(0.5449752296523072)]
+    k_c = 4.512
+    k_star = [k_c ** (2 / 3) * np.pi * (4 / 3) ** (2 / 3) * N ** (1 / 3) for N in Nvec]
+    y2 = [analticL(N, k) for (N, k) in zip(Nvec, k_star)]
+
+
+    figure()
+    plt.plot(Nvec,y_local_minimum, "-o",markersize=25, linewidth=5, label=r"simulation: local minimum $\langle L \rangle$")
+    print(y_local_minimum)
+
+    # plt.plot(Nvec, y2, "--", markersize=25, markerfacecolor='none', linewidth=5,
+    #          label=r"$y = f_{\langle L \rangle} (k^*) $")
+    #
+    # plt.plot(Nvec, [1.5*i for i in y2], "--", markersize=25, markerfacecolor='none', linewidth=5,
+    #          label=r"$y = 1.5 f_{\langle L \rangle} (k^*) $")
+
+    popt, pcov = curve_fit(power_law, Nvec, y_local_minimum)
+    a_fit, b_fit = popt
+    print("拟合参数: a = %.4f, b = %.4f" % (a_fit, b_fit))
+    plt.plot(Nvec, power_law(Nvec, a_fit, b_fit), label=fr"Fit: $y = {a_fit:.2f} x^{{{b_fit:.2f}}}$", linewidth=5)
+
+    # x = np.array(Nvec)
+    # b_fit = -0.13
+    # plt.plot(x, a_fit * x**b_fit, label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}", color='red')
+    Nvec = [464, 1000, 2154, 4642, 10000]
+    c = [np.float64(23.53467376631608), np.float64(33.68320434287138), np.float64(48.457378123702426),
+         np.float64(69.47011764188508), np.float64(100)]
+
+    y3=[2*c_value/3/np.sqrt(np.pi)*N**(-0.5)  for (N,c_value) in zip(Nvec,c)]
+    plt.plot(Nvec, y3, "--",label=r"$y = \frac{2C}{3\sqrt{\pi}}N^{-1/2}$",linewidth=5)
+    plt.plot(Nvec, [1.45*i for i in y3], "--",label=r"$y = 1.45\frac{2C}{3\sqrt{\pi}}N^{-1/2}$", linewidth=5)
+
+
+    # latex_expr = r"$f_{\langle L \rangle} = \frac{2}{3}\sqrt{\frac{k}{N\pi}}\left(1+\frac{4}{3\pi}\sqrt{\frac{k}{N\pi}}\right) 0.52\sqrt{N\pi} (k - k_c)^{-\frac{1}{2}}$"
+    # plt.text(1000, 0.65, latex_expr, fontsize=26)
+
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'Network size, $N$', fontsize=26)
+    plt.ylabel(r'Local minimum stretech, $\langle L \rangle_{min}$', fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+
+    plt.legend(fontsize=26, loc=(0.5, 0.2))
+        # plt.yl/im([min(y2), 0.65])
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    plt.show()
+    plt.close()
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -1127,12 +1413,25 @@ if __name__ == '__main__':
     # STEP 4 <d> and <h> versus real average degree beta = 1024 under differnet N for local minimum
     """
     # if realL = True,L = real stretch ; else , L = <d><h>
-    plot_L_with_avg_loc()
+    # plot_L_with_avg_loc()
+    # print(generate_ED_log_unifrom(2, 199999, 12))
+
+
 
     # Nvec = [464, 681, 1000,1468, 2154,3156, 4642,6803, 10000,14683]
     # # Nvec = [681,1468,3156,6803,14683]
     # k_c = 4.512
     # k_star = [k_c ** (2 / 3) * np.pi * (4 / 3) ** (2 / 3) * N ** (1 / 3) for N in Nvec]
     # print(k_star)
+
+    # print(generate_ED_log_unifrom(523, 3331, 30))
+
+    """
+    # STEP 5 <d> and <h> versus real average degree beta = 1024 under differnet N for local minimum
+    """
+    hopcount_fit()
+    # hopcount_fit_C()
+    # analytic_local_min_check()
+
 
 
