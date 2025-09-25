@@ -10,6 +10,8 @@ import networkx as nx
 from scipy.optimize import curve_fit
 
 from R2SRGG.R2SRGG import loadSRGGandaddnode
+from R2SRGG.distribution.stretchL_diffNkbeta_SRGG_ub import generate_ED_log_unifrom
+
 
 def analticdl(N, k_vals):
     pi = np.pi
@@ -300,7 +302,338 @@ def plot_dl_vs_realED(N, beta_vec):
     plt.close()
 
 
+
+def load_large_network_results_dev_vs_avg(N, beta, kvec, realL):
+    if realL:
+        # if L = <d_e>h real stretch
+        folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
+    else:
+        # if L = <d_e><h> ave  link length* hopcount
+        folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
+
+    exemptionlist = []
+    for N in [N]:
+        ave_deviation_vec = []
+        real_ave_degree_vec = []
+        std_deviation_vec = []
+        ave_edgelength_vec = []
+        std_edgelength_vec = []
+
+        ave_hop_vec = []
+        std_hop_vec = []
+        ave_L_vec = []
+        std_L_vec = []
+
+        for beta in [beta]:
+            for ED in kvec:
+                for ExternalSimutime in [0]:
+                    try:
+                        # FileNetworkName = folder_name+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                        #     Nn=N, EDn=ED, betan=beta)
+                        # G = loadSRGGandaddnode(N, FileNetworkName)
+                        # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+                        # # print("real ED:", real_avg)
+                        if N>200:
+                            real_avg_name = folder_name + "real_avg_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            real_avg = np.loadtxt(real_avg_name)
+                            real_ave_degree_vec.append(real_avg)
+                        else:
+                            real_ave_degree_name = folder_name + "real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            real_avg = np.loadtxt(real_ave_degree_name)
+                            real_ave_degree_vec.append(np.mean(real_avg))
+
+
+                        if realL:
+                            #if L = <d_e>h real stretch
+                            deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
+                            ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                            std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+
+
+                            edgelength_vec_name = folder_name + "ave_edgelength_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        else:
+                            # if L = <d_e><h> ave  link length* hopcount
+                            edgelength_vec_name = folder_name + "ave_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+
+
+                        # deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        # ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
+                        # ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                        # std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+                        #
+                        # edgelength_vec_name = folder_name + "ave_edgelength_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+
+
+                        ave_edgelength_for_a_para_comb = np.loadtxt(edgelength_vec_name)
+                        ave_edgelength_vec.append(np.mean(ave_edgelength_for_a_para_comb))
+                        std_edgelength_vec.append(np.std(ave_edgelength_for_a_para_comb))
+
+
+
+                        hopcount_Name = folder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        hop_vec = np.loadtxt(hopcount_Name, dtype=int)
+
+                        ave_hop_vec.append(np.mean(hop_vec))
+                        std_hop_vec.append(np.std(hop_vec))
+
+
+                        if realL:
+                            #if L = <d_e>h real stretch
+                            L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
+                        else:
+                            # if L = <d_e><h> ave  link length* hopcount
+                            L = [np.mean(hop_vec)*np.mean(ave_edgelength_for_a_para_comb)]
+
+                        # # L = np.multiply(ave_edgelength_for_a_para_comb, hop_vec)
+                        # L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
+
+                        ave_L_vec.append(np.mean(L))
+                        std_L_vec.append(np.std(L))
+
+                    except FileNotFoundError:
+                        exemptionlist.append((N, ED, beta, ExternalSimutime))
+    print(exemptionlist)
+    return real_ave_degree_vec, ave_deviation_vec, std_deviation_vec, ave_edgelength_vec, std_edgelength_vec, ave_hop_vec, std_hop_vec, ave_L_vec, std_L_vec
+    # return kvec, real_ave_degree_vec, ave_deviation_vec, std_deviation_vec
+
+
+def load_large_network_results_dev_vs_avg_locmin_hunter(N, beta, kvec, realL):
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\localmin_hunter\\"
+
+    exemptionlist = []
+    for N in [N]:
+        ave_deviation_vec = []
+        real_ave_degree_vec = []
+        std_deviation_vec = []
+        ave_edgelength_vec = []
+        std_edgelength_vec = []
+
+        ave_hop_vec = []
+        std_hop_vec = []
+        ave_L_vec = []
+        std_L_vec = []
+
+        for beta in [beta]:
+            for ED in kvec:
+                for ExternalSimutime in [0]:
+                    try:
+                        # FileNetworkName = folder_name+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                        #     Nn=N, EDn=ED, betan=beta)
+                        # G = loadSRGGandaddnode(N, FileNetworkName)
+                        # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+                        # # print("real ED:", real_avg)
+
+                        real_ave_degree_name = folder_name + "real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        real_avg = np.loadtxt(real_ave_degree_name)
+                        real_ave_degree_vec.append(np.mean(real_avg))
+
+
+                        if realL:
+                            #if L = <d_e>h real stretch
+                            # deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            # ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
+                            # ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                            # std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+
+
+                            edgelength_vec_name = folder_name + "ave_edgelength_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        else:
+                            # if L = <d_e><h> ave  link length* hopcount
+                            edgelength_vec_name = folder_name + "ave_graph_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+
+                        ave_edgelength_for_a_para_comb = np.loadtxt(edgelength_vec_name)
+                        ave_edgelength_vec.append(np.mean(ave_edgelength_for_a_para_comb))
+                        std_edgelength_vec.append(np.std(ave_edgelength_for_a_para_comb))
+
+                        hopcount_Name = folder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        hop_vec = np.loadtxt(hopcount_Name, dtype=int)
+
+                        ave_hop_vec.append(np.mean(hop_vec))
+                        std_hop_vec.append(np.std(hop_vec))
+
+                        hop_vec_no1 = hop_vec[hop_vec != 1]
+
+                        if realL:
+                            if len(ave_edgelength_for_a_para_comb) != len(hop_vec_no1):
+                                ave_edgelength_for_a_para_comb_no1 = ave_edgelength_for_a_para_comb[hop_vec != 1]
+                            #if L = <d_e>h real stretch
+                                L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb_no1, hop_vec_no1)]
+                            # if we include 1-hop sp
+                            #     L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
+                            else:
+                                L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec_no1)]
+
+                        else:
+                            # if L = <d_e><h> ave  link length* hopcount
+                            L = [np.mean(hop_vec)*np.mean(ave_edgelength_for_a_para_comb)]
+
+                        # # L = np.multiply(ave_edgelength_for_a_para_comb, hop_vec)
+                        # L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
+
+                        ave_L_vec.append(np.mean(L))
+                        std_L_vec.append(np.std(L))
+
+                    except FileNotFoundError:
+                        exemptionlist.append((N, ED, beta, ExternalSimutime))
+    print(exemptionlist)
+    return real_ave_degree_vec, ave_deviation_vec, std_deviation_vec, ave_edgelength_vec, std_edgelength_vec, ave_hop_vec, std_hop_vec, ave_L_vec, std_L_vec
+    # return kvec, real_ave_degree_vec, ave_deviation_vec, std_deviation_vec
+
+
+def MKmodel_dl(k, beta):
+    return k**(beta/2 - 1)
+
+
+
+def plot_dl_vs_k_inlarge_network():
+    Nvec = [464, 1000, 2154, 4642, 10000]
+    Nvec = [10000, 20000, 40000, 60000, 100000]
+    # Nvec = [215]
+    beta = 1024
+    beta = 2.1
+    realL = False
+
+    real_ave_degree_dict = {}
+    ave_L = {}
+    std_L = {}
+
+    real_ave_degree_dict_0 = {}
+    ave_L_0 = {}
+    std_L_0 = {}
+
+    k_star_dict = {}
+    localmin_dict = {}
+
+    linklength_dict = {}
+
+    if beta == 1024:
+        # kvec_dict = {215: list(range(24, 104 + 1, 2)), 464: list(range(30, 154 + 1, 2)),
+        #              1000: list(range(39, 229 + 1, 2)),
+        #              2154: list(range(52, 364 + 1, 2)), 4642: list(range(67, 272 + 1, 2)),
+        #              10000: list(range(118, 316 + 1, 2)),
+        #              681: list(range(40, 164 + 1, 2)), 1468: list(range(50, 240 + 1, 2)),
+        #              3156: list(range(72, 384 + 1, 2)),
+        #              6803: list(range(87, 295 + 1, 2)), 14683: list(range(140, 340 + 1, 2))}
+        # kvec_dict = {215: [2, 3, 5, 9, 14] + list(range(24, 104 + 1, 2)) + [170, 278, 455, 746, 1221, 2000],
+        #           464: list(range(30, 154 + 1, 2)), 1000: list(range(39, 229 + 1, 2)), 2154: list(
+        #         range(52, 364 + 1, 2)), 4642: list(range(67, 272 + 1, 2)), 10000: list(range(118, 316 + 1, 2))}
+
+        kvec_dict_0 = {
+            100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
+            215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+            464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+            1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+            2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+            4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+            10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 7.0, 8.0, 9.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848,
+                    1389,
+                    2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+    elif beta == 2.1:
+        # kvec_dict = {
+        #     464: generate_ED_log_unifrom(2, 1000000, 12),
+        #     681: generate_ED_log_unifrom(2, 1000000, 12),
+        #     1000: generate_ED_log_unifrom(2, 1000000, 12),
+        #     1468: generate_ED_log_unifrom(2, 1000000, 12),
+        #     2154: generate_ED_log_unifrom(2, 1000000, 12),
+        #     3156: generate_ED_log_unifrom(2, 1000000, 12),
+        #     4642: generate_ED_log_unifrom(2, 1000000, 12),
+        #     6803: generate_ED_log_unifrom(2, 1000000, 12),
+        #     10000: generate_ED_log_unifrom(2, 1000000, 12)+[3296030],
+        #     20000: generate_ED_log_unifrom(2, 1000000, 12)+[3296030],
+        #     40000: generate_ED_log_unifrom(2, 1000000, 12)+[3296030],
+        #     60000: generate_ED_log_unifrom(2, 1000000, 12)+[3296030],
+        #     100000: generate_ED_log_unifrom(2, 1000000, 12),
+        # }
+        kvec_dict = {
+            464: generate_ED_log_unifrom(2, 1000000, 12),
+            681: generate_ED_log_unifrom(2, 1000000, 12),
+            1000: generate_ED_log_unifrom(2, 1000000, 12),
+            1468: generate_ED_log_unifrom(2, 1000000, 12),
+            2154: generate_ED_log_unifrom(2, 1000000, 12),
+            3156: generate_ED_log_unifrom(2, 1000000, 12),
+            4642: generate_ED_log_unifrom(2, 1000000, 12),
+            6803: generate_ED_log_unifrom(2, 1000000, 12),
+            10000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000] + [3296030],
+            20000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000] + [3296030,
+                                                                                          10866500,
+                                                                                          35826700],
+            40000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000] + [3296030,
+                                                                                          10866500,
+                                                                                          35826700],
+            60000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000] + [3296030,
+                                                                                          10866500,
+                                                                                          35826700],
+            100000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000],
+        }
+    fig, ax = plt.subplots()
+
+    count = 0
+    for N in Nvec:
+        # kvec = kvec_dict[N]
+        # real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_locmin_hunter(
+        #     N, beta, kvec, realL)
+        # real_ave_degree_dict[N] = real_ave_degree_vec
+        # ave_L[N] = ave_L_vec
+        # std_L[N] = std_L_vec
+        if beta == 1024:
+            kvec2 = kvec_dict_0[N]
+            real_ave_degree_vec_0, _, _, linklength_vec_0, _, _, _, ave_L_vec_0, std_L_vec_0 = load_large_network_results_dev_vs_avg(
+                N, beta, kvec2, realL)
+            linklength_dict[N] = linklength_vec_0
+        else:
+            kvec2 = kvec_dict[N]
+            real_ave_degree_vec_0, _, _, linklength_vec_0, _,_ , _, ave_L_vec_0, std_L_vec_0 = load_large_network_results_dev_vs_avg_locmin_hunter(
+                N, beta, kvec2, realL)
+            linklength_dict[N] = linklength_vec_0
+
+        plt.plot(real_ave_degree_vec_0, linklength_vec_0, "--o", markersize=25, markerfacecolor='none', linewidth=5,
+                 label=f"{N}")
+        # plt.plot(kvec2, hop_vec_0, "-o", markersize=25, markerfacecolor='none', linewidth=5,
+        #          label=f"{N}")
+        # plt.plot([alpha(x, N, beta) for x in kvec2], hop_vec_0, "-o", markersize=25, markerfacecolor='none', linewidth=5,
+        #          label=f"{N}")
+
+
+        count = count + 1
+
+    y_fit = [0.1* MKmodel_dl(k, beta) for k in real_ave_degree_vec_0]
+    plt.plot(real_ave_degree_vec_0, y_fit, '-', label=r"fit: $y = 0.02 k^{\beta/2-1}$")
+
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    plt.yscale('log')
+    plt.xscale('log')
+    # plt.xlabel(r'Network size, $N$', fontsize=26)
+    plt.xlabel(r'$k$', fontsize=26)
+    # plt.xlabel(r'Expected degree $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    plt.ylabel(r' $\langle d_l \rangle$', fontsize=26)
+    plt.legend(fontsize=12, loc=(0.7, 0.2))
+    plt.show()
+
+
 if __name__ == '__main__':
-    plot_dl_vs_realED(10000, [2.02,2.3,2.5,3, 4, 8, 128])
-    # plot_dl_vs_realED(10000, [2.02, 2.3, 2.5, 3])
+    # step_1: for differnet beta  Figure4 (d)
+    # plot_dl_vs_realED(10000, [2.02,2.3,2.5,3, 4, 8, 128])
+
+
+    # step_2: for differnet N
+    plot_dl_vs_k_inlarge_network()
+
 
