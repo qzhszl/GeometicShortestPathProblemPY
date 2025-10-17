@@ -251,7 +251,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu(Edind
     print(exemptionlist)
 
 
-def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex,legendpara):
+def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex,legendpara,theis_flag = False):
     # Figure 5
     # plot PRECISION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ED_list = [2,5, 10, 100, 1000]  # Expected degrees
@@ -392,29 +392,36 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrando
     # }
     # ytick_vec = ytick_dict[(ED, beta)]
     # plt.yticks(ytick_vec, fontsize=22)
-
-    fignum_dict = {
-        (5, 4): "a",
-        (5, 8): "b",
-        (5, 128): "c",
-        (2, 8): "d",
-        (10, 8): "e",
-        (100, 8): "f",
-    }
-    fignum = fignum_dict[(ED, beta)]
-    ax.text(-0.23, 1.13, fr'({fignum}) $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
-            fontsize=25, verticalalignment='top', horizontalalignment='left')
-
-
     plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    if theis_flag:
+        figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N_withrandom_thesis.svg".format(
+            EDn=ED, betan=beta)
+    else:
+        fignum_dict = {
+            (5, 4): "a",
+            (5, 8): "b",
+            (5, 128): "c",
+            (2, 8): "d",
+            (10, 8): "e",
+            (100, 8): "f",
+        }
+        fignum = fignum_dict[(ED, beta)]
+        ax.text(-0.23, 1.13, fr'({fignum}) $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
+                fontsize=25, verticalalignment='top', horizontalalignment='left')
+
+        # figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
+        #             EDn=ED, betan=beta)
+        #
+        # fig.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
+        figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N_withrandom.svg".format(
+            EDn=ED, betan=beta)
+
+
+
     # Display the plot
     # plt.show()
-    # figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
-    #             EDn=ED, betan=beta)
-    #
-    # fig.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
-    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\PrecisionGeoVsRGGSRGGED{EDn}Beta{betan}N_withrandom.svg".format(
-                EDn=ED, betan=beta)
+
     plt.savefig(
         figname,
         format="svg",
@@ -690,7 +697,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_clu2(Edin
 
 
 
-def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara):
+def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara,theis_flag = False):
     # Figure 5 recall
     # plot recall!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ED_list = [2,5, 10, 100, 1000]  # Expected degrees
@@ -830,26 +837,29 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_wi
     #
     # plt.yticks(ytick_vec,fontsize=22)
     plt.tick_params(axis='both', which="both", length=6, width=1)
+    if theis_flag:
+        figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}Nwithrandom_thesis.svg".format(
+            EDn=ED, betan=beta)
+    else:
+        fignum_dict = {
+            (5,4): "a",
+            (5,8): "b",
+            (5,128): "c",
+            (2, 8): "d",
+            (10, 8): "e",
+            (100, 8): "f",
+        }
+        fignum = fignum_dict[(ED,beta)]
+        ax.text(-0.23, 1.13, fr'({fignum}) $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
+                fontsize=25, verticalalignment='top', horizontalalignment='left')
+        # ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+        # Display the plot
 
-    fignum_dict = {
-        (5,4): "a",
-        (5,8): "b",
-        (5,128): "c",
-        (2, 8): "d",
-        (10, 8): "e",
-        (100, 8): "f",
-    }
-    fignum = fignum_dict[(ED,beta)]
-    ax.text(-0.23, 1.13, fr'({fignum}) $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
-            fontsize=25, verticalalignment='top', horizontalalignment='left')
-    # ax.yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
-    # Display the plot
-
-    # figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
-    #     EDn=ED, betan=beta)
-    # plt.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
-    figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}Nwithrandom.svg".format(
-        EDn=ED, betan=beta)
+        # figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}N.pdf".format(
+        #     EDn=ED, betan=beta)
+        # plt.savefig(figname, format='pdf', bbox_inches='tight', dpi=600)
+        figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}Nwithrandom.svg".format(
+            EDn=ED, betan=beta)
 
     plt.savefig(
         figname,
@@ -1114,11 +1124,11 @@ if __name__ == '__main__':
 
 
 
-    # for Edindex,betaindex in [(1,1),(1,6),(1,2),(2,2),(3,2)]:
-    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=0)
-    # for Edindex in [0]:
-    #     for betaindex in [2]:
-    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=1)
+    for Edindex,betaindex in [(1,1),(1,6),(1,2),(2,2),(3,2)]:
+        plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=0,theis_flag=True)
+    for Edindex in [0]:
+        for betaindex in [2]:
+            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=1,theis_flag=True)
 
 
 
@@ -1148,11 +1158,11 @@ if __name__ == '__main__':
     STEP 2 Plot Figure recall : bar figure
     """
     for Edindex,betaindex in [(1,2),(1,6),(1,1),(2,2),(3,2)]:
-        plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex, legendpara=0)
+        plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex, legendpara=0,theis_flag=True)
 
     for Edindex in [0]:
         for betaindex in [2]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara=1)
+            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara=1,theis_flag=True)
 
     """
     Plot figure for netsci

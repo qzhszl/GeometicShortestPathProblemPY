@@ -420,7 +420,7 @@ def process_data(betaindex):
     print(exemptionlist)
 
 
-def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
+def plot_heatmap_precision_smooth_fromprocessed_data(betaindex,thesis_flag = False):
     # Figure 6 Heatmap
     N = 10000
     ED_list = [2, 4, 8, 16, 32, 64, 128,256,512]  # Expected degrees
@@ -487,7 +487,10 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
     cbar = plt.colorbar(im, label="Precision")
     cbar.ax.tick_params(labelsize=20)
     cbar.ax.set_ylabel("Precision", fontsize=20)
-    plt.ylabel(r"Expected degree $\mathbb{E}[D]$",fontsize = 25)
+    if thesis_flag:
+        plt.ylabel(r"Expected degree $E[D]$", fontsize=25)
+    else:
+        plt.ylabel(r"Expected degree $\mathbb{E}[D]$",fontsize = 25)
     plt.xlabel(r"Noise amplitude $\alpha$", fontsize = 25)
     plt.xticks(ticks=np.arange(len(x_labels))+ 1,labels=x_labels,fontsize=20)  # x 轴刻度字体大小
     plt.yticks(ticks=np.arange(len(y_labels))+ 1,labels=y_labels,fontsize=20)  # y 轴刻度字体大小
@@ -527,7 +530,10 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
     cbar = plt.colorbar(im, label="Precision")
     cbar.ax.tick_params(labelsize=20)
     cbar.ax.set_ylabel("Precision", fontsize=20)
-    plt.ylabel(r"Expected degree $\mathbb{E}[D]$", fontsize=25)
+    if thesis_flag:
+        plt.ylabel(r"Expected degree $E[D]$", fontsize=25)
+    else:
+        plt.ylabel(r"Expected degree $\mathbb{E}[D]$", fontsize=25)
     plt.xlabel(r"Noise amplitude $\alpha$", fontsize=25)
     plt.xticks(ticks=np.arange(len(x_labels)) + 1, labels=x_labels, fontsize=20)  # x 轴刻度字体大小
     plt.yticks(ticks=np.arange(len(y_labels)) + 1, labels=y_labels, fontsize=20)  # y 轴刻度字体大小
@@ -568,7 +574,10 @@ def plot_heatmap_precision_smooth_fromprocessed_data(betaindex):
     cbar = plt.colorbar(im, label="Precision")
     cbar.ax.tick_params(labelsize=20)
     cbar.ax.set_ylabel("Precision", fontsize=20)
-    plt.ylabel(r"Expected degree $\mathbb{E}[D]$", fontsize=25)
+    if thesis_flag:
+        plt.ylabel(r"Expected degree $E[D]$", fontsize=25)
+    else:
+        plt.ylabel(r"Expected degree $\mathbb{E}[D]$", fontsize=25)
     plt.xlabel(r"Noise amplitude $\alpha$", fontsize=25)
     plt.xticks(ticks=np.arange(len(x_labels)) + 1, labels=x_labels, fontsize=20)  # x 轴刻度字体大小
     plt.yticks(ticks=np.arange(len(y_labels)) + 1, labels=y_labels, fontsize=20)  # y 轴刻度字体大小
@@ -837,15 +846,15 @@ if __name__ == '__main__':
     """
     # check_simple_case()   # check one square
 
-    # for beta in [2]:
-    #     # process_data(beta)
-    #     plot_heatmap_precision_smooth_fromprocessed_data(beta)
+    for beta in [1,2,4]:
+        # process_data(beta)
+        plot_heatmap_precision_smooth_fromprocessed_data(beta,thesis_flag = True)
 
     """
     Plot the heatmap for the skeleton Figure 6
     """
     # check_which_square_is_bigger(4)
-    plot_skeleton(128)
+    # plot_skeleton(128)
 
 
 

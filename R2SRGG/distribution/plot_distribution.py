@@ -347,7 +347,7 @@ def round_quarter(x):
         return math.ceil(x)
 
 
-def plot_distribution(N, ED, beta):
+def plot_distribution(N, ED, beta,thesis_flag = False):
     """
     Compared maximum, minimum, average deviation with randomly selected nodes
     :return:
@@ -434,28 +434,38 @@ def plot_distribution(N, ED, beta):
         (100, 5, 128): -0.28,
         (1000, 5, 4): -0.33,
     }
-    Nlabel_dict = {100:"10^2",1000:"10^3"}
-    Nlabel = Nlabel_dict[N]
-    fignum = fignum_dict[(N,ED, beta)]
-    ax.text(xtextpos_dict[(N,ED, beta)], 1.15, fr'({fignum}) $N = {Nlabel}$, $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
-            fontsize=28, verticalalignment='top', horizontalalignment='left')
+
+    plt.legend(fontsize=28, handlelength=1, handletextpad=0.5)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+
+    if thesis_flag:
+        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionN{Nn}ED{EDn}Beta{betan}_thesis.svg".format(
+            Nn=N, EDn=ED, betan=beta)
+
+    else:
+        Nlabel_dict = {100:"10^2",1000:"10^3"}
+        Nlabel = Nlabel_dict[N]
+        fignum = fignum_dict[(N,ED, beta)]
+        ax.text(xtextpos_dict[(N,ED, beta)], 1.15, fr'({fignum}) $N = {Nlabel}$, $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
+                fontsize=28, verticalalignment='top', horizontalalignment='left')
+        # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionN{Nn}ED{EDn}Beta{betan}.pdf".format(
+        #     Nn=N, EDn=ED, betan=beta)
+        # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
+
+        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionN{Nn}ED{EDn}Beta{betan}.svg".format(
+            Nn=N, EDn=ED, betan=beta)
 
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=28,handlelength=1, handletextpad=0.5)
-    plt.tick_params(axis='both', which="both",length=6, width=1)
-    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionN{Nn}ED{EDn}Beta{betan}.pdf".format(
-    #     Nn=N, EDn=ED, betan=beta)
-    # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
 
-    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\DistributionN{Nn}ED{EDn}Beta{betan}.svg".format(
-        Nn=N, EDn=ED, betan=beta)
+
     plt.savefig(picname, format='svg', bbox_inches='tight', transparent=True)
 
     plt.show()
     plt.close()
 
 
-def plot_distribution_10000node(N, ED, beta):
+def plot_distribution_10000node(N, ED, beta,thesis_flag=False):
     """
     Figure 2 (b)
     Compared maximum, minimum, average deviation with randomly selected nodes
@@ -500,7 +510,10 @@ def plot_distribution_10000node(N, ED, beta):
         plt.plot(bin_vec[1:len(bin_vec)], hvalue, color=color, label=label, linewidth=10)
 
     # text = r"$N = 10^4$, $\beta = {beta}$, $\mathbb{E}[D] = {ED}$".format(beta=beta, ED=5)
-    text = r"$N = 10^4$, $\beta = 4$, $\mathbb{E}[D] = 5$"
+    if thesis_flag:
+        text = r"$N = 10^4$, $\beta = 4$, $E[D] = 5$"
+    else:
+        text = r"$N = 10^4$, $\beta = 4$, $\mathbb{E}[D] = 5$"
     ax.text(
         0.5, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
         text,
@@ -632,17 +645,19 @@ def plot_distribution_diffN(ED, beta):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # for (N,ED,beta) in [(100, 5, 4),
-    #                   (100, 10, 4),
-    #                   (100, 50, 4),
-    #                   (100, 5, 8),
-    #                   (100, 5, 128),
-    #                   (1000, 5, 4)]:
-    #     plot_distribution(N,ED,beta)
-    plot_distribution(100,5,4)
+    # Figure 10 Appendix distance to geodesic distribution
 
+    for (N,ED,beta) in [(100, 5, 4),
+                      (100, 10, 4),
+                      (100, 50, 4),
+                      (100, 5, 8),
+                      (100, 5, 128),
+                      (1000, 5, 4)]:
+        plot_distribution(N,ED,beta,thesis_flag=True)
+    # plot_distribution(100,5,4)
 
-    # plot_distribution_10000node(10000, 5.0, 4)
+    # Figure 2 (b)
+    # plot_distribution_10000node(10000, 5.0, 4,thesis_flag=True)
 
     # plot_distribution_diffN(ED=10, beta=8)
 

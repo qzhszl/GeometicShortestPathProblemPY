@@ -599,10 +599,10 @@ def compute_proper_ed():
     rseed = random.randint(0, 100)
     for i in range(rseed):
         rg.ran1()
-    Nvec = [464,681,1000,1468,2154,3156,4642,6803,10000]
+    Nvec = [100,464,681,1000,1468,2154,3156,4642,6803,10000]
     # 1000000
     for N in Nvec:
-        G,coorx,coory = R2SRGG(N,10000,3.1,rg)
+        G,coorx,coory = R2SRGG(N,299999,128,rg)
         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
         print(real_avg)
 

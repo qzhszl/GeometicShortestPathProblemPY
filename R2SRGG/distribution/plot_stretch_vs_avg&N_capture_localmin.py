@@ -188,10 +188,16 @@ def load_large_network_results_dev_vs_avg(N, beta, kvec, realL):
                         # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
                         # # print("real ED:", real_avg)
                         if N>200:
-                            real_avg_name = folder_name + "real_avg_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
-                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                            real_avg = np.loadtxt(real_avg_name)
-                            real_ave_degree_vec.append(real_avg)
+                            try:
+                                real_avg_name = folder_name + "real_avg_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+                                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                                real_avg = np.loadtxt(real_avg_name)
+                                real_ave_degree_vec.append(real_avg)
+                            except:
+                                real_ave_degree_name = folder_name + "real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                                real_avg = np.loadtxt(real_ave_degree_name)
+                                real_ave_degree_vec.append(np.mean(real_avg))
                         else:
                             real_ave_degree_name = folder_name + "real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                                 Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -201,11 +207,11 @@ def load_large_network_results_dev_vs_avg(N, beta, kvec, realL):
 
                         if realL:
                             #if L = <d_e>h real stretch
-                            deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-                            ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
-                            ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
-                            std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+                            # deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            # ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
+                            # ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                            # std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
 
 
                             edgelength_vec_name = folder_name + "ave_edgelength_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
@@ -278,6 +284,9 @@ def analticL_smallbeta(N, k_vals,A, beta):
     h_vals = k_vals**(beta/2 -1)*(A+np.log(N)/np.log(k_vals))
     return h_vals
 
+def analticL_smallbeta2(N, k_vals,A,B, beta):
+    h_vals = k_vals**(beta/2 -1)*(A+B*np.log(N)/np.log(k_vals))
+    return h_vals
 
 
 def analtich(N, k_vals):
@@ -299,6 +308,8 @@ def analtich_small_beta(N, k_vals,A):
 def analtich_small_beta_logk(N, logkinverse,A):
     return A + np.log(N)*logkinverse
 
+def analtich_mid_beta_logk(N, logkinverse,A,B):
+    return A + B*np.log(N)*logkinverse
 
 def analticdl(N, k_vals):
     pi = np.pi
@@ -421,6 +432,7 @@ def plot_Lavedaveh_with_avg():
 def plot_L_with_avg():
     # the x-axis is the input average degree
     Nvec = [215, 464, 1000, 2154, 4642,10000]
+    Nvec = [10000]
 
     realL = True
 
@@ -529,8 +541,6 @@ def plot_L_with_avg():
     # plt.title('Errorbar Curves with Minimum Points after Peak')
     plt.show()
     plt.close()
-
-
 
 def plot_L_with_avg2():
     # the x-axis is the input average degree
@@ -1219,10 +1229,10 @@ def plot_L_with_avg_loc_largeN():
 
 
     # Nvec = [100000]
-    # beta = 1024
-    beta = 2.5
+    beta = 1024
+    # beta = 2.5
 
-    realL = True
+    realL = False
 
     real_ave_degree_dict = {}
     ave_L = {}
@@ -1269,7 +1279,7 @@ def plot_L_with_avg_loc_largeN():
                     3727, 6105,
                     9999, 16479, 27081, 44767, 73534, 121205, 199999]}
 
-    elif beta in [2.1,2.5]:
+    elif beta in [2.1]:
         kvec_dict = {
             464: generate_ED_log_unifrom(2, 1000000, 12),
             681: generate_ED_log_unifrom(2, 1000000, 12),
@@ -1317,6 +1327,79 @@ def plot_L_with_avg_loc_largeN():
         #     4642: kvec_tem,
         #     6803: kvec_tem,
         #     10000: kvec_tem}
+    elif beta in [2.5]:
+        kvec_dict = {
+            464: generate_ED_log_unifrom(2, 1000000, 12),
+            681: generate_ED_log_unifrom(2, 1000000, 12),
+            1000: generate_ED_log_unifrom(2, 1000000, 12),
+            1468: generate_ED_log_unifrom(2, 1000000, 12),
+            2154: generate_ED_log_unifrom(2, 1000000, 12),
+            3156: generate_ED_log_unifrom(2, 1000000, 12),
+            4642: generate_ED_log_unifrom(2, 1000000, 12),
+            6803: generate_ED_log_unifrom(2, 1000000, 12),
+            10000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328,3296030],
+            20000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000],
+            40000: [2,7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000,10866500],
+            60000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000],
+            100000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328]
+        }
+        if realL:
+            kvec_dict_forlocalmin = {
+                10000: generate_ED_log_unifrom(236, 2568, 30),
+                20000: generate_ED_log_unifrom(236, 2568, 30),
+                40000: generate_ED_log_unifrom(779, 8465, 30),
+                60000: generate_ED_log_unifrom(779, 8465, 15),
+                100000: generate_ED_log_unifrom(779, 8465, 15)
+            }
+        else:
+            kvec_dict_forlocalmin = {
+                464: generate_ED_log_unifrom(72, 779, 30),
+                681: generate_ED_log_unifrom(72, 779, 30),
+                1000: generate_ED_log_unifrom(72, 779, 30),
+                1468: generate_ED_log_unifrom(72, 779, 30),
+                2154: generate_ED_log_unifrom(236, 2568, 30),
+                3156: generate_ED_log_unifrom(236, 2568, 30),
+                4642: generate_ED_log_unifrom(134, 2218, 30),
+                6803: generate_ED_log_unifrom(134, 2218, 30),
+                10000: generate_ED_log_unifrom(22, 72, 15),
+                20000: generate_ED_log_unifrom(22, 72, 15),
+                40000: generate_ED_log_unifrom(22, 72, 15),
+                60000: generate_ED_log_unifrom(22, 72, 15),
+                100000: generate_ED_log_unifrom(22, 72, 15)
+            }
+        # kvec_dict_forlocalmin = {
+        #     464: generate_ED_log_unifrom(72, 779, 30),
+        #     681: generate_ED_log_unifrom(72, 779, 30),
+        #     1000: generate_ED_log_unifrom(72, 779, 30),
+        #     1468: generate_ED_log_unifrom(72, 779, 30),
+        #     2154: generate_ED_log_unifrom(236, 2568, 30),
+        #     3156: generate_ED_log_unifrom(236, 2568, 30),
+        #     4642: generate_ED_log_unifrom(134, 2218, 30),
+        #     6803: generate_ED_log_unifrom(134, 2218, 30),
+        #     10000: generate_ED_log_unifrom(523, 3331, 30),
+        #     20000: generate_ED_log_unifrom(2218, 36645, 30),
+        #     40000: generate_ED_log_unifrom(2218, 36645, 30),
+        #     60000: generate_ED_log_unifrom(2218, 9016, 15)+generate_ED_log_unifrom(9016, 148939, 30),
+        #     100000: generate_ED_log_unifrom(5050, 9016, 15)+generate_ED_log_unifrom(9016, 51406, 30)
+        # }
+
+        kvec_dict = merge_kvec_dicts(kvec_dict, kvec_dict_forlocalmin)
+
+        # kvec_tem = generate_ED_log_unifrom(523, 3331, 30) # find local optimum
+        # kvec_tem1 = generate_ED_log_unifrom(236, 523, 30) # find local optimum extra for N<=1000
+        # kvec_tem1_smallN = kvec_tem1[:-1]+kvec_tem
+        # # print(kvec_tem1_smallN)
+        # kvec_dict = {
+        #     464: kvec_tem1_smallN,
+        #     681: kvec_tem1_smallN,
+        #     1000: kvec_tem1_smallN,
+        #     1468: kvec_tem,
+        #     2154: kvec_tem,
+        #     3156: kvec_tem,
+        #     4642: kvec_tem,
+        #     6803: kvec_tem,
+        #     10000: kvec_tem}
+
     else:
         # beta ==3.1
         kvec_dict = {
@@ -1392,8 +1475,14 @@ def plot_L_with_avg_loc_largeN():
         #              label=N, color=colors[N_index])
 
 
+        print(x)
+        print(y)
         plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
                      label=f"N:{N}", color=colors[N_index])
+        data = np.column_stack((x, y))
+        np.savetxt(f"approximate_stretch_vs_degree_N{N}.txt", data, fmt="%.6f", header="real_avg approximate_stretch",
+                   comments='')
+
         # plt.errorbar(kvec_dict[N], y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
         #              label=N, color=colors[N_index])
         # plt.errorbar([alpha(x,N, beta) for x in kvec_dict[N]], y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
@@ -1448,7 +1537,7 @@ def plot_L_with_avg_loc_largeN():
     plt.xscale('log')
     # plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
     plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
-    plt.xlabel(r'$\alpha$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
 
     if realL:
         plt.ylabel(r'Average stretch, $\langle L \rangle$', fontsize=26)
@@ -1491,6 +1580,12 @@ def plot_L_with_avg_loc_largeN():
         k_star = [np.exp(2/(beta-2)) for N in Nvec]
         A_vec = [0.52,0.6,0.62,0.62,0.7]
         y2 = [analticL_smallbeta(N, k_vals,A, beta) for (N, k_vals, A) in zip(Nvec,k_star,A_vec)]
+        # plt.plot(k_star, y2, "-o", markersize=25, markerfacecolor='none', linewidth=5, label="")
+    elif beta == 2.5:
+        k_star = [np.exp(2/(beta-2)) for N in Nvec]
+        A_vec = [0.16,0.09,0.12,0.08,0.12]
+        B_vec = [1.2475,1.2781,1.2778,1.2838,1.2804]
+        y2 = [analticL_smallbeta2(N, k_vals,A,B, beta) for (N, k_vals, A,B) in zip(Nvec,k_star,A_vec,B_vec)]
         # plt.plot(k_star, y2, "-o", markersize=25, markerfacecolor='none', linewidth=5, label="")
 
 
@@ -1554,8 +1649,12 @@ def plot_L_with_avg_loc_largeN():
     print("拟合参数: a = %.4f, b = %.4f" % (a_fit, b_fit))
     plt.plot(Nvec, power_law(Nvec, a_fit, b_fit), label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}", color='red')
 
+    # plt.plot(Nvec, [np.e*(0.12+0.25*1.18*np.log(N))  for N in Nvec], "--", markersize=15, linewidth=5,
+    #          label=r"analytical formula2")
+
+
     plt.plot(Nvec, y2, "--", markersize=15, linewidth=5,
-             label=r"analytical model")
+             label=r"analytical formula")
     # x = np.array(Nvec)
     # b_fit = -0.13
     # plt.plot(x, a_fit * x**b_fit, label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}", color='red')
@@ -1591,7 +1690,7 @@ def plot_Llogk_with_k_loc_largeN():
 
     # Nvec = [10000]
     # beta = 1024
-    beta = 2.1
+    beta = 2.5
 
     realL = False
 
@@ -1672,7 +1771,7 @@ def plot_Llogk_with_k_loc_largeN():
             100000: generate_ED_log_unifrom(5050, 9016, 15) + generate_ED_log_unifrom(9016, 51406, 30)
         }
 
-        kvec_dict = merge_kvec_dicts(kvec_dict, kvec_dict_forlocalmin)
+        # kvec_dict = merge_kvec_dicts(kvec_dict, kvec_dict_forlocalmin)
 
         # kvec_tem = generate_ED_log_unifrom(523, 3331, 30) # find local optimum
         # kvec_tem1 = generate_ED_log_unifrom(236, 523, 30) # find local optimum extra for N<=1000
@@ -1688,6 +1787,55 @@ def plot_Llogk_with_k_loc_largeN():
         #     4642: kvec_tem,
         #     6803: kvec_tem,
         #     10000: kvec_tem}
+    elif beta==2.5:
+        kvec_dict = {
+            464: generate_ED_log_unifrom(2, 1000000, 12),
+            681: generate_ED_log_unifrom(2, 1000000, 12),
+            1000: generate_ED_log_unifrom(2, 1000000, 12),
+            1468: generate_ED_log_unifrom(2, 1000000, 12),
+            2154: generate_ED_log_unifrom(2, 1000000, 12),
+            3156: generate_ED_log_unifrom(2, 1000000, 12),
+            4642: generate_ED_log_unifrom(2, 1000000, 12),
+            6803: generate_ED_log_unifrom(2, 1000000, 12),
+            10000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328,3296030],
+            20000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000],
+            40000: [2,7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000,10866500],
+            60000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000],
+            100000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328]
+        }
+        if realL:
+            kvec_dict_forbeta3 = {
+                464: generate_ED_log_unifrom(72, 779, 30),
+                681: generate_ED_log_unifrom(72, 779, 30),
+                1000: generate_ED_log_unifrom(72, 779, 30),
+                1468: generate_ED_log_unifrom(72, 779, 30),
+                2154: generate_ED_log_unifrom(236, 2568, 30),
+                3156: generate_ED_log_unifrom(236, 2568, 30),
+                4642: generate_ED_log_unifrom(134, 2218, 30),
+                6803: generate_ED_log_unifrom(134, 2218, 30),
+                10000: generate_ED_log_unifrom(236, 2568, 30),
+                20000: generate_ED_log_unifrom(236, 2568, 30),
+                40000: generate_ED_log_unifrom(779, 8465, 30),
+                60000: generate_ED_log_unifrom(779, 8465, 15),
+                100000: generate_ED_log_unifrom(779, 8465, 15)
+            }
+        else:
+            kvec_dict_forbeta3 = {
+                464: generate_ED_log_unifrom(72, 779, 30),
+                681: generate_ED_log_unifrom(72, 779, 30),
+                1000: generate_ED_log_unifrom(72, 779, 30),
+                1468: generate_ED_log_unifrom(72, 779, 30),
+                2154: generate_ED_log_unifrom(236, 2568, 30),
+                3156: generate_ED_log_unifrom(236, 2568, 30),
+                4642: generate_ED_log_unifrom(134, 2218, 30),
+                6803: generate_ED_log_unifrom(134, 2218, 30),
+                10000: generate_ED_log_unifrom(22, 72, 15),
+                20000: generate_ED_log_unifrom(22, 72, 15),
+                40000: generate_ED_log_unifrom(22, 72, 15),
+                60000: generate_ED_log_unifrom(22, 72, 15),
+                100000: generate_ED_log_unifrom(22, 72, 15)
+            }
+        kvec_dict = merge_kvec_dicts(kvec_dict, kvec_dict_forbeta3)
     else:
         # beta ==3.1
         kvec_dict = {
@@ -1764,7 +1912,10 @@ def plot_Llogk_with_k_loc_largeN():
                      label=N, color=colors[N_index])
             # print(x)
             # print([np.log(i) * j for (i, j) in zip(x, y)])
-
+        elif beta ==2.5:
+            Llogk = [np.log(i) * j for (i, j) in zip(x, y)]
+            plt.plot(x[1:], Llogk[1:], "-o", markersize=16,linewidth=5,
+                     label=N, color=colors[N_index])
 
 
 
@@ -1800,11 +1951,20 @@ def plot_Llogk_with_k_loc_largeN():
         #             marker='s', s=1000,
         #             facecolors='none', edgecolors='red', linewidths=2,
         #             label='min')
+    if beta ==2.1:
+        popt, pcov = curve_fit(power_law, x[7:-5], Llogk[7:-5])
+        a_fit, b_fit = popt
+        print("拟合参数: a = %.4f, b = %.4f" % (a_fit, b_fit))
+        plt.plot(x[5:], power_law(x[5:], a_fit, b_fit), label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}", color='red')
+    elif beta ==2.5:
+        popt, pcov = curve_fit(power_law, x[7:-5], Llogk[7:-5])
+        a_fit, b_fit = popt
+        print("拟合参数: a = %.4f, b = %.4f" % (a_fit, b_fit))
+        plt.plot(x, power_law(x, a_fit, b_fit), label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}", color='red')
 
-    popt, pcov = curve_fit(power_law, x[7:-5], Llogk[7:-5])
-    a_fit, b_fit = popt
-    print("拟合参数: a = %.4f, b = %.4f" % (a_fit, b_fit))
-    plt.plot(x[5:], power_law(x[5:], a_fit, b_fit), label=f"Fit: y = {a_fit:.2f} * x^{b_fit:.2f}", color='red')
+        # MODEL FIT
+        plt.plot(x, [x_value**0.5*(0.12+1.28*np.log(10000)/np.log(x_value))*np.log(x_value)  for x_value in x], label=f"fit2: analytic formula: Llog(k)~k^0.25")
+
 
 
     k_c = 4.512
@@ -1822,19 +1982,19 @@ def plot_Llogk_with_k_loc_largeN():
 
     plt.yscale('log')
     plt.xscale('log')
-    plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
+    plt.xlabel(r'Average degree, $\langle k \rangle$', fontsize=26)
     # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
     # plt.xlabel(r'$\alpha$', fontsize=26)
 
     if realL:
-        plt.ylabel(r'$\langle L \rangle log (\langle D \rangle)$', fontsize=26)
+        plt.ylabel(r'$\langle L \rangle log (\langle k \rangle)$', fontsize=26)
     else:
-        plt.ylabel(r'Average stretch, $\langle r \rangle \langle h \rangle $', fontsize=26)
+        plt.ylabel(r'$\langle r \rangle \langle h \rangle log (\langle k \rangle)$', fontsize=26)
 
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=26, loc=(0.5, 0.05))
+    plt.legend(fontsize=26, loc=(0.5, 0.45))
     plt.tick_params(axis='both', which="both", length=6, width=1)
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
     #     betan=beta)
@@ -1984,7 +2144,7 @@ def hopcount_fit():
     Nvec = [10000, 20000, 40000, 60000, 100000]
     # Nvec = [215]
     beta = 1024
-    beta = 2.1
+    beta = 2.5
     realL = True
 
     real_ave_degree_dict = {}
@@ -2039,6 +2199,22 @@ def hopcount_fit():
             60000: [2, 7,8,10,12,14, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000]+[3296030,10866500, 35826700],
             100000: [2, 7,8,10,12,14, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000],
             }
+    elif beta == 2.5:
+        kvec_dict = {
+            464: generate_ED_log_unifrom(2, 1000000, 12),
+            681: generate_ED_log_unifrom(2, 1000000, 12),
+            1000: generate_ED_log_unifrom(2, 1000000, 12),
+            1468: generate_ED_log_unifrom(2, 1000000, 12),
+            2154: generate_ED_log_unifrom(2, 1000000, 12),
+            3156: generate_ED_log_unifrom(2, 1000000, 12),
+            4642: generate_ED_log_unifrom(2, 1000000, 12),
+            6803: generate_ED_log_unifrom(2, 1000000, 12),
+            10000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 3296030],
+            20000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000],
+            40000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000, 10866500],
+            60000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328, 1000000],
+            100000: [2, 7, 22, 72, 236, 779, 2568, 8465, 27908, 92008, 303328]
+        }
     figure()
     c_vec = []
     c_vec_get = [np.float64(23.53467376631608), np.float64(33.68320434287138), np.float64(48.457378123702426),
@@ -2064,28 +2240,46 @@ def hopcount_fit():
             hop_dict[N] = hop_vec_0
 
 
-        # plt.plot(real_ave_degree_vec_0,hop_vec_0,"--o",markersize = 20,markerfacecolor='none',linewidth=5,label = f"{N}")
-        plt.plot([1/np.log(x) for x in real_ave_degree_vec_0[1:]], hop_vec_0[1:], "--o", markersize=20, markerfacecolor='none', linewidth=5,
-                 label=f"{N}")
-        print("x:",[1/np.log(x) for x in real_ave_degree_vec_0[1:]])
+        plt.plot(real_ave_degree_vec_0,hop_vec_0,"--o",markersize = 20,markerfacecolor='none',linewidth=5,label = f"{N}")
+        # data = np.column_stack((real_ave_degree_vec_0, hop_vec_0))
+        # np.savetxt(f"hopcount_vs_degree_N{N}.txt", data, fmt="%.6f", header="real_avg hopcount",
+        #            comments='')
+
+        # plt.plot([1/np.log(x) for x in real_ave_degree_vec_0[1:]], hop_vec_0[1:], "--o", markersize=20, markerfacecolor='none', linewidth=5,
+        #          label=f"{N}")
+        # print("x:",[1/np.log(x) for x in real_ave_degree_vec_0[1:]])
         # plt.plot(kvec2, hop_vec_0, "-o", markersize=25, markerfacecolor='none', linewidth=5,
         #          label=f"{N}")
         # plt.plot([alpha(x, N, beta) for x in kvec2], hop_vec_0, "-o", markersize=25, markerfacecolor='none', linewidth=5,
         #          label=f"{N}")
 
 
+        if beta ==2.1:
+            # curve fit using log(n)/log(k)+A
+            def model_fixed(x, A):
+                return analtich_small_beta_logk(N, x, A)
+            # 曲线拟合
+            popt, pcov = curve_fit(model_fixed, [1/np.log(x) for x in real_ave_degree_vec_0[1:-5]], hop_vec_0[1:-5])
+            A_fit = popt[0]
+            print(A_fit)
 
-        # curve fit using log(n)/log(k)+A
-        def model_fixed(x, A):
-            return analtich_small_beta_logk(N, x, A)
-        # 曲线拟合
-        popt, pcov = curve_fit(model_fixed, [1/np.log(x) for x in real_ave_degree_vec_0[1:-5]], hop_vec_0[1:-5])
-        A_fit = popt[0]
-        print(A_fit)
+            x_fit = np.linspace(min([1/np.log(x) for x in real_ave_degree_vec_0[1:]]), max([1/np.log(x) for x in real_ave_degree_vec_0[1:]]), 20000)
+            y_fit = model_fixed(x_fit, A_fit)
+            plt.plot(x_fit, y_fit, '-', label=fr"fit: $\langle L \rangle = {A_fit:.4f} + log({N})/log(k)$")
+        elif beta ==2.5:
+            # curve fit using log(n)/log(k)+A
+            def model_fixed(x, A,B):
+                return analtich_mid_beta_logk(N, x, A,B)
 
-        x_fit = np.linspace(min([1/np.log(x) for x in real_ave_degree_vec_0[1:]]), max([1/np.log(x) for x in real_ave_degree_vec_0[1:]]), 20000)
-        y_fit = model_fixed(x_fit, A_fit)
-        plt.plot(x_fit, y_fit, '-', label=fr"fit: $\langle L \rangle = {A_fit:.4f} + log({N})/log(k)$")
+            # 曲线拟合
+            popt, pcov = curve_fit(model_fixed, [1 / np.log(x) for x in real_ave_degree_vec_0[1:-5]], hop_vec_0[1:-5])
+            A_fit,B_fit = popt
+            print("拟合结果: A =", A_fit, "B =", B_fit)
+
+            x_fit = np.linspace(min([1 / np.log(x) for x in real_ave_degree_vec_0[1:]]),
+                                max([1 / np.log(x) for x in real_ave_degree_vec_0[1:]]), 20000)
+            y_fit = model_fixed(x_fit, A_fit,B_fit)
+            plt.plot(x_fit, y_fit, '-', label=fr"fit: $\langle L \rangle = {A_fit:.4f} + {B_fit:.4f}log({N})/log(k)$")
 
 
 
@@ -2109,8 +2303,8 @@ def hopcount_fit():
     print(c_vec)
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
-    # plt.yscale('log')
-    # plt.xscale('log')
+    plt.yscale('log')
+    plt.xscale('log')
     # plt.xlabel(r'Network size, $N$', fontsize=26)
     plt.xlabel(r'$1/log(k)$', fontsize=26)
     # plt.xlabel(r'Expected degree $E[D]$', fontsize=26)
@@ -2202,6 +2396,126 @@ def analytic_local_min_check():
     plt.close()
 
 
+def plot_realLFlaseLananlyticL_together():
+    figure()
+    N = 10000
+
+    real_avg_vec = [np.float64(1.46954), np.float64(5.03142), np.float64(15.24824), np.float64(47.79766), np.float64(147.43898),
+     np.float64(447.46456), np.float64(1312.27718), np.float64(3668.05386), np.float64(9550.78412),
+     np.float64(22354.68586), np.float64(44602.77848)]
+    approx_vec = [np.float64(0.8182731846623904), np.float64(0.254000769163314), np.float64(0.2015803223922931),
+     np.float64(0.1937751811010468), np.float64(0.20360747037771829), np.float64(0.23695464716334422),
+     np.float64(0.25732389727935495), np.float64(0.3288515302072136), np.float64(0.4295282447630304),
+     np.float64(0.5283123673344998), np.float64(0.5901199694952706)]
+
+    realL_vec = [np.float64(1.3863705186983992), np.float64(0.7547550428302459), np.float64(0.6763889039859593),
+     np.float64(0.6472066091029783), np.float64(0.6206690419300328), np.float64(0.617937406241449),
+     np.float64(0.605152825990719), np.float64(0.6199646665115169), np.float64(0.6738063983102505),
+     np.float64(0.7542639664055537), np.float64(0.8809445530712725)]
+
+    x2  = np.linspace(min(real_avg_vec),max(real_avg_vec),100000)
+    ana_vec = [0.025*x_value ** 0.25 * (0.12 + 1.28 * np.log(10000) / np.log(x_value)) for x_value in x2]
+
+    # plt.plot(x, [x_value ** 0.5 * (0.12 + 1.28 * np.log(10000) / np.log(x_value)) * np.log(x_value) for x_value in x],
+    #          label=f"fit2: analytic formula: Llog(k)~k^0.25")
+
+    plt.plot(real_avg_vec, approx_vec, "-o", markersize=25, markerfacecolor='none', linewidth=5, label=r"$approx <L> = <r><h>$")
+    plt.plot(real_avg_vec, realL_vec, "-o", markersize=25, markerfacecolor='none', linewidth=5,
+             label=r"$real <L>$")
+    plt.plot(x2, ana_vec, "--", linewidth=5, label=r"$ana: y = c* k^{0.25}(A+B* log(N)/log(k))$")
+
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'Average degree, $\langle k \rangle$', fontsize=26)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+
+    plt.ylabel(r'Average stretch, $\langle L \rangle$', fontsize=26)
+
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.legend(fontsize=26, loc=(0.4, 0.7))
+    plt.text(0.5,1.6,r"$N = 10^4,\beta = 1.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\L_vs_realavg.svg"
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+def plot_Llogk_realLFlaseLananlyticL_together():
+    figure()
+    N = 10000
+
+    real_avg_vec = [np.float64(1.46954), np.float64(5.03142), np.float64(15.24824), np.float64(47.79766), np.float64(147.43898),
+     np.float64(447.46456), np.float64(1312.27718), np.float64(3668.05386), np.float64(9550.78412),
+     np.float64(22354.68586), np.float64(44602.77848)]
+    approx_vec = [np.float64(0.8182731846623904), np.float64(0.254000769163314), np.float64(0.2015803223922931),
+     np.float64(0.1937751811010468), np.float64(0.20360747037771829), np.float64(0.23695464716334422),
+     np.float64(0.25732389727935495), np.float64(0.3288515302072136), np.float64(0.4295282447630304),
+     np.float64(0.5283123673344998), np.float64(0.5901199694952706)]
+
+    realL_vec = [np.float64(1.3863705186983992), np.float64(0.7547550428302459), np.float64(0.6763889039859593),
+     np.float64(0.6472066091029783), np.float64(0.6206690419300328), np.float64(0.617937406241449),
+     np.float64(0.605152825990719), np.float64(0.6199646665115169), np.float64(0.6738063983102505),
+     np.float64(0.7542639664055537), np.float64(0.8809445530712725)]
+
+    x2  = np.linspace(min(real_avg_vec),max(real_avg_vec),100000)
+    ana_vec = [0.025*x_value ** 0.25 * (0.12 + 1.28 * np.log(10000) / np.log(x_value))* np.log(x_value) for x_value in x2]
+
+    # plt.plot(x, [x_value ** 0.5 * (0.12 + 1.28 * np.log(10000) / np.log(x_value)) * np.log(x_value) for x_value in x],
+    #          label=f"fit2: analytic formula: Llog(k)~k^0.25")
+
+
+
+    plt.plot(real_avg_vec, [np.log(i) * j for (i, j) in zip(real_avg_vec, approx_vec)], "-o", markersize=25, markerfacecolor='none', linewidth=5, label=r"$approx <L> = <r><h>$")
+    plt.plot(real_avg_vec, [np.log(i) * j for (i, j) in zip(real_avg_vec, realL_vec)], "-o", markersize=25, markerfacecolor='none', linewidth=5,
+             label=r"$real <L>$")
+    plt.plot(x2, ana_vec, "--", linewidth=5, label=r"$ana: y = c* k^{0.25}(A+B* log(N)/log(k))*log(k)$")
+
+    plt.plot(x2, [0.025*x_value ** 0.25 * (1.28 * np.log(10000)) for x_value in x2], "--", linewidth=5, label=r"$ana: y = c* k^{0.25}B* log(N)$")
+
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'Average degree, $\langle k \rangle$', fontsize=26)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+
+    plt.ylabel(r'$\langle L \rangle log(k)$', fontsize=26)
+
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.legend(fontsize=26, loc=(0.4, 0))
+    plt.text(0.5,12,r"$N = 10^4,\beta = 1.5,c = 0.025, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\L_vs_realavg.svg"
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Figure 4 supp
@@ -2217,6 +2531,7 @@ if __name__ == '__main__':
     # if realL = True,L = real stretch ; else , L = <d><h>
     # plot_L_with_avg()
 
+
     """
     # STEP 3 <d> and <h> versus real average degree beta = 1024 under differnet N
     """
@@ -2231,6 +2546,8 @@ if __name__ == '__main__':
     plot_L_with_avg_loc_largeN()
     # plot_Llogk_with_k_loc_largeN()
 
+    # plot_realLFlaseLananlyticL_together()
+    # plot_Llogk_realLFlaseLananlyticL_together()
 
     """
     # STEP 5 <d> and <h> versus real average degree beta = 1024 under differnet N for local minimum
@@ -2245,6 +2562,8 @@ if __name__ == '__main__':
     # print([alpha(i, 100000000, 2.1) for i in generate_ED_log_unifrom(2,100000,12)])
     # x  =
     # print()
+
+
 
 
 

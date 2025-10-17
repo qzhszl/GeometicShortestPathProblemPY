@@ -267,8 +267,8 @@ def plot_hopcount_vs_realED(N, beta_vec):
     # 拟合曲线
     N_fit2 = np.linspace(1,10000 , 50)
     y_fit2 = power_law(N_fit2, a2, alpha2)
-    plt.plot(N_fit2, y_fit2, '-', linewidth=5, color="#E6B565",
-             label=fr'$f(k) = {a2:.1f} k^{{{alpha2:.1f}}}$')
+    # plt.plot(N_fit2, y_fit2, '-', linewidth=5, color="#E6B565",
+    #          label=fr'$f(k) = {a2:.1f} k^{{{alpha2:.1f}}}$')
 
 
 
@@ -281,13 +281,14 @@ def plot_hopcount_vs_realED(N, beta_vec):
 
     # plt.plot(k_vals, f1, label=r'$f_1(k) = \frac{\log n}{\log \log n}$', linestyle='--', color='orange')
     # plt.plot(k_vals, f2, label=r'$f_2(k) = 1 + \frac{n}{k}$', color='green')
-    plt.plot(k_vals, f3,"-",linewidth =5 , label=r'$f(k) = \frac{\log n}{\log k}$', color="#5CBF9B")
+    # plt.plot(k_vals, f3,"-",linewidth =5 , label=r'$f(\langle D\rangle) = \frac{\log N}{\log \langle D\rangle}$', color="#5CBF9B")
 
     # 曲线 4: <h> ~ (<k> - <k>_c)^(-a)
     kc = 4.512
     k_vals2 = np.linspace(4.6, 10000, 20000)
     f4 = 100 * (k_vals2 - kc) ** (-0.5)
-    plt.plot(k_vals2, f4, label=r'$\langle h\rangle = 100*(\langle k\rangle - %.3f)^{-1/2}$' % kc)
+    # plt.plot(k_vals2, f4, label=r'$\langle h\rangle = 100*(\langle k\rangle - %.3f)^{-1/2}$' % kc, color="#E6B565")
+    plt.plot(k_vals2, f4, linewidth =5,label=r'$\langle h\rangle = 10^2(\langle D\rangle - 4.5)^{-0.5}$', color="#E6B565")
 
 
     # kvec = [11, 16, 27, 44, 73, 107, 120, 193, 316, 518, 848, 1389]
@@ -316,7 +317,7 @@ def plot_hopcount_vs_realED(N, beta_vec):
     # plt.xticks(np.arange(0, 50, 10))
     plt.ylim([0.8,400])
     plt.xlim([0.3, 50000])
-    plt.legend(fontsize=26, bbox_to_anchor=(0.435, 0.47),markerscale = 1, handlelength = 1,labelspacing = 0.2, handletextpad = 0.3, borderpad = 0.1, borderaxespad=0.1)
+    plt.legend(fontsize=24, bbox_to_anchor=(0.3, 0.62),markerscale = 1, handlelength = 1,labelspacing = 0.2, handletextpad = 0.3, borderpad = 0.1, borderaxespad=0.1)
 
     # ax.legend(
     #     fontsize=14,
@@ -352,12 +353,12 @@ def plot_hopcount_vs_realED(N, beta_vec):
 
     picname =  filefolder_name+ "hopvsEDN{Nn}.svg".format(
         Nn=N)
-    # plt.savefig(
-    #     picname,
-    #     format="svg",
-    #     bbox_inches='tight',  # 紧凑边界
-    #     transparent=True  # 背景透明，适合插图叠加
-    # )
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
     plt.show()
     # 清空图像，以免影响下一个图
     plt.close()
@@ -794,6 +795,9 @@ if __name__ == '__main__':
 
     # plot_hopcount_vs_ED_test(10000,[2.02,4,8,128])
 
+    """"
+    Figure 4 (c)
+    """
     plot_hopcount_vs_realED(10000,[2.02,4,8,128])
 
     # plot_hopcount_vs_ED_test2(10000, [1024])

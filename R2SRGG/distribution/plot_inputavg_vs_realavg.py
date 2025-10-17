@@ -66,7 +66,7 @@ def power_law(x, a, b):
     return a * x**b
 
 
-def plot_inputavg_vs_realavg(beta):
+def plot_inputavg_vs_realavg(beta,thesis_flag):
     # Figure 1 (b)
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', "#A2C7A4", "#9DB0C2", "#E3B6A4"]
     if beta == 4:
@@ -111,11 +111,14 @@ def plot_inputavg_vs_realavg(beta):
         x_fit = np.linspace(min(x), 9999, 500)
         y_fit = power_law(x_fit, *popt)
 
-        plt.loglog(x_fit, y_fit, 'r-', linewidth=3, label=f'Fit: y = {a:.3f} * x^{b:.3f}')
 
-        plt.legend()
 
-        plt.xlabel(r'Expected degree, $\mathbb{E}[D]$', fontsize=26)
+        if thesis_flag:
+            plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+        else:
+            plt.loglog(x_fit, y_fit, 'r-', linewidth=3, label=f'Fit: y = {a:.3f} * x^{b:.3f}')
+            plt.legend()
+            plt.xlabel(r'Expected degree, $\mathbb{E}[D]$', fontsize=26)
         plt.ylabel(r"Average degree, $\langle D \rangle$", fontsize=26)
         plt.xticks(fontsize=28)
         plt.yticks(fontsize=28)
@@ -615,11 +618,12 @@ def test_analytic_result():
 
 if __name__ == '__main__':
     # load_10000nodenetwork_results(4)
-    # plot_inputavg_vs_realavg_several_beta()
-    # FIGURE 1!!!!!!!!!!!!!
-    # plot_inputavg_vs_realavg(4)
 
-    test_analytic_result()
+    # plot_inputavg_vs_realavg_several_beta()
+    # Figure 1!!!!!!!!!!!!!
+    plot_inputavg_vs_realavg(4,thesis_flag=True)
+
+    # test_analytic_result()
 
     # plot_inputavg_vs_realavg_100node(4)
 

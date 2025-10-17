@@ -155,6 +155,130 @@ def load_resort_data(N, beta):
     return degree_vec_resort, ave_L_resort, std_L_resort, real_ave_degree_vec, ave_L_vec, ave_L_dic
 
 
+
+
+def load_large_network_results_dev_vs_avg_beta128(N, beta, kvec, realL):
+    if realL:
+        # if L = <d_e>h real stretch
+        folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
+    else:
+        # if L = <d_e><h> ave  link length* hopcount
+        folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
+
+    exemptionlist = []
+    for N in [N]:
+        ave_deviation_vec = []
+        real_ave_degree_vec = []
+        std_deviation_vec = []
+        ave_edgelength_vec = []
+        std_edgelength_vec = []
+
+        ave_hop_vec = []
+        std_hop_vec = []
+
+        ave_hop_vec_no1 = []
+        std_hop_vec_no1 = []
+
+        ave_L_vec = []
+        std_L_vec = []
+
+        for beta in [beta]:
+            for ED in kvec:
+                for ExternalSimutime in [0]:
+                    try:
+                        # FileNetworkName = folder_name+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                        #     Nn=N, EDn=ED, betan=beta)
+                        # G = loadSRGGandaddnode(N, FileNetworkName)
+                        # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+                        # # print("real ED:", real_avg)
+                        if N>200:
+                            try:
+                                real_avg_name = folder_name + "real_avg_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+                                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                                real_avg = np.loadtxt(real_avg_name)
+                                real_ave_degree_vec.append(real_avg)
+                            except:
+                                real_ave_degree_name = folder_name + "real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                    Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                                real_avg = np.loadtxt(real_ave_degree_name)
+                                real_ave_degree_vec.append(np.mean(real_avg))
+                        else:
+                            real_ave_degree_name = folder_name + "real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            real_avg = np.loadtxt(real_ave_degree_name)
+                            real_ave_degree_vec.append(np.mean(real_avg))
+
+
+                        if realL:
+                            #if L = <d_e>h real stretch
+                            # deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            # ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
+                            # ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                            # std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+
+
+                            edgelength_vec_name = folder_name + "ave_edgelength_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        else:
+                            # if L = <d_e><h> ave  link length* hopcount
+                            edgelength_vec_name = folder_name + "ave_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+
+
+                        # deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        # ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
+                        # ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                        # std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+                        #
+                        # edgelength_vec_name = folder_name + "ave_edgelength_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+
+
+                        ave_edgelength_for_a_para_comb = np.loadtxt(edgelength_vec_name)
+                        ave_edgelength_vec.append(np.mean(ave_edgelength_for_a_para_comb))
+                        std_edgelength_vec.append(np.std(ave_edgelength_for_a_para_comb))
+
+
+
+                        hopcount_Name = folder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        hop_vec = np.loadtxt(hopcount_Name, dtype=int)
+
+                        ave_hop_vec.append(np.mean(hop_vec))  # include 1
+                        std_hop_vec.append(np.std(hop_vec))
+
+                        mask = hop_vec != 1
+                        hop_vec_no1 = hop_vec[mask]
+                        ave_hop_vec_no1.append(np.mean(hop_vec_no1))
+                        std_hop_vec_no1.append(np.std(hop_vec_no1))
+
+
+                        if realL:
+                            #if L = <d_e>h real stretch
+                            ave_edgelength_for_a_para_comb_no1 = ave_edgelength_for_a_para_comb[mask]
+
+                            L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb_no1, hop_vec_no1)]
+                        else:
+                            # if L = <d_e><h> ave  link length* hopcount
+                            L = [np.mean(hop_vec)*np.mean(ave_edgelength_for_a_para_comb)]
+
+                        # # L = np.multiply(ave_edgelength_for_a_para_comb, hop_vec)
+                        # L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
+
+                        ave_L_vec.append(np.mean(L))
+                        std_L_vec.append(np.std(L))
+
+                    except FileNotFoundError:
+                        exemptionlist.append((N, ED, beta, ExternalSimutime))
+    print(exemptionlist)
+    return real_ave_degree_vec, ave_deviation_vec, std_deviation_vec, ave_edgelength_vec, std_edgelength_vec, ave_hop_vec, std_hop_vec, ave_L_vec, std_L_vec
+    # return kvec, real_ave_degree_vec, ave_deviation_vec, std_deviation_vec
+
+
+
+
 def load_large_network_results_dev_vs_avg(N, beta, kvec):
     folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
     exemptionlist = []
@@ -292,7 +416,106 @@ def plot_L_with_avg_for_one_network():
 
 
 def plot_L_with_avg():
-    # Figure 4(b)
+    # Figure 3(c)
+    # the x-axis is the input average degree
+    Nvec = [100, 1000, 10000]
+    # Nvec = [100]
+    real_ave_degree_dict = {}
+    ave_L = {}
+    std_L = {}
+    # [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+    #  3727, 6105,
+    #  9999, 16479, 27081, 44767, 73534, 121205, 199999]
+    kvec_dict = {
+        100: [2, 3, 4, 5, 6, 8, 10, 12, 14, 17, 22, 27, 33, 40, 49, 60, 73, 89, 113, 149, 198, 260, 340, 446, 584,
+              762, 993, 1292, 1690, 2276, 3142, 4339],
+        1000: [2, 3, 4, 5, 6, 7, 8, 11, 15, 20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999, 1425, 2033, 2900,
+               4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168],
+        10000: [2.2,  3.0, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+
+    for N in Nvec:
+        if N < 100:
+            for beta in [4]:
+                degree_vec_resort, ave_deviation_vec, std_deviation_vec, _, _, _ = load_resort_data(N, beta)
+                real_ave_degree_dict[N] = degree_vec_resort
+                ave_L[N] = ave_deviation_vec
+                std_L[N] = std_deviation_vec
+                kvec = degree_vec_resort
+                real_ave_degree_vec = degree_vec_resort
+                kvec_dict[N] = kvec
+                real_ave_degree_dict[N] = real_ave_degree_vec
+        else:
+            for beta in [4]:
+                kvec = kvec_dict[N]
+                real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg(
+                    N, beta, kvec)
+                real_ave_degree_dict[N] = real_ave_degree_vec
+                ave_L[N] = ave_L_vec
+                std_L[N] = std_L_vec
+
+    # plt.plot(kvec,ave_deviation_vec,"o-")
+    # plt.xscale('log')
+    # plt.show()
+    lengend = [r"$N=10$", r"$N=10^2$", r"$N=10^3$", r"$N=10^4$"]
+    fig, ax = plt.subplots(figsize=(9, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    colors = ["#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # colorvec2 = ['#9FA9C9', '#D36A6A']
+    for N_index in range(len(Nvec)):
+        N = Nvec[N_index]
+        if N == 10:
+            # x = real_ave_degree_dict[N]
+            # print(len(x))
+            # x = x[1:]
+            # y = ave_L[N]
+            # y = y[1:]
+            # error = std_L[N]
+            # error = error[1:]
+            x = real_ave_degree_dict[N]
+            y = ave_L[N]
+            error = std_L[N]
+
+        else:
+            x = real_ave_degree_dict[N]
+            y = ave_L[N]
+            error = std_L[N]
+        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                     label=lengend[N_index], color=colors[N_index])
+
+
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
+    plt.ylim(0.02, 2)
+    # plt.yticks([0, 0.1, 0.2, 0.3])
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
+    plt.ylabel(r'Average stretch, $\langle L \rangle$', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=26, loc=(0.5, 0.5))
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\L_vs_realavg.svg"
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+def plot_L_with_avg_beta1024():
+    # Figure 3(c)
     # the x-axis is the input average degree
     Nvec = [100, 1000, 10000]
     # Nvec = [100]
@@ -558,18 +781,233 @@ def plot_L_vs_beta(ED):
     plt.show()
 
 
+
+def plot_L_with_avg_for_one_network_beta128():
+    # Figure 4b
+    # the x-axis is the input average degree
+    N = 10000
+    realL = True
+    beta = 128
+    kvec = [2.2, 3.0, 3.8, 5, 6.0, 8.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+            2276,
+            3727, 6105,
+            9999, 16479, 27081, 44767, 73534, 121205, 199999]
+    # kvec = [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105,
+    #         9999,
+    #         16479, 27081, 44767, 73534, 121205, 199999]
+    # real_ave_degree_dict = {}
+    # ave_deviation_dict = {}
+    # std_deviation_dict = {}
+    # kvec_dict = {}
+
+    # real_ave_degree_vec, ave_deviation_vec, std_deviation_vec, ave_edgelength_vec, std_edgelength_vec, ave_hop_vec, std_hop_vec, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg(
+    #     N, beta, kvec)
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_beta128(
+        N, beta, kvec, realL)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+
+    plt.errorbar(real_ave_degree_vec, ave_L_vec, yerr=std_L_vec, linestyle="-", linewidth=3, elinewidth=1, capsize=5,
+                 marker='o', markersize=16,
+                 label=r"$\langle S \rangle$", color=colors[3])
+
+    # text = fr"$N = 10^4$, $\beta = {beta}$"
+    # ax.text(
+    #     0.3, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+    #     text,
+    #     transform=ax.transAxes,  # 使用轴坐标
+    #     fontsize=26,  # 字体大小
+    #     ha='center',  # 水平居中对齐
+    #     va='bottom',  # 垂直对齐方式
+    # )
+
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
+
+    # plt.yticks([0, 0.1, 0.2, 0.3])
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.ylim([0.01,3])
+    plt.xlabel(r'$\langle D \rangle$', fontsize=32)
+    plt.ylabel(r'$\langle S \rangle$', fontsize=32)
+    plt.xticks(fontsize=32)
+    plt.yticks(fontsize=32)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=26, loc=(0.5, 0.1))
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
+    picname = folder_name + f"L_vs_avg_N{N}beta{beta}_N10000only.svg"
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+
+def plot_L_with_avg_plotfigureonly():
+    # the x-axis is the input average degree
+    Nvec = [215, 464, 1000, 2154, 4642,10000]
+    Nvec = [100,1000,10000]
+
+    realL = True
+
+    # Nvec = [100]
+    real_ave_degree_dict = {}
+    ave_L = {}
+    std_L = {}
+
+
+    beta_vec = [128]
+    kvec_dict = {
+        100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 642, 1000],
+        215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+        464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+        1000: [2,3, 4,5, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+        2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+        4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+        10000: [2.2, 3.0, 3.8, 5, 6.0,  8.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+                2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+    # kvec_dict = {
+    #     100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
+    #     215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+    #     464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+    #     1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+    #     2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+    #     4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+    #     10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+    #             3727]}
+
+    for N in Nvec:
+        if N < 100:
+            for beta in beta_vec:
+                degree_vec_resort, ave_deviation_vec, std_deviation_vec, _, _, _ = load_resort_data(N, beta)
+                real_ave_degree_dict[N] = degree_vec_resort
+                ave_L[N] = ave_deviation_vec
+                std_L[N] = std_deviation_vec
+                kvec = degree_vec_resort
+                real_ave_degree_vec = degree_vec_resort
+                kvec_dict[N] = kvec
+                real_ave_degree_dict[N] = real_ave_degree_vec
+        else:
+            for beta in beta_vec:
+                kvec = kvec_dict[N]
+                real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_beta128(
+                    N, beta, kvec,realL)
+                real_ave_degree_dict[N] = real_ave_degree_vec
+                ave_L[N] = ave_L_vec
+                std_L[N] = std_L_vec
+
+    # plt.plot(kvec,ave_deviation_vec,"o-")
+    # plt.xscale('log')
+    # plt.show()
+
+    lengend = [r"$N=10^2$", r"$N=10^3$", r"$N=10^4$"]
+    fig, ax = plt.subplots(figsize=(9, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
+    colors = ["#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # colors = c
+    # colorvec2 = ['#9FA9C9', '#D36A6A']
+    for N_index in range(len(Nvec)):
+        N = Nvec[N_index]
+        if N == 10:
+            # x = real_ave_degree_dict[N]
+            # print(len(x))
+            # x = x[1:]
+            # y = ave_L[N]
+            # y = y[1:]
+            # error = std_L[N]
+            # error = error[1:]
+            x = real_ave_degree_dict[N]
+            y = ave_L[N]
+            error = std_L[N]
+
+        else:
+            x = real_ave_degree_dict[N]
+            y = ave_L[N]
+            error = std_L[N]
+        kvec = kvec_dict[N]
+        print(kvec)
+        print(y)
+        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                     label=lengend[N_index], color=colors[N_index])
+
+    # k_c = 4.512
+    # k_star = [k_c**(2/3) * np.pi * (4/3)**(2/3) * N**(1/3) for N in Nvec]
+    # y2 = [analticL(N, k) for (N, k) in zip(Nvec, k_star)]
+    # plt.plot(k_star,y2,"-o",markersize = 25,markerfacecolor='none',linewidth=5,label = "analytic local minimum")
+    # print(k_star)
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
+    # plt.ylim(0.02, 2)
+    # plt.yticks([0, 0.1, 0.2, 0.3])
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
+    if realL:
+        plt.ylabel(r'Average stretch, $\langle S \rangle$', fontsize=26)
+    else:
+        plt.ylabel(r'Average stretch, $\langle r \rangle \langle h \rangle $', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=26, loc=(0.5, 0.05))
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\L_vs_realavg_beta128.svg"
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+
+
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # Figure 4
+    # Figure 3 (original Figure 4)
     """
-    # STEP 1  L versus real average degree
+    # STEP 1  L versus real average degree  Figure 3(d)
     """
-    plot_L_with_avg()
+    # plot_L_with_avg()
 
     """
-    # STEP 1.5  L versus real average degree for one network
+    # STEP 1.5  L versus real average degree for one network Figure 3(d)
     """
     # plot_L_with_avg_for_one_network()
+
+
+    """
+    # STEP 1_2 real L and <d><h> versus real average degree beta = 128  Figure 3(d)
+    """
+    # if realL = True,L = real stretch ; else , L = <d><h>
+
+    plot_L_with_avg_plotfigureonly()
+    # plot_L_with_avg_for_one_network_beta128()
+
+
+
 
     """
     # STEP 2 plot L vs N

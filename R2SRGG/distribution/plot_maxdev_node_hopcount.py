@@ -13,7 +13,7 @@ import math
 from matplotlib.ticker import FormatStrFormatter
 
 
-def plot_maxdev_node_hocount(N, ED, beta,hop_value):
+def plot_maxdev_node_hocount(N, ED, beta,hop_value,thesis_flag = False):
     # Figure 10 Appendix for the distribution of max position
     SP_hopcount = []
     max_dev_node_hopcount = []
@@ -105,24 +105,30 @@ def plot_maxdev_node_hocount(N, ED, beta,hop_value):
 
         # plt.yticks([0, 0.03, 0.06, 0.09, 0.12, 0.15])  # h = 13
         # plt.ylim([0, 0.18])
-        fignum_dict = {
-            (100, 5, 4,13): "a",
-            (1000, 5, 4,13): "b",
-            (10000, 5, 4,13): "c",
-            (1000, 5, 2.2,12): "d",
-            (1000, 5, 4,12): "e",
-            (1000, 5, 128,12): "f",
-            (1000, 4, 4, 4): "g",
-            (1000, 16, 4, 4): "h",
-            (1000, 64, 4, 4): "i",
-        }
-        fignum = fignum_dict[(N, ED, beta,hop_value)]
+        if thesis_flag:
+            picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}_thesis.svg".format(
+                Nn=N, EDn=ED, betan=beta, key=key)
+        else:
+            fignum_dict = {
+                (100, 5, 4,13): "a",
+                (1000, 5, 4,13): "b",
+                (10000, 5, 4,13): "c",
+                (1000, 5, 2.2,12): "d",
+                (1000, 5, 4,12): "e",
+                (1000, 5, 128,12): "f",
+                (1000, 4, 4, 4): "g",
+                (1000, 16, 4, 4): "h",
+                (1000, 64, 4, 4): "i",
+            }
+            fignum = fignum_dict[(N, ED, beta,hop_value)]
 
-        Nlabel_dict = {100: "10^2", 1000: "10^3", 10000: "10^4"}
-        Nlabel = Nlabel_dict[N]
+            Nlabel_dict = {100: "10^2", 1000: "10^3", 10000: "10^4"}
+            Nlabel = Nlabel_dict[N]
 
-        ax.text(-0.33, 1.18, fr'({fignum}) $N = {Nlabel}$, $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
-                fontsize=28, verticalalignment='top', horizontalalignment='left')
+            ax.text(-0.33, 1.18, fr'({fignum}) $N = {Nlabel}$, $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
+                    fontsize=28, verticalalignment='top', horizontalalignment='left')
+            picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}_thesis.svg".format(
+                Nn=N, EDn=ED, betan=beta, key=key)
 
         text = rf"$h = {key}$"
         plt.text(
@@ -143,15 +149,15 @@ def plot_maxdev_node_hocount(N, ED, beta,hop_value):
         #     Nn=N, EDn=ED, betan=beta,key = key)
         # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600)
 
-        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.svg".format(
-            Nn=N, EDn=ED, betan=beta, key=key)
+        # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\maxdev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.svg".format(
+        #     Nn=N, EDn=ED, betan=beta, key=key)
         plt.savefig(picname, format='svg', bbox_inches='tight', transparent = True)
         # plt.show()
         # 清空图像，以免影响下一个图
         plt.close()
 
 
-def plot_mindev_node_hocount(N, ED, beta,hop_value):
+def plot_mindev_node_hocount(N, ED, beta,hop_value,thesis_flag = False):
     # The data is collected through deviatition_vs_diffNkbeta_SRGG.py
     SP_hopcount = []
     max_dev_node_hopcount = []
@@ -243,26 +249,31 @@ def plot_mindev_node_hocount(N, ED, beta,hop_value):
         # plt.yticks([0, 0.03,0.06, 0.09,0.12,0.15, 0.18])
         # plt.yticks([0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30])
         # plt.ylim([0,0.32])
+        if thesis_flag:
+            picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\mindev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}_thesis.svg".format(
+                Nn=N, EDn=ED, betan=beta, key=key)
+        else:
+            fignum_dict = {
+                (100, 5, 4, 13): "a",
+                (1000, 5, 4, 13): "b",
+                (10000, 5, 4, 13): "c",
+                (1000, 5, 2.2, 12): "d",
+                (1000, 5, 4, 12): "e",
+                (1000, 5, 128, 12): "f",
+                (1000, 4, 4, 4): "g",
+                (1000, 16, 4, 4): "h",
+                (1000, 64, 4, 4): "i",
+            }
+            fignum = fignum_dict[(N, ED, beta, hop_value)]
 
-        fignum_dict = {
-            (100, 5, 4, 13): "a",
-            (1000, 5, 4, 13): "b",
-            (10000, 5, 4, 13): "c",
-            (1000, 5, 2.2, 12): "d",
-            (1000, 5, 4, 12): "e",
-            (1000, 5, 128, 12): "f",
-            (1000, 4, 4, 4): "g",
-            (1000, 16, 4, 4): "h",
-            (1000, 64, 4, 4): "i",
-        }
-        fignum = fignum_dict[(N, ED, beta, hop_value)]
+            Nlabel_dict = {100: "10^2", 1000: "10^3", 10000: "10^4"}
+            Nlabel = Nlabel_dict[N]
 
-        Nlabel_dict = {100: "10^2", 1000: "10^3", 10000: "10^4"}
-        Nlabel = Nlabel_dict[N]
-
-        ax.text(-0.33, 1.18, fr'({fignum}) $N = {Nlabel}$, $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$',
-                transform=ax.transAxes,
-                fontsize=28, verticalalignment='top', horizontalalignment='left')
+            ax.text(-0.33, 1.18, fr'({fignum}) $N = {Nlabel}$, $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$',
+                    transform=ax.transAxes,
+                    fontsize=28, verticalalignment='top', horizontalalignment='left')
+            picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\mindev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.svg".format(
+                Nn=N, EDn=ED, betan=beta, key=key)
 
 
         text = rf"$h = {key}$"
@@ -282,8 +293,8 @@ def plot_mindev_node_hocount(N, ED, beta,hop_value):
         # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\mindev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.png".format(
         #     Nn=N, EDn=ED, betan=beta,key = key)
         # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600)
-        picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\mindev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.svg".format(
-            Nn=N, EDn=ED, betan=beta, key=key)
+        # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\formaxhop\\distancetosinglenode\\mindev_nodehop{Nn}ED{EDn}Beta{betan}Hop{key}.svg".format(
+        #     Nn=N, EDn=ED, betan=beta, key=key)
         plt.savefig(picname, format='svg', bbox_inches='tight', transparent = True)
 
         plt.show()
@@ -831,29 +842,28 @@ if __name__ == '__main__':
     # plot_maxdev_node_hocount(10000, 5, 4)
     # radius = math.sqrt(5/((10000-1)*math.pi))
     # print(0.52/radius)
-    # for (N,ED,beta,hop_value) in [
-    #     (100, 5, 4, 13),
-    #     (1000, 5, 4, 13),
-    #     (10000, 5, 4, 13),
-    #     (1000, 5, 2.2, 12),
-    #     (1000, 5, 4, 12),
-    #     (1000, 5, 128, 12),
-    #     (1000, 4, 4, 4),
-    #     (1000, 16, 4, 4),
-    #     (1000, 64, 4, 4)]:
-    #     plot_maxdev_node_hocount(N, ED, beta, hop_value)
-    #
-    # for (N, ED, beta, hop_value) in [
-    #     (100, 5, 4, 13),
-    #     (1000, 5, 4, 13),
-    #     (10000, 5, 4, 13),
-    #     (1000, 5, 2.2, 12),
-    #     (1000, 5, 4, 12),
-    #     (1000, 5, 128, 12),
-    #     (1000, 4, 4, 4),
-    #     (1000, 16, 4, 4),
-    #     (1000, 64, 4, 4)]:
-    #     plot_mindev_node_hocount(N, ED, beta, hop_value)
+    for (N,ED,beta,hop_value) in [
+        (100, 5, 4, 13),
+        (1000, 5, 4, 13),
+        (10000, 5, 4, 13),
+        (1000, 5, 2.2, 12),
+        (1000, 5, 4, 12),
+        (1000, 5, 128, 12),
+        (1000, 4, 4, 4),
+        (1000, 16, 4, 4),
+        (1000, 64, 4, 4)]:
+        plot_maxdev_node_hocount(N, ED, beta, hop_value,thesis_flag = True)
+    for (N, ED, beta, hop_value) in [
+        (100, 5, 4, 13),
+        (1000, 5, 4, 13),
+        (10000, 5, 4, 13),
+        (1000, 5, 2.2, 12),
+        (1000, 5, 4, 12),
+        (1000, 5, 128, 12),
+        (1000, 4, 4, 4),
+        (1000, 16, 4, 4),
+        (1000, 64, 4, 4)]:
+        plot_mindev_node_hocount(N, ED, beta, hop_value,thesis_flag = True)
 
 
     # plot_maxdev_node_hocount(10000, 5, 4,13)
@@ -863,4 +873,4 @@ if __name__ == '__main__':
 
     # plot_maxmindev_node_hocount_together(10000, 5, 4)
 
-    plot_maxmindev_node_hocount_together_version2(10000, 5, 4)
+    # plot_maxmindev_node_hocount_together_version2(10000, 5, 4)

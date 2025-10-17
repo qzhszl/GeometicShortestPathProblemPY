@@ -91,8 +91,8 @@ def datatest(Edindex, betaindex,legendpara):
             writer.writerows(rows)
 
 
-def plot_predict_geo_sidevscenter(Edindex, betaindex, legendpara):
-    # Figure 7
+def plot_predict_geo_sidevscenter(Edindex, betaindex, legendpara,thesis_flag = True):
+    # Figure 7(b)
     # plot PRECISION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ED_list = [4,8]  # Expected degrees
     ED = ED_list[Edindex]
@@ -175,8 +175,14 @@ def plot_predict_geo_sidevscenter(Edindex, betaindex, legendpara):
     ax.set_yticks([0,0.1])
     # ax.text(0.1, 0.55, r'$N = 10^4$' + "\n" + r'$\beta = 4$' + "\n" + r"$\mathbb{E}[D] = 5$",transform=ax.transAxes,
     #          fontsize=34)
-    ax.text(0.1, 0.55, r'$N = 10^4$' + "\n" + r"$\mathbb{E}[D] = 5$" + "\n" + r'$\beta = 4$', transform=ax.transAxes,
-            fontsize=34)
+
+    if thesis_flag:
+        ax.text(0.1, 0.55, r'$N = 10^4$' + "\n" + r"$E[D] = 5$" + "\n" + r'$\beta = 4$', transform=ax.transAxes,
+                fontsize=34)
+    else:
+        ax.text(0.1, 0.55, r'$N = 10^4$' + "\n" + r"$\mathbb{E}[D] = 5$" + "\n" + r'$\beta = 4$',
+                transform=ax.transAxes,
+                fontsize=34)
     ax.tick_params(axis='x', pad=15)
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
@@ -207,7 +213,7 @@ def plot_predict_geo_sidevscenter(Edindex, betaindex, legendpara):
 
 
 
-def plot_predict_geodistance_Vs_reconstructionRGG_SRGGcenterside(Edindex, betaindex, legendpara):
+def plot_predict_geodistance_Vs_reconstructionRGG_SRGGcenterside(Edindex, betaindex, legendpara,thesis_flag = False):
     # Figure unknown
     # plot PRECISION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     ED_list = [4,8]  # Expected degrees
@@ -363,10 +369,15 @@ if __name__ == '__main__':
     # datatest(2, 2, 0)
 
 
-    # for Edindex,betaindex in [(0,0)]:
-    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGGcenterside(Edindex, betaindex, legendpara=1)
-    for Edindex, betaindex in [(0, 0)]:
-        plot_predict_geo_sidevscenter(Edindex, betaindex, legendpara=1)
+    for Edindex,betaindex in [(0,0)]:
+        plot_predict_geodistance_Vs_reconstructionRGG_SRGGcenterside(Edindex, betaindex, legendpara=1,thesis_flag = True)
+
+
+    '''
+    Figure 7(b)
+    '''
+    # for Edindex, betaindex in [(0, 0)]:
+    #     plot_predict_geo_sidevscenter(Edindex, betaindex, legendpara=1,thesis_flag = True)
 
 
 

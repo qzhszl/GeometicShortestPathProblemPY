@@ -100,40 +100,43 @@ def generate_and_plot_SRGG(N, avg, beta):
 
 
 def generate_and_plot_SRGG_2(N, avg, beta):
-    # Figure 2
+    # Figure 2 : Figure 2a
     rg = RandomGenerator(-12)
     rseed = random.randint(0, 100)
     for i in range(rseed):
         rg.ran1()
-    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-        Nn=N, EDn=avg, betan=beta)
-    G = loadSRGGandaddnode(N, FileNetworkName)
-    # load coordinates with noise
-    Coorx = []
-    Coory = []
-    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
-        Nn=N, EDn=avg, betan=beta)
-    with open(FileNetworkCoorName, "r") as file:
-        for line in file:
-            if line.startswith("#"):
-                continue
-            data = line.strip().split("\t")
-            Coorx.append(float(data[0]))
-            Coory.append(float(data[1]))
-    xx = Coorx
-    yy = Coory
 
 
-    # G, xx, yy = R2SRGG(N, avg, beta, rg, SaveNetworkPath=None)
-    #
+
     # FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-    #                 Nn=N, EDn=avg, betan=beta)
-    # nx.write_edgelist(G, FileNetworkName)
+    #     Nn=N, EDn=avg, betan=beta)
+    # G = loadSRGGandaddnode(N, FileNetworkName)
+    # # load coordinates with noise
+    # Coorx = []
+    # Coory = []
     # FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
     #     Nn=N, EDn=avg, betan=beta)
-    # with open(FileNetworkCoorName, "w") as file:
-    #     for data1, data2 in zip(xx, yy):
-    #         file.write(f"{data1}\t{data2}\n")
+    # with open(FileNetworkCoorName, "r") as file:
+    #     for line in file:
+    #         if line.startswith("#"):
+    #             continue
+    #         data = line.strip().split("\t")
+    #         Coorx.append(float(data[0]))
+    #         Coory.append(float(data[1]))
+    # xx = Coorx
+    # yy = Coory
+
+
+    G, xx, yy = R2SRGG(N, avg, beta, rg, SaveNetworkPath=None)
+
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                    Nn=N, EDn=avg, betan=beta)
+    nx.write_edgelist(G, FileNetworkName)
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+        Nn=N, EDn=avg, betan=beta)
+    with open(FileNetworkCoorName, "w") as file:
+        for data1, data2 in zip(xx, yy):
+            file.write(f"{data1}\t{data2}\n")
 
 
 
@@ -218,6 +221,131 @@ def generate_and_plot_SRGG_2(N, avg, beta):
 
 
 
+
+def generate_and_plot_SRGG_3(N, avg, beta):
+    # Figure 2 : Figure 2a
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    for i in range(rseed):
+        rg.ran1()
+
+
+
+    FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+        Nn=N, EDn=avg, betan=beta)
+    G = loadSRGGandaddnode(N, FileNetworkName)
+    # load coordinates with noise
+    Coorx = []
+    Coory = []
+    FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+        Nn=N, EDn=avg, betan=beta)
+    with open(FileNetworkCoorName, "r") as file:
+        for line in file:
+            if line.startswith("#"):
+                continue
+            data = line.strip().split("\t")
+            Coorx.append(float(data[0]))
+            Coory.append(float(data[1]))
+    xx = Coorx
+    yy = Coory
+
+
+    # G, xx, yy = R2SRGG(N, avg, beta, rg, SaveNetworkPath=None)
+    #
+    # FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #                 Nn=N, EDn=avg, betan=beta)
+    # nx.write_edgelist(G, FileNetworkName)
+    # FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+    #     Nn=N, EDn=avg, betan=beta)
+    # with open(FileNetworkCoorName, "w") as file:
+    #     for data1, data2 in zip(xx, yy):
+    #         file.write(f"{data1}\t{data2}\n")
+
+
+
+    clustering_coefficient = nx.average_clustering(G)
+    print("real cc:", clustering_coefficient)
+
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    print("real ED:", real_avg)
+
+    pos = {i: (xx[i], yy[i]) for i in range(N)}
+
+    nodes = 775
+    nodet = 371
+    diameter_path = nx.shortest_path(G,nodes,nodet)
+
+    # lengths = dict(nx.all_pairs_shortest_path_length(G))
+    # max_len = 0
+    # diameter_path = []
+    #
+    # for u in lengths.keys():
+    #     for v in lengths[u].keys():
+    #         if u != v and lengths[u][v] > max_len:
+    #             max_len = lengths[u][v]
+    #             diameter_path = nx.shortest_path(G, source=u, target=v)
+    #
+    # # 构造 diameter 边列表
+    diameter_edges = list(zip(diameter_path, diameter_path[1:]))
+
+
+    # 绘制图
+    fig, ax = plt.subplots(figsize=(6, 6))
+    # plt.text(0.2, 1.2, r'$\mathbb{E}[D] = 2, \mathbb{E}[D] = 5, \mathbb{E}[D] = 10$',
+    #          transform=ax.transAxes,
+    #          fontsize=22,
+    #          bbox=dict(facecolor='white', alpha=0.5))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # nx.draw(G, pos, with_labels=True, node_color='skyblue', node_size=10, font_size=12)
+    # plt.show()
+    nx.draw_networkx_edges(G, pos, edge_color='#7A7DB1', width=2,alpha=0.5)
+    nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='#6FB494', width=5)
+    # nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='black', width=2, style='dashed',)
+
+
+    # node_colors = ['#62ABC7' if n in diameter_path else '#7A7DB1' for n in G.nodes]
+    # node_sizes = [40 if n in diameter_path else 30 for n in G.nodes]
+
+    # 绘制空心节点
+    nx.draw_networkx_nodes(G, pos,
+                           node_size=30,
+                           node_color='#D08082',  # 空心节点
+                           edgecolors="black",  # 圆圈颜色
+                           linewidths=1,
+                           alpha=0.7)
+
+    nx.draw_networkx_nodes(G, pos, nodelist=diameter_path, node_size=50, node_color='#6FB494',edgecolors="black")
+    # nx.draw_networkx_labels(G, pos)
+    # text = r"$\mathbb{E}[D] = 3.5$"
+    # text = r"$N = 150\\$, $\beta = 8$,\n $\mathbb{E}[D] = 12$"
+    text = r"$N = 10^3$" + "\n" + r"$\beta = 8$" + "\n" + r"$\mathbb{E}[D] = 15$"
+    # text = r"$N = 10^3$" +"\n"+ r"$\beta = 8$" + "\n" + r"$E[D] = 15$"
+    ax.text(
+        0.5, 1,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+        text,
+        transform=ax.transAxes,  # 使用轴坐标
+        fontsize=26,  # 字体大小
+        ha='left',  # 水平居中对齐
+        va='bottom'  # 垂直对齐方式
+    )
+
+    # plt.axis('equal')  # 保持横纵比例一致，图形不会变形
+    plt.axis('off')  # 关闭坐标轴
+    plt.tight_layout()
+    # picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\SRGG_N{N}_ED{avg}_avg{real_avg}.pdf"
+    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+    picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\SRGG_N{N}_ED{avg}_avg{real_avg}.svg"
+
+    picname = f"D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\example network\\SRGG_legend.svg"
+
+    plt.savefig(picname, format='svg', bbox_inches='tight', transparent = True)
+
+    plt.show()
+
+
+
+
 def generate_plot_model_graph():
     G = nx.Graph()
     G.add_edges_from([(0, 1), (1, 2),(2,3),(3,4),(2,4)])  # using a list of edge tuples
@@ -234,7 +362,12 @@ def generate_plot_model_graph():
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # generate_and_plot_SRGG(200,10,4)
-    generate_and_plot_SRGG_2(200, 8, 8)
+
+    # Figure 2 (a) ---------------------------------------------------------
+    # generate_and_plot_SRGG_2(200, 8, 8)
+
+    generate_and_plot_SRGG_3(1000, 15, 8)
+
 
     # generate_plot_model_graph()
 

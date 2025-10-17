@@ -185,6 +185,8 @@ def find_giant_component(beta):
 
 def scattor_peakvs_GLCC():
     # Figure 4(a)
+    thesis_flag = True
+
     peak_avg = [4, 3.4, 5.0, 5.0, 5.8, 5.4, 6, 6.4, 3.2, 3.1, 2.6, 2.7, 2.9, 2.9, 3.7, 3.8, 4.6, 4.8, 4.2]
     SLCC_avg = [3.8, 3.2, 5.0, 4.8, 6, 5.6, 6, 6.0, 3.1, 2.9, 2.6, 2.7, 2.8, 2.7, 3.7, 3.9, 4.4, 4.8, 4.4]
 
@@ -199,8 +201,10 @@ def scattor_peakvs_GLCC():
               [0.4940, 0.1840, 0.5560],
               [0.4660, 0.6740, 0.1880]]
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
-
-    plt.scatter(peak_avg, SLCC_avg, marker='o', s=150, color=colors[3], label=r"$\mathbb{E}[D]$")
+    if thesis_flag:
+        plt.scatter(peak_avg, SLCC_avg, marker='o', s=150, color=colors[3], label=r"$E[D]$")
+    else:
+        plt.scatter(peak_avg, SLCC_avg, marker='o', s=150, color=colors[3], label=r"$\mathbb{E}[D]$")
     x = np.linspace(2.2,6,10)
     y = np.linspace(2.2, 6, 10)
     plt.plot(x,y,"--",color=colors[0],label=r"$y=x$",linewidth=5)
@@ -221,21 +225,38 @@ def scattor_peakvs_GLCC():
     )
 
     # plt.xscale('log')
-    plt.xlabel(r'$\mathbb{E}[D]_{dev_{max}}$', fontsize=30)
-    plt.ylabel(r'$\mathbb{E}[D]_{SLCC_{max}}$', fontsize=30)
-    plt.xticks([2,3,4,5,6],fontsize=28)
-    plt.yticks([2,3,4,5,6],fontsize=28)
-    plt.legend(fontsize=30)
-    plt.tick_params(axis='both', which="both", length=6, width=1)
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
-    picname = filefolder_name + "scattor_slcc_vs_peak.svg"
-    # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
-    plt.savefig(
-        picname,
-        format="svg",
-        bbox_inches='tight',  # 紧凑边界
-        transparent=True  # 背景透明，适合插图叠加
-    )
+    if thesis_flag:
+        plt.xlabel(r'$E[D]_{\langle d \rangle_{local~max}}$', fontsize=30)
+        plt.ylabel(r'$E[D]_{SLCC_{max}}$', fontsize=30)
+        plt.xticks([2, 3, 4, 5, 6], fontsize=28)
+        plt.yticks([2, 3, 4, 5, 6], fontsize=28)
+        plt.legend(fontsize=30)
+        plt.tick_params(axis='both', which="both", length=6, width=1)
+        filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
+        picname = filefolder_name + "scattor_slcc_vs_peak_thesis.svg"
+        # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+        plt.savefig(
+            picname,
+            format="svg",
+            bbox_inches='tight',  # 紧凑边界
+            transparent=True  # 背景透明，适合插图叠加
+        )
+    else:
+        plt.xlabel(r'$\mathbb{E}[D]_{\langle d \rangle_{max}}$', fontsize=30)
+        plt.ylabel(r'$\mathbb{E}[D]_{SLCC_{max}}$', fontsize=30)
+        plt.xticks([2,3,4,5,6],fontsize=28)
+        plt.yticks([2,3,4,5,6],fontsize=28)
+        plt.legend(fontsize=30)
+        plt.tick_params(axis='both', which="both", length=6, width=1)
+        filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\inpuavg_beta\\"
+        picname = filefolder_name + "scattor_slcc_vs_peak.svg"
+        # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
+        plt.savefig(
+            picname,
+            format="svg",
+            bbox_inches='tight',  # 紧凑边界
+            transparent=True  # 背景透明，适合插图叠加
+        )
 
     plt.show()
 
@@ -334,8 +355,9 @@ if __name__ == '__main__':
     # find_giant_component(3.9)
 
     """
-    # plot the scattor plot
+    # plot the scattor plot Figure 4 (a)
     """
+
     scattor_peakvs_GLCC()
 
     """
