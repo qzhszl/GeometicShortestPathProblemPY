@@ -159,8 +159,11 @@ def load_resort_data(N, beta):
 
 def load_large_network_results_dev_vs_avg_beta128(N, beta, kvec, realL):
     if realL:
-        # if L = <d_e>h real stretch
-        folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
+        if beta in [2.1,2.5,3.1]:
+            folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\localmin_hunter\\"
+        else:
+            # if L = <d_e>h real stretch
+            folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
     else:
         # if L = <d_e><h> ave  link length* hopcount
         folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
@@ -275,6 +278,7 @@ def load_large_network_results_dev_vs_avg_beta128(N, beta, kvec, realL):
     print(exemptionlist)
     return real_ave_degree_vec, ave_deviation_vec, std_deviation_vec, ave_edgelength_vec, std_edgelength_vec, ave_hop_vec, std_hop_vec, ave_L_vec, std_L_vec
     # return kvec, real_ave_degree_vec, ave_deviation_vec, std_deviation_vec
+
 
 
 
@@ -782,6 +786,8 @@ def plot_L_vs_beta(ED):
 
 
 
+
+
 def plot_L_with_avg_for_one_network_beta128():
     # Figure 4b
     # the x-axis is the input average degree
@@ -809,6 +815,90 @@ def plot_L_with_avg_for_one_network_beta128():
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
 
+    print(real_ave_degree_vec)
+    print(ave_L_vec)
+    plt.errorbar(real_ave_degree_vec, ave_L_vec, yerr=std_L_vec, linestyle="-", linewidth=3, elinewidth=1, capsize=5,
+                 marker='o', markersize=16,
+                 label=r"$\langle S \rangle$", color=colors[3])
+
+    # text = fr"$N = 10^4$, $\beta = {beta}$"
+    # ax.text(
+    #     0.3, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+    #     text,
+    #     transform=ax.transAxes,  # 使用轴坐标
+    #     fontsize=26,  # 字体大小
+    #     ha='center',  # 水平居中对齐
+    #     va='bottom',  # 垂直对齐方式
+    # )
+
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
+
+    # plt.yticks([0, 0.1, 0.2, 0.3])
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.ylim([0.01,3])
+    plt.xlabel(r'$\langle D \rangle$', fontsize=32)
+    plt.ylabel(r'$\langle S \rangle$', fontsize=32)
+    plt.xticks(fontsize=32)
+    plt.yticks(fontsize=32)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=26, loc=(0.5, 0.1))
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\"
+    picname = folder_name + f"L_vs_avg_N{N}beta{beta}_N10000only.svg"
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+def return_plot_L_with_avg_for_one_beta():
+    # the x-axis is the input average degree
+    N = 10000
+    realL = True
+    beta = 3.1
+
+    kvec = [2,4,5,6,7,22,72,236,]
+
+
+    # if beta ==128:
+    #     kvec = [2.2, 3.0, 3.8, 5, 6.0, 8.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+    #             2276,
+    #             3727, 6105,
+    #             9999, 16479, 27081, 44767, 73534, 121205, 199999]
+    # else:
+    #     kvec = [2,6,12,46,132,375,1067,3040,8657,24657,70224,199999]
+
+
+
+    # kvec = [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105,
+    #         9999,
+    #         16479, 27081, 44767, 73534, 121205, 199999]
+    # real_ave_degree_dict = {}
+    # ave_deviation_dict = {}
+    # std_deviation_dict = {}
+    # kvec_dict = {}
+
+    # real_ave_degree_vec, ave_deviation_vec, std_deviation_vec, ave_edgelength_vec, std_edgelength_vec, ave_hop_vec, std_hop_vec, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg(
+    #     N, beta, kvec)
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_return(
+        N, beta, kvec, realL)
+
+    fig, ax = plt.subplots(figsize=(9, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+
+    print(real_ave_degree_vec)
+    print(ave_L_vec)
     plt.errorbar(real_ave_degree_vec, ave_L_vec, yerr=std_L_vec, linestyle="-", linewidth=3, elinewidth=1, capsize=5,
                  marker='o', markersize=16,
                  label=r"$\langle S \rangle$", color=colors[3])
@@ -854,10 +944,12 @@ def plot_L_with_avg_for_one_network_beta128():
 
 
 
+
+
 def plot_L_with_avg_plotfigureonly():
     # the x-axis is the input average degree
     Nvec = [215, 464, 1000, 2154, 4642,10000]
-    Nvec = [100,1000,10000]
+    Nvec = [100,1000,10000, 20000]
 
     realL = True
 
@@ -878,7 +970,12 @@ def plot_L_with_avg_plotfigureonly():
         10000: [2.2, 3.0, 3.8, 5, 6.0,  8.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
                 2276,
                 3727, 6105,
-                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+                9999, 16479, 27081, 44767, 73534, 121205, 199999],
+        20000: [2.2, 2.8, 3.4,4.4, 5, 6.0, 8.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+                2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205]
+    }
     # kvec_dict = {
     #     100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
     #     215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
@@ -913,7 +1010,7 @@ def plot_L_with_avg_plotfigureonly():
     # plt.xscale('log')
     # plt.show()
 
-    lengend = [r"$N=10^2$", r"$N=10^3$", r"$N=10^4$"]
+    lengend = [r"$N=10^2$", r"$N=10^3$", r"$N=10^4$", r"$N=2 \times 10^4$"]
     fig, ax = plt.subplots(figsize=(9, 6))
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
@@ -969,16 +1066,204 @@ def plot_L_with_avg_plotfigureonly():
     #     betan=beta)
     # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
     picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\L_vs_realavg_beta128.svg"
-    plt.savefig(
-        picname,
-        format="svg",
-        bbox_inches='tight',  # 紧凑边界
-        transparent=True  # 背景透明，适合插图叠加
-    )
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
     # plt.title('Errorbar Curves with Minimum Points after Peak')
     plt.show()
     plt.close()
 
+
+
+def plot_L_with_avg_diffbeta():
+    # the x-axis is the input average degree
+    # The data is loaed from plot_stretch_v_avg&N_capature_localmin.py plot_L_with_avg_loc_largeN()
+    N = 10000
+
+    realL = False
+
+    # Nvec = [100]
+    real_ave_degree_dict = {}
+    ave_L = {}
+    std_L = {}
+    approx_L =  {}
+
+
+    beta_vec = [4,128]
+    kvec_dict = {
+        100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 642, 1000],
+        215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+        464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+        1000: [2,3, 4,5, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+        2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+        4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+        10000: [2.2, 3.0, 3.8, 5, 6.0,  8.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+                2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205, 199999],
+        20000: [2.2, 2.8, 3.4,4.4, 5, 6.0, 8.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+                2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205]
+    }
+    # kvec_dict = {
+    #     100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
+    #     215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+    #     464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+    #     1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+    #     2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+    #     4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+    #     10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+    #             3727]}
+
+    for beta in beta_vec:
+        kvec = kvec_dict[N]
+        real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_beta128(
+            N, beta, kvec,realL)
+        real_ave_degree_dict[beta] = real_ave_degree_vec
+        ave_L[beta] = ave_L_vec
+        std_L[beta] = std_L_vec
+
+    # plt.plot(kvec,ave_deviation_vec,"o-")
+    # plt.xscale('log')
+    # plt.show()
+
+    lengend = [r"$\beta=2.1$", r"$\beta=2.5$", r"$\beta=4$", r"$\beta=128$"]
+    fig, ax = plt.subplots(figsize=(9, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
+    colors = ["#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # colors = c
+    # colorvec2 = ['#9FA9C9', '#D36A6A']
+
+
+    # real_ave_degree_dict[2.5] = [np.float64(1.3802), np.float64(4.6628), np.float64(13.7504), np.float64(41.3624), np.float64(121.1224),
+    #  np.float64(130.4644), np.float64(140.1094), np.float64(150.687), np.float64(162.0182), np.float64(174.1272),
+    #  np.float64(187.1632), np.float64(200.8026), np.float64(215.758), np.float64(231.4976), np.float64(248.5472),
+    #  np.float64(266.907), np.float64(286.2412), np.float64(306.3448), np.float64(328.5492), np.float64(340.4932),
+    #  np.float64(351.8212), np.float64(376.905), np.float64(403.5924), np.float64(432.2924), np.float64(462.6738),
+    #  np.float64(494.5304), np.float64(529.2872), np.float64(565.3824), np.float64(604.1762), np.float64(645.247),
+    #  np.float64(688.635), np.float64(735.0184), np.float64(783.71), np.float64(835.7892), np.float64(890.686),
+    #  np.float64(2103.6792), np.float64(4257.9598), np.float64(6934.8888), np.float64(8898.362), np.float64(9929.8622)]
+    # ave_L[2.5]  = [np.float64(2.083753542297957), np.float64(0.8108291291468183), np.float64(0.7086999716180932),
+    #  np.float64(0.6743696974975774), np.float64(0.6485367658365878), np.float64(0.6497151015858645),
+    #  np.float64(0.6519750995982597), np.float64(0.649283688806195), np.float64(0.6437894976565234),
+    #  np.float64(0.6434539118697549), np.float64(0.6386335147524166), np.float64(0.6383315540220368),
+    #  np.float64(0.633582391183019), np.float64(0.6331559814304656), np.float64(0.6326149108611301),
+    #  np.float64(0.6364490881533421), np.float64(0.6311935559791461), np.float64(0.63162527832276),
+    #  np.float64(0.6303570356987208), np.float64(0.6344778917716585), np.float64(0.6324816930851671),
+    #  np.float64(0.6335929712525001), np.float64(0.6382516495678294), np.float64(0.6382697612836463),
+    #  np.float64(0.6374513277396701), np.float64(0.6412180232617238), np.float64(0.6438241694238583),
+    #  np.float64(0.6464903995012711), np.float64(0.6554241486662417), np.float64(0.6518530129876442),
+    #  np.float64(0.6570248816812725), np.float64(0.660588289448376), np.float64(0.6649758895766243),
+    #  np.float64(0.6612636941366813), np.float64(0.6710528177496031), np.float64(0.7530533967784127),
+    #  np.float64(0.8947615820067742), np.float64(0.963460886822925), np.float64(1.1196354619043718),
+    #  np.float64(1.2093558418297714)]
+
+    real_ave_degree_dict[2.5] = [np.float64(1.3802), np.float64(4.6628), np.float64(13.7504), np.float64(41.3624),
+                                 np.float64(121.1224),
+                                 np.float64(130.4644),
+                                 np.float64(174.1272),
+                                 np.float64(231.4976),
+                                 np.float64(306.3448),
+                                 np.float64(376.905),
+                                 np.float64(494.5304),
+                                 np.float64(783.71),
+                                 np.float64(835.7892),
+                                 np.float64(890.686),
+                                 np.float64(2103.6792), np.float64(4257.9598), np.float64(6934.8888),
+                                 np.float64(8898.362), np.float64(9929.8622)]
+    ave_L[2.5] = [np.float64(2.083753542297957), np.float64(0.8108291291468183), np.float64(0.7086999716180932),
+                  np.float64(0.6743696974975774), np.float64(0.6485367658365878), np.float64(0.6497151015858645),
+                  np.float64(0.6434539118697549), np.float64(0.6331559814304656), np.float64(0.63162527832276),
+                  np.float64(0.6335929712525001), np.float64(0.6412180232617238), np.float64(0.6518530129876442),
+                  np.float64(0.6612636941366813), np.float64(0.6710528177496031), np.float64(0.7530533967784127),
+                  np.float64(0.8947615820067742), np.float64(0.963460886822925), np.float64(1.1196354619043718),
+                  np.float64(1.2093558418297714)]
+
+
+    real_ave_degree_dict[3.1] = [np.float64(1.533162), np.float64(5.274501999999999), np.float64(16.141509999999997),
+     np.float64(50.544774000000004), np.float64(153.98062399999998), np.float64(451.08478800000006),
+     np.float64(1224.1397040000002), np.float64(2934.61436), np.float64(5747.6903839999995), np.float64(8460.482898),
+     np.float64(9668.840538), np.float64(9943.386174)]
+    ave_L[3.1] = [np.float64(0.7073626407706719), np.float64(0.7767907598623258), np.float64(0.6823988009051273),
+     np.float64(0.6429823932052088), np.float64(0.628112971110632), np.float64(0.6249892683133915),
+     np.float64(0.6728046131127262), np.float64(0.7680096849141987), np.float64(0.9128719689922662),
+     np.float64(1.053636194955935), np.float64(1.123536183341839), np.float64(1.1266797833173825)]
+
+    real_ave_degree_dict[2.1] =[np.float64(0.647672), np.float64(0.9536), np.float64(1.2332), np.float64(1.792), np.float64(2.058828),
+     np.float64(5.847454000000002), np.float64(16.889622), np.float64(47.695429999999995),
+     np.float64(130.94333999999998), np.float64(343.033686), np.float64(842.6122099999999),
+     np.float64(1887.5601599999998), np.float64(3706.396326), np.float64(6092.669242000001), np.float64(8187.439658),
+     np.float64(9344.583)]
+    ave_L[2.1] =[np.float64(0.27143445114259124), np.float64(0.7598339194549935), np.float64(2.675853772043278),
+     np.float64(1.4656527772294778), np.float64(1.3136788477251418), np.float64(0.8542345889975687),
+     np.float64(0.7386616210765622), np.float64(0.6890922705269413), np.float64(0.6642333052457445),
+     np.float64(0.6455108478945255), np.float64(0.6808760138955805), np.float64(0.746380165204815),
+     np.float64(0.8396772972302338), np.float64(0.9318348031709808), np.float64(1.024014919492898),
+     np.float64(1.3314722164403012)]
+
+    approx_L[2.1] = [np.float64(0.18713185030928067), np.float64(0.7283556244139056), np.float64(2.3453236422507335), np.float64(1.2129600085566379), np.float64(1.0596813847187543), np.float64(0.5570708063885884), np.float64(0.4308826229144635), np.float64(0.3904621312891976), np.float64(0.3930380853589546), np.float64(0.3964590523677577), np.float64(0.4713624573018614), np.float64(0.5520598341571079), np.float64(0.6036795026077996), np.float64(0.605236360802573), np.float64(0.5710837915958688), np.float64(0.5429516015345655)]
+    approx_L[2.5] = []
+    real_ave_degree_dict[4] = [1.7054, 2.1758, 2.3132, 2.65, 2.9316, 3.4204, 4.6164, 7.6562, 12.1664, 20.397, 32.749, 53.1894, 85.5136, 137.117, 218.353, 345.515, 540.688, 836.2706, 1274.4564, 1903.7746, 2765.9072, 3888.2098, 5252.766, 6702.0802, 8029.6946, 8990.1558, 9553.0216, 9820.4528]
+    approx_L[4] = [np.float64(0.047142366971440246), np.float64(0.20861996975776426), np.float64(0.3889985780686527), np.float64(0.6390728663273963), np.float64(0.4679255268407224), np.float64(0.34249510012394296), np.float64(0.2575292756978971), np.float64(0.1950389670926904), np.float64(0.17174246626728473), np.float64(0.16412749193484105), np.float64(0.16554785757124327), np.float64(0.17103442293291765), np.float64(0.18362445384559242), np.float64(0.19996835814461092), np.float64(0.22164503626728538), np.float64(0.24902137730478238), np.float64(0.27450434516084105), np.float64(0.30773424399552624), np.float64(0.35892274446087363), np.float64(0.41679672719049743), np.float64(0.4741504332954842), np.float64(0.5196804807434381), np.float64(0.5532632778358367), np.float64(0.5632517127774106), np.float64(0.5543953726725661), np.float64(0.5443747566911749), np.float64(0.532921861195619), np.float64(0.5270276034416593)]
+    ave_L[4] = [np.float64(0.10586833057728005), np.float64(0.32092651829744073), np.float64(0.4211427701655029), np.float64(1.600106730159238), np.float64(1.1207469459545976), np.float64(0.9602755020342794), np.float64(0.8505105399855226), np.float64(0.7521601392454854), np.float64(0.7144736637949518), np.float64(0.6897834045341739), np.float64(0.6611984828894697), np.float64(0.6430243010088226), np.float64(0.6299550989628939), np.float64(0.6236145759731754), np.float64(0.6226740920891127), np.float64(0.6267114073026878), np.float64(0.6282176272232343), np.float64(0.6364987317054913), np.float64(0.6586756556582146), np.float64(0.6946337988528414), np.float64(0.7457111976022143), np.float64(0.826799927138955), np.float64(0.9428326521400886), np.float64(1.0663845876582414), np.float64(1.140146289513965), np.float64(1.1836464727030707), np.float64(1.1939575186864742), np.float64(1.188776107945433)]
+
+    beta_vec = [2.1,2.5,4, 128]
+    for beta_index in range(len(beta_vec)):
+        beta = beta_vec[beta_index]
+        x = real_ave_degree_dict[beta]
+        y = ave_L[beta]
+
+        kvec = kvec_dict[N]
+        print(kvec)
+        print(y)
+        if beta in [4, 128]:
+            error = std_L[beta]
+            plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                         label=lengend[beta_index], color=colors[beta_index])
+        else:
+            plt.plot(x, y,linestyle="--", linewidth=3, marker='o',
+                         markersize=16,
+                         label=lengend[beta_index], color=colors[beta_index])
+
+    # k_c = 4.512
+    # k_star = [k_c**(2/3) * np.pi * (4/3)**(2/3) * N**(1/3) for N in Nvec]
+    # y2 = [analticL(N, k) for (N, k) in zip(Nvec, k_star)]
+    # plt.plot(k_star,y2,"-o",markersize = 25,markerfacecolor='none',linewidth=5,label = "analytic local minimum")
+    # print(k_star)
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
+    # plt.ylim(0.02, 2)
+    # plt.yticks([0, 0.1, 0.2, 0.3])
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
+    if realL:
+        plt.ylabel(r'Average stretch, $\langle S \rangle$', fontsize=26)
+    else:
+        plt.ylabel(r'Average stretch, $\langle r \rangle \langle h \rangle $', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.legend(fontsize=26, loc=(0.5, 0.05))
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\L_vs_realavg_beta128.svg"
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
 
 
 
@@ -1003,11 +1288,15 @@ if __name__ == '__main__':
     """
     # if realL = True,L = real stretch ; else , L = <d><h>
 
-    plot_L_with_avg_plotfigureonly()
+    # plot_L_with_avg_plotfigureonly()
     # plot_L_with_avg_for_one_network_beta128()
 
 
-
+    """
+    # STEP 1.9 real L and <d><h> versus real average degree diffbeta
+    """
+    # if realL = True,L = real stretch ; else , L = <d><h>
+    plot_L_with_avg_diffbeta()
 
     """
     # STEP 2 plot L vs N

@@ -404,6 +404,195 @@ def load_large_network_results_dev_vs_avg_locmin_1hopdiff(N, beta, kvec, realL,h
     # return kvec, real_ave_degree_vec, ave_deviation_vec, std_deviation_vec
 
 
+def plot_hopcount_L_Lsamu_with_avg():
+    # plot how the hopcount and link length changes with the average degree
+    # the x-axis is the input average degree
+    Nvec = [10000]
+
+    hop_flag = True
+
+    # Nvec = [100]
+    real_ave_degree_dict = {}
+    ave_L = {}
+    ave_L_no1 = {}
+    ave_Lsamu = {}
+    ave_Lsamu_no1 = {}
+    std_L = {}
+
+    edgelength = {}
+    hop = {}
+    hop_no1 = {}
+
+    beta_vec = [1024]
+    kvec_dict = {
+        100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
+        215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+        464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+        1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+        2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+        4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 7.0, 8.0, 9.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+                2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+
+    for N in Nvec:
+        for beta in beta_vec:
+            kvec = kvec_dict[N]
+            real_ave_degree_vec, ave_edgelength_vec, _, ave_hop_vec, _, ave_hop_vec_no1, _, ave_L_vec_no1, _ = load_large_network_results_dev_vs_avg_locmin_1hopdiff(
+                N, beta, kvec, True,True)
+            _, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_locmin_1hopdiff(
+                N, beta, kvec, True, False)
+
+            _, _, _, _, _, _, _, ave_L_samu_vec, _ = load_large_network_results_dev_vs_avg_locmin_1hopdiff(
+                N, beta, kvec, False, False)
+
+            _, _, _, _, _, _, _, ave_L_samu_vec_no1, _ = load_large_network_results_dev_vs_avg_locmin_1hopdiff(
+                N, beta, kvec, False, True)
+
+            real_ave_degree_dict[N] = real_ave_degree_vec
+            ave_L[N] = ave_L_vec
+            ave_L_no1[N] = ave_L_vec_no1
+            ave_Lsamu[N] = ave_L_samu_vec
+            ave_Lsamu_no1[N] = ave_L_samu_vec_no1
+
+            edgelength[N] = ave_edgelength_vec
+            hop[N] = ave_hop_vec
+            hop_no1[N] = ave_hop_vec_no1
+
+    # plt.plot(kvec,ave_deviation_vec,"o-")
+    # plt.xscale('log')
+    # plt.show()
+    fig, ax = plt.subplots(figsize=(9, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    # colors = ["#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # colors = c
+    # colorvec2 = ['#9FA9C9', '#D36A6A']
+    for N_index in range(len(Nvec)):
+        N = Nvec[N_index]
+        x = real_ave_degree_dict[N]
+        y = edgelength[N]
+        y1 = hop[N]
+        y2 = hop_no1[N]
+
+        ana_edgelength = [(100*(k-4.512)**(-0.5)-k/(N-1))/(1-k/(N-1)) for k in x]
+        ana_hop = [analtich(N, k) for k in x]
+        if hop_flag == True:
+
+            plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+                     label="inculde 1-hop", color=colors[N_index])
+            plt.plot(x, y2, linestyle="--", linewidth=3, marker='o', markersize=16,
+                     label="exculde 1-hop", color=colors[N_index + 1])
+
+            plt.plot(x, ana_edgelength, linestyle="-", linewidth=3,
+                     label="Samu new model", color=colors[N_index + 2])
+
+
+            # plt.plot(x, [i-j for (i,j) in zip(y2, y1)], linestyle="--", linewidth=3, marker='o', markersize=16,
+            #          label="exclude 1-hop, <h>  - include 1-hop, <h>", color=colors[N_index])
+
+        else:
+            plt.plot(x, y, linestyle="--", linewidth=3, marker='o', markersize=16,
+                     label="inculde 1-hop", color=colors[N_index])
+
+        # if hop_flag == True:
+        #     plt.plot(x, ana_hop, "-", linewidth=5, label=r"$0.52\sqrt{(N-1)\pi}(k-k_c)^{\frac{1}{2}}$")
+        # else:
+        #     plt.plot(x, ana_edgelength, "-", linewidth=5, label=f"analytic link length, N = {N}")
+
+    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
+    # plt.ylim(0.02, 2)
+    # plt.yticks([0, 0.1, 0.2, 0.3])
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
+    if hop_flag:
+        plt.ylabel(r'hopcount', fontsize=26)
+    else:
+        plt.ylabel(r'link length', fontsize=26)
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.legend(fontsize=26, loc=(0.4, 0.7))
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\L_vs_realavg.svg"
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+    fig2, ax2 = plt.subplots(figsize=(9, 6))
+    for N_index in range(len(Nvec)):
+        N = Nvec[N_index]
+        x = real_ave_degree_dict[N]
+        y1 = ave_L[N]
+        y2 = ave_L_no1[N]
+        y3 = ave_Lsamu[N]
+        y4 = ave_Lsamu_no1[N]
+
+        print("data:")
+        print(x)
+        print(y2)
+        print(y3)
+
+        # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+        #          label="inculde 1-hop, real L", color=colors[N_index])
+        plt.plot(x, y2, linestyle="--", linewidth=3, marker='o', markersize=16,
+                 label="real: L", color=colors[N_index + 1])
+        plt.plot(x, y3, linestyle="--", linewidth=3, marker='o', markersize=16,
+                 label="approx: <r><h>", color=colors[N_index + 2])
+        # plt.plot(x, y4, linestyle="--", linewidth=3, marker='o', markersize=16,
+        #          label="exculde 1-hop, <h><r>", color=colors[N_index + 3])
+
+        ana_L = [analticL(N, k) for k in x]
+        plt.plot(x, ana_L, "-", linewidth=5, label=r"ana: $y = <r><h>$")
+
+    plt.text(1.2, 1.6,
+             r"$<r><h> = \frac{2}{3} "
+             r"\sqrt{\frac{k}{N\pi}} "
+             r"\left( 1 + \frac{4}{3\pi} \sqrt{\frac{k}{N\pi}} \right)"
+             r"C (k - k_c)^{-1/2}$",
+             fontsize=18)    # ax.spines['right'].set_visible(False)
+    # ax.spines['top'].set_visible(False)
+    plt.ylim(0, 1.5)
+    # plt.yticks([0, 0.1, 0.2, 0.3])
+    # plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
+
+    plt.ylabel(r'$\langle L \rangle$', fontsize=26)
+
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.legend(fontsize=26, loc=(0.5, 0.5))
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\L_vs_realavg.svg"
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Figure 4 supp
@@ -412,6 +601,14 @@ if __name__ == '__main__':
     # STEP 1 <L> and <h> versus real average degree beta = 1024 whether 1hop is included
     """
 
-    plot_hopcount_L_Lsamu_with_avg_whether_1hopincluded()
+    # plot_hopcount_L_Lsamu_with_avg_whether_1hopincluded()
+
+    """
+   # STEP 2 <L> and <r><h> versus real average degree beta = 1024
+   """
+    plot_hopcount_L_Lsamu_with_avg()
+
+
+
 
 

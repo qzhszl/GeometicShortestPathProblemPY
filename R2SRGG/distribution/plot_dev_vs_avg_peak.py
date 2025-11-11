@@ -185,7 +185,7 @@ def find_giant_component(beta):
 
 def scattor_peakvs_GLCC():
     # Figure 4(a)
-    thesis_flag = True
+    thesis_flag = False
 
     peak_avg = [4, 3.4, 5.0, 5.0, 5.8, 5.4, 6, 6.4, 3.2, 3.1, 2.6, 2.7, 2.9, 2.9, 3.7, 3.8, 4.6, 4.8, 4.2]
     SLCC_avg = [3.8, 3.2, 5.0, 4.8, 6, 5.6, 6, 6.0, 3.1, 2.9, 2.6, 2.7, 2.8, 2.7, 3.7, 3.9, 4.4, 4.8, 4.4]
@@ -242,7 +242,7 @@ def scattor_peakvs_GLCC():
             transparent=True  # 背景透明，适合插图叠加
         )
     else:
-        plt.xlabel(r'$\mathbb{E}[D]_{\langle d \rangle_{max}}$', fontsize=30)
+        plt.xlabel(r'$\mathbb{E}[D]_{\langle d \rangle_{local~max}}$', fontsize=30)
         plt.ylabel(r'$\mathbb{E}[D]_{SLCC_{max}}$', fontsize=30)
         plt.xticks([2,3,4,5,6],fontsize=28)
         plt.yticks([2,3,4,5,6],fontsize=28)
