@@ -611,6 +611,8 @@ def compute_proper_ed():
 
 
 
+
+
 if __name__ == '__main__':
     """
     Step1 run simulations with different beta and input AVG for one sp case

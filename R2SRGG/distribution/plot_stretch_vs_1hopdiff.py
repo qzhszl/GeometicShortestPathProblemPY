@@ -551,20 +551,40 @@ def plot_hopcount_L_Lsamu_with_avg():
                  label="real: L", color=colors[N_index + 1])
         plt.plot(x, y3, linestyle="--", linewidth=3, marker='o', markersize=16,
                  label="approx: <r><h>", color=colors[N_index + 2])
-        # plt.plot(x, y4, linestyle="--", linewidth=3, marker='o', markersize=16,
-        #          label="exculde 1-hop, <h><r>", color=colors[N_index + 3])
+        plt.plot(x, y4, linestyle="--", linewidth=3, marker='o', markersize=16,
+                 label="exculde 1-hop, <r><h>", color=colors[N_index + 3])
 
         ana_L = [analticL(N, k) for k in x]
         plt.plot(x, ana_L, "-", linewidth=5, label=r"ana: $y = <r><h>$")
 
-    plt.text(1.2, 1.6,
+        x3 = np.linspace(5, 20, 10000)
+        ana_vec_real = [0.01*analtich(N, k) for k in x3]
+        ana_vec_app = [0.007*analtich(N, k) for k in x3]
+
+        # plt.plot(x, [x_value ** 0.5 * (0.12 + 1.28 * np.log(10000) / np.log(x_value)) * np.log(x_value) for x_value in x],
+        #          label=f"fit2: analytic formula: Llog(k)~k^0.25")
+
+        plt.plot(x3, ana_vec_real, "--", linewidth=5, label=r"$ana: <S> = c_1(k - k_c)^{-1/2}$")
+        plt.plot(x3, ana_vec_app, "--", linewidth=5, label=r"$ana: <S> = c_2(k - k_c)^{-1/2}$")
+
+        x4 = np.linspace(1000, 10000, 10000)
+        ana_vec_real_tail = [2.6*analticdl(N, k) for k in x4]
+        ana_vec_app_tail = [2.1*analticdl(N, k) for k in x4]
+        plt.plot(x4, ana_vec_real_tail, "--", linewidth=5, label=r"$ana: <S> = c_3* \frac{2}{3}\sqrt{\frac{k}{N\pi}}\left( 1 + \frac{4}{3\pi} \sqrt{\frac{k}{N\pi}} \right)$")
+        plt.plot(x4, ana_vec_app_tail, "--", linewidth=5, label=r"$ana: <S> = c_4* \frac{2}{3}\sqrt{\frac{k}{N\pi}}\left( 1 + \frac{4}{3\pi} \sqrt{\frac{k}{N\pi}} \right)$")
+
+
+
+
+
+    plt.text(1.2, 2.6,
              r"$<r><h> = \frac{2}{3} "
              r"\sqrt{\frac{k}{N\pi}} "
              r"\left( 1 + \frac{4}{3\pi} \sqrt{\frac{k}{N\pi}} \right)"
              r"C (k - k_c)^{-1/2}$",
              fontsize=18)    # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
-    plt.ylim(0, 1.5)
+    plt.ylim(0, 2.6)
     # plt.yticks([0, 0.1, 0.2, 0.3])
     # plt.yscale('log')
     plt.xscale('log')
@@ -575,7 +595,7 @@ def plot_hopcount_L_Lsamu_with_avg():
     plt.xticks(fontsize=26)
     plt.yticks(fontsize=26)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
-    plt.legend(fontsize=26, loc=(0.5, 0.5))
+    plt.legend(fontsize=26, loc=(0.5, 0.45))
     plt.tick_params(axis='both', which="both", length=6, width=1)
     # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
     #     betan=beta)

@@ -246,17 +246,33 @@ def R2SRGG_withlinkweight(N, avg, beta, rg, Coorx=None, Coory=None, SaveNetworkP
         with open(SaveNetworkPath, "w") as file:
             for nodei, nodej, dist in zip(s, t, linkweight):
                 file.write(f"{nodei}\t{nodej}\t{dist}\n")
+
+
     # Create graph and remove self-loops
     G = nx.Graph()
     # G.add_edges_from(zip(s, t,linkweight))
     for nodei, nodej, dist in zip(s, t, linkweight):
         G.add_edge(nodei, nodej, weight=dist)
+
+    max_edge_weight_per_node = {}
+
+    for node in G.nodes():
+        weights = [d["weight"] for _, _, d in G.edges(node, data=True)]
+        if weights:  # 避免孤立节点报错
+            max_edge_weight_per_node[node] = max(weights)
+        else:
+            max_edge_weight_per_node[node] = 0
+
+    # 2. 求所有节点最大权重的平均值
+    average_max_weight = sum(max_edge_weight_per_node.values()) / nx.number_of_nodes(G)
+
     if G.number_of_nodes()<N:
         ExpectedNodeList = [i for i in range(0, N)]
         Nodelist = list(G.nodes)
         difference = [item for item in ExpectedNodeList if item not in Nodelist]
         G.add_nodes_from(difference)
-    return G,linkweight, xx, yy
+
+    return G,linkweight,average_max_weight, xx, yy
 
 
 
@@ -380,10 +396,10 @@ if __name__ == '__main__':
     #             print("inputpara:",(N,ED,beta))
     #             print("real ED:", real_avg)
     # check_realdegree_vs_expecteddegree()
-    G, Coorx, Coory = R2SRGG(100, 15, 8, rg)
-    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    print("inputpara:", (100, 18,128))
-    print("real ED:", real_avg)
+    # G, Coorx, Coory = R2SRGG(100, 15, 8, rg)
+    # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    # print("inputpara:", (100, 18,128))
+    # print("real ED:", real_avg)
 
     # G, Coorx, Coory = R2SRGG(1000, 14, 4, rg)
     # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
@@ -438,4 +454,12 @@ if __name__ == '__main__':
     # with open(FileNetworkCoorName, "w") as file:
     #     for data1, data2 in zip(x_coords, y_coords):
     #         file.write(f"{data1}\t{data2}\n")
+
+    N = 10000
+    ED = 2
+    beta = 1024
+    G, linkweight, average_max_weight, xx, yy = R2SRGG_withlinkweight(N, ED, beta, rg)
+    print(average_max_weight)
+
+
 
