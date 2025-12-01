@@ -537,6 +537,7 @@ def load_large_network_results_dev_vs_avg_approxLlargedlrealdiff(N, beta, kvec, 
 
 def plot_realL_approxL_maxrh_together():
     # produce strech vs <r><h> vs <max(r)><h> with curve fit.
+    # the x is the real average degree
 
     real_ave_degree_dict = {}
     ave_L = {}
@@ -1466,7 +1467,7 @@ if __name__ == '__main__':
 
     # function~3 figure:produce strech vs <r><h> vs <max(r)><h> with curve fit.
     # ___________________________________________________________________________________________________________________
-    plot_realL_approxL_maxrh_together()
+    # plot_realL_approxL_maxrh_together()
 
 
 
@@ -1490,7 +1491,7 @@ if __name__ == '__main__':
     #     produce strech vs <r><h> with curve fit (beta == 2.5 and 1024)
     #     the y-axis is <S>*k^{-tau} and the x-axis is 1/log(k)
     # ___________________________________________________________________________________________________________________
-    # plot_realL_approxL_together_test3()
+    plot_realL_approxL_together_test3()
 
 
     # function~8 figure:  how the realL, <r><h>, <max(r)><h> for given E[D] change with N

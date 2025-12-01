@@ -2406,7 +2406,7 @@ if __name__ == '__main__':
     """
     # STEP 1  real L versus real average degree small beta
     """
-    plot_L_with_avg2()
+    # plot_L_with_avg2()
 
 
     """
@@ -2427,7 +2427,7 @@ if __name__ == '__main__':
     """
     # if realL = True,L = real stretch ; else , L = <d><h>
     # plot_L_with_avg_loc()
-    # plot_L_with_avg_loc_largeN()
+    plot_L_with_avg_loc_largeN()
     # plot_Llogk_with_k_loc_largeN()
 
     """

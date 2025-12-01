@@ -125,22 +125,27 @@ def plot_hopcount_vs_ED(N, beta):
 
 def plot_hopcount_vs_realED(N, beta_vec):
     # Figure 4(c)
-    # load and test data
-    # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\" # for ONE SP, load data for beta = 2.05 and 1024
-    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
-
-    # kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155]
-    # kvec = [2, 3, 5, 8, 10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155, 266, 457, 787, 1356, 2337, 4028, 6943, 11972, 20647]# for ONE SP, load data for beta = 2.05 and 1024
-    kvec = [2.2, 3.0, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
-                3727, 6105,
-                9999, 16479, 27081, 44767, 73534, 121205, 199999]
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
     count = 0
-    fig, ax = plt.subplots(figsize=(8, 8))
-    betalabel =["$2.1$","$2^2$","$2^3$","$2^6$"]
+    fig, ax = plt.subplots(figsize=(8, 6))
+    betalabel =["$2.5$","$3$","$2^2$","$2^3$","$2^7$"]
     data_dict = {}
     count = 0
     for beta in beta_vec:
+        if beta in [4,8,128]:
+            kvec = [2.2, 3.0, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]
+        elif beta ==3:
+            kvec = [1.2, 1.5,1.8,2,2.2, 3, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]
+        elif beta ==2.5:
+            kvec = [1.2, 1.5,2,3, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
         SP_hopcount_ave = []
         SP_hopcount_std = []
         real_ave_degree_vec = []
@@ -150,6 +155,7 @@ def plot_hopcount_vs_realED(N, beta_vec):
 
             for ExternalSimutime in range(1):
                 try:
+                    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
                     hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
                         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                     hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
@@ -162,14 +168,26 @@ def plot_hopcount_vs_realED(N, beta_vec):
                     real_avg = np.loadtxt(real_avg_name)
                     real_ave_degree_vec.append(real_avg)
                 except:
-                    print("datalost:",(ED,beta,ExternalSimutime))
+                    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\test\\"
+                    hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
+                    hopcount_for_a_para_comb = np.hstack(
+                        (hopcount_for_a_para_comb, hopcount_for_a_para_comb_10times))
+                    # FileNetworkName = filefolder_name +"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                    #     Nn=N, EDn=ED, betan=beta)
+                    real_avg_name = filefolder_name + "real_ave_degree_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    real_avg = np.loadtxt(real_avg_name)
+                    real_ave_degree_vec.append(real_avg)
+                    # print("datalost:",(ED,beta,ExternalSimutime))
 
             SP_hopcount_ave.append(np.mean(hopcount_for_a_para_comb))
             SP_hopcount_std.append(np.std(hopcount_for_a_para_comb))
 
-            print(list(real_ave_degree_vec))
-            print(SP_hopcount_ave)
-            print(SP_hopcount_std)
+            # print(list(real_ave_degree_vec))
+            # print(SP_hopcount_ave)
+            # print(SP_hopcount_std)
             data_dict[beta] =(real_ave_degree_vec,SP_hopcount_ave,SP_hopcount_std)
         # if beta == 2.02:
         #     plt.errorbar(real_ave_degree_vec[4:], SP_hopcount_ave[4:], SP_hopcount_std[4:], linestyle="-", linewidth=3,
@@ -186,81 +204,12 @@ def plot_hopcount_vs_realED(N, beta_vec):
                         marker='o', markersize=16, color=colors[count],
                          label=rf"$N=10^4$, $\beta$ = {betalabel[count]}")
         else:
-            plt.errorbar(real_ave_degree_vec, SP_hopcount_ave, linestyle="-", linewidth=3,
+            plt.errorbar(real_ave_degree_vec, SP_hopcount_ave, linestyle="--", linewidth=1,
                          marker='o', markersize=16, color=colors[count],
-                         label=rf"$N=10^4$, $\beta$ = {betalabel[count]}")
+                         label=rf"$\beta$ = {betalabel[count]}")
 
 
         count = count+1
-    # data_dict = {2.05:([0.3842, 0.5602, 0.9056, 1.4132, 1.7166, 2.1752, 2.767, 3.5134, 4.3432, 5.4588, 6.794, 8.3146, 10.328, 12.7314,
-    #  15.7576, 19.724, 31.4082, 49.8322, 78.8138, 123.7288, 192.536, 296.478, 450.5532, 675.6858, 996.0806],
-    # [np.float64(1.4681295715778475), np.float64(1.978980557015239), np.float64(7.089406304591558), np.float64(22.6721),
-    #  np.float64(16.0256), np.float64(12.0946), np.float64(9.6047), np.float64(7.9761), np.float64(6.9364),
-    #  np.float64(6.0909), np.float64(5.451), np.float64(4.9801), np.float64(4.5597), np.float64(4.2282),
-    #  np.float64(3.9341), np.float64(3.6837), np.float64(3.2397), np.float64(2.8884), np.float64(2.6729),
-    #  np.float64(2.4423), np.float64(2.1933), np.float64(2.0248), np.float64(1.9605), np.float64(1.9333),
-    #  np.float64(1.9043)],
-    # [np.float64(0.7959392445512715), np.float64(1.306804595024895), np.float64(5.25729519424271),
-    #  np.float64(6.641986268429046), np.float64(4.176307536568637), np.float64(2.773671004282952),
-    #  np.float64(2.0463718894668195), np.float64(1.5954086592469028), np.float64(1.3506128386773169),
-    #  np.float64(1.1381727417224505), np.float64(0.9963929947565869), np.float64(0.8981670167624727),
-    #  np.float64(0.8066200530609192), np.float64(0.7474789361580699), np.float64(0.690765654907654),
-    #  np.float64(0.6409791806291371), np.float64(0.5948478040641992), np.float64(0.4776457264542414),
-    #  np.float64(0.48980158227592524), np.float64(0.5208365482567443), np.float64(0.4408345608048444),
-    #  np.float64(0.28563081066299556), np.float64(0.2184942791013074), np.float64(0.2503020375466409),
-    #  np.float64(0.29417938404993643)]),
-    # 3:([1.5328, 2.2936, 3.786, 6.0364, 7.5058, 9.6968, 12.5228, 16.047, 20.2318, 25.7052, 32.5532, 40.562, 51.059, 63.9842,
-    #  80.3998, 101.9986, 168.1194, 274.0374, 441.9626, 702.2758, 1095.6854, 1668.7986, 2467.4028, 3515.5474, 4785.3006],
-    # [np.float64(18.0887), np.float64(21.8116), np.float64(11.6371), np.float64(8.1725), np.float64(7.1046),
-    #  np.float64(6.1869), np.float64(5.4659), np.float64(4.9263), np.float64(4.4903), np.float64(4.1183),
-    #  np.float64(3.8086), np.float64(3.5668), np.float64(3.3326), np.float64(3.1366), np.float64(2.9525),
-    #  np.float64(2.7963), np.float64(2.5403), np.float64(2.2717), np.float64(2.0473), np.float64(1.9389),
-    #  np.float64(1.8974), np.float64(1.8384), np.float64(1.7551), np.float64(1.6471), np.float64(1.526)],
-    # [np.float64(12.115908232980308), np.float64(6.3460621995060835), np.float64(2.980738765809577),
-    #  np.float64(1.9640630717978484), np.float64(1.6347045115249423), np.float64(1.3767964228599665),
-    #  np.float64(1.2038426765985661), np.float64(1.0621997505177638), np.float64(0.952840967843008),
-    #  np.float64(0.853290753494962), np.float64(0.7763800873283652), np.float64(0.7195399641437575),
-    #  np.float64(0.6839424244773825), np.float64(0.6463284304438417), np.float64(0.5940065235332017),
-    #  np.float64(0.5442483899838382), np.float64(0.5342058685563085), np.float64(0.5026719705732556),
-    #  np.float64(0.366691573396499), np.float64(0.2697532020199204), np.float64(0.30507907171748117),
-    #  np.float64(0.368083468794783), np.float64(0.4300278944440697), np.float64(0.47787193891250823),
-    #  np.float64(0.4993235424051224)]),
-    #  4: (
-    #  [1.7068, 2.3392, 2.9518, 3.411, 4.6492, 7.7432, 12.2706, 20.4646, 33.0194, 53.2308, 85.65, 137.0372,
-    #   218.4154, 345.4992, 540.9926, 836.887, 1274.8252, 1901.6242, 2765.4762, 3887.8192, 5251.9086,
-    #   6699.4674, 8027.4616, 8988.935, 9552.1832, 9819.8554],
-    #  [7.812002823554964, 25.942825451245337, 46.03553553553554, 30.642342342342342, 18.49974977479732,
-    #   11.374486832882747, 8.155633450175262, 6.012829507868097, 4.862207492216531, 4.016507297433317,
-    #   3.431629973742678, 2.9883260582681963, 2.6750869298425037, 2.4394363278416744, 2.2113391157182147,
-    #   2.04766050054407, 2.0020510483135827, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0],
-    #  [5.383462293482874, 14.681831440628555, 18.29254098106746, 11.250025421789491, 6.163356488499396,
-    #   3.5020401904670075, 2.3296685590949666, 1.5450976129541034, 1.2110331346917764, 0.9355309714878918,
-    #   0.7633027802509961, 0.6275618490624042, 0.514938547321775, 0.4967358517733515, 0.4082583665837819,
-    #   0.21304688974955338, 0.045242032606834195, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-    #  ),
-    #  1024: (
-    #      [1.5554, 2.3392, 3.8926, 6.192, 7.743, 10.0388, 13.0968, 16.9344, 21.4386, 27.531, 35.0834, 44.058, 55.9208,
-    #       70.7122, 89.8856, 115.2898, 194.227, 325.963, 544.0998, 900.1238, 1467.1444, 2343.9226, 3645.9348, 5444.3032,
-    #       7617.0924],
-    #      [np.float64(2.281541857700798), np.float64(4.5090832892986645), np.float64(45.1786), np.float64(
-    #          59.942), np.float64(47.1371), np.float64(38.6387), np.float64(32.3199), np.float64(27.2802), np.float64(
-    #          23.6262), np.float64(20.3878), np.float64(17.7595), np.float64(15.6246), np.float64(13.6995), np.float64(
-    #          12.0753), np.float64(10.6417), np.float64(9.342), np.float64(7.1553), np.float64(5.5226), np.float64(
-    #          4.3037), np.float64(3.3825), np.float64(2.6889), np.float64(2.156), np.float64(1.7654), np.float64(
-    #          1.4631), np.float64(1.2414)],
-    #      [np.float64(1.6684760224508528), np.float64(3.77469872533102), np.float64(33.783142275993214), np.float64(
-    #          27.54113715880301), np.float64(21.77658613258745), np.float64(17.914160943510584), np.float64(
-    #          15.070380353196132), np.float64(12.680500304010092), np.float64(10.980959591948238), np.float64(
-    #          9.479483696910924), np.float64(8.22567077811895), np.float64(7.216139885007773), np.float64(
-    #          6.304553889848195), np.float64(5.5304457243517), np.float64(4.8535678742549795), np.float64(
-    #          4.238211415208071), np.float64(3.2008720546126175), np.float64(2.4204729372583365), np.float64(
-    #          1.840452745929653), np.float64(1.4043481583994761), np.float64(1.0865158949596643), np.float64(
-    #          0.8372956467102883), np.float64(0.6655545357068796), np.float64(0.5171444575744769), np.float64(
-    #          0.42793228436284175)]
-    #  )}
-    # for beta, val in data_dict.items():
-    #     plt.errorbar(data_dict[beta][0], data_dict[beta][1], data_dict[beta][2], linestyle="-", linewidth=3, elinewidth=1,
-    #                  capsize=5, marker='o', markersize=6, label=rf"N={N},$\beta$ = {beta}")
 
     popt2, pcov2 = curve_fit(power_law, data_dict[128][0][10:], data_dict[128][1][10:])
     a2, alpha2 = popt2
@@ -284,54 +233,19 @@ def plot_hopcount_vs_realED(N, beta_vec):
     # plt.plot(k_vals, f3,"-",linewidth =5 , label=r'$f(\langle D\rangle) = \frac{\log N}{\log \langle D\rangle}$', color="#5CBF9B")
 
     # 曲线 4: <h> ~ (<k> - <k>_c)^(-a)
+    beta=128
     kc = 4.512
     k_vals2 = np.linspace(4.6, 10000, 20000)
     f4 = 100 * (k_vals2 - kc) ** (-0.5)
-    # plt.plot(k_vals2, f4, label=r'$\langle h\rangle = 100*(\langle k\rangle - %.3f)^{-1/2}$' % kc, color="#E6B565")
-    plt.plot(k_vals2, f4, linewidth =5,label=r'$\langle h\rangle = 10^2(\langle D\rangle - 4.5)^{-0.5}$', color="#E6B565")
-
-
-    # kvec = [11, 16, 27, 44, 73, 107, 120, 193, 316, 518, 848, 1389]
-    # kvec = [0.886 * i ** (0.957) for i in kvec]
-    # x = [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389]
-    # a_realavg_vec = []
-    #
-    # kvec = [7.6544, 12.1272, 20.414358564143587,
-    #                 32.9682,
-    #                 53.2058, 85.6794, 137.1644, 218.4686, 345.3296, 541.029]
-
-    # SP_hopcount_ave = [np.float64(10.68658), np.float64(8.175736), np.float64(6.041096), np.float64(4.825936),
-    #                    np.float64(3.973012),
-    #                    np.float64(3.50587), np.float64(3.381164), np.float64(2.959456), np.float64(2.63692),
-    #                    np.float64(2.38936),
-    #                    np.float64(2.140096), np.float64(1.958244)]
-    # SP_hopcount_std = [np.float64(3.2480486301162426), np.float64(2.3264283479840935), np.float64(1.5923162747343884),
-    #                    np.float64(1.2057220757305558), np.float64(0.945885642060392), np.float64(0.8104107249413719),
-    #                    np.float64(0.7713455808546515), np.float64(0.657793420508293), np.float64(0.5602186301793256),
-    #                    np.float64(0.5534462850177965), np.float64(0.4775406901867107), np.float64(0.3507883071939542)]
-    #
-    # plt.errorbar(kvec, SP_hopcount_ave, SP_hopcount_std, linestyle="-", linewidth=3, elinewidth=1, capsize=5,
-    #              marker='o', markersize=6, label = rf"N=10000,$\beta$ = 4")
+    plt.plot(k_vals2, f4, linewidth =2,label=r'$\langle h\rangle = 10^2(\langle D\rangle - 4.5)^{-0.5}$', color=colors[beta_vec.index(beta)])
 
 
     # plt.xticks(np.arange(0, 50, 10))
     plt.ylim([0.8,400])
     plt.xlim([0.3, 50000])
-    plt.legend(fontsize=24, bbox_to_anchor=(0.3, 0.62),markerscale = 1, handlelength = 1,labelspacing = 0.2, handletextpad = 0.3, borderpad = 0.1, borderaxespad=0.1)
+    plt.legend(fontsize=26, bbox_to_anchor=(0.3, 0.62),markerscale = 1, handlelength = 1,labelspacing = 0.2, handletextpad = 0.3, borderpad = 0.1, borderaxespad=0.1)
 
-    # ax.legend(
-    #     fontsize=14,
-    #     labelspacing=0.2,  # 行间距（默认 0.5）
-    #     handlelength=1.0,  # 图例标记线长度（默认 2.0）
-    #     handletextpad=0.4,  # 标记与文字之间的间距（默认 0.8）
-    #     borderaxespad=0.3,  # 图例与轴的间距
-    #     borderpad=0.3  # 图例边框与内容的间距
-    # )
 
-    # plt.xlabel(r'x', fontsize=35)
-    # plt.ylabel(r'$f_{h}(x)$', fontsize=35)
-    # plt.xticks(fontsize=28)
-    # plt.yticks(fontsize=28)
     plt.xscale('log')
     plt.yscale('log')
     plt.xlabel(r'$\langle D \rangle$', fontsize=36)
@@ -350,7 +264,7 @@ def plot_hopcount_vs_realED(N, beta_vec):
     #     va='bottom'  # 垂直对齐方式
     # )
     # plt.title("average hopcount vs expected degree")
-
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
     picname =  filefolder_name+ "hopvsEDN{Nn}.svg".format(
         Nn=N)
     plt.savefig(
@@ -362,6 +276,241 @@ def plot_hopcount_vs_realED(N, beta_vec):
     plt.show()
     # 清空图像，以免影响下一个图
     plt.close()
+
+
+def smallbeta_fit():
+    # 数据
+    x = np.array([1.3898, 1.6662, 2.0778, 2.6166, 2.9616, 3.9998, 6.5578, 10.1302, 16.6914,
+                  26.197, 41.4038, 65.1388, 101.3464, 156.6434, 240.8744, 365.5722, 548.1062, 811.3048, 1180.0008,
+                  1683.7022, 2344.7662, 3191.8418, 4192.7072, 5316.3456, 6447.6906, 7495.6608, 8357.897])
+
+    y = np.array([32.23448137765318, 23.064658192373138,
+                  15.864545818327331, 12.220566169850954, 10.937575030012004, 8.52836985890123, 6.277238619309655,
+                  5.08852836613089, 4.203284598437813, 3.6616880513231758, 3.244424352019289, 2.908862034239678,
+                  2.6813353566009104, 2.4677780036592805, 2.2378561180569787, 2.066625220184437, 2.0064434350903135,
+                  2.0003259098316133, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0])
+
+    # 构造函数 f(x) = log(10000)/log(x)
+    f = np.log(10000) / np.log(x)
+
+    # 线性最小二乘求解 y = a*f + b
+    A = np.vstack([f, np.ones_like(f)]).T
+    a, b = np.linalg.lstsq(A, y, rcond=None)[0]
+
+    print("a =", a)
+    print("b =", b)
+
+    # 生成拟合曲线
+    y_fit = a * f + b
+
+    # 作图
+    plt.figure(figsize=(7, 5))
+    plt.scatter(x, y, label='data')
+    plt.plot(x, y_fit, label='fit: y = a*log(10000)/log(x) + b')
+    plt.xscale('log')
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_hopcount_vs_realED_finalversion(N, beta_vec):
+    # Figure 4(c)
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+    count = 0
+    fig, ax = plt.subplots(figsize=(10, 6))
+    betalabel =["$2.5$","$3$","$2^2$","$2^3$","$2^7$"]
+    betalabel = ["$2.5$", "$3$", "$4$", "$8$", "$128$"]
+    data_dict = {}
+    count = 0
+
+
+    for beta in beta_vec:
+        if beta in [128]:
+            kvec = [2.2, 3.0, 3.8, 4.4,5.1, 5.5,6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]
+        if beta in [8]:
+            kvec = [2.2, 3.0, 3.8, 4.4,5,8, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]
+        elif beta ==3:
+            kvec = [1.2, 1.5,1.8,2,2.4,2.8, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]
+        elif beta ==2.5:
+            kvec = [1.2, 1.5,1.6,2,2.4,3, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]
+        elif beta == 4:
+            kvec = [1.6,2.2,2.6,2.8, 3.2, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                    3727, 6105,
+                    9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
+        SP_hopcount_ave = []
+        SP_hopcount_std = []
+        real_ave_degree_vec = []
+        for ED in kvec:
+            # print(ED)
+            hopcount_for_a_para_comb = np.array([])
+
+            for ExternalSimutime in range(1):
+                try:
+                    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
+                    hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
+                    hopcount_for_a_para_comb = np.hstack(
+                        (hopcount_for_a_para_comb, hopcount_for_a_para_comb_10times))
+                    # FileNetworkName = filefolder_name +"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                    #     Nn=N, EDn=ED, betan=beta)
+                    real_avg_name = filefolder_name + "real_avg_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    real_avg = np.loadtxt(real_avg_name)
+                    real_ave_degree_vec.append(real_avg)
+                except:
+                    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\test\\"
+                    hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
+                    hopcount_for_a_para_comb = np.hstack(
+                        (hopcount_for_a_para_comb, hopcount_for_a_para_comb_10times))
+                    # FileNetworkName = filefolder_name +"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                    #     Nn=N, EDn=ED, betan=beta)
+                    real_avg_name = filefolder_name + "real_ave_degree_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    real_avg = np.loadtxt(real_avg_name)
+                    real_ave_degree_vec.append(real_avg)
+                    # print("datalost:",(ED,beta,ExternalSimutime))
+
+            hopcount_for_a_para_comb = hopcount_for_a_para_comb[hopcount_for_a_para_comb!=1]
+
+            SP_hopcount_ave.append(np.mean(hopcount_for_a_para_comb))
+            SP_hopcount_std.append(np.std(hopcount_for_a_para_comb))
+
+            # print(list(real_ave_degree_vec))
+            # print(SP_hopcount_ave)
+            # print(SP_hopcount_std)
+            # data_dict[beta] =(real_ave_degree_vec,SP_hopcount_ave,SP_hopcount_std)
+
+        if beta ==128:
+            print(real_ave_degree_vec)
+            print(SP_hopcount_ave)
+        if beta == 2.02:
+            plt.errorbar(real_ave_degree_vec[4:], SP_hopcount_ave[4:], linestyle="-", linewidth=3,
+                        marker='o', markersize=16, color=colors[count],
+                         label=rf"$N=10^4$, $\beta$ = {betalabel[count]}")
+        else:
+            plt.errorbar(real_ave_degree_vec, SP_hopcount_ave, linestyle="--", linewidth=1,
+                         marker='o', markersize=16, color=colors[count],
+                         label=rf"$\beta$ = {betalabel[count]}")
+
+
+        count = count+1
+
+    k_vals = np.linspace(1.1, 15000, 40000)
+    # 曲线 3: A+b*log(n) / log(k)
+    # f3 = 1.3 * np.log(N) / np.log(k_vals)
+    a = 1.17
+    b = 0.4
+    f3 = a * np.log(N) / np.log(k_vals) + b
+
+    beta = 2.5
+    # plt.plot(k_vals, f1, label=r'$f_1(k) = \frac{\log n}{\log \log n}$', linestyle='--', color='orange')
+    # plt.plot(k_vals, f2, label=r'$f_2(k) = 1 + \frac{n}{k}$', color='green')
+    plt.plot(k_vals, f3, "-", linewidth=2, label=rf'${a}\ln{{N}}/ \ln{{\langle D\rangle}}$+{b}',
+             color=colors[beta_vec.index(beta)],zorder=200)
+
+    # 曲线 4: <h> ~ (<k> - <k>_c)^(-a)
+    beta = 128
+    kc = 4.512
+    k_vals2 = np.linspace(4.6, 15000, 20000)
+    a = 92
+    b = 0.6
+    f4 = a * (k_vals2 - kc) ** (-0.5)+b
+    plt.plot(k_vals2, f4, linewidth=2, label=rf'${a}(\langle D\rangle - 4.5)^{{-0.5}}+{b}$',
+             color=colors[beta_vec.index(beta)],zorder=200)
+    handles, labels = ax.get_legend_handles_labels()
+    indices_group1 = [0, 1]
+    handles1 = [handles[i] for i in indices_group1]
+    labels1 = [labels[i] for i in indices_group1]
+    handles2 = [h for i, h in enumerate(handles) if i not in indices_group1]
+    labels2 = [l for i, l in enumerate(labels) if i not in indices_group1]
+
+    legend1 = ax.legend(handles2, labels2,
+                        loc=(0.71, 0.26),  # (x,y) 以 axes 坐标为基准
+                        fontsize=26,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1.5,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.3,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+
+    # 必须把第一个 legend 加回 axes，否则下一个 legend 会把它覆盖
+    ax.add_artist(legend1)
+
+    # 第二块 legend：放右下角（图内）
+    legend2 = ax.legend(handles1, labels1,
+                        loc=(0.23, 0.78),  # (x,y) 以 axes 坐标为基准
+                        fontsize=26,  # 根据期刊要求调小
+                        markerscale=4,
+                        handlelength=1,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.3,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+
+    for handle in legend1.legend_handles:
+        handle.set_linewidth(2)
+    for handle in legend2.legend_handles:
+        handle.set_linewidth(4)
+
+    # plt.xticks(np.arange(0, 50, 10))
+    plt.ylim([0.8,500])
+    # plt.xlim([0.3, 50000])
+    # plt.legend(fontsize=26, bbox_to_anchor=(0.3, 0.62),markerscale = 1, handlelength = 1,labelspacing = 0.2, handletextpad = 0.3, borderpad = 0.1, borderaxespad=0.1)
+
+
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    plt.ylabel(r'$\langle h \rangle$', fontsize=36)
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    # text = r"$N = 10^4$" "\n" r"$\beta = 4$"
+    # plt.text(
+    #     0.25, 0.65,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+    #     text,
+    #     transform=ax.transAxes,  # 使用轴坐标
+    #     fontsize=20,  # 字体大小
+    #     ha='left',  # 水平居中对齐
+    #     va='bottom'  # 垂直对齐方式
+    # )
+    # plt.title("average hopcount vs expected degree")
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
+    picname =  filefolder_name+ "hopvsEDN{Nn}.svg".format(
+        Nn=N)
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    plt.show()
+    # 清空图像，以免影响下一个图
+    plt.close()
+
+
+
 
 
 def plot_hopcount_vs_ED_test(N, beta_vec):
@@ -798,6 +947,11 @@ if __name__ == '__main__':
     """"
     Figure 4 (c)
     """
-    plot_hopcount_vs_realED(10000,[2.02,4,8,128])
+    # plot_hopcount_vs_realED(10000,[2.5,3,4,8,128])
+
+    plot_hopcount_vs_realED_finalversion(10000,[2.5,3,4,8,128])
+
 
     # plot_hopcount_vs_ED_test2(10000, [1024])
+
+    # smallbeta_fit()

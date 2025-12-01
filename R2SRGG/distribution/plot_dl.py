@@ -4,6 +4,8 @@
 @Author: Zhihao Qiu
 @Date: 2025/8/12
 """
+import math
+import cmasher as cmr
 import numpy as np
 import matplotlib.pyplot as plt
 import networkx as nx
@@ -303,6 +305,241 @@ def plot_dl_vs_realED(N, beta_vec):
 
 
 
+
+def plot_dl_vs_realED_finalversionfigure(N, beta_vec):
+    # Figure 4(b) final version
+    # load and test data
+    # filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\" # for ONE SP, load data for beta = 2.05 and 1024
+    filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
+    # kvec = [8,10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155]
+    # kvec = [2, 3, 5, 8, 10, 13, 17, 22, 28, 36, 46, 58, 74, 94, 120, 155, 266, 457, 787, 1356, 2337, 4028, 6943, 11972, 20647]# for ONE SP, load data for beta = 2.05 and 1024
+    kvec0 = [2.2, 3.0, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+            3727, 6105,
+            9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
+    # kvec = [2.2, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+    #         3727, 6105,
+    #         9999,]
+
+    kvec1 = [2, 6, 16, 46, 132, 375, 1067, 3040, 8657, 24657, 70224, 199999]
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    if len(beta_vec)>5:
+        colors = plt.get_cmap('tab10').colors[:len(beta_vec)+2]
+
+    count = 0
+    fig, ax = plt.subplots(figsize=(10, 6))
+    if len(beta_vec) > 5:
+        betalabel = ["$2.1$", "$2.3$","$2.5$","3","$2^2$", "$2^3$", "$2^6$", "$2^{10}$"]
+    else:
+        betalabel = ["$2.5$", "$3$","$4$", "$8$", "$128$"]
+    data_dict = {}
+    count = 0
+    for beta in beta_vec:
+        real_ave_degree_vec = []
+        ave_length_edge_vec = []
+        std_length_edge_vec = []
+        if beta in [2.3,2.5,3]:
+            kvec = kvec1
+        else:
+            kvec = kvec0
+        for ED in kvec:
+            # print(ED)
+            for ExternalSimutime in range(1):
+                try:
+                    ave_length_edge_Name = filefolder_name + "ave_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    ave_length_edge_vec.append(np.loadtxt(ave_length_edge_Name))
+
+                    std_length_edge_Name = filefolder_name + "std_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    std_length_edge_vec.append(np.loadtxt(std_length_edge_Name))
+
+                    real_avg_name = filefolder_name + "real_avg_N{Nn}ED{EDn}beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    real_avg = np.loadtxt(real_avg_name)
+                    real_ave_degree_vec.append(real_avg)
+                except:
+                    print("datalost:", (ED, beta, ExternalSimutime))
+
+            # print(list(real_ave_degree_vec))
+            # print(ave_length_edge_vec)
+            # print(std_length_edge_vec)
+            data_dict[beta] = (real_ave_degree_vec, ave_length_edge_vec, std_length_edge_vec)
+        if beta == 2.02:
+            plt.plot(real_ave_degree_vec[6:], ave_length_edge_vec[6:], linestyle="--",
+                         linewidth=1,
+                        marker='o', markersize=16, color=colors[count],
+                         label=rf"$N=10^4$, $\beta$ = {betalabel[count]}")
+            data =np.column_stack((real_ave_degree_vec[6:], ave_length_edge_vec[6:]))
+            filename = f"linklengthvsdegree_N{N}_beta{beta}.txt"
+            np.savetxt(filename, data, header="real average degree\tave_link_length", fmt="%.6f")
+
+            popt2, pcov2 = curve_fit(power_law, real_ave_degree_vec[6:-5], ave_length_edge_vec[6:-5])
+            a2, alpha2 = popt2
+            y_fit = power_law(real_ave_degree_vec[6:], a2, alpha2)
+            plt.plot(real_ave_degree_vec[6:], y_fit, '-', linewidth=2, color=colors[beta_vec.index(beta)],
+                     label=fr'$f(k) = {a2:.4f} k^{{{alpha2:.2f}}}$')
+
+        else:
+            plt.plot(real_ave_degree_vec, ave_length_edge_vec, linestyle="--", linewidth=1,
+                         marker='o', markersize=16, color=colors[count],
+                         label=rf"$\beta$ = {betalabel[count]}")
+
+            # data = np.column_stack((real_ave_degree_vec, ave_length_edge_vec))
+            # filename = f"linklengthvsdegree_N{N}_beta{beta}.txt"
+            # np.savetxt(filename, data, header="real average degree\tave_link_length", fmt="%.6f")
+
+
+        # if beta in [2.5,128]:
+        #     popt2, pcov2 = curve_fit(power_law, real_ave_degree_vec[:-5], ave_length_edge_vec[:-5])
+        #     a2, alpha2 = popt2
+        #     x = np.linspace(1, 15000, 50)
+        #     y_fit = power_law(x, a2, alpha2)
+        #     plt.plot(x, y_fit, '-', linewidth=2, color=colors[beta_vec.index(beta)],
+        #              label=fr'$f(k) = {a2:.4f} k^{{{alpha2:.2f}}}$')
+
+
+        if beta in [2.5]:
+            # a= 0.032
+            R = 2
+            s = (2 * R * R * N * math.pi) / (beta * math.sin(2 * math.pi / beta))
+            potential_a2 = (2 * (N - 1) * R ** (1 - beta) / (3 - beta)) * (s ** (-beta / 2))
+            print(potential_a2)
+            a2 = 0.034
+            alpha2 = 0.254
+            x = np.linspace(1, 15000, 50)
+            y_fit = power_law(x, a2, alpha2)
+            plt.plot(x, y_fit, '-', linewidth=2, color=colors[beta_vec.index(beta)],
+                     label=fr'${a2:.3f} \langle D \rangle^{{{alpha2:.2f}}}$')
+        elif beta in [128]:
+            # a =0.0026
+            R = 2
+            potential_a2 = (4 / R ** 2) \
+                           * (math.sin(2 * math.pi / beta) / math.sin(3 * math.pi / beta)) * math.sqrt(
+                (beta * math.sin(2 * math.pi / beta)) / (2 * R * R * N * math.pi))
+            print(potential_a2)
+            a2 = 0.0038
+            alpha2 = 0.5
+            x = np.linspace(1, 15000, 50)
+            y_fit = power_law(x, a2, alpha2)
+            plt.plot(x, y_fit, '-', linewidth=2, color=colors[beta_vec.index(beta)],
+                     label=fr'${a2:.3f} \langle D \rangle^{{{alpha2:.2f}}}$')
+
+        count = count + 1
+
+
+    # if len(beta_vec) > 5:
+    #     plt.legend(fontsize=16, bbox_to_anchor=(0.7, 0.6), markerscale=1, handlelength=1, labelspacing=0.2,
+    #                handletextpad=0.3, borderpad=0.1, borderaxespad=0.1)
+    # else:
+    #     legend1 = ax.legend(fontsize=26, bbox_to_anchor=(0.6, 0.55), markerscale=1, handlelength=2, labelspacing=0.2,
+    #            handletextpad=0.3, borderpad=0.1, borderaxespad=0.1)
+
+    # for beta in [2.5,128]:
+    #     if beta in [2.5]:
+    #         # a= 0.032
+    #         R = 2
+    #         s = (2 * R * R * N * math.pi) / (beta * math.sin(2 * math.pi / beta))
+    #         potential_a2 = (2 * (N - 1) * R ** (1 - beta) / (3 - beta)) * (s ** (-beta / 2))
+    #         print(potential_a2)
+    #         a2 = 0.035
+    #         alpha2 = 0.25
+    #         x = np.linspace(1, 15000, 50)
+    #         y_fit = power_law(x, a2, alpha2)
+    #         plt.plot(x, y_fit, '-', linewidth=2, color=colors[beta_vec.index(beta)],
+    #                  label=fr'$\langle d_l \rangle = {a2:.3f} \langle D \rangle^{{{alpha2:.2f}}}$')
+    #     elif beta in [128]:
+    #         # a =0.0026
+    #         R = 2
+    #         potential_a2 = (4 / R ** 2) \
+    #                        * (math.sin(2 * math.pi / beta) / math.sin(3 * math.pi / beta)) * math.sqrt(
+    #             (beta * math.sin(2 * math.pi / beta)) / (2 * R * R * N * math.pi))
+    #         print(potential_a2)
+    #         a2 = 0.0038
+    #         alpha2 = 0.5
+    #         x = np.linspace(1, 15000, 50)
+    #         y_fit = power_law(x, a2, alpha2)
+    #         plt.plot(x, y_fit, '-', linewidth=2, color=colors[beta_vec.index(beta)],
+    #                  label=fr'$\langle d_l \rangle = {a2:.3f} \langle D \rangle^{{{alpha2:.2f}}}$')
+
+    handles, labels = ax.get_legend_handles_labels()
+    indices_group1 = [1, 6]
+    handles1 = [handles[i] for i in indices_group1]
+    labels1 = [labels[i] for i in indices_group1]
+    handles2 = [h for i, h in enumerate(handles) if i not in indices_group1]
+    labels2 = [l for i, l in enumerate(labels) if i not in indices_group1]
+
+    legend1 = ax.legend(handles2, labels2,
+                        bbox_to_anchor=(0.7, 0.53),  # (x,y) 以 axes 坐标为基准
+                        fontsize=26,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1.5,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.3,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+
+    # 必须把第一个 legend 加回 axes，否则下一个 legend 会把它覆盖
+    ax.add_artist(legend1)
+
+    # 第二块 legend：放右下角（图内）
+    # legend2 = ax.legend(handles1, labels1,
+    #                     loc=(0.02, 0.76),  # (x,y) 以 axes 坐标为基准
+    #                     fontsize=26,  # 根据期刊要求调小
+    #                     markerscale=4,
+    #                     handlelength=1,
+    #                     labelspacing=0.2,
+    #                     ncol=1,
+    #                     handletextpad=0.3,
+    #                     borderpad=0.1,
+    #                     borderaxespad=0.1
+    #                     )
+
+    for handle in legend1.legend_handles:
+        handle.set_linewidth(2)
+    # for handle in legend2.legend_handles:
+    #     handle.set_linewidth(4)
+
+
+    # plt.ylim([0.001,1])
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    # plt.xlabel(r'$\mathbb{E}[D]$', fontsize=36)
+    plt.ylabel(r'$\langle d_l \rangle$', fontsize=36)
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    # text = r"$N = 10^4$" "\n" r"$\beta = 4$"
+    # plt.text(
+    #     0.25, 0.65,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+    #     text,
+    #     transform=ax.transAxes,  # 使用轴坐标
+    #     fontsize=20,  # 字体大小
+    #     ha='left',  # 水平居中对齐
+    #     va='bottom'  # 垂直对齐方式
+    # )
+    # plt.title("average hopcount vs expected degree")
+
+    picname = filefolder_name + "linklengthvsEDN{Nn}.svg".format(
+        Nn=N)
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    plt.show()
+    # 清空图像，以免影响下一个图
+    plt.close()
+
+
 def plot_dl_vs_realED_thesis(N, beta_vec):
     # Figure 4(b)
     # load and test data
@@ -565,12 +802,12 @@ def plot_dl_vs_realED_thesis(N, beta_vec):
 
     picname = filefolder_name + "edgelengthvsEDN{Nn}.svg".format(
         Nn=N)
-    plt.savefig(
-        picname,
-        format="svg",
-        bbox_inches='tight',  # 紧凑边界
-        transparent=True  # 背景透明，适合插图叠加
-    )
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
     plt.show()
     # 清空图像，以免影响下一个图
     plt.close()
@@ -934,9 +1171,14 @@ def plot_dl_vs_k_inlarge_network():
 
 if __name__ == '__main__':
     # step_1: for differnet beta  Figure4 b new version
+    #this one is for test all possible results
     # plot_dl_vs_realED(10000, [2.02,2.3,2.5,3, 4, 8, 128])
 
-    plot_dl_vs_realED_thesis(10000, [2.02, 4, 8, 128])
+    # this one is for ploting the figure in published paper
+    plot_dl_vs_realED_finalversionfigure(10000, [2.5, 3, 4, 8, 128])
+
+    # this one is for plotting the figure in the thesis
+    # plot_dl_vs_realED_thesis(10000, [2.02, 4, 8, 128])
 
     # step_2: for differnet N
     # plot_dl_vs_k_inlarge_network()

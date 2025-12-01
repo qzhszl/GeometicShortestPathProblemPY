@@ -4,7 +4,9 @@
 @Author: Zhihao Qiu
 @Date: 05-8-2025
 """
+import os
 import random
+import re
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -17,7 +19,7 @@ from collections import defaultdict
 import math
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from scipy.stats import linregress
-
+from matplotlib.ticker import ScalarFormatter
 
 def bin_and_compute_stats(length_geodesic_vec, data_vec, num_bins=100):
     """
@@ -352,7 +354,7 @@ def load_large_network_results_dev_vs_avg(N, beta, kvec):
 
 
 def plot_L_with_avg_for_one_network():
-    # Figure 4b
+    # Figure 4d
     # the x-axis is the input average degree
     N = 10000
     beta = 4
@@ -420,7 +422,7 @@ def plot_L_with_avg_for_one_network():
 
 
 def plot_L_with_avg():
-    # Figure 3(c)
+    # Figure 3(d)
     # the x-axis is the input average degree
     Nvec = [100, 1000, 10000]
     # Nvec = [100]
@@ -1132,7 +1134,7 @@ def plot_L_with_avg_diffbeta():
     # plt.show()
 
     lengend = [r"$\beta=2.1$", r"$\beta=2.5$", r"$\beta=4$", r"$\beta=128$"]
-    fig, ax = plt.subplots(figsize=(9, 6))
+    fig, ax = plt.subplots(figsize=(10, 6))
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
     colors = ["#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
@@ -1269,6 +1271,1821 @@ def plot_L_with_avg_diffbeta():
 
 
 
+def load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(N, beta, kvec, realL, exclude_hop1_flag):
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+    exemptionlist = []
+    for N in [N]:
+        ave_deviation_vec = []
+        real_ave_degree_vec = []
+        std_deviation_vec = []
+        ave_edgelength_vec = []
+        std_edgelength_vec = []
+
+        ave_hop_vec = []
+        std_hop_vec = []
+        ave_L_vec = []
+        std_L_vec = []
+
+        for beta in [beta]:
+            for ED in kvec:
+                for ExternalSimutime in [0]:
+                    try:
+                        # FileNetworkName = folder_name+"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                        #     Nn=N, EDn=ED, betan=beta)
+                        # G = loadSRGGandaddnode(N, FileNetworkName)
+                        # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+                        # # print("real ED:", real_avg)
+
+                        real_ave_degree_name = folder_name + "real_ave_degree_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        real_avg = np.loadtxt(real_ave_degree_name)
+                        real_ave_degree_vec.append(np.mean(real_avg))
+
+
+                        if realL:
+                            #if L = <d_e>h real stretch
+                            # deviation_vec_name = folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                            # ave_deviation_for_a_para_comb = np.loadtxt(deviation_vec_name)
+                            # ave_deviation_vec.append(np.mean(ave_deviation_for_a_para_comb))
+                            # std_deviation_vec.append(np.std(ave_deviation_for_a_para_comb))
+
+
+                            edgelength_vec_name = folder_name + "ave_edgelength_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        else:
+
+                            # if L = <d_e><h> ave  link length* hopcount
+                            edgelength_vec_name = folder_name + "ave_graph_edge_length_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                                Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+
+                        ave_edgelength_for_a_para_comb = np.loadtxt(edgelength_vec_name)
+                        ave_edgelength_vec.append(np.mean(ave_edgelength_for_a_para_comb))
+                        std_edgelength_vec.append(np.std(ave_edgelength_for_a_para_comb))
+
+                        hopcount_Name = folder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                            Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                        hop_vec = np.loadtxt(hopcount_Name, dtype=int)
+
+                        ave_hop_vec.append(np.mean(hop_vec))
+                        std_hop_vec.append(np.std(hop_vec))
+
+                        hop_vec_no1 = hop_vec[hop_vec != 1]
+
+
+                        if realL:
+                            if len(ave_edgelength_for_a_para_comb) != len(hop_vec_no1):
+                                ave_edgelength_for_a_para_comb_no1 = ave_edgelength_for_a_para_comb[hop_vec != 1]
+                            #if L = <d_e>h real stretch
+                                L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb_no1, hop_vec_no1)]
+                            # if we include 1-hop sp
+                            #     L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
+                            else:
+                                L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec_no1)]
+
+                        else:
+                            # if L = <d_e><h> ave  link length* hopcount
+                            if exclude_hop1_flag == True:
+                                L = [np.mean(hop_vec_no1) * np.mean(ave_edgelength_for_a_para_comb)]
+                            else:
+                                L = [np.mean(hop_vec)*np.mean(ave_edgelength_for_a_para_comb)]
+
+                        # # L = np.multiply(ave_edgelength_for_a_para_comb, hop_vec)
+                        # L = [x * y for x, y in zip(ave_edgelength_for_a_para_comb, hop_vec)]
+
+                        ave_L_vec.append(np.mean(L))
+                        std_L_vec.append(np.std(L))
+
+                    except FileNotFoundError:
+                        exemptionlist.append((N, ED, beta, ExternalSimutime))
+    print(exemptionlist)
+    return real_ave_degree_vec, ave_deviation_vec, std_deviation_vec, ave_edgelength_vec, std_edgelength_vec, ave_hop_vec, std_hop_vec, ave_L_vec, std_L_vec
+    # return kvec, real_ave_degree_vec, ave_deviation_vec, std_deviation_vec
+
+
+def plot_L_with_avg_diffbeta_finalversion():
+    # Figure 4(e) final version
+    # the x-axis is the input average degree
+    # realL
+    N = 10000
+
+    realL = True
+
+    # Nvec = [100]
+    real_ave_degree_dict = {}
+    ave_L = {}
+    std_L = {}
+    approx_L =  {}
+    beta_vec = [2.5,3,4,8,128]
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+    for beta in beta_vec:
+        ED = extract_ED(folder_name, 10000, beta)
+        print(ED)
+
+
+    kvec_dict = {
+        2.5: [1.2,1.4, 1.5,1.6,1.7,1.8,2, 2.4, 2.8, 3.4,4.6,  6.0,  8.0,  10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+              328000,
+              888636],
+        3: [1.2, 1.5, 1.8, 2, 2.2, 2.8, 3, 3.4, 3.8, 4.4, 5, 6.0,  8.0,  10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 121205,199999
+            ],
+        4: [1.2, 1.5, 2, 2.4, 2.8, 3.4, 4, 4.4, 5,  6.0,  8.0,  10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999],
+        8: [1.2,  2, 2.8, 3.4, 4.4, 4.6,5.2, 7.0, 8.0, 10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534,199999],
+        128: [1.2, 2.2, 3.4, 5, 5.5, 6.0, 7.0, 8.0, 10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+              539744, 888636],
+    }
+
+
+    for beta in beta_vec:
+        kvec = kvec_dict[beta]
+        real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+            N, beta, kvec,realL,True)
+        real_ave_degree_dict[beta] = real_ave_degree_vec
+        ave_L[beta] = ave_L_vec
+        std_L[beta] = std_L_vec
+
+    # plt.plot(kvec,ave_deviation_vec,"o-")
+    # plt.xscale('log')
+    # plt.show()
+
+    lengend = [r"$N=10^4,\beta=2.5$", r"$N=10^4,\beta=3$", r"$N=10^4,\beta=2^2$", r"$N=10^4,\beta=2^3$", r"$N=10^4,\beta=2^7$"]
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    # beta_vec = [2.5,3,4,8,128]
+    for beta_index in range(len(beta_vec)):
+        beta = beta_vec[beta_index]
+        x = real_ave_degree_dict[beta]
+        y = ave_L[beta]
+        error = std_L[beta]
+
+        kvec = kvec_dict[beta]
+        print(kvec)
+        print(y)
+
+        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                     label=lengend[beta_index], color=colors[beta_index])
+
+
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    if realL:
+        plt.ylabel(r'$\langle S \rangle$', fontsize=36)
+    else:
+        plt.ylabel(r'Average stretch, $\langle r \rangle \langle h \rangle $', fontsize=26)
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(loc=(0.53, 0.03),  # (x,y) 以 axes 坐标为基准
+                        fontsize=26,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1.5,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.3,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_diffbeta.svg"
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+
+
+def plot_L_with_avg_diffbeta_finalversion2():
+    # Figure 4(e) final version
+    # the x-axis is the input average degree
+    # realL
+    N = 10000
+
+    realL = True
+
+    # Nvec = [100]
+    real_ave_degree_dict = {}
+    ave_L = {}
+    std_L = {}
+    approx_L =  {}
+    beta_vec = [2.5,8,128]
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+    for beta in beta_vec:
+        ED = extract_ED(folder_name, 10000, beta)
+        print(ED)
+
+
+    kvec_dict = {
+        2.5: [1.2,1.4, 1.5,1.6,1.7,1.8,2, 2.4, 2.8, 3.4,4.6,  6.0,  8.0,  10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+              328000,
+              888636],
+        3: [1.2, 1.5, 1.8, 2, 2.2, 2.8, 3, 3.4, 3.8, 4.4, 5, 6.0,  8.0,  10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 121205,199999
+            ],
+        4: [1.2, 1.5, 2, 2.4, 2.8, 3.4, 4, 4.4, 5,  6.0,  8.0,  10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999],
+        8: [1.2,  2, 2.8, 3.4, 4.4, 4.6,5.2, 7.0, 8.0, 10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534,199999],
+        128: [1.2, 2.2, 3.4, 5, 5.5, 6.0, 7.0, 8.0, 10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+              539744, 888636],
+    }
+
+
+    for beta in beta_vec:
+        kvec = kvec_dict[beta]
+        real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+            N, beta, kvec,realL,True)
+        real_ave_degree_dict[beta] = real_ave_degree_vec
+        ave_L[beta] = ave_L_vec
+        std_L[beta] = std_L_vec
+
+    # plt.plot(kvec,ave_deviation_vec,"o-")
+    # plt.xscale('log')
+    # plt.show()
+
+    lengend = [r"$\langle S \rangle,\beta=2.5$", r"$\langle S \rangle \times 10^{-1},\beta=8$", r"$\langle S \rangle \times 10^{-2},\beta=128$"]
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+    colors = ["#D08082", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    # beta_vec = [2.5,3,4,8,128]
+
+    scale_para_vec = [1,0.1,0.01]
+    for beta_index in range(len(beta_vec)):
+        beta = beta_vec[beta_index]
+        x = real_ave_degree_dict[beta]
+        y = ave_L[beta]
+        error = std_L[beta]
+
+        kvec = kvec_dict[beta]
+        # print(kvec)
+        # print(y)
+        y  = [scale_para_vec[beta_index]*i for i in y]
+        error  = [scale_para_vec[beta_index]*i for i in error]
+        plt.errorbar(x, y, yerr=error, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                     label=lengend[beta_index], color=colors[beta_index])
+
+
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    if realL:
+        plt.ylabel(r'$\langle S \rangle$', fontsize=36)
+    else:
+        plt.ylabel(r'Average stretch, $\langle r \rangle \langle h \rangle $', fontsize=26)
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(loc=(0.45, 0.03),  # (x,y) 以 axes 坐标为基准
+                        fontsize=26,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1.5,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.3,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_diffbeta2.svg"
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+
+
+def plot_L_with_avg_finalversion_beta25():
+    # Figure 4(f) final version
+    # the x-axis is the input average degree
+    # realL
+    N = 10000
+
+    realL = True
+
+    # Nvec = [100]
+    real_ave_degree_dict = {}
+    ave_L = {}
+    std_L = {}
+    approx_L =  {}
+    beta_vec = [2.5]
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+    for beta in beta_vec:
+        ED = extract_ED(folder_name, 10000, beta)
+        print(ED)
+
+
+    kvec_dict = {
+        2.5: [1.8,2, 2.4, 2.8, 3.4,4.6,  6.0,  8.0,  10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534,220000,
+              328000,888636],
+        3: [1.2, 1.5, 1.8, 2, 2.2, 2.8, 3, 3.4, 3.8, 4.4, 5, 6.0,  8.0,  10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 121205,199999
+            ],
+        4: [1.2, 1.5, 2, 2.4, 2.8, 3.4, 4, 4.4, 5,  6.0,  8.0,  10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999],
+        8: [1.2,  2, 2.8, 3.4, 4.4, 4.6,5.2, 7.0, 8.0, 10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534,199999],
+        128: [1.2, 2.2, 3.4, 5, 5.5, 6.0,7.0,  8.0, 10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+              539744, 888636],
+    }
+
+
+    for beta in beta_vec:
+        kvec = kvec_dict[beta]
+        real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+            N, beta, kvec,realL,True)
+        real_ave_degree_dict[beta] = real_ave_degree_vec
+        ave_L[beta] = ave_L_vec
+        std_L[beta] = std_L_vec
+
+    # plt.plot(kvec,ave_deviation_vec,"o-")
+    # plt.xscale('log')
+    # plt.show()
+
+    lengend = [r"$N=10^4,\beta=2.5$", r"$N=10^4,\beta=3$", r"$N=10^4,\beta=2^2$", r"$N=10^4,\beta=2^3$", r"$N=10^4,\beta=2^7$"]
+    fig, ax = plt.subplots(figsize=(20, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    # beta_vec = [2.5,3,4,8,128]
+    for beta_index in range(len(beta_vec)):
+        beta = beta_vec[beta_index]
+        x = real_ave_degree_dict[beta]
+        y = ave_L[beta]
+        error = std_L[beta]
+
+        kvec = kvec_dict[beta]
+        print(kvec)
+        print(y)
+
+        plt.errorbar(x, y, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                     label=lengend[beta_index], color=colors[beta_index])
+
+
+
+    x3 = np.linspace(min(real_ave_degree_dict[beta]), 2000, 10000)
+    ana_vec_real = [0.04 * (13+1.3 * np.log(10000) / np.log(x_value)) for x_value in x3]
+    # ana_vec_real = [0.06 * (1.3 * np.log(10000) / np.log(x_value)) for x_value in x3]
+
+    # plt.plot(x3, ana_vec_real, "-", linewidth=3, label=r"$\langle S \rangle = 0.52+0.05\log N/\log \langle D \rangle$",zorder=200,color = "#153779")
+    # plt.plot(x3, ana_vec_real, "-", linewidth=3, label=r"$0.05\log N/\log \langle D \rangle+0.52$",
+    #          zorder=200, color="#153779")
+    plt.plot(x3, ana_vec_real, "-", linewidth=3,
+             zorder=200, color="#153779")
+
+    # plt.plot(x3, ana_vec_real, "-", linewidth=3, label=r"$\langle S \rangle = 0.078\log N/\log \langle D \rangle$",
+    #          zorder=200, color="#153779")
+
+    x4 = np.linspace(500, 15000, 10000)
+    ana_vec_real_tail = [0.108 * x_value ** 0.25 for x_value in x4]
+
+    # plt.plot(x4, ana_vec_real_tail, "-", linewidth=3, label=r"$0.11\langle D \rangle^{0.25}$", zorder=200,
+    #          color="#D0A66F")
+    plt.plot(x4, ana_vec_real_tail, "-", linewidth=3, zorder=200,
+             color="#D0A66F")
+
+
+
+    # plt.yscale('log')
+    plt.xscale('log')
+    plt.ylim([0.2,4])
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    if realL:
+        plt.ylabel(r'$\langle S \rangle$', fontsize=36)
+    else:
+        plt.ylabel(r'Average stretch, $\langle r \rangle \langle h \rangle $', fontsize=26)
+    plt.xticks(fontsize=36)
+    plt.yticks([0.5,1,1.5,2,2.5,3,3.5],fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(loc=(0.015, 0.85),  # (x,y) 以 axes 坐标为基准
+                        fontsize=26,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1.5,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.2,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta25.svg"
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+def plot_L_with_avg_finalversion_beta25_fit_curve_head_straight():
+    """
+    Figure 4(f) inset2: local minimum of stretch
+
+    produce strech vs <r><h> with curve fit (beta == 2.5)
+    the y-axis is <S>*k^{-tau} and the x-axis is 1/log(k)
+    :return:
+    """
+
+    real_ave_degree_dict = {}
+    ave_L = {}
+
+    beta = 2.5
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+
+    N = 10000
+    exclude_hop_flag = True
+    realL = True
+    kvec = [1.8, 2, 2.4, 2.8, 3.4, 4.6, 6.0, 8.0, 10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+            328000, 888636]
+    # kvec = [118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+    #         328000, 888636]
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+        N, beta, kvec, realL, exclude_hop_flag)
+    real_ave_degree_dict[beta] = real_ave_degree_vec
+    ave_L[beta] = ave_L_vec
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    x = real_ave_degree_dict[beta]
+
+    y1 = ave_L[beta]
+    a = 0.25
+    y1 = [i * j ** (-a) for (i, j) in zip(y1, x)]
+
+    y3 = [0.45 / np.log(i)+0.33 for i in x]
+
+    x = [1/np.log(i) for i in x]
+    # x = [np.log(i) for i in x]
+    # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+    #          label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}}$", color=colors[0])
+    plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+              color=colors[0])
+
+    # plt.plot(x, y3, linestyle="-", linewidth=5,
+    #          label=r"$\langle S \rangle \langle D \rangle^{-0.25} = \frac{0.45}{\log{\langle D\rangle}}+0.33$",color = "#153779")
+    plt.plot(x, y3, linestyle="-", linewidth=5,
+             label=r"$\frac{0.45}{\ln{\langle D\rangle}}+0.33$",
+             color="#153779")
+
+    plt.xlabel(r'$1/\ln \langle D \rangle$', fontsize=36)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    plt.ylim(0, 3)
+    # plt.xlim(2, 12000)
+    plt.ylabel(r'$\langle S \rangle \langle D \rangle^{-0.25}$', fontsize=36)
+
+    plt.xticks(fontsize=36)
+    plt.yticks([0,0.5,1.0,1.5,2.0,2.5],fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
+        loc=(0.01, 0.75),
+        fontsize=46,  # 根据期刊要求调小
+        markerscale=1,
+        handlelength=1,
+        labelspacing=0.2,
+        ncol=1,
+        handletextpad=0.2,
+        borderpad=0.05,
+        borderaxespad=0.1
+    )
+    # plt.text(0.5, 1.6, r"$N = 10^4,\beta = 2.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta25_insehead.svg"
+
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+
+    plt.show()
+    plt.close()
+
+
+
+
+def plot_L_with_avg_finalversion_beta25_fit_curve_head_straight2():
+    """
+    Figure 4(f) inset2: local minimum of stretch
+
+    produce strech vs <r><h> with curve fit (beta == 2.5)
+    the y-axis is <S>*k^{-tau} and the x-axis is 1/log(k)
+    :return:
+    """
+
+    real_ave_degree_dict = {}
+    ave_L = {}
+
+    beta = 2.5
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+
+    N = 10000
+    exclude_hop_flag = True
+    realL = True
+    kvec = [1.8, 2, 2.4, 2.8, 3.4, 4.6, 6.0, 8.0, 10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+            328000, 888636]
+    # kvec = [118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+    #         328000, 888636]
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+        N, beta, kvec, realL, exclude_hop_flag)
+    real_ave_degree_dict[beta] = real_ave_degree_vec
+    ave_L[beta] = ave_L_vec
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    x = real_ave_degree_dict[beta]
+
+    y1 = ave_L[beta]
+    a = 0.25
+    y1 = [i * j ** (-a) for (i, j) in zip(y1, x)]
+
+
+    # y3 = [0.45 / np.log(i)+0.33 for i in x]
+    x2 = np.linspace(0.1,15,1000)
+    y3 = [0.7376*i**(-0.75) for i in x2]
+
+    x = [np.log(i) for i in x]
+    # x = [np.log(i) for i in x]
+    # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+    #          label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}}$", color=colors[0])
+
+
+    plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+              color=colors[0])
+
+    # plt.plot(x, y3, linestyle="-", linewidth=5,
+    #          label=r"$\langle S \rangle \langle D \rangle^{-0.25} = \frac{0.45}{\log{\langle D\rangle}}+0.33$",color = "#153779")
+    plt.plot(x2, y3, linestyle="-", linewidth=5,
+             label=r"$0.73(\ln{\langle D \rangle})^{-0.75}$",
+             color="#153779")
+
+    plt.yscale('log')
+    plt.xscale('log')
+
+
+    plt.xlabel(r'$\ln \langle D \rangle$', fontsize=36)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    # plt.ylim(0, 3)
+    # plt.xlim(2, 12000)
+    plt.ylabel(r'$\langle S \rangle \langle D \rangle^{-0.25}$', fontsize=36)
+
+    ax.tick_params(axis='both', which='major', labelsize=36, length=6, width=1)
+    ax.tick_params(axis='both', which='minor', labelsize=36, length=4, width=1)
+
+    plt.xticks(fontsize=36)
+    # plt.yticks([0,0.5,1.0,1.5,2.0,2.5],fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
+        loc=(0.25, 0.8),
+        fontsize=46,  # 根据期刊要求调小
+        markerscale=1,
+        handlelength=1,
+        labelspacing=0.2,
+        ncol=1,
+        handletextpad=0.2,
+        borderpad=0.05,
+        borderaxespad=0.1
+    )
+    # plt.text(0.5, 1.6, r"$N = 10^4,\beta = 2.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta25_insehead2.svg"
+
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+
+    plt.show()
+    plt.close()
+
+
+
+def plot_L_with_avg_finalversion_beta25_fit_curve_tail_asconstant():
+    """
+    Figure 4(f) inset: local minimum of stretch
+
+    produce strech vs <r><h> with curve fit (beta == 2.5 and 1024)
+    the y-axis is <S>*k^{-tau}
+    :return:
+    """
+    real_ave_degree_dict = {}
+    ave_L = {}
+
+    beta = 2.5
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+
+    N = 10000
+    exclude_hop_flag = True
+    realL = True
+    kvec = [1.8, 2, 2.4, 2.8, 3.4, 4.6, 6.0, 8.0, 10, 16, 27, 44, 72,
+          118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+          328000, 888636]
+    kvec = [118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+          328000, 888636]
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+    N, beta, kvec,realL,exclude_hop_flag)
+    real_ave_degree_dict[beta] = real_ave_degree_vec
+    ave_L[beta] = ave_L_vec
+
+
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    x = real_ave_degree_dict[beta]
+
+    y1 = ave_L[beta]
+    a = 0.25
+    y1 = [i*j**(-a) for (i,j) in zip(y1,x)]
+
+    # x = [np.log(i) for i in x]
+    # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=20,
+    #          label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}}$", color=colors[0])
+    plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=20,
+              color=colors[0])
+
+    x4 = np.linspace(500, 15000, 10000)
+    ana_vec_real_tail = [0.1085 for x_value in x4]
+
+    plt.plot(x4, ana_vec_real_tail, "-", linewidth=6, label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}} = 0.11$",
+             zorder=200, color="#1b9890")
+
+    # plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    # plt.ylim(0, 2.7)
+    # plt.xlim(2, 12000)
+    plt.ylabel(r'$\langle S \rangle \langle D \rangle^{-0.25}$', fontsize=36)
+
+    plt.xticks(fontsize=36)
+    plt.yticks([0.1,0.2],fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=36, loc=(0.2, 0.5))
+
+    legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
+                        loc=(0.15, 0.83),
+                        fontsize=38,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.2,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+
+    # plt.text(0.5, 1.6, r"$N = 10^4,\beta = 2.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta25_insetail.svg"
+
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+
+    plt.show()
+    plt.close()
+
+def plot_L_with_avg_finalversion_beta25_fit_curve_tail_asconstant2():
+    """
+    Figure 4(f) inset: local minimum of stretch
+
+    produce strech vs <r><h> with curve fit (beta == 2.5 and 1024)
+    the y-axis is <S>*k^{-tau}
+    :return:
+    """
+    real_ave_degree_dict = {}
+    ave_L = {}
+
+    beta = 2.5
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+
+    N = 10000
+    exclude_hop_flag = True
+    realL = True
+    kvec = [1.8, 2, 2.4, 2.8, 3.4, 4.6, 6.0, 8.0, 10, 16, 27, 44, 72,
+          118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+          328000, 888636]
+    kvec = [118, 193, 316, 518, 848, 1389, 2276, 3727,6105, 9999, 16479, 27081,44767,73534, 129546,220000,
+            328000, 888636]
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+    N, beta, kvec,realL,exclude_hop_flag)
+    real_ave_degree_dict[beta] = real_ave_degree_vec
+    ave_L[beta] = ave_L_vec
+
+
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    x = real_ave_degree_dict[beta]
+
+    y1 = ave_L[beta]
+    a = 0.25
+    y1 = [i*j**(-a) for (i,j) in zip(y1,x)]
+
+    # x = [np.log(i) for i in x]
+    # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=20,
+    #          label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}}$", color=colors[0])
+    plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=20,
+              color=colors[0])
+
+    x4 = np.linspace(500, 11000, 10000)
+    ana_vec_real_tail = [0.1085 for x_value in x4]
+
+    # plt.plot(x4, ana_vec_real_tail, "-", linewidth=6, label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}} = 0.11$",
+    #          zorder=200, color="#1b9890")
+    plt.plot(x4, ana_vec_real_tail, "-", linewidth=6, label=fr"$0.11$",
+             zorder=200, color="#D0A66F")
+
+    # plt.yscale('log')
+    # plt.xscale('log')
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    # plt.ylim(0, 2.7)
+    # plt.xlim(2, 12000)
+    plt.ylabel(r'$\langle S \rangle \langle D \rangle^{-0.25}$', fontsize=36)
+
+    plt.xticks(fontsize=36)
+    plt.yticks([0.1,0.2],fontsize=36)
+
+
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=36, loc=(0.2, 0.5))
+
+    legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
+                        loc=(0.15, 0.8),
+                        fontsize=46,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.2,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+
+    # plt.text(0.5, 1.6, r"$N = 10^4,\beta = 2.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    formatter = ScalarFormatter(useMathText=True)
+    formatter.set_scientific(True)
+    formatter.set_powerlimits((0, 0))
+
+    ax.xaxis.set_major_formatter(formatter)
+    ax.xaxis.get_offset_text().set_fontsize(32)
+
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta25_insetail2.svg"
+
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+
+    plt.show()
+    plt.close()
+
+
+
+def analtich(N, k_vals):
+    pi = np.pi
+    # k 的取值范围
+    k_vals = np.array(k_vals)
+    # 计算 h(k)
+    kc = 4.512
+    C = 0.52 * np.sqrt(N * pi)
+    # print(N, C)
+    h_vals = C * (k_vals - kc) ** (-0.5)
+    return h_vals
+
+
+def analticdl(N, k_vals):
+    pi = np.pi
+    # k 的取值范围
+    k_vals = np.array(k_vals)
+    h_vals = (2 / 3) * np.sqrt(k_vals / (N * pi)) * (1 + 4 / (3 * pi) * np.sqrt(k_vals / (N * pi)))
+    return h_vals
+
+
+def plot_L_with_avg_finalversion_beta128():
+    # Figure 4(g) final version
+    # the x-axis is the input average degree
+    # realL
+    N = 10000
+
+    realL = True
+
+    # Nvec = [100]
+    real_ave_degree_dict = {}
+    ave_L = {}
+    std_L = {}
+    approx_L =  {}
+    beta_vec = [128]
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+    for beta in beta_vec:
+        ED = extract_ED(folder_name, 10000, beta)
+        print(ED)
+
+
+    kvec_dict = {
+        2.5: [1.2,1.4, 1.5,1.6,1.7,1.8,2, 2.4, 2.8, 3.4,4.6,  6.0,  8.0,  10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 199999,
+              888636],
+        3: [1.2, 1.5, 1.8, 2, 2.2, 2.8, 3, 3.4, 3.8, 4.4, 5, 6.0,  8.0,  10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 121205,199999
+            ],
+        4: [1.2, 1.5, 2, 2.4, 2.8, 3.4, 4, 4.4, 5,  6.0,  8.0,  10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999],
+        8: [1.2,  2, 2.8, 3.4, 4.4, 4.6,5.2, 7.0, 8.0, 10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534,199999],
+        128: [6.0,7.0, 8.0, 10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+              539744, 888636],
+    }
+
+
+    for beta in beta_vec:
+        kvec = kvec_dict[beta]
+        real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+            N, beta, kvec,realL,True)
+        real_ave_degree_dict[beta] = real_ave_degree_vec
+        ave_L[beta] = ave_L_vec
+        std_L[beta] = std_L_vec
+
+    # plt.plot(kvec,ave_deviation_vec,"o-")
+    # plt.xscale('log')
+    # plt.show()
+
+    lengend = [r"$N=10^4,\beta=128$"]
+    fig, ax = plt.subplots(figsize=(20, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
+    colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+    colors = ['#6FB494']
+    # beta_vec = [2.5,3,4,8,128]
+    for beta_index in range(len(beta_vec)):
+        beta = beta_vec[beta_index]
+        x = real_ave_degree_dict[beta]
+        y = ave_L[beta]
+        error = std_L[beta]
+
+        kvec = kvec_dict[beta]
+        print(kvec)
+        print(y)
+
+        plt.errorbar(x, y, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                     label=lengend[beta_index], color=colors[beta_index])
+
+
+    x3 = np.linspace(4.6, 1000, 10000)
+
+    ana_vec_real = [0.25 * (x_value - 4.512) ** (-0.5) + 0.48 for x_value in x3]
+
+    # ana_vec_real = [2 * x_value ** (-0.5) for x_value in x3]
+
+
+    # plt.plot(x3, ana_vec_real, "-", linewidth=3, label=r"$\langle S \rangle = 0.25(\langle D \rangle - 4.5)^{-0.5}+0.48$",zorder=200,color = "#153779")
+    # plt.plot(x3, ana_vec_real, "-", linewidth=3,
+    #          label=r"$0.25(\langle D \rangle - 4.5)^{-0.5}+0.48$", zorder=200, color="#153779")
+    plt.plot(x3, ana_vec_real, "-", linewidth=3, zorder=200, color="#153779")
+
+    # plt.plot(x3, ana_vec_real, "-", linewidth=3,
+    #          label=r"$\langle S \rangle = 0.25(\langle D \rangle - 4.5)^{-0.5}$", zorder=200, color="#153779")
+
+    # x4 = np.linspace(1000, 12000, 10000)
+    # ana_vec_real_tail = [0.0115 * x_value ** 0.5 for x_value in x4]
+    #
+    # plt.plot(x4, ana_vec_real_tail, "-", linewidth=3, label=r"$0.01\langle D \rangle^{0.5}$",
+    #          zorder=200, color="#D0A66F")
+
+    # x4 = np.linspace(1000, 10000, 10000)
+    # ana_vec_real_tail = [2.6 * analticdl(N, k) for k in x4]
+    # plt.plot(x4, ana_vec_real_tail, "--", linewidth=3,
+    #          label=r"$ana: <S> = c_3* \frac{2}{3}\sqrt{\frac{k}{N\pi}}\left( 1 + \frac{4}{3\pi} \sqrt{\frac{k}{N\pi}} \right)$")
+
+    # plt.yscale('log')
+    plt.xscale('log')
+    plt.ylim([0.2,4])
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    if realL:
+        plt.ylabel(r'$\langle S \rangle$', fontsize=36)
+    else:
+        plt.ylabel(r'Average stretch, $\langle r \rangle \langle h \rangle $', fontsize=26)
+    plt.xticks(fontsize=36)
+    plt.yticks([0.5,1,1.5,2,2.5,3,3.5],fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(loc=(0.015, 0.85),  # (x,y) 以 axes 坐标为基准
+                        fontsize=26,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1.5,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.3,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta128.svg"
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+def plot_L_with_avg_finalversion_beta128_fit_curve_head_straight():
+    """
+    Figure 4(g) inset2: local minimum of stretch
+
+    produce strech vs <r><h> with curve fit (beta == 2.5)
+    the y-axis is <S>*k^{-tau} and the x-axis is 1/log(k)
+    :return:
+    """
+
+    real_ave_degree_dict = {}
+    ave_L = {}
+
+    beta = 128
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+
+    N = 10000
+    exclude_hop_flag = True
+    realL = True
+    kvec = [6.0,7.0, 8.0, 10, 16, 27, 44, 72,
+          118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+          539744, 888636]
+    kvec = [5.9, 5.95, 6.0, 6.1, 6.2, 6.5, 6.6, 6.7, 6.8, 6.9, 7.0, 8.0, 10, 16, 27, 44, 72,
+            ]
+
+    kvec = [6.1,7.0, 8.0,10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
+    # kvec = [118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+    #         328000, 888636]
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+        N, beta, kvec, realL, exclude_hop_flag)
+    real_ave_degree_dict[beta] = real_ave_degree_vec
+    ave_L[beta] = ave_L_vec
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    x = real_ave_degree_dict[beta]
+
+    y1 = ave_L[beta]
+    a = 0.5
+    y1 = [i * j ** (-a) for (i, j) in zip(y1, x)]
+
+
+    x1 = [1/((i-4.512)**0.5) for i in x]
+
+    # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+    #          label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}}$", color=colors[0])
+    plt.plot(x1, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+             color=colors[4])
+
+    x2 = np.linspace(8,9999,10000)
+
+    y3 = [0.5 / ((i - 4.512) ** 0.5) for i in x2]
+    x3 = [1/((i-4.512)**0.5) for i in x2]
+
+    # plt.plot(x3, y3, linestyle="-", linewidth=5,
+    #          label=r"$\langle S \rangle \langle D \rangle^{-0.5} = \frac{0.5}{\sqrt{\langle D \rangle-D_c)}}$",color = "#153779")
+    plt.plot(x3, y3, linestyle="-", linewidth=5,
+             label=r"$\frac{0.5}{\sqrt{\langle D \rangle-D_c)}}$",
+             color="#153779")
+
+    # plt.xscale("log")
+    plt.xlabel(r'$1/\sqrt{\langle D \rangle-D_c}$', fontsize=36)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    plt.ylim(0, 0.68)
+    # plt.xlim(2, 12000)
+    plt.ylabel(r'$\langle S \rangle \langle D \rangle^{-0.5}$', fontsize=36)
+
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
+        loc=(0.02, 0.72),
+        fontsize=40,  # 根据期刊要求调小
+        markerscale=1,
+        handlelength=1,
+        labelspacing=0.2,
+        ncol=1,
+        handletextpad=0.2,
+        borderpad=0.1,
+        borderaxespad=0.1
+    )
+    # plt.text(0.5, 1.6, r"$N = 10^4,\beta = 2.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta128_insehead.svg"
+
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+
+    plt.show()
+    plt.close()
+
+
+
+def plot_L_with_avg_finalversion_beta128_fit_curve_head_straight2():
+    """
+    Figure 4(g) inset2: local minimum of stretch
+
+    produce strech vs <r><h> with curve fit (beta == 2.5)
+    the y-axis is <S>*k^{-tau} and the x-axis is 1/log(k)
+    :return:
+    """
+
+    real_ave_degree_dict = {}
+    ave_L = {}
+
+    beta = 128
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+
+    N = 10000
+    exclude_hop_flag = True
+    realL = True
+    kvec = [6.0,7.0, 8.0, 10, 16, 27, 44, 72,
+          118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+          539744, 888636]
+    kvec = [5.9, 5.95, 6.0, 6.1, 6.2, 6.5, 6.6, 6.7, 6.8, 6.9, 7.0, 8.0, 10, 16, 27, 44, 72,
+            ]
+
+    kvec = [6.1, 7.0, 8.0,10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
+    # kvec = [118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+    #         328000, 888636]
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+        N, beta, kvec, realL, exclude_hop_flag)
+    real_ave_degree_dict[beta] = real_ave_degree_vec
+    ave_L[beta] = ave_L_vec
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    x = real_ave_degree_dict[beta]
+
+    y1 = ave_L[beta]
+    a = 0.5
+
+    # y1 = [i * (j)**(-0.5) for (i, j) in zip(y1, x)]
+    # y1 = [i * (j-4.512)**0.5 for (i, j) in zip(y1, x)]
+    # x1 = [(i - 4.512) ** 0.5 for i in x]
+    x1 = [1/(i - 4.512) ** 0.5 for i in x]
+    # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+    #          label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}}$", color=colors[0])
+    plt.plot(x1, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+             color=colors[4])
+
+    x2 = np.linspace(4.65,9999,10000)
+
+    # y3 = [0.6*(i - 4.512) ** 0.5+0.4 for i in x2]
+    # x3 = [(i-4.512)**0.5 for i in x2]
+
+    y3 = [0.22 / (i - 4.512) ** 0.5 + 0.5 for i in x2]
+    x3 = [1/(i - 4.512) ** 0.5 for i in x2]
+
+    plt.plot(x3, y3, linestyle="-", linewidth=5,
+             label=r"$\frac{0.22}{\sqrt{\langle D \rangle-D_c)}}+0.5$",color = "#153779")
+
+
+    # plt.xscale("log")
+    plt.xlabel(r'$1/(\langle D \rangle-D_c)^{0.5}$', fontsize=36)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    # plt.ylim(0, 0.68)
+    # plt.xlim(2, 12000)
+    plt.ylabel(r'$\langle S \rangle$', fontsize=36)
+
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
+        loc=(0.1, 0.68),
+        fontsize=46,  # 根据期刊要求调小
+        markerscale=1,
+        handlelength=1,
+        labelspacing=0.2,
+        ncol=1,
+        handletextpad=0.2,
+        borderpad=0.1,
+        borderaxespad=0.1
+    )
+    # plt.text(0.5, 1.6, r"$N = 10^4,\beta = 2.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta128_insehead2.svg"
+
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+
+    plt.show()
+    plt.close()
+
+
+
+def plot_L_with_avg_finalversion_beta128_fit_curve_head_straight3():
+    """
+    Figure 4(g) inset2: local minimum of stretch
+
+    produce strech vs <r><h> with curve fit (beta == 2.5)
+    the y-axis is <S>*k^{-tau} and the x-axis is 1/log(k)
+    :return:
+    """
+
+    real_ave_degree_dict = {}
+    ave_L = {}
+
+    beta = 128
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+
+    N = 10000
+    exclude_hop_flag = True
+    realL = True
+    kvec = [6.0,7.0, 8.0, 10, 16, 27, 44, 72,
+          118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+          539744, 888636]
+    kvec = [5.9, 5.95, 6.0, 6.1, 6.2, 6.5, 6.6, 6.7, 6.8, 6.9, 7.0, 8.0, 10, 16, 27, 44, 72,
+            ]
+
+    kvec = [6.1, 7.0, 8.0,10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
+    # kvec = [118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+    #         328000, 888636]
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+        N, beta, kvec, realL, exclude_hop_flag)
+    real_ave_degree_dict[beta] = real_ave_degree_vec
+    ave_L[beta] = ave_L_vec
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    x = real_ave_degree_dict[beta]
+
+    y1 = ave_L[beta]
+    a = 0.5
+
+    # y1 = [i * (j)**(-0.5) for (i, j) in zip(y1, x)]
+    # y1 = [i * (j-4.512)**0.5 for (i, j) in zip(y1, x)]
+    # x1 = [(i - 4.512) ** 0.5 for i in x]
+    x1 = [(i - 4.512) for i in x]
+    # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+    #          label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}}$", color=colors[0])
+    plt.plot(x1, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+             color=colors[4])
+    print(x1)
+    print(y1)
+
+
+    # x2 = np.linspace(4.65,9999,10000)
+
+    # y3 = [0.6*(i - 4.512) ** 0.5+0.4 for i in x2]
+    # x3 = [(i-4.512)**0.5 for i in x2]
+
+    # y3 = [0.25 / (i - 4.512) ** 0.5 + 0.48 for i in x2]
+
+    x3 = np.linspace(0.1, 100, 10000)
+    y3 = [0.75*i ** (-0.16) for i in x3]
+
+    plt.plot(x3, y3, linestyle="-", linewidth=5,
+             label=r"$0.75(\langle D \rangle-D_c )^{-0.16}$",color = "#153779")
+
+
+
+    plt.xlabel(r'$\langle D \rangle- D_c$', fontsize=36)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    # plt.ylim(0, 0.68)
+    # plt.xlim(2, 12000)
+    plt.ylabel(r'$\langle S \rangle$', fontsize=36)
+
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+
+    plt.xscale("log")
+    plt.yscale("log")
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
+        loc=(0.01, 0.8),
+        fontsize=46,  # 根据期刊要求调小
+        markerscale=1,
+        handlelength=1,
+        labelspacing=0.2,
+        ncol=1,
+        handletextpad=0.2,
+        borderpad=0.1,
+        borderaxespad=0.1
+    )
+    # plt.text(0.5, 1.6, r"$N = 10^4,\beta = 2.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    # plt.tick_params(axis='both', which="both", length=6, width=1)
+    ax.tick_params(axis='both', which='major', labelsize=36, length=6, width=1)
+    ax.tick_params(axis='both', which='minor', labelsize=36, length=4, width=1)
+    ax.minorticks_on()
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta128_insehead3.svg"
+
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+
+    plt.show()
+    plt.close()
+
+
+
+def plot_L_with_avg_finalversion_beta1024():
+    # Figure 4(g) final version
+    # the x-axis is the input average degree
+    # realL
+    N = 10000
+
+    realL = True
+
+    # Nvec = [100]
+    real_ave_degree_dict = {}
+    ave_L = {}
+    std_L = {}
+    approx_L =  {}
+    beta_vec = [1024]
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+    for beta in beta_vec:
+        ED = extract_ED(folder_name, 10000, beta)
+        print(ED)
+
+    kvec_dict = {
+        2.5: [1.2, 1.4, 1.5, 1.6, 1.7, 1.8, 2, 2.4, 2.8, 3.4, 4.6, 6.0, 8.0, 10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 199999,
+              888636],
+        3: [1.2, 1.5, 1.8, 2, 2.2, 2.8, 3, 3.4, 3.8, 4.4, 5, 6.0, 8.0, 10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 121205, 199999
+            ],
+        4: [1.2, 1.5, 2, 2.4, 2.8, 3.4, 4, 4.4, 5, 6.0, 8.0, 10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999],
+        8: [1.2, 2, 2.8, 3.4, 4.4, 4.6, 5.2, 7.0, 8.0, 10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 199999],
+        128: [6.0, 7.0, 8.0, 10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+              539744, 888636],
+        1024: [ 6.0, 7.0, 8.0, 9.0, 10, 16, 27, 44,
+               72, 118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999,
+               328000, 539744, 888636]
+
+    }
+
+
+    for beta in beta_vec:
+        kvec = kvec_dict[beta]
+        real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, std_L_vec = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+            N, beta, kvec,realL,True)
+        real_ave_degree_dict[beta] = real_ave_degree_vec
+        ave_L[beta] = ave_L_vec
+        std_L[beta] = std_L_vec
+
+    # plt.plot(kvec,ave_deviation_vec,"o-")
+    # plt.xscale('log')
+    # plt.show()
+
+    lengend = [r"$N=10^4,\beta=2^7$"]
+    fig, ax = plt.subplots(figsize=(12, 6))
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494','#9FA9C9', '#D36A6A']
+    colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+    colors = ['#7a1017']
+    # beta_vec = [2.5,3,4,8,128]
+    for beta_index in range(len(beta_vec)):
+        beta = beta_vec[beta_index]
+        x = real_ave_degree_dict[beta]
+        y = ave_L[beta]
+        error = std_L[beta]
+
+        kvec = kvec_dict[beta]
+        print(kvec)
+        print(y)
+
+        plt.errorbar(x, y, linestyle="--", linewidth=3, elinewidth=1, capsize=5, marker='o', markersize=16,
+                     label=lengend[beta_index], color=colors[beta_index])
+
+
+    x3 = np.linspace(4.6, 1000, 10000)
+
+    ana_vec_real = [0.25 * (x_value - 4.512) ** (-0.5) + 0.48 for x_value in x3]
+    # ana_vec_real = [2 * x_value ** (-0.5) for x_value in x3]
+
+
+    plt.plot(x3, ana_vec_real, "-", linewidth=3, label=r"$\langle S \rangle = 0.25(\langle D \rangle - 4.5)^{-0.5}+0.48$",zorder=200,color = "#153779")
+
+    # plt.plot(x3, ana_vec_real, "-", linewidth=3,
+    #          label=r"$\langle S \rangle = 0.25(\langle D \rangle - 4.5)^{-0.5}$", zorder=200, color="#153779")
+
+    x4 = np.linspace(1000, 12000, 10000)
+    ana_vec_real_tail = [0.0115 * x_value ** 0.5 for x_value in x4]
+
+    plt.plot(x4, ana_vec_real_tail, "-", linewidth=3, label=r"$\langle S \rangle = 0.01\langle D \rangle^{0.5}$",
+             zorder=200, color="#1b9890")
+
+    # x4 = np.linspace(1000, 10000, 10000)
+    # ana_vec_real_tail = [2.6 * analticdl(N, k) for k in x4]
+    # plt.plot(x4, ana_vec_real_tail, "--", linewidth=3,
+    #          label=r"$ana: <S> = c_3* \frac{2}{3}\sqrt{\frac{k}{N\pi}}\left( 1 + \frac{4}{3\pi} \sqrt{\frac{k}{N\pi}} \right)$")
+
+    # plt.yscale('log')
+    plt.xscale('log')
+
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    if realL:
+        plt.ylabel(r'$\langle S \rangle$', fontsize=36)
+    else:
+        plt.ylabel(r'Average stretch, $\langle r \rangle \langle h \rangle $', fontsize=26)
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(loc=(0.1, 0.15),  # (x,y) 以 axes 坐标为基准
+                        fontsize=20,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1.5,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.3,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta128.svg"
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+def plot_L_with_avg_finalversion_beta1024_fit_curve_head_straight():
+    """
+    Figure 4(g) inset2: local minimum of stretch
+
+    produce strech vs <r><h> with curve fit (beta == 2.5)
+    the y-axis is <S>*k^{-tau} and the x-axis is 1/log(k)
+    :return:
+    """
+
+    real_ave_degree_dict = {}
+    ave_L = {}
+
+    beta = 1024
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+
+    N = 10000
+    exclude_hop_flag = True
+    realL = True
+    kvec = [6.0,7.0, 8.0, 10, 16, 27, 44, 72,
+          118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+          539744, 888636]
+    kvec = [5.9, 5.95, 6.0, 6.1, 6.2, 6.5, 6.6, 6.7, 6.8, 6.9, 7.0, 8.0, 10, 16, 27, 44, 72,
+            ]
+
+    kvec = [6.0,7.0, 8.0,10, 16, 27, 44, 72,
+            118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999]
+
+    # kvec = [118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
+    #         328000, 888636]
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+        N, beta, kvec, realL, exclude_hop_flag)
+    real_ave_degree_dict[beta] = real_ave_degree_vec
+    ave_L[beta] = ave_L_vec
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    x = real_ave_degree_dict[beta]
+
+    y1 = ave_L[beta]
+    a = 0.5
+    y1 = [i * j ** (-a) for (i, j) in zip(y1, x)]
+
+
+    x1 = [1/((i-4.512)**0.5) for i in x]
+
+    # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+    #          label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}}$", color=colors[0])
+    plt.plot(x1, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+             color=colors[4])
+
+    x2 = np.linspace(8,9999,10000)
+
+    y3 = [0.5 / ((i - 4.512) ** 0.5) for i in x2]
+    x3 = [1/((i-4.512)**0.5) for i in x2]
+
+    plt.plot(x3, y3, linestyle="-", linewidth=5,
+             label=r"$\langle S \rangle \langle D \rangle^{-0.5} = \frac{0.5}{\sqrt{\langle D \rangle-D_c)}}$",color = "#153779")
+
+
+    # plt.xscale("log")
+    plt.xlabel(r'$1/\sqrt{\langle D \rangle-D_c}$', fontsize=36)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    plt.ylim(0, 0.68)
+    # plt.xlim(2, 12000)
+    plt.ylabel(r'$\langle S \rangle \langle D \rangle^{-0.5}$', fontsize=36)
+
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
+        loc=(0.1, 0.72),
+        fontsize=40,  # 根据期刊要求调小
+        markerscale=1,
+        handlelength=1,
+        labelspacing=0.2,
+        ncol=1,
+        handletextpad=0.2,
+        borderpad=0.1,
+        borderaxespad=0.1
+    )
+    # plt.text(0.5, 1.6, r"$N = 10^4,\beta = 2.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta128_insehead.svg"
+
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+
+    plt.show()
+    plt.close()
+
+
+
+def plot_L_with_avg_finalversion_beta128_fit_curve_tail_asconstant():
+    """
+    Figure 4(f) inset: local minimum of stretch
+
+    produce strech vs <r><h> with curve fit (beta == 2.5 and 1024)
+    the y-axis is <S>*k^{-tau}
+    :return:
+    """
+    real_ave_degree_dict = {}
+    ave_L = {}
+    approx_L = {}
+    approx_L_maxdl = {}
+
+    hop_count = {}
+
+    beta = 128
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+
+    N = 10000
+    exclude_hop_flag = True
+    realL = True
+    kvec = [1.2, 2.2, 3.4, 5, 5.5, 6.0, 7.0, 8.0, 10, 16, 27, 44, 72,
+              118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+              539744, 888636]
+    kvec = [118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
+            539744, 888636]
+
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+    N, beta, kvec,realL,exclude_hop_flag)
+    real_ave_degree_dict[beta] = real_ave_degree_vec
+    ave_L[beta] = ave_L_vec
+
+
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    x = real_ave_degree_dict[beta]
+
+    y1 = ave_L[beta]
+    a = 0.5
+    y1 = [i*j**(-a) for (i,j) in zip(y1,x)]
+
+    # x = [np.log(i) for i in x]
+    # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=20,
+    #          label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}}$", color=colors[4])
+    plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=20,
+             color=colors[4])
+
+    x4 = np.linspace(500, 15000, 10000)
+    ana_vec_real_tail = [0.011 for x_value in x4]
+
+    # plt.plot(x4, ana_vec_real_tail, "-", linewidth=6, label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}} = 0.01$",
+    #          zorder=200, color="#1b9890")
+    plt.plot(x4, ana_vec_real_tail, "-", linewidth=6, label=fr"$0.01$",
+             zorder=200, color="#1b9890")
+
+    # plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    # plt.ylim(0, 2.7)
+    # plt.xlim(2, 12000)
+    plt.ylabel(r'$\langle S \rangle \langle D \rangle^{-0.5}$', fontsize=36)
+
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=36, loc=(0.2, 0.5))
+
+    legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
+                        loc=(0.02, 0.82),
+                        fontsize=40,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1.5,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.2,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+
+    # plt.text(0.5, 1.6, r"$N = 10^4,\beta = 2.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta128_insetail.svg"
+
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+
+    plt.show()
+    plt.close()
+
+
+def plot_L_with_avg_finalversion_beta128_fit_curve_tail_asconstant2():
+    """
+    Figure 4(f) inset: local minimum of stretch
+
+    produce strech vs <r><h> with curve fit (beta == 2.5 and 1024)
+    the y-axis is <S>*k^{-tau}
+    :return:
+    """
+    real_ave_degree_dict = {}
+    ave_L = {}
+    approx_L = {}
+    approx_L_maxdl = {}
+
+    hop_count = {}
+
+    beta = 128
+    folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+
+    N = 10000
+    exclude_hop_flag = True
+    realL = True
+
+    kvec = [6.0, 7.0, 8.0, 10, 16, 27, 44, 72,118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 19622, 22765, 25908, 29051, 32195, 35338,
+            38481, 41624, 44767, 73534,121205]
+    kvec = [6.0, 7.0, 8.0, 10, 16, 27, 44, 72,118, 193, 316, 518, 848, 1389, 2276, 3727, 6105,8000, 9999, 13000,16479, 19622, 22765, 25908,32195,44767]
+    real_ave_degree_vec, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(
+    N, beta, kvec,realL,exclude_hop_flag)
+    real_ave_degree_dict[beta] = real_ave_degree_vec
+    ave_L[beta] = ave_L_vec
+    print(real_ave_degree_dict[beta])
+    print(ave_L[beta])
+
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+
+    x = real_ave_degree_dict[beta]
+
+    y1 = ave_L[beta]
+    a = 0.5
+    y1 = [i*j**(-a) for (i,j) in zip(y1,x)]
+
+    # x = [np.log(i) for i in x]
+    # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=20,
+    #          label=fr"$\langle S \rangle \langle D \rangle^{{-{a}}}$", color=colors[4])
+    plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=20,
+             color=colors[4])
+
+    x4 = np.linspace(500, 11000, 10000)
+    ana_vec_real_tail = [0.011 for x_value in x4]
+
+    plt.plot(x4, ana_vec_real_tail, "-", linewidth=6, label=fr"$0.01$",
+             zorder=200, color="#D0A66F")
+
+    # plt.yscale('log')
+    # plt.xscale('log')
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
+    # plt.xlabel(r'$\alpha$', fontsize=26)
+    # plt.ylim(0, 0.06)
+    # plt.xlim(2, 12000)
+    plt.ylabel(r'$\langle S \rangle \langle D \rangle^{-0.5}$', fontsize=36)
+
+
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    # plt.legend(fontsize=36, loc=(0.2, 0.5))
+
+    legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
+                        loc=(0.1, 0.82),
+                        fontsize=40,  # 根据期刊要求调小
+                        markerscale=1,
+                        handlelength=1.5,
+                        labelspacing=0.2,
+                        ncol=1,
+                        handletextpad=0.2,
+                        borderpad=0.1,
+                        borderaxespad=0.1
+                        )
+
+    # plt.text(0.5, 1.6, r"$N = 10^4,\beta = 2.5,c = 0.025, A = 0.12, B = 1.28$", fontsize=26)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    formatter = ScalarFormatter(useMathText=True)
+    formatter.set_scientific(True)
+    formatter.set_powerlimits((0, 0))
+
+    ax.xaxis.set_major_formatter(formatter)
+    ax.xaxis.get_offset_text().set_fontsize(32)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\L_vs_realavg_beta128_insetail2.svg"
+
+    plt.savefig(
+        picname,
+        format="svg",
+        bbox_inches='tight',  # 紧凑边界
+        transparent=True  # 背景透明，适合插图叠加
+    )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+
+    plt.show()
+    plt.close()
+
+
+def extract_ED(folder, N, beta):
+    """
+    在 folder 下查找形如：
+    real_ave_degree_N{N}ED{ED}Beta{beta}Simu{ST}.txt
+
+    并提取所有的 ED（支持小数），按数值排序返回。
+    """
+
+    # 根据用户输入动态生成正则
+    # ED 支持小数：\d+(?:\.\d+)?
+    pattern = re.compile(
+        rf"real_ave_degree_"
+        rf"N{N}"
+        rf"ED(?P<ED>\d+(?:\.\d+)?)"
+        rf"Beta{beta}"
+        rf"Simu\d+"
+        rf"\.txt$"
+    )
+
+    ED_list = []
+
+    for fn in os.listdir(folder):
+        full = os.path.join(folder, fn)
+        if not os.path.isfile(full):
+            continue
+
+        m = pattern.match(fn)
+        if m:
+            ed_str = m.group("ED")
+            ED_list.append(convert_number(ed_str))
+
+    return sorted(ED_list)
+
+def convert_number(x):
+    """
+    将字符串数字转成 int 或 float：
+    - 如果是整数（如 '12'），输出 int(12)
+    - 如果是小数（如 '12.5'），输出 float(12.5)
+    """
+    if x.isdigit():
+        return int(x)
+    else:
+        return float(x)
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Figure 3 (original Figure 4)
@@ -1293,11 +3110,44 @@ if __name__ == '__main__':
 
 
     """
-    # STEP 1.9 real L and <d><h> versus real average degree diffbeta
+    # STEP 1.9 real L and <d><h> versus real average degree diffbeta: Figure 4 (e)(f)(g)
     """
     # if realL = True,L = real stretch ; else , L = <d><h>
-    plot_L_with_avg_diffbeta()
+    # plot_L_with_avg_diffbeta()
 
+    # beta = [2.5,3,4,8,128]
+    # plot_L_with_avg_diffbeta_finalversion()
+    # beta = [2.5,8,128]
+    plot_L_with_avg_diffbeta_finalversion2()
+
+    # plot_L_with_avg_finalversion_beta25()
+    # #
+    # plot_L_with_avg_finalversion_beta128()
+
+    # plot_L_with_avg_finalversion_beta25_fit_curve_head_straight()
+
+    # plot_L_with_avg_finalversion_beta25_fit_curve_head_straight2()
+
+    # linear-log scale
+    # plot_L_with_avg_finalversion_beta25_fit_curve_tail_asconstant()
+    # linear-linear scale
+    # plot_L_with_avg_finalversion_beta25_fit_curve_tail_asconstant2()
+
+    # < s >(D)^{-1/2} = 1 / (D - D_c) ^ {1 / 2}
+    # plot_L_with_avg_finalversion_beta128_fit_curve_head_straight()
+    # <s> = 1/ (D-D_c)^{1/2} + c
+    # plot_L_with_avg_finalversion_beta128_fit_curve_head_straight2()
+
+    # <s> vs <D>-<D_c> log-log
+    # plot_L_with_avg_finalversion_beta128_fit_curve_head_straight3()
+
+    # linear-log scale
+    # plot_L_with_avg_finalversion_beta128_fit_curve_tail_asconstant()
+    # linear-linear scale
+    # plot_L_with_avg_finalversion_beta128_fit_curve_tail_asconstant2()
+
+    # plot_L_with_avg_finalversion_beta1024()
+    # plot_L_with_avg_finalversion_beta1024_fit_curve_head_straight()
     """
     # STEP 2 plot L vs N
     """

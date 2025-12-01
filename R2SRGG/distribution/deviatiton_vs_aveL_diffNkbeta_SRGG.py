@@ -1195,9 +1195,9 @@ def distance_inSRGG_oneSP(network_size, input_expected_degree, beta, ExternalSim
 
 def compute_L():
     tasks = []
-    tasks = [(999,10,8,0)]
-    with mp.Pool(processes=1) as pool:
-        pool.starmap(distance_inSRGG_oneSP, tasks)
+    # tasks = [(999,10,8,0)]
+    # with mp.Pool(processes=1) as pool:
+    #     pool.starmap(distance_inSRGG_oneSP, tasks)
 
     # simu1: diff N
     # Nvec = [10, 22, 46, 100, 215, 464, 1000, 2154, 4642, 10000]
@@ -1225,26 +1225,27 @@ def compute_L():
 
     # # simu3: diff ED
     # Nvec = [10, 100, 1000, 10000]
-    # beta_vec = [4]
-    # kvec_dict = {
-    #     100: [2, 3, 4, 5, 6, 8, 10, 12, 14, 17, 22, 27, 33, 40, 49, 60, 73, 89, 113, 149, 198, 260, 340, 446, 584,
-    #           762, 993, 1292, 1690, 2276, 3142, 4339],
-    #     1000: [2, 3, 4, 5, 6, 7, 8, 11, 15, 20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999, 1425, 2033, 2900,
-    #            4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168],
-    #     10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
-    #             3727, 6105,
-    #             9999, 16479, 27081, 44767, 73534, 121205, 199999]}
-    # for N in Nvec:
-    #     if N ==10:
-    #         input_ED_vec = list(range(2, 10)) + [10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 99]  # FOR N =10
-    #     else:
-    #         input_ED_vec = kvec_dict[N]
-    #     for inputED in input_ED_vec:
-    #         for beta in beta_vec:
-    #             tasks.append((N, inputED, beta, 0))
-    #
-    # with mp.Pool(processes=2) as pool:
-    #     pool.starmap(distance_inSRGG_oneSP, tasks)
+    Nvec = [100,1000]
+    beta_vec = [2.5]
+    kvec_dict = {
+        100: [2, 3, 4, 5, 6, 8, 10, 12, 14, 17, 22, 27, 33, 40, 49, 60, 73, 89, 113, 149, 198, 260, 340, 446, 584,
+              762, 993, 1292, 1690, 2276, 3142, 4339],
+        1000: [2, 3, 4, 5, 6, 7, 8, 11, 15, 20, 28, 40, 58, 83, 118, 169, 241, 344, 490, 700, 999, 1425, 2033, 2900,
+               4139, 5909, 8430, 12039, 17177, 24510, 34968, 49887, 71168],
+        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+    for N in Nvec:
+        if N ==10:
+            input_ED_vec = list(range(2, 10)) + [10, 12, 15, 18, 22, 27, 33, 40, 49, 60, 73, 89, 99]  # FOR N =10
+        else:
+            input_ED_vec = kvec_dict[N]
+        for inputED in input_ED_vec:
+            for beta in beta_vec:
+                tasks.append((N, inputED, beta, 0))
+
+    with mp.Pool(processes=1) as pool:
+        pool.starmap(distance_inSRGG_oneSP, tasks)
 
 
 
@@ -1454,12 +1455,12 @@ if __name__ == '__main__':
     """
     Step1 run simulations with different beta and input AVG for one sp case
     """
-    # compute_L()
+    compute_L()
 
     """
     Step2 compute <d_l> and h with different beta and input AVG for one sp case
     """
-    compute_edgelength_h()
+    # compute_edgelength_h()
 
     """
     SMALL NETWROK CHECK
