@@ -620,7 +620,7 @@ def plot_L_with_avg_beta1024():
 
 
 def plot_L_vs_N():
-    # Figure 4 a(1)
+    # Figure 3c(inset)
     Nvec = [22, 46, 100, 215, 464, 999, 2154, 4642, 10000]
     ED = 10
     beta = 8
@@ -688,7 +688,7 @@ def plot_L_vs_N():
 
 
 def plot_L_vs_beta(ED):
-    # Figure 4
+    # Figure 3(c)
     # the x-axis is the real average degree
     # Nvec = [10, 20, 50, 100, 200, 500, 1000, 10000]
     # betavec = [2.1, 4, 8, 16, 32, 64, 128]
@@ -2303,7 +2303,7 @@ def plot_L_with_avg_finalversion_beta128_fit_curve_head_straight():
 
     fig, ax = plt.subplots(figsize=(10, 6))
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
-    colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
+    # colors = ['#ffb2b7', '#f17886', '#e04750', '#b82d36', '#7a1017']
 
     x = real_ave_degree_dict[beta]
 
@@ -2319,19 +2319,23 @@ def plot_L_with_avg_finalversion_beta128_fit_curve_head_straight():
     plt.plot(x1, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
              color=colors[4])
 
-    x2 = np.linspace(8,9999,10000)
+    x2 = np.linspace(4.8,9999,10000)
 
-    y3 = [0.5 / ((i - 4.512) ** 0.5) for i in x2]
+    y3 = [0.24 / ((i - 4.512) ** 0.5)+0.08 for i in x2]
     x3 = [1/((i-4.512)**0.5) for i in x2]
 
     # plt.plot(x3, y3, linestyle="-", linewidth=5,
     #          label=r"$\langle S \rangle \langle D \rangle^{-0.5} = \frac{0.5}{\sqrt{\langle D \rangle-D_c)}}$",color = "#153779")
+    # plt.plot(x3, y3, linestyle="-", linewidth=5,
+    #          label=r"$\frac{0.5}{\sqrt{\langle D \rangle-D_c)}}$",
+    #          color="#153779")
+
     plt.plot(x3, y3, linestyle="-", linewidth=5,
-             label=r"$\frac{0.5}{\sqrt{\langle D \rangle-D_c)}}$",
+             label=r"$\frac{0.24}{\sqrt{\langle D \rangle-\langle D \rangle_c}}+0.08$",
              color="#153779")
 
     # plt.xscale("log")
-    plt.xlabel(r'$1/\sqrt{\langle D \rangle-D_c}$', fontsize=36)
+    plt.xlabel(r'$1/\sqrt{\langle D \rangle-\langle D \rangle_c}$', fontsize=36)
     # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
     # plt.xlabel(r'$\alpha$', fontsize=26)
     plt.ylim(0, 0.68)
@@ -2342,8 +2346,8 @@ def plot_L_with_avg_finalversion_beta128_fit_curve_head_straight():
     plt.yticks(fontsize=36)
     # plt.title('Errorbar Curves with Minimum Points after Peak')
     legend1 = ax.legend(  # (x,y) 以 axes 坐标为基准
-        loc=(0.02, 0.72),
-        fontsize=40,  # 根据期刊要求调小
+        loc=(0.02, 0.7),
+        fontsize=46,  # 根据期刊要求调小
         markerscale=1,
         handlelength=1,
         labelspacing=0.2,
@@ -2433,11 +2437,11 @@ def plot_L_with_avg_finalversion_beta128_fit_curve_head_straight2():
     x3 = [1/(i - 4.512) ** 0.5 for i in x2]
 
     plt.plot(x3, y3, linestyle="-", linewidth=5,
-             label=r"$\frac{0.22}{\sqrt{\langle D \rangle-D_c)}}+0.5$",color = "#153779")
+             label=r"$\frac{0.22}{\sqrt{\langle D \rangle-\langle D \rangle_c)}}+0.5$",color = "#153779")
 
 
     # plt.xscale("log")
-    plt.xlabel(r'$1/(\langle D \rangle-D_c)^{0.5}$', fontsize=36)
+    plt.xlabel(r'$1/(\langle D \rangle-\langle D \rangle_c)^{0.5}$', fontsize=36)
     # plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
     # plt.xlabel(r'$\alpha$', fontsize=26)
     # plt.ylim(0, 0.68)
@@ -3118,7 +3122,7 @@ if __name__ == '__main__':
     # beta = [2.5,3,4,8,128]
     # plot_L_with_avg_diffbeta_finalversion()
     # beta = [2.5,8,128]
-    plot_L_with_avg_diffbeta_finalversion2()
+    # plot_L_with_avg_diffbeta_finalversion2()
 
     # plot_L_with_avg_finalversion_beta25()
     # #
@@ -3151,7 +3155,7 @@ if __name__ == '__main__':
     """
     # STEP 2 plot L vs N
     """
-    # plot_L_vs_N()
+    plot_L_vs_N()
 
     """
     # STEP 3 plot L vs beta

@@ -455,11 +455,12 @@ if __name__ == '__main__':
     #     for data1, data2 in zip(x_coords, y_coords):
     #         file.write(f"{data1}\t{data2}\n")
 
-    N = 10000
-    ED = 2
-    beta = 1024
-    G, linkweight, average_max_weight, xx, yy = R2SRGG_withlinkweight(N, ED, beta, rg)
-    print(average_max_weight)
+    N = 400
+    ED = 10
+    beta = 8
+    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    print("real ED:", real_avg)
 
 
 

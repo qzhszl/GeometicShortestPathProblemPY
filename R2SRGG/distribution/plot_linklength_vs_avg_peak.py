@@ -330,7 +330,7 @@ def scattor_peakvs_GLCC():
         # plt.xlabel(r'$\mathbb{E}[D]_{\langle d \rangle_{local~max}}$', fontsize=36)
         # plt.ylabel(r'$\mathbb{E}[D]_{SLCC_{max}}$', fontsize=36)
         plt.xlabel(r'$\langle D\rangle_{max}$', fontsize=36)
-        plt.ylabel(r'$D_c$', fontsize=36)
+        plt.ylabel(r'$\langle D \rangle_c$', fontsize=36)
         plt.xticks([1,2,3,4,5],fontsize=36)
         plt.yticks([1,2,3,4,5],fontsize=36)
         legend1 = ax.legend(loc=(0.02, 0.75),  # (x,y) 以 axes 坐标为基准

@@ -513,7 +513,7 @@ def plot_distribution_10000node(N, ED, beta,thesis_flag=False):
     if thesis_flag:
         text = r"$N = 10^4$, $\beta = 4$, $E[D] = 5$"
     else:
-        text = r"$N = 10^4$, $\beta = 4$, $\mathbb{E}[D] = 5$"
+        text = r"$N = 10^4$, $\beta = 4$, $\mathbb{E}[D] = 5, \langle D \rangle = 3.9$"
     ax.text(
         0.5, 0.85,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
         text,
@@ -647,17 +647,17 @@ def plot_distribution_diffN(ED, beta):
 if __name__ == '__main__':
     # Figure 10 Appendix distance to geodesic distribution
 
-    for (N,ED,beta) in [(100, 5, 4),
-                      (100, 10, 4),
-                      (100, 50, 4),
-                      (100, 5, 8),
-                      (100, 5, 128),
-                      (1000, 5, 4)]:
-        plot_distribution(N,ED,beta,thesis_flag=True)
+    # for (N,ED,beta) in [(100, 5, 4),
+    #                   (100, 10, 4),
+    #                   (100, 50, 4),
+    #                   (100, 5, 8),
+    #                   (100, 5, 128),
+    #                   (1000, 5, 4)]:
+    #     plot_distribution(N,ED,beta,thesis_flag=True)
     # plot_distribution(100,5,4)
 
     # Figure 2 (b)
-    # plot_distribution_10000node(10000, 5.0, 4,thesis_flag=True)
+    plot_distribution_10000node(10000, 5.0, 4,thesis_flag=False)
 
     # plot_distribution_diffN(ED=10, beta=8)
 
