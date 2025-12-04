@@ -3124,7 +3124,7 @@ if __name__ == '__main__':
     # beta = [2.5,8,128]
     # plot_L_with_avg_diffbeta_finalversion2()
 
-    # plot_L_with_avg_finalversion_beta25()
+    plot_L_with_avg_finalversion_beta25()
     # #
     # plot_L_with_avg_finalversion_beta128()
 
@@ -3155,7 +3155,7 @@ if __name__ == '__main__':
     """
     # STEP 2 plot L vs N
     """
-    plot_L_vs_N()
+    # plot_L_vs_N()
 
     """
     # STEP 3 plot L vs beta
