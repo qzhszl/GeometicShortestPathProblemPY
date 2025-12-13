@@ -914,6 +914,8 @@ def predict_randomselectnode_ub(ED, beta, noise_amplitude, ExternalSimutime):
     ED = 5 and 20 while beta = 4 and 100
     """
     N = 10000
+
+    filefolder = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\test\\"
     # # ED_list = [2, 3.5, 5, 10, 100, 1000, N - 1]  # Expected degrees
     # ED_list = [2, 4, 8, 16, 32, 64, 128,256,512,1024]
     # ED = ED_list[Edindex]
@@ -937,9 +939,9 @@ def predict_randomselectnode_ub(ED, beta, noise_amplitude, ExternalSimutime):
     SPnum_nodepair = []  # save the Number of nearly shortest path for each node pair
     geodistance_between_nodepair = []  # save the geodeisc length between each node pair
 
-    random.seed(ExternalSimutime)
+    # random.seed(ExternalSimutime)
     rg = RandomGenerator(-12)
-    for i in range(random.randint(0, 100)):
+    for i in range(random.randint(0, 1000)):
         rg.ran1()
 
     try:
@@ -960,6 +962,7 @@ def predict_randomselectnode_ub(ED, beta, noise_amplitude, ExternalSimutime):
                 Coorx.append(float(data[0]))
                 Coory.append(float(data[1]))
     except:
+        G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
         print(fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, no data", flush=True)
 
     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
@@ -967,7 +970,7 @@ def predict_randomselectnode_ub(ED, beta, noise_amplitude, ExternalSimutime):
           flush=True)
     realradius = degree_vs_radius(N, real_avg)
 
-    nodepair_num = 100
+    nodepair_num = 1000
 
     # Random select nodepair_num nodes in the largest connected component
     unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
@@ -1020,21 +1023,20 @@ def predict_randomselectnode_ub(ED, beta, noise_amplitude, ExternalSimutime):
     # AUCWithoutnorMean = np.mean(PRAUC_nodepair[~np.isnan(PRAUC_nodepair)])
     # AUCWithoutnorStd = np.std(PRAUC_nodepair[~np.isnan(PRAUC_nodepair)])
 
-
-    precision_Geodis_Name = "/home/qzh/data/PrecisionRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    precision_Geodis_Name = filefolder+"PrecisionRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
         EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(precision_Geodis_Name, Precision_random_nodepair)
 
-    recall_Geodis_Name = "/home/qzh/data/RecallRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    recall_Geodis_Name = filefolder+"RecallRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
         EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(recall_Geodis_Name, Recall_random_nodepair)
 
 
-    NSPnum_nodepairName = "/home/qzh/data/NSPNumED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    NSPnum_nodepairName = filefolder+"NSPNumED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
         EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(NSPnum_nodepairName, SPnum_nodepair, fmt="%i")
 
-    geodistance_between_nodepair_Name = "/home/qzh/data/GeodistanceBetweenTwoNodesED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    geodistance_between_nodepair_Name = filefolder+"GeodistanceBetweenTwoNodesED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
         EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
     np.savetxt(geodistance_between_nodepair_Name, geodistance_between_nodepair)
 
@@ -1054,20 +1056,20 @@ def predict_by_random_selct():
     """
     tasks = []
     simutime = 0
-    for noise_amplitude in [0,0.001,0.01,0.1,1]:
-        tasks.append((5,4,noise_amplitude,simutime))
-    for noise_amplitude in [0,0.001,0.01,0.1,1]:
-        tasks.append((5,8,noise_amplitude,simutime))
-    for noise_amplitude in [0,0.001,0.01,0.1,1]:
-        tasks.append((5,128,noise_amplitude,simutime))
+    # for noise_amplitude in [0,0.001,0.01,0.1,1]:
+    #     tasks.append((5,4,noise_amplitude,simutime))
+    # for noise_amplitude in [0,0.001,0.01,0.1,1]:
+    #     tasks.append((5,8,noise_amplitude,simutime))
+    # for noise_amplitude in [0,0.001,0.01,0.1,1]:
+    #     tasks.append((5,128,noise_amplitude,simutime))
     for noise_amplitude in [0,0.001,0.01,0.1,1]:
         tasks.append((2,8,noise_amplitude,simutime))
-    for noise_amplitude in [0,0.001,0.01,0.1,1]:
-        tasks.append((10,8,noise_amplitude,simutime))
-    for noise_amplitude in [0,0.001,0.01,0.1,1]:
-        tasks.append((100,8,noise_amplitude,simutime))
+    # for noise_amplitude in [0,0.001,0.01,0.1,1]:
+    #     tasks.append((10,8,noise_amplitude,simutime))
+    # for noise_amplitude in [0,0.001,0.01,0.1,1]:
+    #     tasks.append((100,8,noise_amplitude,simutime))
 
-    with mp.Pool(processes=16) as pool:
+    with mp.Pool(processes=2) as pool:
         pool.starmap(predict_randomselectnode_ub, tasks)
 
 

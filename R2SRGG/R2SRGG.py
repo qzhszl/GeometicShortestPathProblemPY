@@ -456,7 +456,7 @@ if __name__ == '__main__':
     #         file.write(f"{data1}\t{data2}\n")
 
     N = 10000
-    ED = 15
+    ED = 2
     beta = 8
     G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)

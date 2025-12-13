@@ -329,7 +329,7 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
 
     for beta in beta_vec:
         if beta in [128]:
-            kvec = [2.2, 3.0, 3.8, 4.4,5.1, 5.5,6.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
+            kvec = [2.2, 3.0, 3.8, 4.4,5.1, 5.5,6.0,7.0,8.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276,
                     3727, 6105,
                     9999, 16479, 27081, 44767, 73534, 121205, 199999]
         if beta in [8]:
@@ -359,6 +359,7 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
             for ExternalSimutime in range(1):
                 try:
                     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
+                    filefolder_name = "E:\\GSPP_data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
                     hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
                         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                     hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
@@ -372,6 +373,7 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
                     real_ave_degree_vec.append(real_avg)
                 except:
                     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\test\\"
+                    filefolder_name = "E:\\GSPP_data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\test\\"
                     hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
                         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                     hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
@@ -398,6 +400,11 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
         if beta ==128:
             print(real_ave_degree_vec)
             print(SP_hopcount_ave)
+            # x_128 = [x-4.512 for x in real_ave_degree_vec]
+            # plt.errorbar(x_128, SP_hopcount_ave, linestyle="--", linewidth=1,
+            #              marker='o', markersize=16, color=colors[count],
+            #              label=rf"$\beta$ = {betalabel[count]}")
+
         if beta == 2.02:
             plt.errorbar(real_ave_degree_vec[4:], SP_hopcount_ave[4:], linestyle="-", linewidth=3,
                         marker='o', markersize=16, color=colors[count],
@@ -412,7 +419,7 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
 
     k_vals = np.linspace(1.1, 15000, 40000)
     # 曲线 3: A+b*log(n) / log(k)
-    # f3 = 1.3 * np.log(N) / np.log(k_vals)
+    # # f3 = 1.3 * np.log(N) / np.log(k_vals)
     a = 1.17
     b = 0.4
     f3 = a * np.log(N) / np.log(k_vals) + b
@@ -423,15 +430,38 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
     plt.plot(k_vals, f3, "-", linewidth=2, label=rf'${a}\ln{{N}}/ \ln{{\langle D\rangle}}$+{b}',
              color=colors[beta_vec.index(beta)],zorder=200)
 
+    # a = 1.1
+    # f3 = a * np.log(N) / np.log(k_vals)
+    #
+    # beta = 2.5
+    # # plt.plot(k_vals, f1, label=r'$f_1(k) = \frac{\log n}{\log \log n}$', linestyle='--', color='orange')
+    # # plt.plot(k_vals, f2, label=r'$f_2(k) = 1 + \frac{n}{k}$', color='green')
+    # plt.plot(k_vals, f3, "-", linewidth=2, label=rf'${a}\ln{{N}}/ \ln{{\langle D\rangle}}$',
+    #          color=colors[beta_vec.index(beta)], zorder=200)
+
+
     # 曲线 4: <h> ~ (<k> - <k>_c)^(-a)
+    # beta = 128
+    # kc = 4.512
+    # k_vals2 = np.linspace(4.6, 15000, 20000)
+    # a = 92
+    # b = 0.6
+    # f4 = a * (k_vals2 - kc) ** (-0.5)+b
+    # plt.plot(k_vals2, f4, linewidth=2, label=rf'${a}(\langle D\rangle - 4.5)^{{-0.5}}+{b}$',
+    #          color=colors[beta_vec.index(beta)],zorder=200)
+
     beta = 128
     kc = 4.512
     k_vals2 = np.linspace(4.6, 15000, 20000)
     a = 92
     b = 0.6
-    f4 = a * (k_vals2 - kc) ** (-0.5)+b
+    f4 = a * (k_vals2 - kc) ** (-0.5) + b
     plt.plot(k_vals2, f4, linewidth=2, label=rf'${a}(\langle D\rangle - 4.5)^{{-0.5}}+{b}$',
-             color=colors[beta_vec.index(beta)],zorder=200)
+             color=colors[beta_vec.index(beta)], zorder=200)
+
+
+
+
     handles, labels = ax.get_legend_handles_labels()
     indices_group1 = [0, 1]
     handles1 = [handles[i] for i in indices_group1]
@@ -499,12 +529,12 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
     picname =  filefolder_name+ "hopvsEDN{Nn}.svg".format(
         Nn=N)
-    plt.savefig(
-        picname,
-        format="svg",
-        bbox_inches='tight',  # 紧凑边界
-        transparent=True  # 背景透明，适合插图叠加
-    )
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
     plt.show()
     # 清空图像，以免影响下一个图
     plt.close()
@@ -937,7 +967,186 @@ def plot_hopcount_vs_ED_test2(N, beta_vec):
     plt.close()
 
 
+def text_hop_for_beta128():
+    import numpy as np
+    import matplotlib.pyplot as plt
 
+    # 您的 X 坐标数据
+    # 注意：我们将 'array(...)' 解释为 np.array(...)
+    x = [np.array(4.6558), np.array(5.4164), np.array(6.1978),
+         np.array(7.6744), np.array(12.3358), np.array(20.6526), np.array(33.5496), np.array(54.21), np.array(88.3386),
+         np.array(142.404),
+         np.array(229.1266), np.array(367.1896), np.array(583.4436), np.array(920.6452), np.array(1434.103),
+         np.array(2196.6802),
+         np.array(3298.0032), np.array(4793.6972), np.array(6698.1078), np.array(8672.7838), np.array(9862.7426)]
+
+    # 您的 Y 坐标数据
+    y = [ 99.29961908580593, 72.29231692677071, 59.71461461461462, 47.11138353765324, 33.33345012262876, 23.928671608896014,
+         18.19666700130509,
+         13.885699924604172, 10.727736010898633, 8.405927051671732, 6.649434406510723, 5.332175625939557,
+         4.3110202781611635, 3.545569689960901, 2.9602219626168225, 2.5497091144149966, 2.243979057591623,
+         2.0474892954456987, 2.0003012501882815, 2.0, 2.0]
+
+
+    # 将 X 列表中的单元素数组展平为普通的浮点数列表
+    x_flat = [a.item() for a in x]
+
+    # 创建图形和子图
+    plt.figure(figsize=(10, 6))
+
+    # 使用 plt.loglog() 进行 log-log 坐标绘图
+    # 'o-' 表示用圆圈标记数据点并用线连接
+
+    x2 = [x-4.512 for x in x_flat]
+
+    x3 = [(x - 4.512)**(-0.5) for x in x_flat]
+
+    # plt.plot(x_flat, y, 'o-', label='Data Points')
+
+
+    # plt.plot(x2, y, 'o-', label='Data Points2')
+    N = 10000
+    y2 = [j * (1 - k / (N - 1) + k / (N - 1)) for (k, j) in zip(x_flat, y)]
+    # plt.plot(x_flat,y2)
+
+    plt.plot(x3, y, 'o-', label='Data Points2')
+    plt.plot(x3, y2, 'o-', label='Data Points2')
+
+    #
+    #
+    # coefficients = np.polyfit(x3[5:], y[5:], 1)
+    # a_fit = coefficients[0]
+    # B_fit = coefficients[1]
+    # Z_fit = np.linspace(min(x3), 2, 100)
+    # y_fit = a_fit * Z_fit + B_fit
+    # plt.plot(Z_fit, y_fit, 'r-', label=f'Linear Fit: $y={a_fit:.2f}Z + {B_fit:.2f}$')
+
+    # 添加标签和标题
+    plt.xlabel(r'$1/\sqrt{\langle D \rangle-\langle D \rangle_c}$')
+    plt.ylabel('hopcount')
+
+    # plt.xscale('log')
+    # plt.yscale('log')
+    # 显示网格线，which="both" 表示主次刻度都显示
+    plt.grid(True, which="both", ls="--", linewidth=0.5)
+
+    # 显示图例
+    plt.legend()
+
+    # 保存图像（可选，如果需要在环境中保存）
+    # plt.savefig('loglog_plot.png')
+
+    # 显示图形
+    plt.show()  # 如果在交互式环境（如 Jupyter 或 IDE）中运行，通常需要这一行
+
+
+
+def test2():
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    # --- 1. 原始数据 ---
+    # 您的 X 坐标数据
+    # 注意：我们使用 np.array(...) 替换了 'array(...)'
+    x = [np.array(1.7172), np.array(2.3352), np.array(2.9842), np.array(3.4444), np.array(3.943), np.array(4.2554),
+         np.array(4.6558),
+         np.array(7.6744), np.array(12.3358), np.array(20.6526), np.array(33.5496), np.array(54.21), np.array(88.3386),
+         np.array(142.404),
+         np.array(229.1266), np.array(367.1896), np.array(583.4436), np.array(920.6452), np.array(1434.103),
+         np.array(2196.6802),
+         np.array(3298.0032), np.array(4793.6972), np.array(6698.1078), np.array(8672.7838), np.array(9862.7426)]
+
+    # 您的 Y 坐标数据
+    y = [3.4640264558799805, 5.047299336149668, 7.654561147874187, 13.309341419299926, 19.878204468238444,
+         50.98821396192203, 99.29961908580593, 47.11138353765324, 33.33345012262876, 23.928671608896014,
+         18.19666700130509,
+         13.885699924604172, 10.727736010898633, 8.405927051671732, 6.649434406510723, 5.332175625939557,
+         4.3110202781611635, 3.545569689960901, 2.9602219626168225, 2.5497091144149966, 2.243979057591623,
+         2.0474892954456987, 2.0003012501882815, 2.0, 2.0]
+
+    # 将 X 列表中的单元素数组展平为普通的 NumPy 数组
+    x_flat = np.array([a.item() for a in x])
+    y_array = np.array(y)
+
+    # --- 2. 变量转换 ---
+    # 设定常数
+    C = 4.512
+
+    # 检查分母 x_flat - C 是否为正，以确保开方和幂运算有效
+    if np.any(x_flat <= C):
+        # 找到所有 x <= C 的索引
+        invalid_indices = np.where(x_flat <= C)[0]
+
+        # 找出第一个导致问题的 X 值
+        first_invalid_x = x_flat[invalid_indices[0]]
+
+        # 由于您的数据中前几项 x < 4.512，我们将只使用 x > 4.512 的数据点进行绘图
+        print(f"警告：常数 C = {C} 大于或等于数据中的前几个 X 值。")
+        print(f"第一个无效 X 值是 {first_invalid_x}。")
+        print("为了避免数学错误（负数开方），我们将仅使用 x > C 的数据点进行转换和绘图。")
+
+        # 过滤数据：只保留 x > C 的点
+        valid_indices = x_flat > C
+        x_valid = x_flat[valid_indices]
+        y_valid = y_array[valid_indices]
+    else:
+        x_valid = x_flat
+        y_valid = y_array
+
+    # 计算新的横轴变量 Z = (x - C)^(-1/2)
+    # Z = 1 / sqrt(x - C)
+    # 这里使用 ** (-0.5) 来表示 (-1/2) 幂
+    Z = (x_valid - C) ** (-0.5)
+
+    # --- 3. 绘图：y vs Z (线性坐标) ---
+    plt.figure(figsize=(10, 6))
+
+    # 使用 plt.plot() 在**线性坐标系**下绘图
+    plt.plot(Z, y_valid, 'o', label=r'Data: $y$ vs $(x-4.512)^{-1/2}$')
+    print(Z)
+    print(y_valid)
+    # 添加标签和标题
+    plt.xlabel(r'Transformed Variable $Z = (x-4.512)^{-1/2}$')  # 使用 LaTeX 语法显示更美观的公式
+    plt.ylabel(r'Original Variable $y$')
+    plt.title('Plot of $y$ vs Transformed $Z$ (Linear Coordinates)')
+
+    # 显示网格线
+    plt.grid(True, linestyle='--', alpha=0.7)
+
+    # 显示图例
+    plt.legend()
+
+    # 显示图形
+    plt.show()
+
+    # --- 4. 可选：线性拟合（Liner Regression）---
+    print("\n--- 线性拟合结果 ---")
+    # 使用 numpy.polyfit 进行一阶多项式拟合 (即线性拟合)
+    # coefficients[0] 是斜率 a，coefficients[1] 是截距 B
+    coefficients = np.polyfit(Z, y_valid, 1)
+    a_fit = coefficients[0]
+    B_fit = coefficients[1]
+
+    # 打印拟合结果
+    print(f"拟合直线方程: y = {a_fit:.4f} * Z + {B_fit:.4f}")
+    print(f"拟合斜率 a ≈ {a_fit:.4f}")
+    print(f"拟合截距 B ≈ {B_fit:.4f}")
+
+    # 重新绘图并加上拟合直线
+    plt.figure(figsize=(10, 6))
+    plt.plot(Z, y_valid, 'o', label='Original Data Points')
+
+    # 绘制拟合直线
+    Z_fit = np.linspace(Z.min(), Z.max(), 100)
+    y_fit = a_fit * Z_fit + B_fit
+    plt.plot(Z_fit, y_fit, 'r-', label=f'Linear Fit: $y={a_fit:.2f}Z + {B_fit:.2f}$')
+
+    plt.xlabel(r'Transformed Variable $Z = (x-4.512)^{-1/2}$')
+    plt.ylabel(r'Original Variable $y$')
+    plt.title('Plot with Linear Regression')
+    plt.grid(True, linestyle='--', alpha=0.7)
+    plt.legend()
+    plt.show()
 
 if __name__ == '__main__':
     # plot_hopcount_vs_ED(10000,4)
@@ -950,6 +1159,9 @@ if __name__ == '__main__':
     # plot_hopcount_vs_realED(10000,[2.5,3,4,8,128])
 
     plot_hopcount_vs_realED_finalversion(10000,[2.5,3,4,8,128])
+
+    # text_hop_for_beta128()
+    # test2()
 
 
     # plot_hopcount_vs_ED_test2(10000, [1024])

@@ -318,12 +318,20 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrando
 
         PrecisonRandom_specificnoise = []
         for ExternalSimutime in range(1):
-            try:
-                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+
+            if (Edindex, betaindex) in [(0,2)]:
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\test\\PrecisionRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
                     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
                 PrecisonRandom_specificnoise = np.loadtxt(precision_Geodis_Name)
-            except FileNotFoundError:
-                pass
+
+                print(PrecisonRandom_specificnoise[PrecisonRandom_specificnoise>0])
+            else:
+                try:
+                    precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\PrecisionRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
+                    PrecisonRandom_specificnoise = np.loadtxt(precision_Geodis_Name)
+                except:
+                    pass
 
         Random_precision_list_all_ave.append(np.mean(PrecisonRandom_specificnoise))
         Random_precision_list_all_std.append(np.std(PrecisonRandom_specificnoise))
@@ -368,7 +376,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrando
     ax.set_xticklabels(x_labels)
 
     if legendpara ==1:
-        leg = ax.legend(fontsize=18, handlelength=1,loc = (0.53, 0.52))
+        leg = ax.legend(fontsize=18, handlelength=1,loc = (0.535, 0.55))
         for text in leg.get_texts():
             if text.get_text() == 'Geo-based':  # 按名称匹配
                 text.set_fontweight('bold')  # 加粗
@@ -764,12 +772,17 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_wi
 
         PrecisonRandom_specificnoise = []
         for ExternalSimutime in range(1):
-            try:
-                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+            if (Edindex,betaindex) in [(0,2)]:
+                precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\test\\RecallRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
                     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
                 PrecisonRandom_specificnoise = np.loadtxt(precision_Geodis_Name)
-            except FileNotFoundError:
-                pass
+            else:
+                try:
+                    precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
+                    PrecisonRandom_specificnoise = np.loadtxt(precision_Geodis_Name)
+                except FileNotFoundError:
+                    pass
 
         Random_precision_list_all_ave.append(np.mean(PrecisonRandom_specificnoise))
         Random_precision_list_all_std.append(np.std(PrecisonRandom_specificnoise))
@@ -814,7 +827,7 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_wi
     #     ax.legend(fontsize=18, handlelength=1.5, loc=(0.53, 0.52))
 
     if legendpara ==1:
-        leg = ax.legend(fontsize=18, handlelength=1,loc = (0.53, 0.52))
+        leg = ax.legend(fontsize=18, handlelength=1,loc = (0.535, 0.55))
         for text in leg.get_texts():
             if text.get_text() == 'Geo-based':  # 按名称匹配
                 text.set_fontweight('bold')  # 加粗
@@ -1124,11 +1137,11 @@ if __name__ == '__main__':
 
 
 
-    for Edindex,betaindex in [(1,1),(1,6),(1,2),(2,2),(3,2)]:
-        plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=0,theis_flag=True)
+    # for Edindex,betaindex in [(1,1),(1,6),(1,2),(2,2),(3,2)]:
+    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=0,theis_flag=True)
     for Edindex in [0]:
         for betaindex in [2]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=1,theis_flag=True)
+            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=1,theis_flag=False)
 
 
 
@@ -1157,12 +1170,12 @@ if __name__ == '__main__':
     """
     STEP 2 Plot Figure recall : bar figure
     """
-    for Edindex,betaindex in [(1,2),(1,6),(1,1),(2,2),(3,2)]:
-        plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex, legendpara=0,theis_flag=True)
+    # for Edindex,betaindex in [(1,2),(1,6),(1,1),(2,2),(3,2)]:
+    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex, legendpara=0,theis_flag=True)
 
     for Edindex in [0]:
         for betaindex in [2]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara=1,theis_flag=True)
+            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara=1,theis_flag=False)
 
     """
     Plot figure for netsci
