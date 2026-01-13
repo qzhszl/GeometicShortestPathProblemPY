@@ -97,7 +97,7 @@ def plot_rayleigh_function():
 def R2SRGG_waman(N, avg, eta, rg, beta=1, Coorx=None, Coory=None, SaveNetworkPath=None):
     """
     Program generates Soft Random Geometric Graph on a 2d unit square
-    Connection probability function is f(d) = \beta e^{- \left(\frac{d}{d_0}\right)^{\eta}}
+    Connection probability function is f(d) = \beta e^{- (\frac{d}{d_0})^{\eta}}
     :param N: number of nodes
     :param avg: d_0
     :param beta: beta (controlling max probability)
