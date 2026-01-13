@@ -196,6 +196,26 @@ def load_large_network_results_maxminave(N, ED, beta):
                         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                     ave_baseline_deviation_for_a_para_comb_10times = np.loadtxt(ave_baseline_deviation_name)
                     ran_deviation_vec.extend(ave_baseline_deviation_for_a_para_comb_10times)
+                elif N ==10000:
+                    deviation_vec_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\comparewithrand\\ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
+                    ave_deviation_vec.extend(ave_deviation_for_a_para_comb_10times)
+
+                    max_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\comparewithrand\\max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    max_deviation_for_a_para_comb_10times = np.loadtxt(max_deviation_name)
+                    max_deviation_vec.extend(max_deviation_for_a_para_comb_10times)
+
+                    min_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\comparewithrand\\min_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    min_deviation_for_a_para_comb_10times = np.loadtxt(min_deviation_name)
+                    min_deviation_vec.extend(min_deviation_for_a_para_comb_10times)
+
+                    ave_baseline_deviation_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\comparewithrand\\ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+                    ave_baseline_deviation_for_a_para_comb_10times = np.loadtxt(ave_baseline_deviation_name)
+                    ran_deviation_vec.extend(ave_baseline_deviation_for_a_para_comb_10times)
                 else:
                     # clustering_coefficient_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\largenetwork\\clustering_coefficient_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
                     #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -362,12 +382,9 @@ def plot_distribution(N, ED, beta,thesis_flag = False):
         #     N, ED, beta)
         # except:
             ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_small_network_results_maxminave(N, ED, beta)
-    elif N < 10000:
+    else:
         ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_large_network_results_maxminave(
             N, ED, beta)
-    else:
-        ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_10000nodenetwork_maxminave(
-            ED, beta)
 
     # cuttail = [9,19,34,24]
     # peakcut = [9,5,5,5]
@@ -385,23 +402,54 @@ def plot_distribution(N, ED, beta,thesis_flag = False):
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
     labels = ["Avg","Max","Min","Ran"]
+
+    plot_count = 0
     for data, color, label in zip(datasets, colors, labels):
         hvalue, bin_vec = np.histogram(data, bins=60, density=True)
+        if plot_count == 2:
+            hvalue = np.append(hvalue, 0.0001)
+            bin_vec = np.append(bin_vec, 0.01127)
         print(bin_vec[1:len(bin_vec)])
+        print(hvalue)
         plt.plot(bin_vec[1:len(bin_vec)], hvalue, color=color, label=label, linewidth=5)
+        plot_count = plot_count+1
 
 
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
-    ax.spines['left'].set_position(('data', 0))
-    ax.spines['bottom'].set_position(('data', 0))
+    # ax.spines['left'].set_position(('data', 0))
+    # ax.spines['bottom'].set_position(('data', 0))
+    # ax.spines['bottom'].set_position(('outward', 0))
     # plt.xscale('log')
     # plt.yscale('log')
     plt.xlim([0,1])
     # plt.ylim([0, 50])
     # plt.yticks([0,5,10,15,20,25])
     # plt.yticks([0, 10, 20, 30, 40, 50])
-    # plt.yscale('log')
+
+
+    if N == 10000 and beta == 8:
+        plt.yscale('log')
+        ymin = 0.01  # 设置最低点
+        current_ylim = ax.get_ylim()  # 获取当前的 y 轴范围
+        ax.set_ylim(ymin, current_ylim[1])  # 保持最大值不变
+    elif N == 10000 and beta == 128:
+        plt.yscale('log')
+        ymin = 0.01  # 设置最低点
+        current_ylim = ax.get_ylim()  # 获取当前的 y 轴范围
+        ax.set_ylim(ymin, current_ylim[1])  # 保持最大值不变
+    elif N == 10000 and ED == 10 and beta==4:
+        plt.yscale('log')
+        ymin = 0.01  # 设置最低点
+        current_ylim = ax.get_ylim()  # 获取当前的 y 轴范围
+        ax.set_ylim(ymin, current_ylim[1])  # 保持最大值不变
+    elif N == 10000 and ED == 50 and beta==4:
+        plt.yscale('log')
+        ymin = 0.01  # 设置最低点
+        current_ylim = ax.get_ylim()  # 获取当前的 y 轴范围
+        ax.set_ylim(ymin, current_ylim[1])  # 保持最大值不变
+
+
     plt.xlabel(r'x',fontsize = 32)
     plt.ylabel(r'$f_{d(q,\gamma(i,j))}(x)$',fontsize = 32)
     plt.xticks(fontsize=28)
@@ -418,24 +466,35 @@ def plot_distribution(N, ED, beta,thesis_flag = False):
     # ytick_vec = ytick_dict[(N, ED, beta)]
     # plt.yticks(ytick_vec, fontsize=28)
 
+    # fignum_dict = {
+    #     (100,5, 4): "a",
+    #     (100,10, 4): "b",
+    #     (100,50, 4): "c",
+    #     (100,5, 8): "d",
+    #     (100,5, 128): "e",
+    #     (1000,5, 4): "f",
+    # }
+
     fignum_dict = {
-        (100,5, 4): "a",
-        (100,10, 4): "b",
-        (100,50, 4): "c",
-        (100,5, 8): "d",
-        (100,5, 128): "e",
-        (1000,5, 4): "f",
-    }
-    xtextpos_dict = {
-        (100, 5, 4): -0.28,
-        (100, 10, 4): -0.28,
-        (100, 50, 4): -0.28,
-        (100, 5, 8): -0.28,
-        (100, 5, 128): -0.28,
-        (1000, 5, 4): -0.33,
+    (10000, 10, 4): "a",
+    (10000, 50, 4): "b",
+    (10000, 5, 8): "c",
+    (10000, 5, 128): "d",
+    (100, 5, 4): "e",
+    (1000, 5, 4): "f",
     }
 
-    plt.legend(fontsize=28, handlelength=1, handletextpad=0.5)
+
+    xtextpos_dict = {
+        (10000, 10, 4): -0.34,
+        (10000, 50, 4): -0.34,
+        (10000, 5, 8): -0.34,
+        (10000, 5, 128): -0.34,
+        (100, 5, 4): -0.28,
+        (1000, 5, 4): -0.28,
+    }
+
+    # plt.legend(fontsize=28, handlelength=1, handletextpad=0.5)
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
 
@@ -444,7 +503,7 @@ def plot_distribution(N, ED, beta,thesis_flag = False):
             Nn=N, EDn=ED, betan=beta)
 
     else:
-        Nlabel_dict = {100:"10^2",1000:"10^3"}
+        Nlabel_dict = {100:"10^2",1000:"10^3",10000:"10^4"}
         Nlabel = Nlabel_dict[N]
         fignum = fignum_dict[(N,ED, beta)]
         ax.text(xtextpos_dict[(N,ED, beta)], 1.15, fr'({fignum}) $N = {Nlabel}$, $\mathbb{{E}}[D] = {ED}$, $\beta = {beta}$', transform=ax.transAxes,
@@ -654,11 +713,10 @@ if __name__ == '__main__':
     #                   (100, 5, 128),
     #                   (1000, 5, 4)]:
     #     plot_distribution(N,ED,beta,thesis_flag=True)
-    # plot_distribution(100,5,4)
+    plot_distribution(10000,5,128,thesis_flag=False)
 
     # Figure 2 (b)
-    plot_distribution_10000node(10000, 5.0, 4,thesis_flag=False)
-
+    # plot_distribution_10000node(10000, 5.0, 4,thesis_flag=False)
     # plot_distribution_diffN(ED=10, beta=8)
 
 
