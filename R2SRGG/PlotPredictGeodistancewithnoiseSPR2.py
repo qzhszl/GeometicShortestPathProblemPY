@@ -318,12 +318,10 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrando
 
         PrecisonRandom_specificnoise = []
         for ExternalSimutime in range(1):
-
             if (Edindex, betaindex) in [(0,2)]:
                 precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\test\\PrecisionRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
                     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
                 PrecisonRandom_specificnoise = np.loadtxt(precision_Geodis_Name)
-
                 print(PrecisonRandom_specificnoise[PrecisonRandom_specificnoise>0])
             else:
                 try:
@@ -874,12 +872,12 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_wi
         figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}Nwithrandom.svg".format(
             EDn=ED, betan=beta)
 
-    plt.savefig(
-        figname,
-        format="svg",
-        bbox_inches='tight',  # 紧凑边界
-        transparent=True  # 背景透明，适合插图叠加
-    )
+    # plt.savefig(
+    #     figname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
     plt.show()
     plt.close()
     print(exemptionlist)
@@ -1173,9 +1171,9 @@ if __name__ == '__main__':
     # for Edindex,betaindex in [(1,2),(1,6),(1,1),(2,2),(3,2)]:
     #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex, legendpara=0,theis_flag=True)
 
-    for Edindex in [0]:
-        for betaindex in [2]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara=1,theis_flag=False)
+    # for Edindex in [0]:
+    #     for betaindex in [2]:
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara=1,theis_flag=False)
 
     """
     Plot figure for netsci
