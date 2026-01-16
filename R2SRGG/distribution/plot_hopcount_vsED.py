@@ -568,11 +568,31 @@ def plot_hopcount_vs_realED_vsPiet(N, beta_vec):
     a = 1
     b = 0.5
     f3 = a * np.log(N) / np.log(k_vals) + b
+    f4 = np.log(N) / np.log(k_vals) + 0.5
+
+    E_logW = []
+
+    for mu in k_vals:
+        val = estimate_E_logW(mu, num_sim=5000, max_gen=25)
+        E_logW.append(val)
+
+    plt.figure()
+    plt.plot(k_vals, E_logW, marker='o')
+    plt.xlabel("Mean degree μ")
+    plt.ylabel(r"$E[\log W \mid W>0]$")
+    plt.title("Curious mean vs μ (Poisson Galton–Watson)")
+    plt.show()
+
+    E_logW = np.array(E_logW)
+
+    f4  = np.log(N) / np.log(k_vals) +0.5 - ((0.5772156649-2*np.log(1-1/k_vals))/np.log(k_vals))- 2*E_logW / np.log(k_vals)
 
     beta = 2.5
     # plt.plot(k_vals, f1, label=r'$f_1(k) = \frac{\log n}{\log \log n}$', linestyle='--', color='orange')
     # plt.plot(k_vals, f2, label=r'$f_2(k) = 1 + \frac{n}{k}$', color='green')
-    plt.plot(k_vals, f3, "-", linewidth=2, label=rf'${a}\ln{{N}}/ \ln{{\langle D\rangle}}$+{b}',
+    # plt.plot(k_vals, f3, "-", linewidth=2, label=rf'${a}\ln{{N}}/ \ln{{\langle D\rangle}}$+{b}',
+    #          zorder=200)
+    plt.plot(k_vals, f4, "-", linewidth=2, label=rf'${a}\ln{{N}}/ \ln{{\langle D\rangle}}$+{b}',
              zorder=200)
 
     # a = 1.1
@@ -631,6 +651,25 @@ def plot_hopcount_vs_realED_vsPiet(N, beta_vec):
     # 清空图像，以免影响下一个图
     plt.close()
 
+def estimate_E_logW(mu, num_sim=5000, max_gen=25):
+    """
+    Estimate E[log W | W>0] for Poisson(mu) Galton–Watson process
+    """
+    logs = []
+
+    for _ in range(num_sim):
+        Z = 1  # Z_0 = 1
+        for _ in range(max_gen):
+            if Z == 0:
+                break
+            Z = np.random.poisson(mu, Z).sum()
+
+        if Z > 0:
+            W_hat = Z / (mu ** max_gen)
+            if W_hat > 0:
+                logs.append(np.log(W_hat))
+
+    return np.mean(logs)
 
 
 def plot_hopcount_vs_ED_test(N, beta_vec):
