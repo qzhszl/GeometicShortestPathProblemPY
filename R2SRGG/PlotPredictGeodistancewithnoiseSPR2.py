@@ -1137,8 +1137,8 @@ if __name__ == '__main__':
 
 
 
-    # for Edindex,betaindex in [(1,1),(1,6),(1,2),(2,2),(3,2)]:
-    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=0,theis_flag=True)
+    for Edindex,betaindex in [(1,1),(1,6),(1,2),(2,2),(3,2)]:
+        plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=0,theis_flag=False)
     for Edindex in [0]:
         for betaindex in [2]:
             plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrandom(Edindex, betaindex, legendpara=1,theis_flag=False)
@@ -1170,8 +1170,8 @@ if __name__ == '__main__':
     """
     STEP 2 Plot Figure recall : bar figure
     """
-    # for Edindex,betaindex in [(1,2),(1,6),(1,1),(2,2),(3,2)]:
-    #     plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex, legendpara=0,theis_flag=True)
+    for Edindex,betaindex in [(1,2),(1,6),(1,1),(2,2),(3,2)]:
+        plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex, legendpara=0,theis_flag=False)
 
     for Edindex in [0]:
         for betaindex in [2]:
