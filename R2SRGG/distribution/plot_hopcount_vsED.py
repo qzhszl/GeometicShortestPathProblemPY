@@ -359,7 +359,7 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
             for ExternalSimutime in range(1):
                 try:
                     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
-                    filefolder_name = "E:\\GSPP_data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
+                    # filefolder_name = "E:\\GSPP_data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\hopandedgelength\\"
                     hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
                         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                     hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
@@ -373,7 +373,7 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
                     real_ave_degree_vec.append(real_avg)
                 except:
                     filefolder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\test\\"
-                    filefolder_name = "E:\\GSPP_data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\test\\"
+                    # filefolder_name = "E:\\GSPP_data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\test\\"
                     hopcount_vec_name = filefolder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
                         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
                     hopcount_for_a_para_comb_10times = np.loadtxt(hopcount_vec_name)
@@ -397,7 +397,7 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
             # print(SP_hopcount_std)
             # data_dict[beta] =(real_ave_degree_vec,SP_hopcount_ave,SP_hopcount_std)
 
-        if beta ==128:
+        if beta ==128 or beta==2.5:
             print(real_ave_degree_vec)
             print(SP_hopcount_ave)
             # x_128 = [x-4.512 for x in real_ave_degree_vec]
@@ -540,6 +540,96 @@ def plot_hopcount_vs_realED_finalversion(N, beta_vec):
     plt.close()
 
 
+
+
+def plot_hopcount_vs_realED_vsPiet(N, beta_vec):
+
+    x = [
+    0.8494, 1.0428, 1.1242, 1.3898, 1.6662, 2.0778, 2.6166,
+    2.9616, 3.9998, 6.5578, 10.1302, 16.6914, 26.197, 41.4038,
+    65.1388, 101.3464, 156.6434, 240.8744, 365.5722, 548.1062,
+    811.3048, 1180.0008, 1683.7022, 2344.7662, 3191.8418,
+    4192.7072, 5316.3456, 6447.6906, 7495.6608, 8357.897]
+    y = [np.float64(3.7979611650485436), np.float64(8.582271406215067), np.float64(18.543789892225593),
+     np.float64(32.23448137765318), np.float64(23.064658192373138), np.float64(15.864545818327331),
+     np.float64(12.220566169850954), np.float64(10.937575030012004), np.float64(8.52836985890123),
+     np.float64(6.277238619309655), np.float64(5.08852836613089), np.float64(4.203284598437813),
+     np.float64(3.6616880513231758), np.float64(3.244424352019289), np.float64(2.908862034239678),
+     np.float64(2.6813353566009104), np.float64(2.4677780036592805), np.float64(2.2378561180569787),
+     np.float64(2.066625220184437), np.float64(2.0064434350903135), np.float64(2.0003259098316133), np.float64(2.0),
+     np.float64(2.0), np.float64(2.0), np.float64(2.0), np.float64(2.0), np.float64(2.0), np.float64(2.0),
+     np.float64(2.0), np.float64(2.0)]
+
+    plt.plot(x,y)
+
+    k_vals = np.linspace(1.1, 15000, 40000)
+    # 曲线 3: A+b*log(n) / log(k)
+    # # f3 = 1.3 * np.log(N) / np.log(k_vals)
+    a = 1
+    b = 0.5
+    f3 = a * np.log(N) / np.log(k_vals) + b
+
+    beta = 2.5
+    # plt.plot(k_vals, f1, label=r'$f_1(k) = \frac{\log n}{\log \log n}$', linestyle='--', color='orange')
+    # plt.plot(k_vals, f2, label=r'$f_2(k) = 1 + \frac{n}{k}$', color='green')
+    plt.plot(k_vals, f3, "-", linewidth=2, label=rf'${a}\ln{{N}}/ \ln{{\langle D\rangle}}$+{b}',
+             zorder=200)
+
+    # a = 1.1
+    # f3 = a * np.log(N) / np.log(k_vals)
+    #
+    # beta = 2.5
+    # # plt.plot(k_vals, f1, label=r'$f_1(k) = \frac{\log n}{\log \log n}$', linestyle='--', color='orange')
+    # # plt.plot(k_vals, f2, label=r'$f_2(k) = 1 + \frac{n}{k}$', color='green')
+    # plt.plot(k_vals, f3, "-", linewidth=2, label=rf'${a}\ln{{N}}/ \ln{{\langle D\rangle}}$',
+    #          color=colors[beta_vec.index(beta)], zorder=200)
+
+
+    # 曲线 4: <h> ~ (<k> - <k>_c)^(-a)
+    # beta = 128
+    # kc = 4.512
+    # k_vals2 = np.linspace(4.6, 15000, 20000)
+    # a = 92
+    # b = 0.6
+    # f4 = a * (k_vals2 - kc) ** (-0.5)+b
+    # plt.plot(k_vals2, f4, linewidth=2, label=rf'${a}(\langle D\rangle - 4.5)^{{-0.5}}+{b}$',
+    #          color=colors[beta_vec.index(beta)],zorder=200)
+
+
+
+
+
+
+
+    # plt.xticks(np.arange(0, 50, 10))
+    plt.ylim([0.8,500])
+    # plt.xlim([0.3, 50000])
+    # plt.legend(fontsize=26, bbox_to_anchor=(0.3, 0.62),markerscale = 1, handlelength = 1,labelspacing = 0.2, handletextpad = 0.3, borderpad = 0.1, borderaxespad=0.1)
+
+
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.xlabel(r'$\langle D \rangle$', fontsize=36)
+    plt.ylabel(r'$\langle h \rangle$', fontsize=36)
+    plt.xticks(fontsize=36)
+    plt.yticks(fontsize=36)
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+
+    # text = r"$N = 10^4$" "\n" r"$\beta = 4$"
+    # plt.text(
+    #     0.25, 0.65,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
+    #     text,
+    #     transform=ax.transAxes,  # 使用轴坐标
+    #     fontsize=20,  # 字体大小
+    #     ha='left',  # 水平居中对齐
+    #     va='bottom'  # 垂直对齐方式
+    # )
+    # plt.title("average hopcount vs expected degree")
+
+    # )
+    plt.show()
+    # 清空图像，以免影响下一个图
+    plt.close()
 
 
 
@@ -1158,7 +1248,7 @@ if __name__ == '__main__':
     """
     # plot_hopcount_vs_realED(10000,[2.5,3,4,8,128])
 
-    plot_hopcount_vs_realED_finalversion(10000,[2.5,3,4,8,128])
+    # plot_hopcount_vs_realED_finalversion(10000,[2.5,3,4,8,128])
 
     # text_hop_for_beta128()
     # test2()
@@ -1167,3 +1257,8 @@ if __name__ == '__main__':
     # plot_hopcount_vs_ED_test2(10000, [1024])
 
     # smallbeta_fit()
+
+    plot_hopcount_vs_realED_vsPiet(10000, [2.5])
+
+
+
