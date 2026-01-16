@@ -81,7 +81,7 @@ def plot_rayleigh_function():
     # 右图：不同 d0
     plt.subplot(1, 2, 2)
     for d0 in d0_values:
-        f = beta_fixed * np.exp(-(d / d0) ** 2)
+        f = beta_fixed * np.exp(-(d / d0) ** 1)
         plt.plot(d, f, label=f'd0={d0}')
     plt.xlabel('d')
     plt.ylabel('f(d)')
@@ -159,11 +159,12 @@ def R2SRGG_waman(N, avg, eta, rg, beta=1, Coorx=None, Coory=None, SaveNetworkPat
 
 
 if __name__ == '__main__':
-    rg = RandomGenerator(-12)
-    for i in range(random.randint(1, 1000)):
-        rg.ran1()
+    # rg = RandomGenerator(-12)
+    # for i in range(random.randint(1, 1000)):
+    #     rg.ran1()
+    #
+    # G,xx,yy = R2SRGG_waman(1000,100,2,rg)
+    # real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    # print("real ED:", real_avg)
 
-    G,xx,yy = R2SRGG_waman(1000,100,2,rg)
-    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    print("real ED:", real_avg)
-
+    plot_rayleigh_function()

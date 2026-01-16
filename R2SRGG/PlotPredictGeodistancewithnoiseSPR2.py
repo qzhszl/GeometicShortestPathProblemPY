@@ -276,6 +276,15 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrando
                     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime,no2=noise_amplitude)
                 Precison_RGG_5_times = np.loadtxt(precision_RGG_Name)
                 PrecisonRGG_specificnoise.extend(Precison_RGG_5_times)
+
+                print((noise_amplitude,ExternalSimutime))
+                precision_RGG_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+                    EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
+                Precison_RGG_5_times1 = np.loadtxt(precision_RGG_Name)
+
+                print(Precison_RGG_5_times)
+                print(Precison_RGG_5_times1)
+
             except FileNotFoundError:
                 exemptionlist.append((ED,beta,noise_amplitude,ExternalSimutime))
         # nonzero_indices_geo = find_nonzero_indices(PrecisonRGG_specificnoise)
@@ -283,6 +292,8 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrando
         # PrecisonRGG_specificnoise = [PrecisonRGG_specificnoise[x] for x in nonzero_indices_geo]
         RGG_precision_list_all_ave.append(np.mean(PrecisonRGG_specificnoise))
         RGG_precision_list_all_std.append(np.std(PrecisonRGG_specificnoise))
+
+
     # print("lenpre", len(PrecisonRGG_specificnoise))
         PrecisonSRGG_specificnoise = []
         for ExternalSimutime in range(20):
@@ -318,12 +329,10 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_withrando
 
         PrecisonRandom_specificnoise = []
         for ExternalSimutime in range(1):
-
-            if (Edindex, betaindex) in [(0,2)]:
+            if (Edindex, betaindex) in [(0,-1)]:
                 precision_Geodis_Name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\test\\PrecisionRandomED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
                     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime, no2=noise_amplitude)
                 PrecisonRandom_specificnoise = np.loadtxt(precision_Geodis_Name)
-
                 print(PrecisonRandom_specificnoise[PrecisonRandom_specificnoise>0])
             else:
                 try:
@@ -874,12 +883,12 @@ def plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_wi
         figname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\RecallGeoVsRGGSRGGED{EDn}Beta{betan}Nwithrandom.svg".format(
             EDn=ED, betan=beta)
 
-    plt.savefig(
-        figname,
-        format="svg",
-        bbox_inches='tight',  # 紧凑边界
-        transparent=True  # 背景透明，适合插图叠加
-    )
+    # plt.savefig(
+    #     figname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
     plt.show()
     plt.close()
     print(exemptionlist)
@@ -1173,9 +1182,9 @@ if __name__ == '__main__':
     for Edindex,betaindex in [(1,2),(1,6),(1,1),(2,2),(3,2)]:
         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex, legendpara=0,theis_flag=False)
 
-    for Edindex in [0]:
-        for betaindex in [2]:
-            plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara=1,theis_flag=False)
+    # for Edindex in [0]:
+    #     for betaindex in [2]:
+    #         plot_predict_geodistance_Vs_reconstructionRGG_SRGG_withnoise_SP_R2_recall_withrandom(Edindex, betaindex,legendpara=1,theis_flag=False)
 
     """
     Plot figure for netsci

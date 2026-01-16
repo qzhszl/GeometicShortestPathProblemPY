@@ -478,7 +478,7 @@ def distance_inlargeSRGG_oneSP(N, ED, beta, eta, rg, ExternalSimutime):
     # print("LCC", LCC_number)
 
     # Randomly choose 100 connectede node pairs
-    nodepair_num = 20000
+    nodepair_num = 200000
     unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
     filename_selecetednodepair = file_folder_name + "selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
         Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
@@ -546,33 +546,33 @@ def distance_inlargeSRGG_oneSP(N, ED, beta, eta, rg, ExternalSimutime):
             ave_baseline_deviation.append(np.mean(baseline_deviations_for_a_nodepair))
             baseline_deviation_vec = baseline_deviation_vec + baseline_deviations_for_a_nodepair
 
-    deviation_vec_name = file_folder_name + "deviation_shortest_path_nodes_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    deviation_vec_name = file_folder_name + "deviation_shortest_path_nodes_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
     np.savetxt(deviation_vec_name, deviation_vec)
-    baseline_deviation_vec_name = file_folder_name + "deviation_baseline_nodes_num_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    baseline_deviation_vec_name = file_folder_name + "deviation_baseline_nodes_num_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
     np.savetxt(baseline_deviation_vec_name, baseline_deviation_vec)
     # For each node pair:
-    ave_deviation_name = file_folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    ave_deviation_name = file_folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
     np.savetxt(ave_deviation_name, ave_deviation)
-    max_deviation_name = file_folder_name + "max_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    max_deviation_name = file_folder_name + "max_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
     np.savetxt(max_deviation_name, max_deviation)
-    min_deviation_name = file_folder_name + "min_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    min_deviation_name = file_folder_name + "min_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
     np.savetxt(min_deviation_name, min_deviation)
-    ave_baseline_deviation_name = file_folder_name + "ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    ave_baseline_deviation_name = file_folder_name + "ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
     np.savetxt(ave_baseline_deviation_name, ave_baseline_deviation)
-    length_geodesic_name = file_folder_name + "length_geodesic_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    length_geodesic_name = file_folder_name + "length_geodesic_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
     np.savetxt(length_geodesic_name, length_geodesic)
-    SPnodenum_vec_name = file_folder_name + "SPnodenum_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    SPnodenum_vec_name = file_folder_name + "SPnodenum_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
     np.savetxt(SPnodenum_vec_name, SPnodenum_vec, fmt="%i")
-    hopcount_Name = file_folder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    hopcount_Name = file_folder_name + "hopcount_sp_N{Nn}_ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
     np.savetxt(hopcount_Name, hopcount_vec)
 
 
@@ -747,17 +747,18 @@ def distance_inSRGG_oneSP(N, input_ED, beta, eta, ExternalSimutime):
 
 def compute_distance():
     tasks = []
-    Nvec = [100]
-    avg_vec = [5, 10, 100]
-    eta = 2
+    Nvec = [10000]
+    avg_vec = [5, 10, 50, 100]
+    eta_vec = [1, 2, 10]
     beta = 1
     for N in Nvec:
         for avg in avg_vec:
-            # input_ED_vec = np.arange(2, 6, 0.1)
-            # x_1dec = [float(f"{v:.1f}") for v in input_ED_vec]
-            tasks.append((N, avg, beta, eta, 0))
+            for eta in eta_vec:
+                # input_ED_vec = np.arange(2, 6, 0.1)
+                # x_1dec = [float(f"{v:.1f}") for v in input_ED_vec]
+                tasks.append((N, avg, beta, eta, 0))
 
-    with mp.Pool(processes=2) as pool:
+    with mp.Pool(processes=12) as pool:
         pool.starmap(distance_inSRGG_oneSP, tasks)
 
     print("all mission completed", flush=True)
@@ -773,3 +774,4 @@ if __name__ == '__main__':
     step2
     """
     compute_distance()
+
