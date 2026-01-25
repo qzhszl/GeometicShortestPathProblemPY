@@ -450,6 +450,19 @@ def plot_distribution(N, ED, beta,thesis_flag = False):
         ax.set_ylim(ymin, current_ylim[1])  # 保持最大值不变
 
 
+    elif N == 100 and ED == 5 and beta==4:
+        plt.yscale('log')
+        ymin = 0.01  # 设置最低点
+        current_ylim = ax.get_ylim()  # 获取当前的 y 轴范围
+        ax.set_ylim(ymin, current_ylim[1])  # 保持最大值不变
+
+    elif N == 1000 and ED == 5 and beta==4:
+        plt.yscale('log')
+        ymin = 0.01  # 设置最低点
+        current_ylim = ax.get_ylim()  # 获取当前的 y 轴范围
+        ax.set_ylim(ymin, current_ylim[1])  # 保持最大值不变
+
+
     plt.xlabel(r'x',fontsize = 32)
     plt.ylabel(r'$f_{d(q,\gamma(i,j))}(x)$',fontsize = 32)
     plt.xticks(fontsize=28)
@@ -490,11 +503,11 @@ def plot_distribution(N, ED, beta,thesis_flag = False):
         (10000, 50, 4): -0.34,
         (10000, 5, 8): -0.34,
         (10000, 5, 128): -0.34,
-        (100, 5, 4): -0.28,
-        (1000, 5, 4): -0.28,
+        (100, 5, 4): -0.34,
+        (1000, 5, 4): -0.34,
     }
 
-    # plt.legend(fontsize=28, handlelength=1, handletextpad=0.5)
+    # plt.legend(fontsize=26, handlelength=1, handletextpad=0.5, frameon=False,loc='right',bbox_to_anchor=(1.04, 0.64))
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
 
@@ -713,7 +726,12 @@ if __name__ == '__main__':
     #                   (100, 5, 128),
     #                   (1000, 5, 4)]:
     #     plot_distribution(N,ED,beta,thesis_flag=True)
-    plot_distribution(10000,5,128,thesis_flag=False)
+
+    for (N,ED,beta) in [(100, 5, 4),
+                      ]:
+        plot_distribution(N,ED,beta,thesis_flag=False)
+
+    # plot_distribution(10000,5,128,thesis_flag=False)
 
     # Figure 2 (b)
     # plot_distribution_10000node(10000, 5.0, 4,thesis_flag=False)

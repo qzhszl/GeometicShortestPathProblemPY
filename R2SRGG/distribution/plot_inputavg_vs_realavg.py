@@ -81,6 +81,19 @@ def plot_inputavg_vs_realavg(beta,thesis_flag):
                         2783.4186,
                         3911.416, 5253, 6700, 8029, 8990, 9552, 9820,9931,9973,9989,9996]
 
+        x = np.array(x)
+        y = np.array(real_avg_vec)
+
+        mask = y < 100  # 只取线性区
+        x_fit = x[mask]
+        y_fit = y[mask]
+
+        k, b = np.polyfit(x_fit, y_fit, 1)
+
+        print("斜率 k =", k)
+        print("截距 b =", b)
+
+        fig, ax = plt.subplots(figsize=(6, 4.5))
 
         # real_avg_vec =[]
         # N = 10000
@@ -92,7 +105,7 @@ def plot_inputavg_vs_realavg(beta,thesis_flag):
         #     print("real ED:", real_avg)
         #     real_avg_vec.append(real_avg)
         # print(real_avg_vec)
-        fig, ax = plt.subplots(figsize=(6, 4.5))
+
         text = r"$N = 10^4$" "\n" r"$\beta = 4$"
         plt.text(
             0.1, 0.65,  # 文本位置（轴坐标，0.5 表示图中央，1.05 表示轴上方）
@@ -111,7 +124,9 @@ def plot_inputavg_vs_realavg(beta,thesis_flag):
         x_fit = np.linspace(min(x), 9999, 500)
         y_fit = power_law(x_fit, *popt)
 
-
+        x1 = np.linspace(0, 10000, 100)
+        y1 = 0.7 * x1
+        plt.plot(x1, y1, label = "y = 0.7x")
 
         if thesis_flag:
             plt.xlabel(r'Expected degree, $E[D]$', fontsize=26)
@@ -123,6 +138,7 @@ def plot_inputavg_vs_realavg(beta,thesis_flag):
         plt.xticks(fontsize=28)
         plt.yticks(fontsize=28)
 
+        plt.legend()
         # picname = filefolder+ "avgvsEkN{Nn}Beta{betan}2.pdf".format(
         #     Nn=10000, betan=beta)
         # plt.savefig(picname, format='pdf', bbox_inches='tight', dpi=600)
