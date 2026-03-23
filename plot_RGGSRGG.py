@@ -74,12 +74,12 @@ def generate_and_plot_SRGG(N, avg, beta):
 
     colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494']
 
-    nx.draw_networkx_edges(G, pos, edge_color='#C89FBF', width=3)
+    nx.draw_networkx_edges(G, pos, edge_color='#C89FBF', width=1)
 
-    nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='#62ABC7', width=5)
+    nx.draw_networkx_edges(G, pos, edgelist=diameter_edges, edge_color='#62ABC7', width=1)
     # 绘制空心节点
     nx.draw_networkx_nodes(G, pos,
-                           node_size=80,
+                           node_size=60,
                            node_color='none',  # 空心节点
                            edgecolors='#7A7DB1',  # 圆圈颜色
                            linewidths=5)
@@ -361,12 +361,12 @@ def generate_plot_model_graph():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # generate_and_plot_SRGG(200,10,4)
+    generate_and_plot_SRGG(2000,10,128)
 
     # Figure 2 (a) ---------------------------------------------------------
     # generate_and_plot_SRGG_2(200, 8, 8)
 
-    generate_and_plot_SRGG_3(1000, 15, 8)
+    # generate_and_plot_SRGG_3(1000, 15, 8)
 
 
     # generate_plot_model_graph()
