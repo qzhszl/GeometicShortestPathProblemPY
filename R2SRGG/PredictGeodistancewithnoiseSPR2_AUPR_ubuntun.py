@@ -29,7 +29,7 @@ import random
 import multiprocessing as mp
 # import math
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 # import seaborn as sns
 # import pandas as pd
 
@@ -105,15 +105,15 @@ def generate_r2SRGG_mothernetwork(Edindex, betaindex):
 def generate_r2SRGG_withdiffinput_clu(ED, beta, noise_amplitude):
     # generate 100 SRGG FOR EACH ED, beta and the amplitude of node
     N = 100
-    ED_list = [2, 3.5, 100, 1000, N - 1]  # Expected degrees
-    # ED_list = [2, 4, 8, 16, 32, 64, 128]  # Expected degrees
-    # # ED_list = [256,512,1024]
-    ED = ED_list[Edindex]
+    # ED_list = [2, 3.5, 100, 1000, N - 1]  # Expected degrees
+    # # ED_list = [2, 4, 8, 16, 32, 64, 128]  # Expected degrees
+    # # # ED_list = [256,512,1024]
+    # ED = ED_list[Edindex]
     print("ED:", ED, flush=True)
 
-    beta_list = [8, 32, 128]
-    # beta_list = [4,8,128]
-    beta = beta_list[betaindex]
+    # beta_list = [8, 32, 128]
+    # # beta_list = [4,8,128]
+    # beta = beta_list[betaindex]
     print("beta:", beta, flush=True)
 
     print("noise_amplitude:", noise_amplitude, flush=True)
@@ -315,25 +315,36 @@ def predict_geodistance_AUPRC_withnoise_SP_R2_clu(ED, beta, noise_amplitude, Ext
 
 
 
-    try:
-        FileOriNetworkName = "/home/qzh/network/NetworkOriginalED{EDn}Beta{betan}Noise0.txt".format(
-            EDn=ED, betan=beta)
-        G = loadSRGGandaddnode(N, FileOriNetworkName)
+    # try:
+    #     FileOriNetworkName = "/home/qzh/network/NetworkOriginalED{EDn}Beta{betan}Noise0.txt".format(
+    #         EDn=ED, betan=beta)
+    #     G = loadSRGGandaddnode(N, FileOriNetworkName)
+    #
+    #     # load coordinates with noise
+    #     Coorx = []
+    #     Coory = []
+    #     FileOriNetworkCoorName = "/home/qzh/network/CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt".format(
+    #         EDn=ED, betan=beta, no=noise_amplitude)
+    #     with open(FileOriNetworkCoorName, "r") as file:
+    #         for line in file:
+    #             if line.startswith("#"):
+    #                 continue
+    #             data = line.strip().split("\t")  # 使用制表符分割
+    #             Coorx.append(float(data[0]))
+    #             Coory.append(float(data[1]))
+    # except:
+    #     print(fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, no data", flush=True)
 
-        # load coordinates with noise
-        Coorx = []
-        Coory = []
-        FileOriNetworkCoorName = "/home/qzh/network/CoorwithNoiseED{EDn}Beta{betan}Noise{no}.txt".format(
-            EDn=ED, betan=beta, no=noise_amplitude)
-        with open(FileOriNetworkCoorName, "r") as file:
-            for line in file:
-                if line.startswith("#"):
-                    continue
-                data = line.strip().split("\t")  # 使用制表符分割
-                Coorx.append(float(data[0]))
-                Coory.append(float(data[1]))
-    except:
-        print(fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, no data", flush=True)
+    rg = RandomGenerator(-12)
+    rseed = random.randint(0, 100)
+    print(rseed)
+    for i in range(rseed):
+        rg.ran1()
+
+    noise_amplitude = 0
+    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+
+
 
     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
     print(fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, realED:{real_avg}",
@@ -420,7 +431,8 @@ def predict_geodistance_AUPRC_withnoise_SP_R2_clu(ED, beta, noise_amplitude, Ext
             prauc_Geo = auc(recalls, precisions)
             print(prauc_Geo)
 
-
+            plt.plot(recalls,precisions)
+            plt.show()
             # Store precision and recall values
             PRAUC_Geodis_nodepair.append(prauc_Geo)
             print(
@@ -445,60 +457,60 @@ def predict_geodistance_AUPRC_withnoise_SP_R2_clu(ED, beta, noise_amplitude, Ext
     # AUCWithoutnorMean = np.mean(PRAUC_nodepair[~np.isnan(PRAUC_nodepair)])
     # AUCWithoutnorStd = np.std(PRAUC_nodepair[~np.isnan(PRAUC_nodepair)])
 
-    # local file path: D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\
-
-    # precision_RGG_Name = "/home/qzh/data/PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-    #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-    # np.savetxt(precision_RGG_Name, Precision_RGG_nodepair)
+    # # local file path: D:\\data\\geometric shortest path problem\\EuclideanSRGG\\ShortestPathAsActualCase\\Noise\\
     #
-    # recall_RGG_Name = "/home/qzh/data/RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-    #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-    # np.savetxt(recall_RGG_Name, Recall_RGG_nodepair)
-
-    precision_Geodis_Name = "/home/qzh/data2/PRAUCGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-    np.savetxt(precision_Geodis_Name, PRAUC_Geodis_nodepair)
-
-    # recall_Geodis_Name = "/home/qzh/data/RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-    #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-    # np.savetxt(recall_Geodis_Name, Recall_Geodis_nodepair)
-
-    # precision_SRGG_Name = "/home/qzh/data/PrecisionSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-    #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-    # np.savetxt(precision_SRGG_Name, Precision_SRGG_nodepair)
+    # # precision_RGG_Name = "/home/qzh/data/PrecisionRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    # #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+    # # np.savetxt(precision_RGG_Name, Precision_RGG_nodepair)
+    # #
+    # # recall_RGG_Name = "/home/qzh/data/RecallRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    # #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+    # # np.savetxt(recall_RGG_Name, Recall_RGG_nodepair)
     #
-    # recall_SRGG_Name = "/home/qzh/data/RecallSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    # precision_Geodis_Name = "/home/qzh/data2/PRAUCGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
     #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-    # np.savetxt(recall_SRGG_Name, Recall_SRGG_nodepair)
-
-    NSPnum_nodepairName = "/home/qzh/data2/NSPNumED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-    np.savetxt(NSPnum_nodepairName, SPnum_nodepair, fmt="%i")
-
-    geodistance_between_nodepair_Name = "/home/qzh/data2/GeodistanceBetweenTwoNodesED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
-        EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
-    np.savetxt(geodistance_between_nodepair_Name, geodistance_between_nodepair)
-
+    # np.savetxt(precision_Geodis_Name, PRAUC_Geodis_nodepair)
+    #
+    # # recall_Geodis_Name = "/home/qzh/data/RecallGeodisED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    # #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+    # # np.savetxt(recall_Geodis_Name, Recall_Geodis_nodepair)
+    #
+    # # precision_SRGG_Name = "/home/qzh/data/PrecisionSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    # #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+    # # np.savetxt(precision_SRGG_Name, Precision_SRGG_nodepair)
+    # #
+    # # recall_SRGG_Name = "/home/qzh/data/RecallSRGGED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    # #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+    # # np.savetxt(recall_SRGG_Name, Recall_SRGG_nodepair)
+    #
+    # NSPnum_nodepairName = "/home/qzh/data2/NSPNumED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+    # np.savetxt(NSPnum_nodepairName, SPnum_nodepair, fmt="%i")
+    #
+    # geodistance_between_nodepair_Name = "/home/qzh/data2/GeodistanceBetweenTwoNodesED{EDn}Beta{betan}Noise{no}PYSimu{ST}.txt".format(
+    #     EDn=ED, betan=beta, no=noise_amplitude, ST=ExternalSimutime)
+    # np.savetxt(geodistance_between_nodepair_Name, geodistance_between_nodepair)
+    #
+    # # print(
+    # #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Pre RGG:{np.mean(Precision_RGG_nodepair)}",
+    # #     flush=True)
+    # # print(
+    # #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Recall RGG:{np.mean(Recall_RGG_nodepair)}",
+    # #     flush=True)
+    # # print(
+    # #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Pre SRGG:{np.mean(Precision_SRGG_nodepair)}",
+    # #     flush=True)
+    # # print(
+    # #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Recall SRGG::{np.mean(Recall_SRGG_nodepair)}",
+    # #     flush=True)
     # print(
-    #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Pre RGG:{np.mean(Precision_RGG_nodepair)}",
+    #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Pre Geodistance:{np.mean(PRAUC_Geodis_nodepair)}",
     #     flush=True)
-    # print(
-    #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Recall RGG:{np.mean(Recall_RGG_nodepair)}",
-    #     flush=True)
-    # print(
-    #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Pre SRGG:{np.mean(Precision_SRGG_nodepair)}",
-    #     flush=True)
-    # print(
-    #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Recall SRGG::{np.mean(Recall_SRGG_nodepair)}",
-    #     flush=True)
-    print(
-        fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Pre Geodistance:{np.mean(PRAUC_Geodis_nodepair)}",
-        flush=True)
-    # print(
-    #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Recall Geodistance:{np.mean(Recall_Geodis_nodepair)}",
-    #     flush=True)
-
-    # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
+    # # print(
+    # #     fr"inputpara:ED:{ED},beta:{beta},noise:{noise_amplitude},simu:{ExternalSimutime}, Mean Recall Geodistance:{np.mean(Recall_Geodis_nodepair)}",
+    # #     flush=True)
+    #
+    # # print("Standard Deviation of AUC Without Normalization:", np.std(PRAUC_nodepair))
 
 
 
@@ -958,14 +970,14 @@ if __name__ == '__main__':
     #         generate_r2SRGG_mothernetwork(i,j)
 
     # STEP 1 generate a lot of SRGG and SRGG with noise
-    for Edindex in range(1):
-        for betaindex in range(1):
-            generate_r2SRGG_mothernetwork(Edindex, betaindex)
-    for Edindex in range(1):
-        for betaindex in range(1):
-            # for noise_amplitude in [1]:
-            for noise_amplitude in [0, 0.001,0.01,0.1,1]:
-                generate_r2SRGG_withdiffinput_clu(Edindex, betaindex, noise_amplitude)
+    # for Edindex in range(1):
+    #     for betaindex in range(1):
+    #         generate_r2SRGG_mothernetwork(Edindex, betaindex)
+    # for Edindex in range(1):
+    #     for betaindex in range(1):
+    #         # for noise_amplitude in [1]:
+    #         for noise_amplitude in [0, 0.001,0.01,0.1,1]:
+    #             generate_r2SRGG_withdiffinput_clu(Edindex, betaindex, noise_amplitude)
 
     # STEP 1.2 generate a lot of SRGG and SRGG with noise for cluster
     # ED = sys.argv[1]
