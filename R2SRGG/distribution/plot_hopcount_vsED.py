@@ -560,30 +560,132 @@ def plot_hopcount_vs_realED_vsPiet(N, beta_vec):
      np.float64(2.0), np.float64(2.0), np.float64(2.0), np.float64(2.0), np.float64(2.0), np.float64(2.0),
      np.float64(2.0), np.float64(2.0)]
 
-    plt.plot(x,y)
+    plt.plot(x,y,label = "simulation")
 
-    k_vals = np.linspace(1.1, 15000, 40000)
+
+
+    def safe_simulate_log_w(lam, num_samples=10000):
+        if lam <= 1.0: return None
+
+        log_w_results = []
+        # 存活概率 (Survival probability) eta = 1 - zeta
+        # zeta 是方程 zeta = exp(lam * (zeta - 1)) 的根
+        # 这里通过模拟自然筛选 W > 0
+
+        for _ in range(num_samples):
+            z = 1.0
+            gen = 0
+            max_gen = 20
+            is_extinct = False
+
+            while gen < max_gen:
+                mu = lam * z
+                # 溢出保护与正态近似
+                if mu > 1e9:
+                    # 当均值很大时，Z_n/lambda^n 几乎不再变化，视为已收敛
+                    break
+                else:
+                    z_next = np.random.poisson(mu)
+
+                if z_next == 0:
+                    is_extinct = True
+                    break
+
+                z = float(z_next)
+                gen += 1
+
+            if not is_extinct:
+                # W = Z_n / lam^gen
+                w = z / (lam ** (gen))
+                log_w_results.append(np.log(w))
+
+        return np.mean(log_w_results) if log_w_results else None
+
+    # # compute Elog(w)
+    # # 设定 lambda 范围：从 1.1 到 100
+    # lambdas = np.unique(np.concatenate([
+    #     np.linspace(1.1, 2, 10),
+    #     np.linspace(2, 10, 15),
+    #     np.linspace(10, 100, 20)
+    # ]))
+    #
+    # print("正在计算，请稍候...")
+    # expectations = [safe_simulate_log_w(l) for l in lambdas]
+    #
+    # # 理论渐近线: -1 / (2 * (lambda - 1))
+    # theory_x = np.linspace(1.1, 100, 200)
+    # theory_y = -1 / (2 * (theory_x - 1))
+    #
+    # # 绘图
+    # plt.figure(figsize=(12, 6), dpi=100)
+    # print(lambdas)
+    # print(expectations)
+    # plt.plot(lambdas, expectations, 'o', label='Monte Carlo Simulation', markersize=5, alpha=0.8)
+    #
+    # plt.plot(theory_x, theory_y, 'r--', label=r'Asymptotic Theory: $-\frac{1}{2(\lambda-1)}$', lw=2)
+    #
+    # plt.axhline(0, color='black', lw=0.5)
+    # plt.title(r'ER Graph Branching Process: $E[\log W | W > 0]$ vs $\lambda$', fontsize=14)
+    # plt.xlabel(r'Mean Degree $\lambda$', fontsize=12)
+    # plt.ylabel(r'Value', fontsize=12)
+    # plt.grid(True, linestyle=':', alpha=0.6)
+    # plt.legend()
+    #
+    # # 添加局部放大图，观察 lambda 在 1 到 5 之间的剧烈波动
+    # ax_inset = plt.axes([0.45, 0.2, 0.4, 0.3])
+    # ax_inset.plot(lambdas[lambdas < 10], np.array(expectations)[lambdas < 10], 'o-')
+    # ax_inset.set_title(r'Detail: $\lambda \in (1, 10]$')
+    # ax_inset.grid(True, alpha=0.3)
+    #
+    # plt.show()
+
+    # k_vals = np.linspace(1.1, 15000, 40000)
+
+    k_vals = [
+        1.1, 1.2, 1.3, 1.4, 1.5,
+        1.6, 1.7, 1.8, 1.9, 2.0,
+        2.57142857, 3.14285714, 3.71428571, 4.28571429, 4.85714286,
+        5.42857143, 6.0, 6.57142857, 7.14285714, 7.71428571,
+        8.28571429, 8.85714286, 9.42857143, 10.0,
+        14.73684211, 19.47368421, 24.21052632, 28.94736842,
+        33.68421053, 38.42105263, 43.15789474, 47.89473684,
+        52.63157895, 57.36842105, 62.10526316, 66.84210526,
+        71.57894737, 76.31578947, 81.05263158, 85.78947368,
+        90.52631579, 95.26315789, 100.0
+    ]
+    k_vals = np.array(k_vals)
+    k2 = np.linspace(110, 10000, 40)
+    k_vals = np.concatenate([k_vals, k2])
+
+
+    E_logW = [np.float64(1.1624671425531505), np.float64(0.6528654963569848), np.float64(0.3558671363410088),
+     np.float64(0.21235602767468104), np.float64(0.1023748170676225), np.float64(-0.0033005486076241406),
+     np.float64(-0.0539431145159829), np.float64(-0.0672025036028807), np.float64(-0.12085628009440792),
+     np.float64(-0.13525623022965172), np.float64(-0.17722504133268846), np.float64(-0.19679456093360773),
+     np.float64(-0.17707711891971806), np.float64(-0.14962127556541902), np.float64(-0.14227879399998086),
+     np.float64(-0.12785768079475204), np.float64(-0.10582650607709498), np.float64(-0.10772823626700838),
+     np.float64(-0.0908865861291084), np.float64(-0.08052607465146815), np.float64(-0.07700905353778012),
+     np.float64(-0.07127557328692788), np.float64(-0.06994957244950922), np.float64(-0.05662674250911393),
+     np.float64(-0.03943509332344465), np.float64(-0.03403303043503174), np.float64(-0.023138218874691082),
+     np.float64(-0.021036693774310545), np.float64(-0.0156983303496275), np.float64(-0.01537399712257907),
+     np.float64(-0.010774532034419037), np.float64(-0.009993855764014441), np.float64(-0.008021162301378684),
+     np.float64(-0.007381180861072187), np.float64(-0.005170937384500631), np.float64(-0.006951349694199275),
+     np.float64(-0.008037184103194487), np.float64(-0.005340537424547048), np.float64(-0.008860390328605288),
+     np.float64(-0.006002774579410996), np.float64(-0.006416800848932894), np.float64(-0.005235654563297551),
+     np.float64(-0.006161390994529131)]
+    E_logW = np.array(E_logW)
+
+    zeros = -1 / (2 * (k2 - 1))
+    E_logW = np.concatenate([E_logW, zeros])
+    print(len(k_vals))
+    print(len(E_logW))
+
     # 曲线 3: A+b*log(n) / log(k)
     # # f3 = 1.3 * np.log(N) / np.log(k_vals)
     a = 1
     b = 0.5
     f3 = a * np.log(N) / np.log(k_vals) + b
     f4 = np.log(N) / np.log(k_vals) + 0.5
-
-    E_logW = []
-
-    for mu in k_vals:
-        val = estimate_E_logW(mu, num_sim=5000, max_gen=25)
-        E_logW.append(val)
-
-    plt.figure()
-    plt.plot(k_vals, E_logW, marker='o')
-    plt.xlabel("Mean degree μ")
-    plt.ylabel(r"$E[\log W \mid W>0]$")
-    plt.title("Curious mean vs μ (Poisson Galton–Watson)")
-    plt.show()
-
-    E_logW = np.array(E_logW)
 
     f4  = np.log(N) / np.log(k_vals) +0.5 - ((0.5772156649-2*np.log(1-1/k_vals))/np.log(k_vals))- 2*E_logW / np.log(k_vals)
 
@@ -592,7 +694,7 @@ def plot_hopcount_vs_realED_vsPiet(N, beta_vec):
     # plt.plot(k_vals, f2, label=r'$f_2(k) = 1 + \frac{n}{k}$', color='green')
     # plt.plot(k_vals, f3, "-", linewidth=2, label=rf'${a}\ln{{N}}/ \ln{{\langle D\rangle}}$+{b}',
     #          zorder=200)
-    plt.plot(k_vals, f4, "-", linewidth=2, label=rf'${a}\ln{{N}}/ \ln{{\langle D\rangle}}$+{b}',
+    plt.plot(k_vals, f4, "-", linewidth=2, label='formula in Piet book',
              zorder=200)
 
     # a = 1.1
@@ -624,7 +726,7 @@ def plot_hopcount_vs_realED_vsPiet(N, beta_vec):
     # plt.xticks(np.arange(0, 50, 10))
     plt.ylim([0.8,500])
     # plt.xlim([0.3, 50000])
-    # plt.legend(fontsize=26, bbox_to_anchor=(0.3, 0.62),markerscale = 1, handlelength = 1,labelspacing = 0.2, handletextpad = 0.3, borderpad = 0.1, borderaxespad=0.1)
+    plt.legend(fontsize=26, bbox_to_anchor=(0.3, 0.62),markerscale = 1, handlelength = 1,labelspacing = 0.2, handletextpad = 0.3, borderpad = 0.1, borderaxespad=0.1)
 
 
     plt.xscale('log')
@@ -1287,7 +1389,7 @@ if __name__ == '__main__':
     """
     # plot_hopcount_vs_realED(10000,[2.5,3,4,8,128])
 
-    # plot_hopcount_vs_realED_finalversion(10000,[2.5,3,4,8,128])
+    # plot_hopcount_vs_realED_finalversion(10000,[2.5,3,4,8,128])   # use this one!
 
     # text_hop_for_beta128()
     # test2()
@@ -1298,6 +1400,7 @@ if __name__ == '__main__':
     # smallbeta_fit()
 
     plot_hopcount_vs_realED_vsPiet(10000, [2.5])
+
 
 
 

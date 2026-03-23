@@ -764,7 +764,7 @@ def plot_L_vs_beta(ED):
     # plt.xscale('log')
     # ax.spines['right'].set_visible(False)
     # ax.spines['top'].set_visible(False)
-    plt.xlabel(r'Temperature parameter, $\beta$', fontsize=26)
+    plt.xlabel(r'Inverse temperature, $\beta$', fontsize=26)
     plt.ylabel(r'Average stretch, $\langle L \rangle$', fontsize=26)
     plt.xscale('log')
     # plt.yscale('log')
@@ -3858,7 +3858,7 @@ if __name__ == '__main__':
 
 
     # (< s >(D)^{-1/2})^{-2} = c(D - D_c)
-    plot_L_with_avg_finalversion_beta128_fit_curve_head_straight_final()
+    # plot_L_with_avg_finalversion_beta128_fit_curve_head_straight_final()
 
     # < s >(D)^{-1/2} = 1 / (D - D_c) ^ {1 / 2}
     # plot_L_with_avg_finalversion_beta128_fit_curve_head_straight()
@@ -3896,7 +3896,7 @@ if __name__ == '__main__':
     """
     # STEP 3 plot L vs beta
     """
-    # plot_L_vs_beta(10)
+    plot_L_vs_beta(10)
 
 
 

@@ -452,16 +452,16 @@ def distance_inlargeSRGG_oneSP(N, ED, beta, eta, rg, ExternalSimutime):
     SPnodenum_vec = []
     LCC_vec = []
     second_vec = []
-    file_folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\waxman\\"
+    file_folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\waxman\\test\\"
     # file_folder_name = "/home/qzh/data/"
     # load a network
 
     G, Coorx, Coory = R2SRGG_waman(N, ED, eta, rg, beta)
-    FileNetworkName = file_folder_name +"network_N{Nn}ED{EDn}Beta{betan}.txt".format(
-        Nn=N, EDn=ED, betan=beta)
+    FileNetworkName = file_folder_name +"network_N{Nn}ED{EDn}eta{betan}.txt".format(
+        Nn=N, EDn=ED, betan=eta)
     nx.write_edgelist(G, FileNetworkName)
-    FileNetworkCoorName = file_folder_name + "network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
-        Nn=N, EDn=ED, betan=beta)
+    FileNetworkCoorName = file_folder_name + "network_coordinates_N{Nn}ED{EDn}eta{betan}.txt".format(
+        Nn=N, EDn=ED, betan=eta)
     with open(FileNetworkCoorName, "w") as file:
         for data1, data2 in zip(Coorx, Coory):
             file.write(f"{data1}\t{data2}\n")
@@ -480,9 +480,9 @@ def distance_inlargeSRGG_oneSP(N, ED, beta, eta, rg, ExternalSimutime):
     # Randomly choose 100 connectede node pairs
     nodepair_num = 200000
     unique_pairs = find_k_connected_node_pairs(G, nodepair_num)
-    filename_selecetednodepair = file_folder_name + "selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
-    np.savetxt(filename_selecetednodepair, unique_pairs, fmt="%i")
+    # filename_selecetednodepair = file_folder_name + "selected_node_pair_N{Nn}ED{EDn}Beta{betan}Simu{ST}.txt".format(
+    #     Nn=N, EDn=ED, betan=beta, ST=ExternalSimutime)
+    # np.savetxt(filename_selecetednodepair, unique_pairs, fmt="%i")
 
     # connected_components = sorted(nx.connected_components(G), key=len, reverse=True)
     # if len(connected_components) > 1:
@@ -748,8 +748,8 @@ def distance_inSRGG_oneSP(N, input_ED, beta, eta, ExternalSimutime):
 def compute_distance():
     tasks = []
     Nvec = [10000]
-    avg_vec = [5, 10, 50, 100]
-    eta_vec = [1, 2, 10]
+    avg_vec = [10]
+    eta_vec = [1]
     beta = 1
     for N in Nvec:
         for avg in avg_vec:
@@ -758,7 +758,7 @@ def compute_distance():
                 # x_1dec = [float(f"{v:.1f}") for v in input_ED_vec]
                 tasks.append((N, avg, beta, eta, 0))
 
-    with mp.Pool(processes=12) as pool:
+    with mp.Pool(processes=1) as pool:
         pool.starmap(distance_inSRGG_oneSP, tasks)
 
     print("all mission completed", flush=True)

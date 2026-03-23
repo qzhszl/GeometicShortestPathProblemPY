@@ -49,7 +49,7 @@ def plot_CC_vs_beta(ED):
     plt.xscale('log')
     # plt.yscale('log')
     plt.plot(x,real_cc_vec,linewidth=5,color=colors[0])
-    plt.xlabel(r'Temperature, $\beta$', fontsize=26)
+    plt.xlabel(r'Inverse temperature, $\beta$', fontsize=26)
     plt.ylabel(r"CC, $c_G$", fontsize=26)
     plt.xticks(fontsize=28)
     plt.yticks(fontsize=28)
