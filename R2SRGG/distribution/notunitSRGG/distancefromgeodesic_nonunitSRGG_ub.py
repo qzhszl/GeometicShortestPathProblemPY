@@ -33,8 +33,8 @@ import os
 import shutil
 import multiprocessing as mp
 
-from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
-from R2SRGG.R2SRGG_notuniformdistributed import R2SRGG_Gaussian
+from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
+from R2SRGG_notuniformdistributed import R2SRGG_Gaussian
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs, hopcount_node
 
@@ -48,9 +48,9 @@ def generate_r2SRGG():
 
     # Nvec = [200, 500, 1000, 10000]
     Nvec = [10000]
-    kvec = np.arange(39, 50.1, 0.2)
+    kvec = np.arange(2, 6.1, 0.2)
     # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [3,3.5,4,4.5,5,6]
+    betavec = [2.2, 4, 8, 16, 32, 64, 128]
     # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
     # betavec = [4]
 
@@ -67,12 +67,12 @@ def generate_r2SRGG():
                 # largest_component = max(components, key=len)
                 # print("LCC", len(largest_component))
 
-                FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\nonunit_network_N{Nn}avg{EDn}_{beta}.txt".format(
-                    Nn=N, EDn=ED, beta = beta)
+                FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                    Nn=N, EDn=ED, betan=beta)
                 nx.write_edgelist(G, FileNetworkName)
 
-                FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\nonunit_network_coordinates_N{Nn}avg{EDn}_{beta}.txt".format(
-                    Nn=N, EDn=ED, beta = beta)
+                FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                    Nn=N, EDn=ED, betan=beta)
                 with open(FileNetworkCoorName, "w") as file:
                     for data1, data2 in zip(Coorx, Coory):
                         file.write(f"{data1}\t{data2}\n")
@@ -430,9 +430,9 @@ def distance_inSRGG(network_size_index, average_degree_index, beta_index, Extern
 
 def distance_inlargeSRGG_oneSP(N, ED, beta, eta, rg, ExternalSimutime):
     """
-    :param N:
-    :param ED:
-    :param beta:
+    :param N:   network size
+    :param ED:  real average degree
+    :param beta:  this is a reserved port for future extension, no-input in this case
     :param rg:
     :param ExternalSimutime:
     :return:
@@ -454,19 +454,29 @@ def distance_inlargeSRGG_oneSP(N, ED, beta, eta, rg, ExternalSimutime):
     LCC_vec = []
     second_vec = []
     # file_folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\waxman\\"
-    file_folder_name = "/home/qzh/data/"
+    file_network_folder_name = "/home/qzh"
+    file_folder_name = "/home/qzh/data3/non_unit/"
     # load a network
 
-    print((N, ED, beta, eta),flush=True)
-    G, Coorx, Coory = R2SRGG_waman(N, ED, eta, rg, beta)
-    FileNetworkName = file_folder_name +"network_N{Nn}ED{EDn}eta{betan}.txt".format(
-        Nn=N, EDn=ED, betan=eta)
-    nx.write_edgelist(G, FileNetworkName)
-    FileNetworkCoorName = file_folder_name + "network_coordinates_N{Nn}ED{EDn}eta{betan}.txt".format(
-        Nn=N, EDn=ED, betan=eta)
-    with open(FileNetworkCoorName, "w") as file:
-        for data1, data2 in zip(Coorx, Coory):
-            file.write(f"{data1}\t{data2}\n")
+    print((N, ED),flush=True)
+    try:
+        FileNetworkName = file_folder_name +"nonunit_network_N{Nn}avg{EDn}.txt".format(
+            Nn=N, EDn=ED)
+        G = loadSRGGandaddnode(N, FileNetworkName)
+        Coorx = []
+        Coory = []
+        FileNetworkCoorName = file_folder_name + "nonunit_network_coordinates_N{Nn}avg{EDn}.txt".format(
+            Nn=N, EDn=ED)
+        with open(FileNetworkCoorName, "r") as file:
+            for line in file:
+                if line.startswith("#"):
+                    continue
+                data = line.strip().split("\t")  # 使用制表符分割
+                Coorx.append(float(data[0]))
+                Coory.append(float(data[1]))
+    except:
+        print("error: no network")
+        # G, Coorx, Coory = R2SRGG(N, ED, beta, rg)  #for test
 
     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
     print("real ED:", real_avg)
@@ -723,14 +733,10 @@ def distance_insmallSRGG_oneSP(N, ED, beta, rg, ExternalSimutime):
     np.savetxt(max_dev_node_hopcount_name, max_dev_node_hopcount, fmt="%i")
 
 
-def distance_inSRGG_oneSP(N, input_ED, beta, eta, ExternalSimutime):
-    print("input para:", (N, input_ED, beta, eta), flush=True)
-
-    # random.seed(N*input_ED)
-    # N = N
-    # ED = input_ED
-    # beta = beta
-    # print("input para:", (N, ED, beta))
+def distance_inSRGG_oneSP(N, input_ED,  ExternalSimutime):
+    print("input para:", (N, input_ED), flush=True)
+    beta = 3  # fake parameter
+    eta = 1 # fake parameter
 
     rg = RandomGenerator(-12)
     rseed = random.randint(0, 1000)
@@ -749,17 +755,12 @@ def distance_inSRGG_oneSP(N, input_ED, beta, eta, ExternalSimutime):
 def compute_distance():
     tasks = []
     Nvec = [10000]
-    avg_vec = [5]
-    eta_vec = [1, 1.1]
-    beta = 1
+    avg_vec = [5,10,50]
     for N in Nvec:
         for avg in avg_vec:
-            for eta in eta_vec:
-                # input_ED_vec = np.arange(2, 6, 0.1)
-                # x_1dec = [float(f"{v:.1f}") for v in input_ED_vec]
-                tasks.append((N, avg, beta, eta, 0))
+                tasks.append((N, avg, 0))
 
-    with mp.Pool(processes=4) as pool:
+    with mp.Pool(processes=3) as pool:
         pool.starmap(distance_inSRGG_oneSP, tasks)
 
     print("all mission completed", flush=True)
@@ -768,12 +769,12 @@ def compute_distance():
 
 
 if __name__ == '__main__':
-    generate_r2SRGG()
+    # generate_r2SRGG()
 
     """
     run simulations for multiple networks one SP
     step2
     """
-    # compute_distance()
+    compute_distance()
 
 
