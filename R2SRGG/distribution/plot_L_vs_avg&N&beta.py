@@ -1273,7 +1273,7 @@ def plot_L_with_avg_diffbeta():
 
 def load_large_network_results_dev_vs_avg_approxLrealfordiffbeta(N, beta, kvec, realL, exclude_hop1_flag):
     folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
-    folder_name = "E:\\GSPP_data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
+    # folder_name = "E:\\GSPP_data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
 
 
     exemptionlist = []
@@ -3841,7 +3841,7 @@ if __name__ == '__main__':
     # beta = [2.5,3,4,8,128]
     # plot_L_with_avg_diffbeta_finalversion()
     # beta = [2.5,8,128]
-    # plot_L_with_avg_diffbeta_finalversion2()
+    plot_L_with_avg_diffbeta_finalversion2()
 
     # plot_L_with_avg_finalversion_beta25()
     # #
@@ -3896,7 +3896,7 @@ if __name__ == '__main__':
     """
     # STEP 3 plot L vs beta
     """
-    plot_L_vs_beta(10)
+    # plot_L_vs_beta(10)
 
 
 

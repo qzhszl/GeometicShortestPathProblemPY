@@ -369,7 +369,7 @@ def check_distribution(N, beta,eta):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    # Figure 10 Appendix distance to geodesic distribution
+    # Figure 10 Appendix: distance to geodesic distribution NONUNIT
 
     # for (N,ED,beta) in [(100, 5, 4),
     #                   (100, 10, 4),
@@ -378,7 +378,7 @@ if __name__ == '__main__':
     #                   (100, 5, 128),
     #                   (1000, 5, 4)]:
     #     plot_distribution(N,ED,beta,thesis_flag=True)
-    plot_distribution(10000,50,3,eta=1,thesis_flag=False)
+    plot_distribution(10000,5,3,eta=1,thesis_flag=False)
 
     # check_distribution(10000, 1, 10)
 
