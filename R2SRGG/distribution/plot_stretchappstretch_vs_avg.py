@@ -1147,7 +1147,7 @@ def plot_stretch_approxstretch_with_avg_diffbeta():
     std_L = {}
     approx_L =  {}
 
-    beta = 128   # beta_vec = [2.5,3,4,8,128]
+    beta = 2.5   # beta_vec = [2.5,3,4,8,128]
     folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
 
     kvec_dict = {
@@ -1197,6 +1197,7 @@ def plot_stretch_approxstretch_with_avg_diffbeta():
                  marker='o', markersize=16,
                  label=lengend[1], color=colors[3])
 
+    plt.ylim([0.001,10])
     plt.yscale('log')
     plt.xscale('log')
     plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
