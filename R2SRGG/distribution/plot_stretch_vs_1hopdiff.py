@@ -613,6 +613,146 @@ def plot_hopcount_L_Lsamu_with_avg():
 
 
 
+
+def plot_realstrech_vs_appstretch_with_avg():
+    # plot real L vs approx L for beta = 1024
+    # the x-axis is the input average degree
+    Nvec = [10000]
+
+    hop_flag = True
+
+    # Nvec = [100]
+    real_ave_degree_dict = {}
+    ave_L = {}
+    ave_L_no1 = {}
+    ave_Lsamu = {}
+    ave_Lsamu_no1 = {}
+    std_L = {}
+
+    edgelength = {}
+    hop = {}
+    hop_no1 = {}
+
+    beta_vec = [1024]
+    kvec_dict = {
+        100: [2, 3, 5, 8, 12, 18, 29, 45, 70, 109, 169, 264, 412, 642, 1000],
+        215: [2, 3, 5, 9, 14, 24, 39, 63, 104, 170, 278, 455, 746, 1221, 2000],
+        464: [2, 3, 6, 10, 18, 30, 52, 89, 154, 265, 456, 785, 1350, 2324, 4000],
+        1000: [2, 4, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
+        2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
+        4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
+        10000: [2.2, 2.8, 3.0, 3.4, 3.8, 4.4, 6.0, 7.0, 8.0, 9.0, 10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+                2276,
+                3727, 6105,
+                9999, 16479, 27081, 44767, 73534, 121205, 199999]}
+
+    for N in Nvec:
+        for beta in beta_vec:
+            kvec = kvec_dict[N]
+            real_ave_degree_vec, ave_edgelength_vec, _, ave_hop_vec, _, ave_hop_vec_no1, _, ave_L_vec_no1, _ = load_large_network_results_dev_vs_avg_locmin_1hopdiff(
+                N, beta, kvec, True,True)
+            _, _, _, _, _, _, _, ave_L_vec, _ = load_large_network_results_dev_vs_avg_locmin_1hopdiff(
+                N, beta, kvec, True, False)
+
+            _, _, _, _, _, _, _, ave_L_samu_vec, _ = load_large_network_results_dev_vs_avg_locmin_1hopdiff(
+                N, beta, kvec, False, False)
+
+            _, _, _, _, _, _, _, ave_L_samu_vec_no1, _ = load_large_network_results_dev_vs_avg_locmin_1hopdiff(
+                N, beta, kvec, False, True)
+
+            real_ave_degree_dict[N] = real_ave_degree_vec
+            ave_L[N] = ave_L_vec
+            ave_L_no1[N] = ave_L_vec_no1
+            ave_Lsamu[N] = ave_L_samu_vec
+            ave_Lsamu_no1[N] = ave_L_samu_vec_no1
+
+            edgelength[N] = ave_edgelength_vec
+            hop[N] = ave_hop_vec
+            hop_no1[N] = ave_hop_vec_no1
+
+
+
+
+    colors = ["#D08082", "#C89FBF", "#62ABC7", "#7A7DB1", '#6FB494', '#9FA9C9', '#D36A6A']
+
+
+    fig2, ax2 = plt.subplots(figsize=(9, 6))
+    for N_index in range(len(Nvec)):
+        N = Nvec[N_index]
+        x = real_ave_degree_dict[N]
+        y1 = ave_L[N]
+        y2 = ave_L_no1[N]
+        y3 = ave_Lsamu[N]
+        y4 = ave_Lsamu_no1[N]
+
+        print("data:")
+        print(x)
+        print(y2)
+        print(y3)
+
+        # plt.plot(x, y1, linestyle="--", linewidth=3, marker='o', markersize=16,
+        #          label="inculde 1-hop, real L", color=colors[N_index])
+        plt.plot(x, y2, linestyle="--", linewidth=3, marker='o', markersize=16,
+                 label=r"$\langle S \rangle$", color=colors[N_index + 1])
+        # plt.plot(x, y3, linestyle="--", linewidth=3, marker='o', markersize=16,
+        #          label="approx: <r><h>", color=colors[N_index + 2])
+        plt.plot(x, y4, linestyle="--", linewidth=3, marker='o', markersize=16,
+                 label=r"$\langle d_l \rangle \langle h \rangle$", color=colors[N_index + 3])
+
+        # ana_L = [analticL(N, k) for k in x]
+        # plt.plot(x, ana_L, "-", linewidth=5, label=r"ana: $y = <r><h>$")
+
+        # x3 = np.linspace(5, 20, 10000)
+        # ana_vec_real = [0.01*analtich(N, k) for k in x3]
+        # ana_vec_app = [0.007*analtich(N, k) for k in x3]
+        #
+        # # plt.plot(x, [x_value ** 0.5 * (0.12 + 1.28 * np.log(10000) / np.log(x_value)) * np.log(x_value) for x_value in x],
+        # #          label=f"fit2: analytic formula: Llog(k)~k^0.25")
+        #
+        # plt.plot(x3, ana_vec_real, "--", linewidth=5, label=r"$ana: <S> = c_1(k - k_c)^{-1/2}$")
+        # plt.plot(x3, ana_vec_app, "--", linewidth=5, label=r"$ana: <S> = c_2(k - k_c)^{-1/2}$")
+        #
+        # x4 = np.linspace(1000, 10000, 10000)
+        # ana_vec_real_tail = [2.6*analticdl(N, k) for k in x4]
+        # ana_vec_app_tail = [2.1*analticdl(N, k) for k in x4]
+        # plt.plot(x4, ana_vec_real_tail, "--", linewidth=5, label=r"$ana: <S> = c_3* \frac{2}{3}\sqrt{\frac{k}{N\pi}}\left( 1 + \frac{4}{3\pi} \sqrt{\frac{k}{N\pi}} \right)$")
+        # plt.plot(x4, ana_vec_app_tail, "--", linewidth=5, label=r"$ana: <S> = c_4* \frac{2}{3}\sqrt{\frac{k}{N\pi}}\left( 1 + \frac{4}{3\pi} \sqrt{\frac{k}{N\pi}} \right)$")
+
+
+
+
+
+
+    # plt.ylim(0, 2.6)
+    # # plt.yticks([0, 0.1, 0.2, 0.3])
+
+    plt.yscale('log')
+    plt.xscale('log')
+    plt.xlabel(r'Average degree, $\langle D \rangle$', fontsize=26)
+    plt.ylabel(r'$Average stretch$', fontsize=26)
+
+    plt.xticks(fontsize=26)
+    plt.yticks(fontsize=26)
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.legend(fontsize=26, loc=(0.5, 0.45))
+    plt.tick_params(axis='both', which="both", length=6, width=1)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\max_min_ave_ran_deviation\\LocalOptimumdiffNBeta{betan}.png".format(
+    #     betan=beta)
+    # plt.savefig(picname, format='png', bbox_inches='tight', dpi=600,transparent=True)
+    # picname = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\L_vs_realavg.svg"
+    # plt.savefig(
+    #     picname,
+    #     format="svg",
+    #     bbox_inches='tight',  # 紧凑边界
+    #     transparent=True  # 背景透明，适合插图叠加
+    # )
+    # plt.title('Errorbar Curves with Minimum Points after Peak')
+    plt.show()
+    plt.close()
+
+
+
+
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # Figure 4 supp
@@ -626,7 +766,16 @@ if __name__ == '__main__':
     """
    # STEP 2 <L> and <r><h> versus real average degree beta = 1024
    """
-    plot_hopcount_L_Lsamu_with_avg()
+    # plot_hopcount_L_Lsamu_with_avg()
+
+    """
+  # STEP 2 <L> and <r><h> versus real average degree beta = 1024
+  """
+
+    plot_realstrech_vs_appstretch_with_avg()
+
+
+
 
 
 

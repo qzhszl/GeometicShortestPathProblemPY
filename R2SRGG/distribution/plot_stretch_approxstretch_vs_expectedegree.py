@@ -1491,7 +1491,7 @@ if __name__ == '__main__':
     #     produce strech vs <r><h> with curve fit (beta == 2.5 and 1024)
     #     the y-axis is <S>*k^{-tau} and the x-axis is 1/log(k)
     # ___________________________________________________________________________________________________________________
-    plot_realL_approxL_together_test3()
+    # plot_realL_approxL_together_test3()
 
 
     # function~8 figure:  how the realL, <r><h>, <max(r)><h> for given E[D] change with N
@@ -1501,7 +1501,7 @@ if __name__ == '__main__':
 
     # function~9 figure: See how the difference between <s>and <r><h> changes with beta
     # ___________________________________________________________________________________________________________________
-    # plot_realL_approxL_together_diff()
+    plot_realL_approxL_together_diff()
 
 
 
