@@ -378,9 +378,7 @@ def check_realdegree_vs_expecteddegree():
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    rg = RandomGenerator(-12)
-    for i in range(random.randint(1, 1000)):
-        rg.ran1()
+
     # betavec = [2.2, 4, 8, 16, 32, 64, 128]
     # N_vec = [100,1000,10000]
     # ED_vec = [10,20,72]
@@ -455,12 +453,24 @@ if __name__ == '__main__':
     #     for data1, data2 in zip(x_coords, y_coords):
     #         file.write(f"{data1}\t{data2}\n")
 
+    rg = RandomGenerator(-12)
+    for i in range(random.randint(1, 1000)):
+        rg.ran1()
     N = 10000
-    ED = 2
-    beta = 8
-    G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
-    real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-    print("real ED:", real_avg)
+    beta = 128
+    for ED in [2,5,10,15,50,100,1000]:
+        for i in range(3):
+            G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+            print(f"ED{ED}, beta{beta}")
+            print("real ED:", real_avg)
 
-
+    N = 100000
+    beta = 128
+    for ED in [2,5,10,15,50]:
+        for i in range(3):
+            G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+            print(f"ED{ED}, beta{beta}")
+            print("real ED:", real_avg)
 

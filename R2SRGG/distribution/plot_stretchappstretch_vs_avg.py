@@ -966,7 +966,7 @@ def plot_stretch_approxstretch_with_avg():
         1000: [2,3, 4,5, 7, 12, 21, 39, 70, 126, 229, 414, 748, 1353, 2446, 4424, 8000],
         2154: [2, 4, 7, 14, 27, 52, 99, 190, 364, 697, 1335, 2558, 4902, 9393, 18000],
         4642: [2, 4, 8, 16, 33, 67, 135, 272, 549, 1107, 2234, 4506, 9091, 18340, 37000],
-        10000: [2.2, 3.0, 3.8, 6.0,  10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
+        10000: [2.2, 3.0, 3.8, 6.0,8,  10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389,
                 2276,
                 3727, 6105,
                 9999, 16479, 27081, 44767, 73534, 121205, 199999],
@@ -1147,11 +1147,11 @@ def plot_stretch_approxstretch_with_avg_diffbeta():
     std_L = {}
     approx_L =  {}
 
-    beta = 2.5   # beta_vec = [2.5,3,4,8,128]
+    beta = 128   # beta_vec = [2.5,3,4,8,128]
     folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\deviaitonvsSPgeometriclength\\approxLrealdiff\\fordiffbeta\\"
 
     kvec_dict = {
-        2.5: [1.2,1.4, 1.5,1.6,1.7,1.8,2, 2.4, 2.8, 3.4,4.6,  6.0,  8.0,  10, 16, 27, 44, 72,
+        2.5: [0.6,0.9,1.2,1.4, 1.5,1.6,1.7,1.8,2, 2.4, 2.8, 3.4,4.6,  6.0,  8.0,  10, 16, 27, 44, 72,
               118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 220000,
               328000,
               888636],
@@ -1162,7 +1162,7 @@ def plot_stretch_approxstretch_with_avg_diffbeta():
             118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999],
         8: [1.2,  2, 2.8, 3.4, 4.4, 4.6,5.2, 7.0, 8.0, 10, 16, 27, 44, 72,
             118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534,199999],
-        128: [1.2, 2.2, 3.4, 5, 5.5, 6.0, 7.0, 8.0, 10, 16, 27, 44, 72,
+        128: [0.6,1.2, 2.2, 3.4, 5, 5.5, 6.0, 7.0, 8.0, 10, 16, 27, 44, 72,
               118, 193, 316, 518, 848, 1389, 2276, 3727, 6105, 9999, 16479, 27081, 44767, 73534, 121205, 199999, 328000,
               539744, 888636],
     }
@@ -1206,7 +1206,7 @@ def plot_stretch_approxstretch_with_avg_diffbeta():
     else:
         plt.ylabel(r'Average stretch, $\langle r \rangle \langle h \rangle $', fontsize=26)
 
-    ax.text(-0.34, 1.15, fr'(c) $N = 10^4$, $\beta = {beta}$',
+    ax.text(-0.34, 1.15, fr'(b) $N = 10^4$, $\beta = {beta}$',
             transform=ax.transAxes,
             fontsize=28, verticalalignment='top', horizontalalignment='left')
 
@@ -1528,14 +1528,14 @@ def convert_number(x):
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
 
-    """
-    # STEP 1 real stretch <S> and <S> approx <d_l><h> versus real average degree beta = 128  
-    """
-    # Figure Appendix: real strech vs not real one
-    # plot_stretch_approxstretch_with_avg()
+    # """
+    # # STEP 1 real stretch <S> and <S> approx <d_l><h> versus real average degree beta = 128
+    # """
+    # # Figure Appendix: real strech vs not real one
+    # # plot_stretch_approxstretch_with_avg()
 
     """
-    # STEP 2 real stretch <S> and <S> approx <d_l><h> versus real average degree beta = 4 
+    # STEP 2 real stretch <S> and <S> approx <d_l><h> versus real average degree beta = 4,128 
     """
     # Figure Appendix: real strech vs approx stretch for other beta
     plot_stretch_approxstretch_with_avg_diffbeta()
