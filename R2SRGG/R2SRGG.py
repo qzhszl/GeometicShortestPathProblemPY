@@ -456,21 +456,21 @@ if __name__ == '__main__':
     rg = RandomGenerator(-12)
     for i in range(random.randint(1, 1000)):
         rg.ran1()
-    N = 10000
+    N = 1000
     beta = 128
-    for ED in [2,5,10,15,50,100,1000]:
+    for ED in [2]:
         for i in range(3):
             G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
             real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
             print(f"ED{ED}, beta{beta}")
             print("real ED:", real_avg)
 
-    N = 100000
-    beta = 128
-    for ED in [2,5,10,15,50]:
-        for i in range(3):
-            G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
-            real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
-            print(f"ED{ED}, beta{beta}")
-            print("real ED:", real_avg)
+    # N = 100000
+    # beta = 128
+    # for ED in [1,5,10,15,50]:
+    #     for i in range(3):
+    #         G, Coorx, Coory = R2SRGG(N, ED, beta, rg)
+    #         real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
+    #         print(f"ED{ED}, beta{beta}")
+    #         print("real ED:", real_avg)
 
