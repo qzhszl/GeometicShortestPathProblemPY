@@ -216,8 +216,8 @@ def generate_gaussian_clusters(n, K, box=(0,1,0,1),
     # sigmas2 = np.random.uniform(sigma_range[0], sigma_range[1], K)
 
     #  随机生成每个 cluster 的 sigma 为固定值
-    sigmas = 0.02
-    sigmas2 = 0.02
+    sigmas = 0.5
+    sigmas2 = 0.5
 
     xx = []
     yy = []

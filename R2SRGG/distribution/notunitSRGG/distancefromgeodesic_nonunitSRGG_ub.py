@@ -32,9 +32,11 @@ import sys
 import os
 import shutil
 import multiprocessing as mp
+import matplotlib.pyplot as plt
 
-from R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
-from R2SRGG_notuniformdistributed import R2SRGG_Gaussian
+
+from R2SRGG.R2SRGG import R2SRGG, distR2, dist_to_geodesic_R2, loadSRGGandaddnode, R2SRGG_withgivennodepair
+from R2SRGG.R2SRGG_notuniformdistributed import R2SRGG_Gaussian
 from SphericalSoftRandomGeomtricGraph import RandomGenerator
 from main import all_shortest_path_node, find_k_connected_node_pairs, find_all_connected_node_pairs, hopcount_node
 
@@ -48,9 +50,9 @@ def generate_r2SRGG():
 
     # Nvec = [200, 500, 1000, 10000]
     Nvec = [10000]
-    kvec = np.arange(2, 6.1, 0.2)
+    kvec = np.arange(120, 310, 1)
     # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
-    betavec = [2.2, 4, 8, 16, 32, 64, 128]
+    betavec = [4]
     # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
     # betavec = [4]
 
@@ -62,16 +64,20 @@ def generate_r2SRGG():
                 real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)
                 print("input para:", (N, ED, beta))
                 print("real ED:", real_avg)
+                pos = {i: (Coorx[i], Coory[i]) for i in range(len(Coory))}
+                nx.draw(G, pos, node_size=20)
+                plt.show()
+
                 # print("clu:", nx.average_clustering(G))
                 # components = list(nx.connected_components(G))
                 # largest_component = max(components, key=len)
                 # print("LCC", len(largest_component))
 
-                FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\network_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\non_unit\\network_N{Nn}ED{EDn}Beta{betan}sigma5.txt".format(
                     Nn=N, EDn=ED, betan=beta)
                 nx.write_edgelist(G, FileNetworkName)
 
-                FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\network_coordinates_N{Nn}ED{EDn}Beta{betan}.txt".format(
+                FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\non_unit\\network_coordinates_N{Nn}ED{EDn}Beta{betan}sigma5.txt".format(
                     Nn=N, EDn=ED, betan=beta)
                 with open(FileNetworkCoorName, "w") as file:
                     for data1, data2 in zip(Coorx, Coory):
