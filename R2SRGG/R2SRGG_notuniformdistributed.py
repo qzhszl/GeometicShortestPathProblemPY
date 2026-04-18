@@ -212,8 +212,12 @@ def generate_gaussian_clusters(n, K, box=(0,1,0,1),
 
 
     # 2️⃣ 随机生成每个 cluster 的 sigma
-    sigmas = np.random.uniform(sigma_range[0], sigma_range[1], K)
-    sigmas2 = np.random.uniform(sigma_range[0], sigma_range[1], K)
+    # sigmas = np.random.uniform(sigma_range[0], sigma_range[1], K)
+    # sigmas2 = np.random.uniform(sigma_range[0], sigma_range[1], K)
+
+    #  随机生成每个 cluster 的 sigma 为固定值
+    sigmas = 0.02
+    sigmas2 = 0.02
 
     xx = []
     yy = []
@@ -224,8 +228,8 @@ def generate_gaussian_clusters(n, K, box=(0,1,0,1),
         k = np.random.randint(0, K)
 
         # 从 Gaussian 采样
-        x = np.random.normal(loc=centers[k][0], scale=sigmas[k])
-        y = np.random.normal(loc=centers[k][1], scale=sigmas2[k])
+        x = np.random.normal(loc=centers[k][0], scale=sigmas)
+        y = np.random.normal(loc=centers[k][1], scale=sigmas2)
         # 4️⃣ 可选：限制在区域内（推荐 rejection）
         if xmin <= x <= xmax and ymin <= y <= ymax:
             xx.append(x)
@@ -500,7 +504,7 @@ if __name__ == '__main__':
     #         file.write(f"{data1}\t{data2}\n")
 
     N = 10000
-    ED = 2
+    ED = 10
     beta = 8
     G, Coorx, Coory = R2SRGG_Gaussian(N, ED, beta, rg)
     real_avg = 2 * nx.number_of_edges(G) / nx.number_of_nodes(G)

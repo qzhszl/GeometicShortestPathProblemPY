@@ -769,12 +769,12 @@ def compute_distance():
 
 
 if __name__ == '__main__':
-    # generate_r2SRGG()
+    generate_r2SRGG()
 
     """
     run simulations for multiple networks one SP
     step2
     """
-    compute_distance()
+    # compute_distance()
 
 
