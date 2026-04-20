@@ -50,7 +50,7 @@ def generate_r2SRGG():
 
     # Nvec = [200, 500, 1000, 10000]
     Nvec = [10000]
-    kvec = np.arange(120, 310, 1)
+    kvec = np.arange(60, 310, 1)
     # kvec = list(range(2, 16)) + [20, 25, 30, 35, 40, 50, 60, 70, 80, 100]
     betavec = [4]
     # betavec = [2.2, 2.4, 2.5, 2.6, 2.8, 3, 3.25, 3.5, 3.75, 5, 6, 7]
@@ -73,11 +73,11 @@ def generate_r2SRGG():
                 # largest_component = max(components, key=len)
                 # print("LCC", len(largest_component))
 
-                FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\non_unit\\network_N{Nn}ED{EDn}Beta{betan}sigma5.txt".format(
+                FileNetworkName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\non_unit\\network_N{Nn}ED{EDn}Beta{betan}sigma008.txt".format(
                     Nn=N, EDn=ED, betan=beta)
                 nx.write_edgelist(G, FileNetworkName)
 
-                FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\non_unit\\network_coordinates_N{Nn}ED{EDn}Beta{betan}sigma5.txt".format(
+                FileNetworkCoorName = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\EuclideanSoftRGGnetwork\\inputavgbeta\\non_unit\\network_coordinates_N{Nn}ED{EDn}Beta{betan}sigma008.txt".format(
                     Nn=N, EDn=ED, betan=beta)
                 with open(FileNetworkCoorName, "w") as file:
                     for data1, data2 in zip(Coorx, Coory):

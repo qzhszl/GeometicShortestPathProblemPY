@@ -56,7 +56,7 @@ def load_small_network_results_maxminave(N, ED, beta):
 
 
 
-def load_large_network_results_maxminave(N, ED, beta,eta):
+def load_large_network_results_maxminave(N, ED, beta,eta,inputsigma = 1):
     exemptionlist = []
     for N in [N]:
         ave_deviation_vec = []
@@ -64,47 +64,71 @@ def load_large_network_results_maxminave(N, ED, beta,eta):
         min_deviation_vec = []
         ran_deviation_vec = []
 
-        file_folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\nonunit\\"
+        file_folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\nonunit\\diffsigma\\"
         for ExternalSimutime in [0]:
             try:
                 if N ==1000:
                     deviation_vec_name = file_folder_name+"ave_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
+                    Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
+
                     ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
                     ave_deviation_vec.extend(ave_deviation_for_a_para_comb_10times)
 
-                    max_deviation_name = file_folder_name+"max_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
+                    max_deviation_name = file_folder_name + "max_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, etan=eta, ST=ExternalSimutime)
                     max_deviation_for_a_para_comb_10times = np.loadtxt(max_deviation_name)
                     max_deviation_vec.extend(max_deviation_for_a_para_comb_10times)
 
-                    min_deviation_name = file_folder_name+"min_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
+                    min_deviation_name = file_folder_name + "min_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, etan=eta, ST=ExternalSimutime)
+
+
                     min_deviation_for_a_para_comb_10times = np.loadtxt(min_deviation_name)
                     min_deviation_vec.extend(min_deviation_for_a_para_comb_10times)
 
-                    ave_baseline_deviation_name = file_folder_name+"ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
+                    ave_baseline_deviation_name = file_folder_name + "ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, etan=eta, ST=ExternalSimutime)
                     ave_baseline_deviation_for_a_para_comb_10times = np.loadtxt(ave_baseline_deviation_name)
                     ran_deviation_vec.extend(ave_baseline_deviation_for_a_para_comb_10times)
-                elif N ==10000:
-                    deviation_vec_name = file_folder_name+"ave_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
+
+                elif N == 10000:
+                    deviation_vec_name = file_folder_name + "ave_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, etan=eta, ST=ExternalSimutime)
+
+                    deviation_vec_name = file_folder_name + "deviation_shortest_path_nodes_N{Nn}ED{EDn}Beta{betan}sigma{inputsigma}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, inputsigma=inputsigma)
+
                     ave_deviation_for_a_para_comb_10times = np.loadtxt(deviation_vec_name)
                     ave_deviation_vec.extend(ave_deviation_for_a_para_comb_10times)
 
-                    max_deviation_name = file_folder_name+"max_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
+                    max_deviation_name = file_folder_name + "max_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, etan=eta, ST=ExternalSimutime)
+
+                    max_deviation_name = file_folder_name + "max_deviation_N{Nn}ED{EDn}Beta{betan}sigma{inputsigma}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, inputsigma=inputsigma)
+
                     max_deviation_for_a_para_comb_10times = np.loadtxt(max_deviation_name)
                     max_deviation_vec.extend(max_deviation_for_a_para_comb_10times)
 
-                    min_deviation_name = file_folder_name+"min_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
+
+
+
+                    min_deviation_name = file_folder_name + "min_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, etan=eta, ST=ExternalSimutime)
+                    min_deviation_name = file_folder_name + "min_deviation_N{Nn}ED{EDn}Beta{betan}sigma{inputsigma}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, inputsigma=inputsigma)
+
+
                     min_deviation_for_a_para_comb_10times = np.loadtxt(min_deviation_name)
                     min_deviation_vec.extend(min_deviation_for_a_para_comb_10times)
 
-                    ave_baseline_deviation_name = file_folder_name+"ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
-        Nn=N, EDn=ED, betan=beta,etan=eta, ST=ExternalSimutime)
+                    ave_baseline_deviation_name = file_folder_name + "ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}eta{etan}Simu{ST}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, etan=eta, ST=ExternalSimutime)
+
+                    ave_baseline_deviation_name = file_folder_name + "ave_baseline_deviation_N{Nn}ED{EDn}Beta{betan}sigma{inputsigma}.txt".format(
+                        Nn=N, EDn=ED, betan=beta, inputsigma=inputsigma)
+
+
                     ave_baseline_deviation_for_a_para_comb_10times = np.loadtxt(ave_baseline_deviation_name)
                     ran_deviation_vec.extend(ave_baseline_deviation_for_a_para_comb_10times)
             except FileNotFoundError:
@@ -158,7 +182,7 @@ def load_10000nodenetwork_maxminave(ED, beta):
 
 
 
-def plot_distribution(N, ED, beta,eta,thesis_flag = False):
+def plot_distribution(N, ED, beta,eta,sigma,thesis_flag = False):
     """
     Compared maximum, minimum, average deviation with randomly selected nodes
     :return:
@@ -175,7 +199,7 @@ def plot_distribution(N, ED, beta,eta,thesis_flag = False):
             ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_small_network_results_maxminave(N, ED, beta)
     else:
         ave_deviation_vec, max_deviation_vec, min_deviation_vec, ran_deviation_vec, _ = load_large_network_results_maxminave(
-            N, ED, beta, eta)
+            N, ED, beta, eta,sigma)
 
     # cuttail = [9,19,34,24]
     # peakcut = [9,5,5,5]
@@ -198,29 +222,29 @@ def plot_distribution(N, ED, beta,eta,thesis_flag = False):
     for data, color, label in zip(datasets, colors, labels):
         hvalue, bin_vec = np.histogram(data, bins=60, density=True)
 
-        if plot_count == 1 and ED==5 and eta==1:
-            hvalue = np.append(hvalue, 0.001)
-            bin_vec = np.append(bin_vec, 0.099)
-        elif plot_count == 0 and ED == 5 and eta == 1:
-            hvalue = np.append(hvalue, 0.001)
-            bin_vec = np.append(bin_vec, 0.0614)
-        elif plot_count == 0 and ED == 10 and eta == 1:
-            hvalue = np.append(hvalue, 0.001)
-            bin_vec = np.append(bin_vec, 0.164)
-        elif plot_count == 1 and ED == 10 and eta == 1:
-            hvalue = np.append(hvalue, 0.001)
-            bin_vec = np.append(bin_vec, 0.294)
-        elif plot_count == 1 and ED == 10 and eta == 10:
-            hvalue = np.append(hvalue, 0.001)
-            bin_vec = np.append(bin_vec, 0.226)
-        elif plot_count == 0 and ED == 50 and eta == 2:
-            hvalue = np.append(hvalue, 0.001)
-            bin_vec = np.append(bin_vec, 0.146)
-        elif plot_count == 0 and ED == 5 and eta == 2:
-            hvalue = np.append(hvalue, 0.001)
-            bin_vec = np.append(bin_vec, 0.157)
-        print(bin_vec[1:len(bin_vec)])
-        print(hvalue)
+        # if plot_count == 1 and ED==5 and eta==1:  # this is for eta
+        #     hvalue = np.append(hvalue, 0.001)
+        #     bin_vec = np.append(bin_vec, 0.099)
+        # elif plot_count == 0 and ED == 5 and eta == 1:
+        #     hvalue = np.append(hvalue, 0.001)
+        #     bin_vec = np.append(bin_vec, 0.0614)
+        # elif plot_count == 0 and ED == 10 and eta == 1:
+        #     hvalue = np.append(hvalue, 0.001)
+        #     bin_vec = np.append(bin_vec, 0.164)
+        # elif plot_count == 1 and ED == 10 and eta == 1:
+        #     hvalue = np.append(hvalue, 0.001)
+        #     bin_vec = np.append(bin_vec, 0.294)
+        # elif plot_count == 1 and ED == 10 and eta == 10:
+        #     hvalue = np.append(hvalue, 0.001)
+        #     bin_vec = np.append(bin_vec, 0.226)
+        # elif plot_count == 0 and ED == 50 and eta == 2:
+        #     hvalue = np.append(hvalue, 0.001)
+        #     bin_vec = np.append(bin_vec, 0.146)
+        # elif plot_count == 0 and ED == 5 and eta == 2:
+        #     hvalue = np.append(hvalue, 0.001)
+        #     bin_vec = np.append(bin_vec, 0.157)
+        # print(bin_vec[1:len(bin_vec)])
+        # print(hvalue)
         plt.plot(bin_vec[1:len(bin_vec)], hvalue, color=color, label=label, linewidth=5)
         plot_count = plot_count+1
 
@@ -232,17 +256,20 @@ def plot_distribution(N, ED, beta,eta,thesis_flag = False):
     # ax.spines['bottom'].set_position(('outward', 0))
     # plt.xscale('log')
     # plt.yscale('log')
-    plt.xlim([0,1.2])
+    # plt.xlim([0,1.2])
     # plt.ylim([0, 50])
     # plt.yticks([0,5,10,15,20,25])
     # plt.yticks([0, 10, 20, 30, 40, 50])
-
+    plt.xticks([0, 0.2, 0.4, 0.6, 0.8])
+    # if ED == 5 and sigma=="08":
+    #     plt.xticks([0,0.2,0.4,0.6,0.8,1.0])
 
     if N == 10000:
         plt.yscale('log')
-        ymin = 0.001  # 设置最低点
+        ymin = 0.01  # 设置最低点
         current_ylim = ax.get_ylim()  # 获取当前的 y 轴范围
         ax.set_ylim(ymin, current_ylim[1])  # 保持最大值不变
+        ax.set_xlim(0, 1)
 
     # plt.yscale('log')
     plt.xlabel(r'x',fontsize = 32)
@@ -271,9 +298,15 @@ def plot_distribution(N, ED, beta,eta,thesis_flag = False):
     # }
 
     fignum_dict = {
-    (10000, 5, 1): "a",
-    (10000, 10, 1): "b",
-    (10000, 50, 1): "c",
+    (10000, 5, "08"): "a",
+    (10000, 5, 2): "b",
+    (10000, 5, 5): "c",
+    (10000, 10, "08"): "d",
+    (10000, 10, 2): "e",
+    (10000, 10, 5): "f",
+    (10000, 50, "08"): "g",
+    (10000, 50, 2): "h",
+    (10000, 50, 5): "i",
     }
 
 
@@ -286,7 +319,7 @@ def plot_distribution(N, ED, beta,eta,thesis_flag = False):
     plt.legend(fontsize=26, handlelength=1, handletextpad=0.5, frameon=False,loc='right',bbox_to_anchor=(1.04, 0.64))
     plt.tick_params(axis='both', which="both", length=6, width=1)
 
-    file_folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\nonunit\\"
+    file_folder_name = "D:\\data\\geometric shortest path problem\\EuclideanSRGG\\nonunit\\diffsigma\\"
     if thesis_flag:
         picname = file_folder_name+"DistributionN{Nn}ED{EDn}Beta{betan}_thesis.svg".format(
             Nn=N, EDn=ED, betan=beta)
@@ -294,15 +327,15 @@ def plot_distribution(N, ED, beta,eta,thesis_flag = False):
         try:
             Nlabel_dict = {100:"10^2",1000:"10^3",10000:"10^4"}
             Nlabel = Nlabel_dict[N]
-            fignum = fignum_dict[(N,ED, eta)]
-            ax.text(xtextpos_dict[(N,ED, eta)], 1.15, fr'({fignum}) $N = {Nlabel}$, $\langle D \rangle = {ED}$', transform=ax.transAxes,
+            fignum = fignum_dict[(N,ED, sigma)]
+            ax.text(xtextpos_dict[(N,ED, eta)], 1.15, fr'({fignum}) $N = {Nlabel}$, $\langle D \rangle = {ED}$, $\sigma = 0.{sigma}$', transform=ax.transAxes,
                     fontsize=28, verticalalignment='top', horizontalalignment='left')
             # picname = file_folder_name+"DistributionN{Nn}ED{EDn}Beta{betan}.pdf".format(
             #     Nn=N, EDn=ED, betan=beta)
             # plt.savefig(picname,format='pdf', bbox_inches='tight', dpi=600)
 
-            picname = file_folder_name+"DistributionN{Nn}ED{EDn}eta{etan}.svg".format(
-                Nn=N, EDn=ED, etan=eta)
+            picname = file_folder_name+r"DistributionN{Nn}ED{EDn}sigma{sigma}.svg".format(
+                Nn=N, EDn=ED, sigma=sigma)
             plt.savefig(picname, format='svg', bbox_inches='tight', transparent=True)
         except:
             pass
@@ -378,7 +411,13 @@ if __name__ == '__main__':
     #                   (100, 5, 128),
     #                   (1000, 5, 4)]:
     #     plot_distribution(N,ED,beta,thesis_flag=True)
-    plot_distribution(10000,5,3,eta=1,thesis_flag=False)
+    N = 10000
+    eta = 1
+    for ED in [5,10,50]:
+        for sigma in ["08", 2, 5]:
+            plot_distribution(10000, ED, 4, eta=1, sigma=sigma, thesis_flag=False)
+
+    # plot_distribution(10000,50,4,eta=1,sigma=2,thesis_flag=False)
 
     # check_distribution(10000, 1, 10)
 
