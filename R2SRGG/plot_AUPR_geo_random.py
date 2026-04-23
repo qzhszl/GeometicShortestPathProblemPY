@@ -884,8 +884,8 @@ def plot_predict_geodistance_Vs_random_withnoise_SP_R2(Edindex, betaindex, legen
     y4 = Random_precision_list_all_ave
     # print()
     y_error_lower = [p*0 for p in y3]
-    # y2[4] = 0
-    # SRGG_precision_list_all_std[4] =0
+    y2[4] = 0
+    SRGG_precision_list_all_std[4] =0
 
     print(y2)
     print(y4)
@@ -992,7 +992,7 @@ if __name__ == '__main__':
     STEP 1 plot Figure 10 appendix AUPR: bar figure with expected by chance
     """
     for Edindex in [1]:
-        for betaindex in [6]:
+        for betaindex in [1]:
             plot_predict_geodistance_Vs_random_withnoise_SP_R2(Edindex, betaindex, legendpara=0, theis_flag=False)
 
 
